@@ -22,6 +22,10 @@ from . import views
 
 urlpatterns = [
     # use names for easy calls + functions reverse() and {% url %}  
+    path('login/', views.login_session, name='login'),
+    path('logout/', views.logout_session, name='logout'),
+
+ 
     path('director/', views.director_dashboard, name='director_dashboard'),
     path('sector-chief/', views.sector_chief_dashboard, name='sector_chief_dashboard'),
     path('professor/', views.professor_dashboard, name='professor_dashboard'),

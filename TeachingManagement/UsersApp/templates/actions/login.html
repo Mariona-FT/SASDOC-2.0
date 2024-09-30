@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+<body>
+    <h1>Inici de sessió</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}  <!-- Renders the form fields -->
+        <button type="submit">Iniciar sessió</button>
+    </form>
+    {% if form.non_field_errors %}
+        <p style="color:red;">{{ form.non_field_errors }}</p>
+    {% endif %}
+</body>
+</html>
