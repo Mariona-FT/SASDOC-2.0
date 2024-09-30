@@ -17,9 +17,7 @@ Including another URLconf
   **  URL ONLY FOR THIS APP **
 """
 from django.urls import path
-from TeachingManagementApp import views
-
-app_name = 'baseapp'
+from . import views
 
 urlpatterns = [
     # use names for easy calls + functions reverse() and {% url %}  
