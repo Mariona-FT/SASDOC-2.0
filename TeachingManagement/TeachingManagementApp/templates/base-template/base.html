@@ -16,8 +16,16 @@
                 <li><a href="#">Cursos</a></li>
                 <li><a href="#">Contacte</a></li>
             </ul>
+            {% if user.is_authenticated %} 
+            Hi {{user.username}} 
+            &nbsp;&nbsp; 
+            <a href="{% url 'logout' %}" class="btn-link"> Close session </a>
+          {% else %}
+            <a href="{% url 'login' %}" class="btn-link"> Login </a>
+          {% endif %}
         </nav>
     </header>
+
 
     <main>
         {% block content %}
