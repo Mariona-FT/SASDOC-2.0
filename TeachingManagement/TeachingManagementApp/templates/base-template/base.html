@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SASDOC 2.0{% endblock %}</title>
+    {% load static %}
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="#">Inici</a></li>
+                <li><a href="#">Assignacions</a></li>
+                <li><a href="#">Professors</a></li>
+                <li><a href="#">Cursos</a></li>
+                <li><a href="#">Contacte</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}
+        <!-- Default content goes here -->
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2024-25 SASDOC 2.0. Tots els drets reservats.</p>
+    </footer>
+
+</body>
+</html>
