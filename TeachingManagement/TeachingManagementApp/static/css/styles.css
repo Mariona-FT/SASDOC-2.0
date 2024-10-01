@@ -2,7 +2,33 @@ body {
     background-color: #f0f0f0;
 }
 
-.navbar-custom {
-    background-color: #333;
-    color: #fff;
+/* Navbar background color and general styling */
+.navbar {
+    background-color: #f8f9fa; /* Light background color */
+    padding: 10px;
+}
+
+/* Style for navbar links */
+.navbar-nav .nav-link {
+    color: #343a40; /* Dark gray text color */
+    padding: 10px 15px;
+    text-decoration: none;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* Hover effect for navbar links */
+.navbar-nav .nav-link:hover {
+    text-decoration: underline; /* Adds underline for clarity */
+}
+
+/* Active link styling */
+.navbar-nav .nav-link.active {
+    background-color: #0056b3; /* Darker blue for active link */
+    color: white;
+    border-radius: 5px;
+}
+
+/* User info and logout text styling */
+.navbar-text {
+    color: #343a40;
 }

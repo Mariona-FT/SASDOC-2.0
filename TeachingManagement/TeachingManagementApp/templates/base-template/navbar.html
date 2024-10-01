@@ -1,0 +1,64 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">SASDOC 2.0</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                {% if user.is_authenticated %}
+                    <!-- Director Role -->
+                    {% if user.role == 'director' %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'director_dashboard' %}">Tauler Director</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'register_professor' %}">Registar Professors</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'register_chief' %}">Registrar Caps de Sector</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Registrar Professors per excel </a>
+                        </li>
+
+
+                    <!-- Sector Chief Role -->
+                    {% elif user.role == 'sector_chief' %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'sector_chief_dashboard' %}">Tauler Cap de Sector</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link"  href="#">Funció Cap de Sector</a>
+                        </li>
+
+                    <!-- Professor Role -->
+                    {% elif user.role == 'professor' %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Tauler Professor</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Funció per Professor</a>
+                        </li>
+                    {% endif %}
+                {% endif %}
+            </ul>
+
+            <!-- User Info / Logout -->
+            <ul class="navbar-nav ms-auto">
+                {% if user.is_authenticated %}
+                    <li class="nav-item d-flex align-items-center">
+                        <span class="navbar-text">Hola,<strong> {{ user.username }} </strong></span> &nbsp;&nbsp;
+                        <a class="nav-link" href="{% url 'logout' %}">Sortir</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">Iniciar Sessió</a>
+                    </li>
+
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
