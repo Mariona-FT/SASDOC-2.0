@@ -1,19 +1,43 @@
-<!DOCTYPE html>
-<html lang="ca">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-</head>
-<body>
-    <h1>Inici de sessió</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}  <!-- Renders the form fields -->
-        <button type="submit">Iniciar sessió</button>
-    </form>
-    {% if form.non_field_errors %}
-        <p style="color:red;">{{ form.non_field_errors }}</p>
-    {% endif %}
-</body>
-</html>
+{% extends 'base-template/base.html' %}
+
+{% block title %}Inici de sessió{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h1 class="h3 mb-3">Inici de sessió</h1>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <!-- Loop through form fields and render them with Bootstrap classes -->
+                        {% for field in form %}
+                            <div class="mb-3">
+                                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                                {{ field }}
+                                <div class="form-text text-muted">{{ field.help_text }}</div>
+                                {% if field.errors %}
+                                    <div class="text-danger">{{ field.errors }}</div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                        
+                        <button type="submit" class="btn btn-primary w-100">Iniciar sessió</button>
+                    </form>
+
+                    <!-- Display non-field errors if there are any -->
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger mt-3">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

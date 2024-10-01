@@ -1,0 +1,29 @@
+<nav>
+    <ul>
+        {% if user.is_authenticated %}
+            {% if user.role == 'director' %}
+                <!-- Navbar for Director -->
+                <li><a href="{% url 'director_dashboard' %}">Tauler Director</a></li>
+                <li><a href="#">Funció per Director</a></li>
+
+            {% elif user.role == 'sector_chief' %}
+                <!-- Navbar for Sector Chief -->
+                <li><a href="{% url 'sector_chief_dashboard' %}">Tauler Cap de Sector</a></li>
+                <li><a href="{% url 'some_sector_chief_feature' %}">Funció Cap de Sector</a></li>
+
+            {% elif user.role == 'professor' %}
+                <!-- Navbar for Professor -->
+                <li><a href="{% url 'professor_dashboard' %}">Tauler Professor</a></li>
+                <li><a href="{% url 'some_professor_feature' %}">Funció per Professor</a></li>
+
+            {% endif %}
+
+        <li class="nav-item"> Hi {{ user.username }}  &nbsp;&nbsp; 
+        <li><a href="{% url 'logout' %}">Sortir</a></li>
+        
+        {% else %}
+            <!-- Navbar for Unauthenticated Users -->
+            <li><a href="{% url 'login' %}">Iniciar Sessió</a></li>
+        {% endif %}
+    </ul>
+</nav>
