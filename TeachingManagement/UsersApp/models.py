@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, Group, Permission # Customize user model
+from django.contrib.auth import get_user_model
+from django.utils import timezone
 
 # Create your models here.
 
@@ -27,3 +29,32 @@ class CustomUser(AbstractUser):
         help_text='Specific permissions for this user.',
         verbose_name='user permissions'
     )
+
+
+class Professor(models.Model):
+    # ForeignKey to CustomUser
+    user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
+    
+    # Additional professor-specific fields
+    name = models.CharField(max_length=100)
+    family_name = models.CharField(max_length=100)
+    description = models.TextField(null=True, blank=True)
+    comment = models.TextField(null=True, blank=True)
+    email = models.EmailField(unique=True)
+    isActive = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.name} {self.family_name}"
+
+class Chief(models.Model):
+    
+    professor = models.ForeignKey('Professor', on_delete=models.CASCADE)
+
+    year = models.CharField(max_length=4, default=str(timezone.now().year))  # Default is the current year
+    #year = models.ForeignKey('Year', on_delete=models.SET_NULL, null=True)
+
+    section = models.CharField(max_length=100)
+    #section = models.ForeignKey('Section', on_delete=models.SET_NULL, null=True)
+
+    def __str__(self):
+        return f"{self.professor.name} {self.professor.family_name} - {self.section} ({self.year})"

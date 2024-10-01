@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser
+from .models import CustomUser,Professor,Chief
 
 # Register your models here.
 
@@ -16,3 +16,14 @@ class CustomUserAdmin(UserAdmin):
 
 
 admin.site.register(CustomUser, CustomUserAdmin)
+
+class ProfessorAdmin(admin.ModelAdmin):
+    list_display=["name","family_name","description","comment","email","isActive"]
+    list_filter=("isActive",)
+
+admin.site.register(Professor, ProfessorAdmin)
+
+class CheifAdmin(admin.ModelAdmin):
+    list_display=["professor","year","section"]
+
+admin.site.register(Chief, CheifAdmin)

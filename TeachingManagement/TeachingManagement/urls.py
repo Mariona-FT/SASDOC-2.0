@@ -16,8 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
+from django.shortcuts import redirect
 
 urlpatterns = [
+    path('', lambda request: redirect('baseapp/', permanent=True)),  # Redirect root URL to /baseapp/
+
     path('baseapp/',include('TeachingManagementApp.urls')),  # URL for every APP - TeachingManagementApp
     path('users/',include('UsersApp.urls')),  # URL for every APP - UsersApp
 
