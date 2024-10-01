@@ -14,8 +14,15 @@
                             <a class="nav-link" href="{% url 'director_dashboard' %}">Tauler Director</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Funció per Director</a>
+                            <a class="nav-link" href="{% url 'register_professor' %}">Registar Professors</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'register_chief' %}">Registrar Caps de Sector</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Registrar Professors per excel </a>
+                        </li>
+
 
                     <!-- Sector Chief Role -->
                     {% elif user.role == 'sector_chief' %}

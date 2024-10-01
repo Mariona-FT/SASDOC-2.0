@@ -13,6 +13,6 @@ def home_page(request):
             return redirect('sector_chief_dashboard')
         elif request.user.role == 'professor':
             return redirect('professor_dashboard')
-    else:
+    
         # For unauthenticated users, show the home page
-        return render(request, 'home.html')
+    return render(request, 'home.html')

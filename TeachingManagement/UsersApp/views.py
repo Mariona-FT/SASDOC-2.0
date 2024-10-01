@@ -1,7 +1,8 @@
 from django.shortcuts import render,redirect
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required,user_passes_test
 from django.contrib.auth import login, authenticate, logout
-from .forms import CustomLoginForm # customized login - forms.py
+from .forms import CustomLoginForm, ProfessorRegistrationForm,ChiefRegistrationForm # customized forms in forms.py
+from .models import Professor,Chief
 
 # Create your views here.
 
@@ -9,7 +10,7 @@ def is_director(user):
     return user.role == 'director'
 
 @login_required
-#@user_passes_test(is_director)
+@user_passes_test(is_director)
 def director_dashboard(request):
     return render(request, 'users/director_dashboard.html')
 
@@ -17,7 +18,7 @@ def is_sector_chief(user):
     return user.role == 'sector_chief'
 
 @login_required
-#@user_passes_test(is_sector_chief)
+@user_passes_test(is_sector_chief)
 def sector_chief_dashboard(request):
     return render(request, 'users/sectorchief_dashboard.html')
 
@@ -25,10 +26,42 @@ def is_professor(user):
     return user.role == 'professor'
 
 @login_required
-#@user_passes_test(is_professor)
+@user_passes_test(is_professor)
 def professor_dashboard(request):
     return render(request, 'users/professor_dashboard.html')
 
+#REGISTER PROFESSOR - only for DIRECTOR
+@login_required
+@user_passes_test(is_director)
+def register_professor(request):
+   
+    if request.method == 'POST':
+        form = ProfessorRegistrationForm(request.POST)
+       
+        if form.is_valid():
+            form.save()  # The form's save method already handles user and professor creation
+            return redirect('Home')  # Redirect to a success page
+    else:
+        form = ProfessorRegistrationForm()
+
+    return render(request, 'actions/register_professor.html', {'form': form})
+
+#REGISTER CHEIF
+@login_required
+@user_passes_test(is_director)
+def register_chief(request):
+    if request.method == 'POST':
+        form = ChiefRegistrationForm(request.POST)
+        if form.is_valid():
+            chief = form.save(commit=False)
+            chief.professor = form.cleaned_data['professor']  # Associate with the selected professor
+            chief.save()
+            return redirect('Home')  # Redirect to a success page
+    else:
+        form = ChiefRegistrationForm()
+    return render(request, 'actions/register_chief.html', {'form': form})
+
+#LOGIN
 def login_session(request):
 
     if request.method == 'POST':
@@ -58,7 +91,7 @@ def login_session(request):
 
     return render(request, 'actions/login.html', {'form': form})
 
-
+#LOGOUT
 def logout_session(request):
     logout(request)
     return redirect('Home')

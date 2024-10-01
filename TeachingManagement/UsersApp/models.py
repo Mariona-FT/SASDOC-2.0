@@ -30,10 +30,10 @@ class CustomUser(AbstractUser):
         verbose_name='user permissions'
     )
 
-
+#PROFESSOR MODEL
 class Professor(models.Model):
     # ForeignKey to CustomUser
-    user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     
     # Additional professor-specific fields
     name = models.CharField(max_length=100)
@@ -43,9 +43,12 @@ class Professor(models.Model):
     email = models.EmailField(unique=True)
     isActive = models.BooleanField(default=True)
 
+    
     def __str__(self):
         return f"{self.name} {self.family_name}"
 
+
+#CHIEF MODEL
 class Chief(models.Model):
     
     professor = models.ForeignKey('Professor', on_delete=models.CASCADE)
