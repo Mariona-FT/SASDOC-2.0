@@ -25,8 +25,10 @@ urlpatterns = [
     path('login/', views.login_session, name='login'),
     path('logout/', views.logout_session, name='logout'),
 
-    path('register/professor/', views.register_professor, name='register_professor'),
-    path('register/chief/', views.register_chief, name='register_chief'),
+    path('register-professor/', views.register_professor, name='register_professor'),
+    path('upload-professors/', views.upload_professors, name='upload_professors'),
+
+    path('register-chief/', views.register_chief, name='register_chief'),
 
  
     path('director/', views.director_dashboard, name='director_dashboard'),

@@ -1,8 +1,11 @@
+import pandas as pd
 from django.shortcuts import render,redirect
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.contrib.auth import login, authenticate, logout
-from .forms import CustomLoginForm, ProfessorRegistrationForm,ChiefRegistrationForm # customized forms in forms.py
-from .models import Professor,Chief
+from django.contrib.auth.hashers import make_password
+from django.contrib import messages
+from .forms import CustomLoginForm, ProfessorRegistrationForm,ChiefRegistrationForm, UploadFileForm # customized forms in forms.py
+from .models import Professor,Chief, CustomUser
 
 # Create your views here.
 
@@ -47,6 +50,87 @@ def register_professor(request):
         form = ProfessorRegistrationForm()
 
     return render(request, 'actions/register_professor.html', {'form': form})
+
+#REGISTER PROFESSOR - only for DIRECTOR - USING CSV or EXCEL
+@login_required
+@user_passes_test(is_director)
+def upload_professors(request):
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            file = request.FILES['file']
+            try:
+                # Check file format and read content
+                if file.name.endswith('.csv'):
+                    data = pd.read_csv(file)
+                elif file.name.endswith('.xlsx'):
+                    data = pd.read_excel(file)
+                else:
+                    messages.error(request, "Tipus de fitxer no suportat.")
+                    return redirect('upload_professors')
+
+                # Validate columns in the file
+                required_columns = ['nom', 'cognom', 'email', 'descripcio', 'comentaris', 'esactiu']
+                if not all(column in data.columns for column in required_columns):
+                    messages.error(request, f"El fitxer ha de contenir exactament les següents columnes: {', '.join(required_columns)}")
+                    return redirect('upload_professors')
+
+                # Loop through the data and update/create professors
+                for index, row in data.iterrows():
+                    try:
+                        username = f"{row['nom']}.{row['cognom']}".lower()
+                        password = f"{row['nom'].lower()}_{row['cognom'].lower()}"  # Create password
+
+                        # Check if the user already exists
+                        user, created = CustomUser.objects.get_or_create(
+                            username=username,
+                            defaults={
+                                'first_name': row['nom'],
+                                'last_name': row['cognom'],
+                                'email': row['email'],
+                                'role': 'professor'
+                            }
+                        )
+
+                        if created:
+                            user.password = make_password(password)  # Hash the password
+                            user.save()
+                            messages.success(request, f"Professor {user.first_name} {user.last_name} creat correctament.")
+                        else:
+                            # Update user information if already exists
+                            user.first_name = row['nom']
+                            user.last_name = row['cognom']
+                            user.email = row['email']
+                            user.save()
+                            messages.info(request, f"Professor {user.first_name} {user.last_name} actualitzat correctament.")
+
+                        # Update or create Professor instance
+                        Professor.objects.update_or_create(
+                            user=user,
+                            defaults={
+                                'name': row['nom'],
+                                'family_name': row['cognom'],
+                                'email': row['email'],
+                                'description': row['descripcio'],
+                                'comment': row['comentaris'],
+                                'isActive': row['esactiu']
+                            }
+                        )
+
+                    except Exception as e:
+                        # Handle errors specific to each row with a friendly message
+                        messages.warning(request, f"Error actualitzant el professor {row['nom']} {row['cognom']}.")
+                
+                messages.success(request, f"Professors pujats correctament.")
+                return redirect('upload_professors')
+
+            except Exception as e:
+                messages.error(request, f"Error de processament del fitxer: {str(e)}")
+                return redirect('upload_professors')
+    else:
+        form = UploadFileForm()
+
+    return render(request, 'actions/upload_professors.html', {'form': form})
 
 #REGISTER CHEIF
 @login_required
