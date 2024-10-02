@@ -40,31 +40,31 @@ class ProfessorRegistrationForm(UserCreationForm):
         if commit:
             user.save()  # Save the CustomUser to the database
         
-        professor, created = Professor.objects.get_or_create(
+            # Save the associated Professor instance
+        Professor.objects.create(
             user=user,
-            defaults={
-                'name': first_name,
-                'family_name': family_name,
-                'description': self.cleaned_data.get('description'),
-                'comment': self.cleaned_data.get('comment'),
-                'email': self.cleaned_data.get('email'),
-                'isActive': self.cleaned_data.get('isactive'),
-            }
+            name=self.cleaned_data.get('name'),
+            family_name=self.cleaned_data.get('family_name'),
+            description=self.cleaned_data.get('description'),
+            comment=self.cleaned_data.get('comment'),
+            email=self.cleaned_data.get('email'),
+            isActive=self.cleaned_data.get('isactive'),
         )
-
-        # If the professor already exists, update the fields
-        if not created:
-            professor.name = first_name
-            professor.family_name = family_name
-            professor.description = self.cleaned_data.get('description')
-            professor.comment = self.cleaned_data.get('comment')
-            professor.email = self.cleaned_data.get('email')
-            professor.isActive = self.cleaned_data.get('isactive')
-            professor.save()
         return user
     
 
 class ChiefRegistrationForm(forms.ModelForm):
+   
     class Meta:
         model = Chief
-        fields = ['professor', 'year', 'section']  # Include fields as necessary
+        fields = ['professor', 'year', 'section'] 
+
+    
+    def save(self, commit=True):
+        # Create or update the chief instance
+        chief = super().save(commit=False)
+
+        if commit:
+            chief.save()
+
+        return chief
