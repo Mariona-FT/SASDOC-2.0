@@ -1,11 +1,17 @@
+import pandas as pd
 from django.shortcuts import render,redirect
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.contrib.auth import login, authenticate, logout
-from .forms import CustomLoginForm, ProfessorRegistrationForm,ChiefRegistrationForm # customized forms in forms.py
-from .models import Professor,Chief
+from django.contrib.auth.hashers import make_password
+from django.contrib import messages
+from .forms import CustomLoginForm, ProfessorRegistrationForm,ChiefRegistrationForm, UploadFileForm # customized forms in forms.py
+from .models import Professor,Chief, CustomUser
+from .services import register_professor_form, process_professor_file #services of the app
+
 
 # Create your views here.
 
+#DIRECTOR views
 def is_director(user):
     return user.role == 'director'
 
@@ -14,6 +20,7 @@ def is_director(user):
 def director_dashboard(request):
     return render(request, 'users/director_dashboard.html')
 
+#SECTOR CHIEF views
 def is_sector_chief(user):
     return user.role == 'sector_chief'
 
@@ -22,6 +29,7 @@ def is_sector_chief(user):
 def sector_chief_dashboard(request):
     return render(request, 'users/sectorchief_dashboard.html')
 
+#PROFESSOR views
 def is_professor(user):
     return user.role == 'professor'
 
@@ -30,23 +38,36 @@ def is_professor(user):
 def professor_dashboard(request):
     return render(request, 'users/professor_dashboard.html')
 
-#REGISTER PROFESSOR - only for DIRECTOR
+
+# REGISTER PROFESSOR - only for DIRECTOR
 @login_required
 @user_passes_test(is_director)
 def register_professor(request):
-   
     if request.method == 'POST':
         form = ProfessorRegistrationForm(request.POST)
-       
         if form.is_valid():
-            user=form.save()  # The form's save method already handles user and professor creation
-            print(f"User saved: {user.username}")
-
-            return redirect('Home')  # Redirect to a success page
-    else:           
+            user = register_professor_form(form,request)
+            return redirect('register_professor')  
+    else:
         form = ProfessorRegistrationForm()
 
     return render(request, 'actions/register_professor.html', {'form': form})
+
+
+# REGISTER PROFESSOR - only for DIRECTOR - USING CSV or EXCEL
+@login_required
+@user_passes_test(is_director)
+def upload_professors(request):
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            file = request.FILES['file']
+            if process_professor_file(file, request):
+                return redirect('upload_professors')
+    else:
+        form = UploadFileForm()
+
+    return render(request, 'actions/upload_professors.html', {'form': form})
 
 #REGISTER CHEIF
 @login_required
@@ -62,7 +83,9 @@ def register_chief(request):
             chief = form.save(commit=False)
             chief.professor = form.cleaned_data['professor']
             chief.save()
-            return redirect('Home')  # Redirect to a success page
+            messages.success(request, f"Professor {chief.professor.name} {chief.professor.family_name} triat per ser cap de secció: {chief.section}.")
+
+            return redirect('register_chief')
     else:
         form = ChiefRegistrationForm()
     return render(request, 'actions/register_chief.html', {'form': form,'professors':professors})

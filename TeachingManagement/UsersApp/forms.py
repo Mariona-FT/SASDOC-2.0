@@ -7,7 +7,6 @@ from django.contrib.auth.models import User
 User = get_user_model()
 
 class CustomLoginForm(AuthenticationForm):
-    # You can add custom fields here if needed
     pass
 
 class ProfessorRegistrationForm(UserCreationForm):
@@ -21,7 +20,6 @@ class ProfessorRegistrationForm(UserCreationForm):
 
     class Meta:
         model = CustomUser
-        # Include CustomUser fields (username, password) along with email
         fields = ['password1', 'password2', 'email']
 
     def save(self, commit=True):
@@ -32,7 +30,7 @@ class ProfessorRegistrationForm(UserCreationForm):
         first_name = self.cleaned_data.get('name')
         family_name = self.cleaned_data.get('family_name')
 
-        user.username = f'{first_name}.{family_name}'.lower()  
+        user.username = f'{first_name}.{family_name}'.lower() #username will be: name.familyname
         user.first_name = first_name
         user.last_name = family_name
         user.role = 'professor' 
@@ -52,6 +50,10 @@ class ProfessorRegistrationForm(UserCreationForm):
         )
         return user
     
+#To upload files .csv 
+class UploadFileForm(forms.Form):
+    file = forms.FileField(label="Puja un fitxer de tipus CSV o Excel:")
+
 
 class ChiefRegistrationForm(forms.ModelForm):
    
@@ -66,5 +68,4 @@ class ChiefRegistrationForm(forms.ModelForm):
 
         if commit:
             chief.save()
-
         return chief
