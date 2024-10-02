@@ -68,5 +68,4 @@ class ChiefRegistrationForm(forms.ModelForm):
 
         if commit:
             chief.save()
-
         return chief
