@@ -39,9 +39,11 @@ def register_professor(request):
         form = ProfessorRegistrationForm(request.POST)
        
         if form.is_valid():
-            form.save()  # The form's save method already handles user and professor creation
+            user=form.save()  # The form's save method already handles user and professor creation
+            print(f"User saved: {user.username}")
+
             return redirect('Home')  # Redirect to a success page
-    else:
+    else:           
         form = ProfessorRegistrationForm()
 
     return render(request, 'actions/register_professor.html', {'form': form})
@@ -50,20 +52,23 @@ def register_professor(request):
 @login_required
 @user_passes_test(is_director)
 def register_chief(request):
+    
+    professors = Professor.objects.all()  # Fetch all professors
+
     if request.method == 'POST':
+        
         form = ChiefRegistrationForm(request.POST)
         if form.is_valid():
             chief = form.save(commit=False)
-            chief.professor = form.cleaned_data['professor']  # Associate with the selected professor
+            chief.professor = form.cleaned_data['professor']
             chief.save()
             return redirect('Home')  # Redirect to a success page
     else:
         form = ChiefRegistrationForm()
-    return render(request, 'actions/register_chief.html', {'form': form})
+    return render(request, 'actions/register_chief.html', {'form': form,'professors':professors})
 
 #LOGIN
 def login_session(request):
-
     if request.method == 'POST':
         form = CustomLoginForm(request, data=request.POST)
         

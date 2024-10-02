@@ -1,14 +1,119 @@
 {% extends 'base-template/base.html' %}
 
-{% block title %}Registrar Cap Secció {% endblock %}
+{% block title %}Registrar Cap Secció{% endblock %}
 
 {% block content %}
+<h1>Registrar Cap Secció</h1>
 
-<h1>Registrar Cap Secció </h1>
 <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Registrar</button>
+
+    {% if form.errors %}
+    <div class="alert alert-danger">
+        <ul>
+            {% for field, errors in form.errors.items %}
+                <li><strong>{{ field }}:</strong> {{ errors|join:", " }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <!-- Filter Fields -->
+    <div class="form-group">
+        <label for="filter-name">Filtrar per Nom</label>
+        <input type="text" id="filter-name" class="form-control" placeholder="Cerca per Nom">
+    </div>
+
+    <div class="form-group">
+        <label for="filter-family-name">Filtrar per Cognom</label>
+        <input type="text" id="filter-family-name" class="form-control" placeholder="Cerca per Cognom">
+    </div>
+
+    <div class="form-group">
+        <label for="filter-active">Filtrar per Actiu</label>
+        <select id="filter-active" class="form-control">
+            <option value="">Tots</option>
+            <option value="true">Actiu</option>
+            <option value="false">No Actiu</option>
+        </select>
+    </div>
+
+    <!-- Professors Table -->
+    <table class="table table-striped" id="professors-table">
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Cognom</th>
+                <th>Email</th>
+                <th>Comentari</th>
+                <th>Actiu</th>
+                <th>Seleccionar</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for professor in professors %}
+            <tr>
+                <td>{{ professor.name }}</td>
+                <td>{{ professor.family_name }}</td>
+                <td>{{ professor.email }}</td>
+                <td>{{ professor.comment }}</td>
+                <td>{{ professor.isActive|yesno:"Sí,No" }}</td>
+                <td>
+                    <input type="radio" name="professor" value="{{ professor.id }}">
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Year and Section Fields -->
+    <div class="form-group">
+        <label for="id_year">Any</label>
+        {{ form.year}}
+    </div>
+
+    <div class="form-group">
+        <label for="id_section">Secció</label>
+        {{ form.section}}
+    </div>
+
+    <button type="submit" class="btn btn-primary">Registrar</button>
 </form>
+
+<!-- JavaScript for Filtering -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const filterName = document.getElementById('filter-name');
+        const filterFamilyName = document.getElementById('filter-family-name');
+        const filterActive = document.getElementById('filter-active');
+        const tableRows = document.querySelectorAll('#professors-table tbody tr');
+
+        function filterTable() {
+            const nameValue = filterName.value.toLowerCase();
+            const familyNameValue = filterFamilyName.value.toLowerCase();
+            const activeValue = filterActive.value;
+
+            tableRows.forEach(row => {
+                const nameText = row.cells[0].textContent.toLowerCase();
+                const familyNameText = row.cells[1].textContent.toLowerCase();
+                const isActive = row.cells[4].textContent.toLowerCase() === 'sí';
+
+                const matchesName = nameText.includes(nameValue);
+                const matchesFamilyName = familyNameText.includes(familyNameValue);
+                const matchesActive = (activeValue === '' || (activeValue === 'true' && isActive) || (activeValue === 'false' && !isActive));
+
+                if (matchesName && matchesFamilyName && matchesActive) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        filterName.addEventListener('input', filterTable);
+        filterFamilyName.addEventListener('input', filterTable);
+        filterActive.addEventListener('change', filterTable);
+    });
+</script>
 
 {% endblock %}
