@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'TeachingManagementApp',
     'UsersApp',
+    'AcademicInfoApp',
 ]
 
 MIDDLEWARE = [
