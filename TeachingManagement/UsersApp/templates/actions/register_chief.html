@@ -69,8 +69,14 @@
                 <td>{{ professor.comment }}</td>
                 <td>{{ professor.isActive}}</td>
                 <td>
-                    <input type="radio" name="professor" value="{{ professor.idProfessor }}" required>
-                </td>
+                    {% if professor.user.role == 'sector_chief' %}
+                        {% with chief=professor.chief_set.first %}
+                            <span class="text-danger">Cap de Secció: {{ chief.section }}</span>
+                        {% endwith %}                    
+                    {% else %}
+                <input type="radio" name="professor" value="{{ professor.idProfessor }}" required>
+                    {% endif %}
+                    
             </tr>
             {% endfor %}
         </tbody>
