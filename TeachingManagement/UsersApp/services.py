@@ -5,12 +5,19 @@ from django.contrib import messages
 import pandas as pd
 from UsersApp.models import CustomUser, Professor
 
+#REGISTER PROFESSOR MANUALLY
 def register_professor_form(form, request):
-    user=form.save() 
-    messages.success(request,f"Professor {user.first_name} {user.last_name} creat correctament.")
-    return user
+    try:
+        user = form.save()
+        messages.success(request, f"Professor {user.first_name} {user.last_name} creat correctament.")
+        print(f"User created: {user.username}, ID: {user.id}")  # Debugging line
+        return user
+    except Exception as e:
+        print(f"Error in register_professor_form: {str(e)}")  # Debugging line
+        messages.error(request, "Error al registrar el professor.")
+        return None
 
-
+#REGISTER PROFESSORS FILES
 def process_professor_file(file, request):
     try:
         # Check file format and read content
@@ -23,23 +30,22 @@ def process_professor_file(file, request):
             return False
 
         # Validate columns in the file
-        required_columns = ['nom', 'cognom', 'email', 'descripcio', 'comentaris', 'esactiu']
+        required_columns = ['idProfessor', 'Name', 'FamilyName', 'Description', 'Comment', 'email', 'isActive']
         if not all(column in data.columns for column in required_columns):
             messages.error(request, f"El fitxer ha de contenir exactament les següents columnes: {', '.join(required_columns)}")
             return False
 
-        # Loop through the data and update/create professors
         for index, row in data.iterrows():
             try:
-                username = f"{row['nom']}.{row['cognom']}".lower()
-                password = f"{row['nom'].lower()}_{row['cognom'].lower()}"  # Create password
+                username = f"{row['Name']}.{row['FamilyName']}".lower()
+                password = f"{row['Name'].lower()}_{row['FamilyName'].lower()}"  # Create password
 
                 # Check if the user already exists
                 user, created = CustomUser.objects.get_or_create(
                     username=username,
                     defaults={
-                        'first_name': row['nom'],
-                        'last_name': row['cognom'],
+                        'first_name': row['Name'],
+                        'last_name': row['FamilyName'],
                         'email': row['email'],
                         'role': 'professor'
                     }
@@ -51,29 +57,31 @@ def process_professor_file(file, request):
                     messages.success(request, f"Professor {user.first_name} {user.last_name} creat correctament.")
                 else:
                     # Update user information if already exists
-                    user.first_name = row['nom']
-                    user.last_name = row['cognom']
+                    user.first_name = row['Name']
+                    user.last_name = row['FamilyName']
                     user.email = row['email']
                     user.save()
                     messages.info(request, f"Professor {user.first_name} {user.last_name} actualitzat correctament.")
+                
 
-                # Update or create Professor instance
+                # Update or create Professor instance with idProfessor
                 Professor.objects.update_or_create(
-                    user=user,
+                    idProfessor=row['idProfessor'],  # Use idProfessor from the row
                     defaults={
-                        'name': row['nom'],
-                        'family_name': row['cognom'],
+                        'user': user,
+                        'name': row['Name'],
+                        'family_name': row['FamilyName'],
                         'email': row['email'],
-                        'description': row['descripcio'],
-                        'comment': row['comentaris'],
-                        'isActive': row['esactiu']
+                        'description': row['Description'],
+                        'comment': row['Comment'],
+                        'isActive': row['isActive'].lower(),
                     }
                 )
 
             except Exception as e:
                 # Handle errors specific to each row with a friendly message
-                messages.warning(request, f"Error actualitzant el professor {row['nom']} {row['cognom']}.")
-        
+                messages.warning(request, f"Error actualitzant el professor {row['Name']} {row['FamilyName']}: {str(e)}")
+              
         messages.success(request, f"Professors pujats correctament.")
         return True
 

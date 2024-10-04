@@ -22,7 +22,7 @@
     <div class="alert alert-danger">
         <ul>
             {% for field, errors in form.errors.items %}
-                <li><strong>{{ field }}:</strong> {{ errors|join:", " }}</li>
+                {{ field }}: {{ errors|join:", " }}
             {% endfor %}
         </ul>
     </div>
@@ -43,8 +43,8 @@
         <label for="filter-active">Filtrar per si és Professorat actiu:</label>
         <select id="filter-active" class="form-control">
             <option value="">Tots</option>
-            <option value="true">Actiu</option>
-            <option value="false">No Actiu</option>
+            <option value="yes">Actiu</option>
+            <option value="no">No Actiu</option>
         </select>
     </div>
 
@@ -67,9 +67,9 @@
                 <td>{{ professor.family_name }}</td>
                 <td>{{ professor.email }}</td>
                 <td>{{ professor.comment }}</td>
-                <td>{{ professor.isActive|yesno:"Actiu, No Actiu" }}</td>
+                <td>{{ professor.isActive}}</td>
                 <td>
-                    <input type="radio" name="professor" value="{{ professor.id }}">
+                    <input type="radio" name="professor" value="{{ professor.idProfessor }}" required>
                 </td>
             </tr>
             {% endfor %}
@@ -80,12 +80,22 @@
     <div class="form-group">
         <label for="id_year">Any</label>
         {{ form.year}}
+        {% if form.year.errors %}
+        <div class="text-danger">
+            {{ form.year.errors|join:", " }}
+        </div>
+    {% endif %}
     </div>
 
     <br>
     <div class="form-group">
         <label for="id_section">Secció</label>
         {{ form.section}}
+        {% if form.section.errors %}
+        <div class="text-danger">
+            {{ form.section.errors|join:", " }}
+        </div>
+    {% endif %}
     </div>
    
     <br>
@@ -108,11 +118,11 @@
             tableRows.forEach(row => {
                 const nameText = row.cells[0].textContent.toLowerCase();
                 const familyNameText = row.cells[1].textContent.toLowerCase();
-                const isActive = row.cells[4].textContent.toLowerCase() === 'actiu';
+                const isActive = row.cells[4].textContent.toLowerCase(); // Capture the active status correctly
 
                 const matchesName = nameText.includes(nameValue);
                 const matchesFamilyName = familyNameText.includes(familyNameValue);
-                const matchesActive = (activeValue === '' || (activeValue === 'true' && isActive) || (activeValue === 'false' && !isActive));
+                const matchesActive = (activeValue === '' || isActive === activeValue); // Use isActive instead of isActiveText
 
                 if (matchesName && matchesFamilyName && matchesActive) {
                     row.style.display = '';

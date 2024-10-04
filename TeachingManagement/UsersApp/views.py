@@ -39,7 +39,7 @@ def professor_dashboard(request):
     return render(request, 'users/professor_dashboard.html')
 
 
-# REGISTER PROFESSOR - only for DIRECTOR
+# REGISTER PROFESSOR MANUALLY - only for DIRECTOR
 @login_required
 @user_passes_test(is_director)
 def register_professor(request):
@@ -79,20 +79,35 @@ def register_chief(request):
     if request.method == 'POST':
         
         form = ChiefRegistrationForm(request.POST)
-        if form.is_valid():
+        professor_id = request.POST.get('professor')  # Get the professor ID from the submitted data
+
+        if form.is_valid() and professor_id:
             chief = form.save(commit=False)
-            professor = form.cleaned_data['professor']
-            chief.professor=professor
+            # Fetch the professor based on the ID
+            try:
+                chief.professor = Professor.objects.get(idProfessor=professor_id)
+            except Professor.DoesNotExist:
+                form.add_error(None, 'Selected professor does not exist.')
+                return render(request, 'actions/register_chief.html', {'form': form, 'professors': professors})
+            
             chief.save()
             
-            professor.user.role = 'chief'
+            # Update the professor's user role
+            professor = chief.professor  # Use the fetched professor object
+            professor.user.role = 'sector_chief'
             professor.user.save()  # Save changes to the user model
-            messages.success(request, f"Professor {chief.professor.name} {chief.professor.family_name} triat per ser cap de secció: {chief.section}.")
-
+            
+            messages.success(request, f"Professor {professor.name} {professor.family_name} triat per ser cap de secció: {chief.section}.")
             return redirect('register_chief')
+        
+        # If the form is not valid or professor_id is missing, display the errors
+        if not professor_id:
+            form.add_error('professor', 'This field is required.')
+            
     else:
         form = ChiefRegistrationForm()
-    return render(request, 'actions/register_chief.html', {'form': form,'professors':professors})
+        
+    return render(request, 'actions/register_chief.html', {'form': form, 'professors': professors})
 
 #LOGIN
 def login_session(request):

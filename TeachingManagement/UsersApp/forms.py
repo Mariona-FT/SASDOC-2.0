@@ -11,12 +11,18 @@ class CustomLoginForm(AuthenticationForm):
 
 class ProfessorRegistrationForm(UserCreationForm):
     # Fields for the professor-specific information
+    idprofessor=forms.CharField(max_length=10,required=True)
     name = forms.CharField(max_length=100, required=True, label="Name")
     family_name = forms.CharField(max_length=100, required=True, label="Family Name")
     description = forms.CharField(widget=forms.Textarea, required=False, label="Description")
     comment = forms.CharField(widget=forms.Textarea, required=False, label="Comment")
     email = forms.EmailField(required=True, label="Email Address")
-    isactive = forms.BooleanField( required=False, label="Is active")
+
+    ACTIVE_CHOICES = [
+        ('yes', 'Yes'),
+        ('no', 'No'),
+    ]
+    isactive = forms.ChoiceField(choices=ACTIVE_CHOICES, required=True, label="Is active")
 
     class Meta:
         model = CustomUser
@@ -41,12 +47,13 @@ class ProfessorRegistrationForm(UserCreationForm):
             # Save the associated Professor instance
         Professor.objects.create(
             user=user,
+            idProfessor=self.cleaned_data['idprofessor'],  
             name=self.cleaned_data.get('name'),
             family_name=self.cleaned_data.get('family_name'),
             description=self.cleaned_data.get('description'),
             comment=self.cleaned_data.get('comment'),
             email=self.cleaned_data.get('email'),
-            isActive=self.cleaned_data.get('isactive'),
+            isActive=self.cleaned_data.get('isactive'), 
         )
         return user
     

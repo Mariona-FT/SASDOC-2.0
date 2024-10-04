@@ -32,6 +32,9 @@ class CustomUser(AbstractUser):
 
 #PROFESSOR MODEL
 class Professor(models.Model):
+    #Custom PK
+    idProfessor = models.CharField(max_length=10, primary_key=True, unique=True)  
+
     # ForeignKey to CustomUser
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     
@@ -41,8 +44,13 @@ class Professor(models.Model):
     description = models.TextField(null=True, blank=True)
     comment = models.TextField(null=True, blank=True)
     email = models.EmailField(unique=True)
-    isActive = models.BooleanField(default=True)
-
+    
+    ACTIVE_CHOICES = [
+        ('yes', 'Yes'),
+        ('no', 'No'),
+    ]
+    
+    isActive = models.CharField(max_length=3, choices=ACTIVE_CHOICES, default='yes')
     
     def __str__(self):
         return f"{self.name} {self.family_name}"
@@ -51,7 +59,7 @@ class Professor(models.Model):
 #CHIEF MODEL
 class Chief(models.Model):
     
-    professor = models.ForeignKey('Professor', on_delete=models.CASCADE)
+    professor = models.ForeignKey(Professor, on_delete=models.CASCADE)
 
     year = models.CharField(max_length=4, default=str(timezone.now().year))  # Default is the current year
     #year = models.ForeignKey('Year', on_delete=models.SET_NULL, null=True)

@@ -18,7 +18,7 @@ class CustomUserAdmin(UserAdmin):
 admin.site.register(CustomUser, CustomUserAdmin)
 
 class ProfessorAdmin(admin.ModelAdmin):
-    list_display=["name","family_name","description","comment","email","isActive"]
+    list_display=["idProfessor","name","family_name","description","comment","email","isActive"]
     list_filter=("isActive",)
 
 admin.site.register(Professor, ProfessorAdmin)
