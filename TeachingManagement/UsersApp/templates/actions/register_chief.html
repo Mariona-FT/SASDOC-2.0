@@ -67,7 +67,7 @@
                 <td>{{ professor.family_name }}</td>
                 <td>{{ professor.email }}</td>
                 <td>{{ professor.comment }}</td>
-                <td>{{ professor.isActive|yesno:"Actiu,No Actiu" }}</td>
+                <td>{{ professor.isActive|yesno:"Actiu, No Actiu" }}</td>
                 <td>
                     <input type="radio" name="professor" value="{{ professor.id }}">
                 </td>
@@ -108,7 +108,7 @@
             tableRows.forEach(row => {
                 const nameText = row.cells[0].textContent.toLowerCase();
                 const familyNameText = row.cells[1].textContent.toLowerCase();
-                const isActive = row.cells[4].textContent.toLowerCase() === 'sí';
+                const isActive = row.cells[4].textContent.toLowerCase() === 'actiu';
 
                 const matchesName = nameText.includes(nameValue);
                 const matchesFamilyName = familyNameText.includes(familyNameValue);

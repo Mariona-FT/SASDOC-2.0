@@ -81,8 +81,12 @@ def register_chief(request):
         form = ChiefRegistrationForm(request.POST)
         if form.is_valid():
             chief = form.save(commit=False)
-            chief.professor = form.cleaned_data['professor']
+            professor = form.cleaned_data['professor']
+            chief.professor=professor
             chief.save()
+            
+            professor.user.role = 'chief'
+            professor.user.save()  # Save changes to the user model
             messages.success(request, f"Professor {chief.professor.name} {chief.professor.family_name} triat per ser cap de secció: {chief.section}.")
 
             return redirect('register_chief')
