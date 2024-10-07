@@ -11,12 +11,12 @@ def field_crud(request):
     form = FieldForm()
     deleting = None
 
-    # Handle editing
+    #Edit
     if 'edit' in request.GET:
         field = get_object_or_404(Field, pk=request.GET['edit'])
         form = FieldForm(instance=field)
 
-    # Handle deletion confirmation
+    # Delete
     if 'delete' in request.GET:
         deleting = get_object_or_404(Field, pk=request.GET['delete'])
 
@@ -28,17 +28,34 @@ def field_crud(request):
         else:
             form = FieldForm(request.POST)
         
+        #Create Field
         if form.is_valid():
             form.save()
             return redirect('field_crud')
 
-    # Handle actual deletion
+    # Delete compleatly
     if request.method == 'POST' and 'confirm_delete' in request.POST:
         deleting.delete()
         return redirect('field_crud')
 
+    #List of fields
     return render(request, 'field_crud.html', {
         'fields': fields,
         'form': form,
         'deleting': deleting
     })
+
+def section_crud(request):
+    pass
+
+def section_crud(request):
+    pass
+
+def school_crud(request):
+    pass
+
+def degree_crud(request):
+    pass
+
+def course_crud(request):
+    pass

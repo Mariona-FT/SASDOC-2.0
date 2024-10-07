@@ -17,15 +17,17 @@
                             <a class="nav-link" href="{% url 'register_professor' %}">Registar Professors</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'field_crud' %}">Informació Fields</a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link" href="{% url 'register_chief' %}">Registrar Caps de Sector</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'upload_professors' %}">Registrar Professors per excel </a>
                         </li>
 
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#academicNavbar" aria-expanded="false" aria-controls="academicNavbar">
+                               Informació Acadèmica
+                            </a>
+                        </li>
 
                     <!-- Sector Chief Role -->
                     {% elif user.role == 'sector_chief' %}
@@ -65,3 +67,10 @@
         </div>
     </div>
 </nav>
+
+<!-- Include the Academic Info Navbar Below the General Navbar -->
+<div class="collapse" id="academicNavbar">
+    {% if user.role == 'director' %}
+        {% include 'base-template/navbar-academic-info.html' %}
+    {% endif %}
+</div>

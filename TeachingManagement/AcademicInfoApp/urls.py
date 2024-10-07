@@ -21,5 +21,9 @@ from .import views
 
 urlpatterns = [
     path('fields/', views.field_crud, name='field_crud'),
+    path('sections/', views.section_crud, name='section_crud'),
+    path('schools/', views.school_crud, name='school_crud'),
+    path('degrees/', views.degree_crud, name='degree_crud'),
+    path('courses/', views.course_crud, name='course_crud'),
 
 ]
