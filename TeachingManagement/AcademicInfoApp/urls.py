@@ -25,5 +25,7 @@ urlpatterns = [
     path('schools/', views.school_crud, name='school_crud'),
     path('degrees/', views.degree_crud, name='degree_crud'),
     path('courses/', views.course_crud, name='course_crud'),
+    path('typeprofessor/', views.type_professor_crud, name='type_professor_crud'),
+
 
 ]

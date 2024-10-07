@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.contrib import messages
 from django.shortcuts import render, redirect,get_object_or_404
-from .models import Field,Section,School,Degree
-from .forms import FieldForm,SectionForm,SchoolForm,DegreeForm
+from .models import Field,Section,School,Degree,TypeProfessor
+from .forms import FieldForm,SectionForm,SchoolForm,DegreeForm,TypeProfessorForm
 
 # Create your views here.
 
@@ -270,3 +270,53 @@ def degree_crud(request):
 
 def course_crud(request):
     pass
+
+def type_professor_crud(request):
+    type_professors = TypeProfessor.objects.all()
+    form = TypeProfessorForm()
+    deleting = None
+
+    if request.method == "POST":
+        # Handle delete confirmation
+        if 'confirm_delete' in request.POST:
+            type_professor_id = request.POST.get('confirm_delete')
+            type_professor = get_object_or_404(TypeProfessor, pk=type_professor_id)
+            type_professor_name = type_professor.Name
+            type_professor.delete()
+            messages.success(request, f"{type_professor_name} s'ha eliminat correctament.")
+            return redirect('type_professor_crud')
+
+        # Handle update
+        if 'idTypeProfessor' in request.POST:
+            type_professor_id = request.POST.get('idTypeProfessor')
+            type_professor = get_object_or_404(TypeProfessor, pk=type_professor_id)
+            form = TypeProfessorForm(request.POST, instance=type_professor)
+            if form.is_valid():
+                form.save()
+                messages.success(request, f"{type_professor.Name} s'ha actualitzat correctament.")
+                return redirect('type_professor_crud')
+
+        # Handle create
+        else:
+            form = TypeProfessorForm(request.POST)
+            if form.is_valid():
+                type_professor = form.save()
+                messages.success(request, f"{type_professor.Name} s'ha creat correctament.")
+                return redirect('type_professor_crud')
+
+    # Handle edit
+    if 'edit' in request.GET:
+        type_professor_id = request.GET.get('edit')
+        type_professor = get_object_or_404(TypeProfessor, pk=type_professor_id)
+        form = TypeProfessorForm(instance=type_professor)
+
+    # Handle initial delete confirmation
+    if 'confirm_delete' in request.GET:
+        type_professor_id = request.GET.get('confirm_delete')
+        deleting = get_object_or_404(TypeProfessor, pk=type_professor_id)
+
+    return render(request, 'type_professor_crud.html', {
+        'form': form,
+        'type_professors': type_professors,
+        'deleting': deleting,
+    })
