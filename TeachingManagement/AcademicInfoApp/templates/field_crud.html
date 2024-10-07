@@ -41,24 +41,30 @@
         </tr>
     </thead>
     <tbody>
-        {% for field in fields %}
-            <tr>
-                <td>{{ field.NameField }}</td>
-                <td>{{ field.Description }}</td>
-                <td>{{ field.isActive|yesno:"Sí,No" }}</td>
-                <td>
-                    <!-- Edit button -->
-                    <a href="?edit={{ field.pk }}" class="btn btn-warning btn-sm">Editar</a>
+        {% if fields %}
+            {% for field in fields %}
+                <tr>
+                    <td>{{ field.NameField }}</td>
+                    <td>{{ field.Description }}</td>
+                    <td>{{ field.isActive|yesno:"Sí,No" }}</td>
+                    <td>
+                        <!-- Edit button -->
+                        <a href="?edit={{ field.pk }}" class="btn btn-warning btn-sm">Editar</a>
 
-                    <!-- Delete form with JavaScript confirmation -->
-                    <form method="post" action="{% url 'field_crud' %}" style="display:inline;" onsubmit="return confirmDelete(('{{ field.NameField }}'));">
-                        {% csrf_token %}
-                        <input type="hidden" name="confirm_delete" value="{{ field.pk }}">
-                        <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
-                    </form>
-                </td>
-            </tr>
-        {% endfor %}
+                        <!-- Delete form with JavaScript confirmation -->
+                        <form method="post" action="{% url 'field_crud' %}" style="display:inline;" onsubmit="return confirmDelete(('{{ field.NameField }}'));">
+                            {% csrf_token %}
+                            <input type="hidden" name="confirm_delete" value="{{ field.pk }}">
+                            <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% else %}
+        <tr>
+            <td colspan=4" class="text-center">Cap camp entrat.</td>
+        </tr>        
+    {% endif %}
     </tbody>
 </table>
 
