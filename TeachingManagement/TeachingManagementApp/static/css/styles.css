@@ -5,8 +5,10 @@ body {
 /* Navbar background color and general styling */
 .navbar {
     background-color: #f8f9fa; /* Light background color */
+    border-bottom: 1px solid #ccc; /* Adds a subtle border */
     padding: 10px;
 }
+
 
 /* Style for navbar links */
 .navbar-nav .nav-link {
@@ -28,7 +30,46 @@ body {
     border-radius: 5px;
 }
 
+/* Active link styling */
+.nav-item.active {
+    text-decoration: underline;  /* Underline the active link */
+}
+/* Active link styling */
+.navbar-sub-nav .nav-item.active .nav-link {
+    text-decoration: underline;  /* Underline the active link */
+}
+
 /* User info and logout text styling */
 .navbar-text {
     color: #343a40;
+}
+
+/* Sub navbar */
+.navbar-sub-nav {
+    background-color: #e0e0e0; /* Custom grey */
+    border-bottom: 1px solid #ccc; /* Adds a subtle border */
+    padding: 10px;
+
+}
+/* Styling for navbar links */
+.navbar-sub-nav .nav-link {
+    color: #4a4a4a; /* Dark grey for text */
+    font-size: 16px; /* Adjust the size to make it more readable */
+    padding: 8px 15px; /* Adjust the spacing around the links */
+    margin-right: 20px; /* Adds space between links */
+    text-transform: capitalize; /* Optional: Make the first letter capital */
+    text-align: center; /* Ensures the text is centered in the link */
+    display: inline-block; /* Makes each link an inline block for spacing */
+}
+/* Add hover effect for navbar links */
+.navbar-sub-nav .nav-link:hover {
+    color: #000; /* Change text color on hover */
+    background-color: #e0e0e0; /* Slightly lighter background on hover */
+    border-radius: 5px; /* Optional: Rounded corners */
+}
+
+/* Optional: Adjust spacing for the container */
+.navbar-sub-nav .container-fluid {
+    padding-left: 20px;
+    padding-right: 20px;
 }

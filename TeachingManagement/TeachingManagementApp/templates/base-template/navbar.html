@@ -10,16 +10,16 @@
                 {% if user.is_authenticated %}
                     <!-- Director Role -->
                     {% if user.role == 'director' %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'director_dashboard' %}">Tauler Director</a>
+                        <li class="nav-item {% if request.path|slice:":16" == '/users/director/' %}active{% endif %}">
+                            <a class="nav-link"  href="{% url 'director_dashboard' %}">Tauler Director</a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item {% if request.path|slice:":26" == '/users/register-professor/' %}active{% endif %}">
                             <a class="nav-link" href="{% url 'register_professor' %}">Registar Professors</a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item {% if request.path|slice:":22" == '/users/register-chief/' %}active{% endif %}">
                             <a class="nav-link" href="{% url 'register_chief' %}">Registrar Caps de Sector</a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item {% if request.path|slice:":25" == '/users/upload-professors/' %}active{% endif %}">
                             <a class="nav-link" href="{% url 'upload_professors' %}">Registrar Professors per excel </a>
                         </li>
 
