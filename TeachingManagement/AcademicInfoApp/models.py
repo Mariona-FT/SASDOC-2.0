@@ -5,7 +5,7 @@ from django.db import models
 class Field(models.Model):
     idField = models.AutoField(primary_key=True)
     NameField = models.CharField(max_length=100)
-    Description = models.TextField()
+    Description = models.TextField(blank=True, null=True)
     isActive = models.BooleanField(default=True)
 
     class Meta:

@@ -1,0 +1,48 @@
+{% extends 'base-template/base.html' %}
+
+{% block title %}Information Field{% endblock %}
+
+{% block content %}
+
+<h2>{% if form.instance.pk %}Update Field{% else %}Create Field{% endif %}</h2>
+
+<!-- Form for creating/updating fields -->
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">{% if form.instance.pk %}Update{% else %}Create{% endif %} Field</button>
+</form>
+
+<hr>
+
+<!-- List of all fields -->
+<h3>Field List</h3>
+<ul>
+  {% for field in fields %}
+    <li>
+      {{ field.NameField }} - {{ field.isActive }}
+
+      <!-- Edit button -->
+      <a href="?edit={{ field.pk }}">Edit</a>
+
+      <!-- Delete form -->
+      <form method="post" action="?delete={{ field.pk }}" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit">Delete</button>
+      </form>
+    </li>
+  {% endfor %}
+</ul>
+
+{% if deleting %}
+  <hr>
+  <!-- Confirm deletion -->
+  <h3>Are you sure you want to delete {{ deleting.NameField }}?</h3>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" name="confirm_delete">Yes, delete</button>
+    <a href="{% url 'field_crud' %}">Cancel</a>
+  </form>
+{% endif %}
+
+{% endblock %}
