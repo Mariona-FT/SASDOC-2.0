@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.contrib import messages
 from django.shortcuts import render, redirect,get_object_or_404
-from .models import Field,Section,School,Degree,TypeProfessor,Lenguage
-from .forms import FieldForm,SectionForm,SchoolForm,DegreeForm,TypeProfessorForm,LenguageForm
+from .models import Field,Section,School,Degree,TypeProfessor,Lenguage,Year
+from .forms import FieldForm,SectionForm,SchoolForm,DegreeForm,TypeProfessorForm,LenguageForm,YearForm
 
 # Create your views here.
 
@@ -370,5 +370,55 @@ def lenguage_crud(request):
     return render(request, 'lenguage_crud.html', {
         'form': form,
         'lenguages': lenguages,
+        'deleting': deleting,
+    })
+
+def year_crud(request):
+    years = Year.objects.all()
+    form = YearForm()
+    deleting = None
+
+    if request.method == "POST":
+        # Handle delete confirmation
+        if 'confirm_delete' in request.POST:
+            year_id = request.POST.get('confirm_delete')
+            year = get_object_or_404(Year, pk=year_id)
+            year_value = year.Year
+            year.delete()
+            messages.success(request, f"L'any {year_value} s'ha eliminat correctament.")
+            return redirect('year_crud')
+
+        # Handle update
+        if 'idYear' in request.POST:
+            year_id = request.POST.get('idYear')
+            year = get_object_or_404(Year, pk=year_id)
+            form = YearForm(request.POST, instance=year)
+            if form.is_valid():
+                form.save()
+                messages.success(request, f"L'any {year.Year} s'ha actualitzat correctament.")
+                return redirect('year_crud')
+
+        # Handle create
+        else:
+            form = YearForm(request.POST)
+            if form.is_valid():
+                year = form.save()
+                messages.success(request, f"L'any {year.Year} s'ha creat correctament.")
+                return redirect('year_crud')
+
+    # Handle edit
+    if 'edit' in request.GET:
+        year_id = request.GET.get('edit')
+        year = get_object_or_404(Year, pk=year_id)
+        form = YearForm(instance=year)
+
+    # Handle initial delete confirmation
+    if 'confirm_delete' in request.GET:
+        year_id = request.GET.get('confirm_delete')
+        deleting = get_object_or_404(Year, pk=year_id)
+
+    return render(request, 'year_crud.html', {
+        'form': form,
+        'years': years,
         'deleting': deleting,
     })

@@ -1,5 +1,5 @@
 from django import forms
-from .models import Field,Section,School,Degree,TypeProfessor,Lenguage
+from .models import Field,Section,School,Degree,TypeProfessor,Lenguage,Year
 
 class FieldForm(forms.ModelForm):
     class Meta:
@@ -58,4 +58,13 @@ class LenguageForm(forms.ModelForm):
         fields = ['Lenguage']
         labels = {
             'Lenguage': 'Llenguatge',
+        }
+
+class YearForm(forms.ModelForm):
+    class Meta:
+        model = Year
+        fields = ['Year', 'isEditable']
+        labels = {
+            'Year': 'Any',
+            'isEditable': 'És editable?',
         }

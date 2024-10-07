@@ -97,7 +97,7 @@ class Lenguage(models.Model):
 
 class Year(models.Model):
     Year = models.IntegerField(primary_key=True,unique=True)
-    isActive = models.BooleanField(default=False)
+    isEditable = models.BooleanField(default=False)
 
     class Meta:
         verbose_name='year'
