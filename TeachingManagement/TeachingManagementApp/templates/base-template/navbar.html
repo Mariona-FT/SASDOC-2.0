@@ -23,6 +23,11 @@
                             <a class="nav-link" href="{% url 'upload_professors' %}">Registrar Professors per excel </a>
                         </li>
 
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#academicNavbar" aria-expanded="true" aria-controls="academicNavbar">
+                               Informació Acadèmica
+                            </a>
+                        </li>
 
                     <!-- Sector Chief Role -->
                     {% elif user.role == 'sector_chief' %}
@@ -62,3 +67,10 @@
         </div>
     </div>
 </nav>
+
+<!-- Include the Academic Info Navbar Below the General Navbar -->
+<div class="collapse {% if '/academicinfo/' in request.path %}show{% endif %}" id="academicNavbar">
+    {% if user.role == 'director' %}
+        {% include 'base-template/navbar-academic-info.html' %}
+    {% endif %}
+</div>

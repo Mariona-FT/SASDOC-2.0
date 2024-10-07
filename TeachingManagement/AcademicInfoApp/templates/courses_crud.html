@@ -1,0 +1,86 @@
+{% extends 'base-template/base.html' %}
+
+{% block title %}Curs{% endblock %}
+
+{% block content %}
+
+<h2>{% if form.instance.pk %}Actualitzar Curs{% else %}Crear Curs{% endif %}</h2>
+
+<!-- Display success, warning, or error messages -->
+{% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            <div class="{% if message.tags %}alert alert-{{ message.tags }}{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<!-- Form for creating/updating courses -->
+<form method="post" class="mb-4">
+    {% csrf_token %}
+    {% if form.instance.pk %}
+        <input type="hidden" name="idCourse" value="{{ form.instance.pk }}">
+    {% endif %}
+    <div class="mb-3">
+        {{ form.as_p }}  <!-- This will use the custom labels -->
+    </div>
+    <button type="submit" class="btn btn-primary">{% if form.instance.pk %}Actualitzar{% else %}Crear{% endif %} Curs</button>
+</form>
+
+<hr>
+
+<!-- List of all courses -->
+<h3>Llista de Cursos</h3>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nom del Curs</th>
+            <th>Codi del Curs</th>
+            <th>ECTS</th>
+            <th>Grau</th>
+            <th>Camp</th>
+            <th>Actiu</th>
+            <th>Accions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if courses %}
+            {% for course in courses %}
+                <tr>
+                    <td>{{ course.NameCourse }}</td>
+                    <td>{{ course.CodeCourse }}</td>
+                    <td>{{ course.ECTS }}</td>
+                    <td>{{ course.Degree }}</td>
+                    <td>{{ course.Field }}</td>
+                    <td>{{ course.isActive|yesno:"Sí,No" }}</td>
+                    <td>
+                        <!-- Edit button -->
+                        <a href="?edit={{ course.pk }}" class="btn btn-warning btn-sm">Editar</a>
+
+                        <!-- Delete form with JavaScript confirmation -->
+                        <form method="post" action="{% url 'courses_crud' %}" style="display:inline;" onsubmit="return confirmDelete('{{ course.NameCourse }}');">
+                            {% csrf_token %}
+                            <input type="hidden" name="confirm_delete" value="{{ course.pk }}">
+                            <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="7" class="text-center">Cap curs entrada.</td>
+            </tr>        
+        {% endif %}
+    </tbody>
+</table>
+
+<!-- JavaScript function for confirmation -->
+<script>
+    function confirmDelete(fieldName) {
+        return confirm("Estàs segur que vols eliminar aquest curs: " + fieldName + "?");
+    }
+</script>
+
+{% endblock %}

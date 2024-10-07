@@ -17,6 +17,18 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from django.shortcuts import redirect
+from .import views
 
 urlpatterns = [
+    path('fields/', views.field_crud, name='field_crud'),
+    path('sections/', views.section_crud, name='section_crud'),
+    path('schools/', views.school_crud, name='school_crud'),
+    path('degrees/', views.degree_crud, name='degree_crud'),
+    path('courses/', views.course_crud, name='courses_crud'),
+    path('typeprofessor/', views.type_professor_crud, name='type_professor_crud'),
+    path('lenguages/', views.lenguage_crud, name='lenguage_crud'),
+    path('years/', views.year_crud, name='year_crud'),
+
+
+
 ]

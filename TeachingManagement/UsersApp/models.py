@@ -52,6 +52,10 @@ class Professor(models.Model):
     
     isActive = models.CharField(max_length=3, choices=ACTIVE_CHOICES, default='yes')
     
+    class Meta:
+        verbose_name='professor'
+        verbose_name_plural='professors'
+
     def __str__(self):
         return f"{self.name} {self.family_name}"
 
@@ -66,6 +70,11 @@ class Chief(models.Model):
 
     section = models.CharField(max_length=100)
     #section = models.ForeignKey('Section', on_delete=models.SET_NULL, null=True)
+    
+    class Meta:
+        verbose_name='section chief'
+        verbose_name_plural='section chiefs'
+            
 
     def __str__(self):
         return f"{self.professor.name} {self.professor.family_name} - {self.section} ({self.year})"
