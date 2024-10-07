@@ -1,48 +1,76 @@
 {% extends 'base-template/base.html' %}
 
-{% block title %}Information Field{% endblock %}
+{% block title %}Informació del Camp{% endblock %}
 
 {% block content %}
 
-<h2>{% if form.instance.pk %}Update Field{% else %}Create Field{% endif %}</h2>
+<h2>{% if form.instance.pk %}Actualitzar Camp{% else %}Crear Camp{% endif %}</h2>
+
+<!-- Display messages success, warning, or error -->
+{% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
 
 <!-- Form for creating/updating fields -->
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">{% if form.instance.pk %}Update{% else %}Create{% endif %} Field</button>
+<form method="post" class="mb-4">
+    {% csrf_token %}
+    {% if form.instance.pk %}
+        <input type="hidden" name="idField" value="{{ form.instance.pk }}">
+    {% endif %}
+    <div class="mb-3">
+        {{ form.as_p }}
+    </div>
+    <button type="submit" class="btn btn-primary">{% if form.instance.pk %}Actualitzar{% else %}Crear{% endif %} Camp</button>
 </form>
+
+{% if deleting %}
+    <hr>
+    <!-- Confirm deletion -->
+    <h3>Estàs segur que vols eliminar {{ deleting.NameField }}?</h3>
+    <form method="post" action="{% url 'field_crud' %}">
+        {% csrf_token %}
+        <input type="hidden" name="confirm_delete" value="{{ deleting.pk }}">
+        <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+        <a href="{% url 'field_crud' %}" class="btn btn-secondary">Cancel·lar</a>
+    </form>
+{% endif %}
 
 <hr>
 
-<!-- List of all fields -->
-<h3>Field List</h3>
-<ul>
-  {% for field in fields %}
-    <li>
-      {{ field.NameField }} - {{ field.isActive }}
+<!-- List all fields -->
+<h3>Llista de Camps</h3>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nom del Camp</th>
+            <th>Descripció</th>
+            <th>Actiu</th>
+            <th>Accions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for field in fields %}
+            <tr>
+                <td>{{ field.NameField }}</td>
+                <td>{{ field.Description }}</td>
+                <td>{{ field.isActive|yesno:"Sí,No" }}</td>
+                <td>
+                    <!-- Edit button -->
+                    <a href="?edit={{ field.pk }}" class="btn btn-warning btn-sm">Editar</a>
 
-      <!-- Edit button -->
-      <a href="?edit={{ field.pk }}">Edit</a>
+                    <!-- Delete form -->
+                    <a href="?confirm_delete={{ field.pk }}" class="btn btn-danger btn-sm">Eliminar</a>
 
-      <!-- Delete form -->
-      <form method="post" action="?delete={{ field.pk }}" style="display:inline;">
-        {% csrf_token %}
-        <button type="submit">Delete</button>
-      </form>
-    </li>
-  {% endfor %}
-</ul>
-
-{% if deleting %}
-  <hr>
-  <!-- Confirm deletion -->
-  <h3>Are you sure you want to delete {{ deleting.NameField }}?</h3>
-  <form method="post">
-    {% csrf_token %}
-    <button type="submit" name="confirm_delete">Yes, delete</button>
-    <a href="{% url 'field_crud' %}">Cancel</a>
-  </form>
-{% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
 {% endblock %}
