@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.contrib import messages
 from django.shortcuts import render, redirect,get_object_or_404
-from .models import Field,Section
-from .forms import FieldForm,SectionForm
+from .models import Field,Section,School
+from .forms import FieldForm,SectionForm,SchoolForm
 
 # Create your views here.
 
@@ -138,8 +138,71 @@ def section_crud(request):
         'deleting': deleting,
     })
 
+### SCHOOLS ###
 def school_crud(request):
-    pass
+    schools = School.objects.all()
+    form = SchoolForm()  # Initialize the form
+    deleting = None
+
+    if request.method == "POST":
+        # FINAL DELETE
+        if 'confirm_delete' in request.POST:
+            school_id = request.POST.get('confirm_delete')  # id passed in request
+            print("Intentant eliminar l'escola amb ID:", school_id)  
+            try:
+                school = School.objects.get(pk=school_id)
+                school_name = school.NameSchool  # Store the name for the message
+                school.delete()
+                messages.success(request, f"{school_name} s'ha eliminat correctament.")
+                return redirect('school_crud') 
+            except School.DoesNotExist:
+                messages.error(request, "Error: L'escola no existeix.")
+                print("Error: L'escola amb ID", school_id, "no existeix.")  
+
+        # UPDATE
+        if 'idSchool' in request.POST:  
+            school_id = request.POST.get('idSchool')
+            print("Intentant actualitzar l'escola amb ID:", school_id)  
+            school = get_object_or_404(School, pk=school_id)  # Check if school exists
+            form = SchoolForm(request.POST, instance=school) 
+            if form.is_valid():  # Check if form is valid
+                form.save()
+                messages.success(request, f"{school.NameSchool} s'ha actualitzat correctament.")
+                return redirect('school_crud') 
+            else:
+                print("Errors en el formulari d'actualització:", form.errors)  
+                messages.error(request, "Error en actualitzar l'escola. Si us plau, revisa els camps.")
+
+        # CREATE
+        else:
+            form = SchoolForm(request.POST)  # Initialize form with POST data
+            print("Intentant crear una nova escola:", request.POST)  
+            if form.is_valid():  # Check if form is valid
+                school = form.save()
+                messages.success(request, f"{school.NameSchool} s'ha creat correctament.")
+                return redirect('school_crud')  
+            else:
+                print("Errors en el formulari de creació:", form.errors)  
+                messages.error(request, "Error en crear l'escola. Si us plau, revisa els camps.")
+
+    # UPDATE FORM
+    if 'edit' in request.GET:
+        school_id = request.GET.get('edit')
+        print("Intentant editar l'escola amb ID:", school_id)  
+        school = get_object_or_404(School, pk=school_id)
+        form = SchoolForm(instance=school)
+    
+    # ACTION OF INITIAL DELETE
+    if 'confirm_delete' in request.GET:
+        school_id = request.GET.get('confirm_delete')
+        deleting = get_object_or_404(School, pk=school_id)  # Get school to delete
+
+    return render(request, 'school_crud.html', {
+        'form': form,
+        'schools': schools,
+        'deleting': deleting,
+    })
+    
 
 def degree_crud(request):
     pass
