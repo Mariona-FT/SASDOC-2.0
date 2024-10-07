@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.contrib import messages
 from django.shortcuts import render, redirect,get_object_or_404
-from .models import Field,Section,School,Degree,TypeProfessor,Lenguage,Year
-from .forms import FieldForm,SectionForm,SchoolForm,DegreeForm,TypeProfessorForm,LenguageForm,YearForm
+from .models import Field,Section,School,Degree,Courses,TypeProfessor,Lenguage,Year
+from .forms import FieldForm,SectionForm,SchoolForm,DegreeForm,CoursesForm,TypeProfessorForm,LenguageForm,YearForm
 
 # Create your views here.
 
@@ -22,7 +22,7 @@ def field_crud(request):
                 field = Field.objects.get(pk=field_id)
                 field_name = field.NameField  # Store the name for the message
                 field.delete()
-                messages.success(request, f"{field_name} s'ha eliminat correctament.")
+                messages.success(request, f"El camp {field_name} s'ha eliminat correctament.")
                 return redirect('field_crud') 
             except Field.DoesNotExist:
                 messages.error(request, "Error: El camp no existeix.")
@@ -36,7 +36,7 @@ def field_crud(request):
             form = FieldForm(request.POST, instance=field) 
             if form.is_valid(): #Check form correct
                 form.save()
-                messages.success(request, f"{field.NameField} s'ha actualitzat correctament.")
+                messages.success(request, f"El camp {field.NameField} s'ha actualitzat correctament.")
                 return redirect('field_crud') 
             else:
                 print("Errors en el formulari d'actualització:", form.errors)  
@@ -48,7 +48,7 @@ def field_crud(request):
             print("Intentant crear un nou camp:", request.POST)  
             if form.is_valid(): #Check form correct
                 field = form.save()
-                messages.success(request, f"{field.NameField} s'ha creat correctament.")
+                messages.success(request, f"El camp {field.NameField} s'ha creat correctament.")
                 return redirect('field_crud')  
             else:
                 print("Errors en el formulari de creació:", form.errors)  
@@ -87,7 +87,7 @@ def section_crud(request):
                 section = Section.objects.get(pk=section_id)
                 section_name = section.NameSection  # Store the name for the message
                 section.delete()
-                messages.success(request, f"{section_name} s'ha eliminat correctament.")
+                messages.success(request, f"la secció {section_name} s'ha eliminat correctament.")
                 return redirect('section_crud') 
             except Section.DoesNotExist:
                 messages.error(request, "Error: La secció no existeix.")
@@ -101,7 +101,7 @@ def section_crud(request):
             form = SectionForm(request.POST, instance=section) 
             if form.is_valid():  # Check if form is valid
                 form.save()
-                messages.success(request, f"{section.NameSection} s'ha actualitzat correctament.")
+                messages.success(request, f"La secció {section.NameSection} s'ha actualitzat correctament.")
                 return redirect('section_crud') 
             else:
                 print("Errors en el formulari d'actualització:", form.errors)  
@@ -113,7 +113,7 @@ def section_crud(request):
             print("Intentant crear una nova secció:", request.POST)  
             if form.is_valid():  # Check if form is valid
                 section = form.save()
-                messages.success(request, f"{section.NameSection} s'ha creat correctament.")
+                messages.success(request, f"La secció {section.NameSection} s'ha creat correctament.")
                 return redirect('section_crud')  
             else:
                 print("Errors en el formulari de creació:", form.errors)  
@@ -152,7 +152,7 @@ def school_crud(request):
                 school = School.objects.get(pk=school_id)
                 school_name = school.NameSchool  # Store the name for the message
                 school.delete()
-                messages.success(request, f"{school_name} s'ha eliminat correctament.")
+                messages.success(request, f"L'escola {school_name} s'ha eliminat correctament.")
                 return redirect('school_crud') 
             except School.DoesNotExist:
                 messages.error(request, "Error: L'escola no existeix.")
@@ -166,7 +166,7 @@ def school_crud(request):
             form = SchoolForm(request.POST, instance=school) 
             if form.is_valid():  # Check if form is valid
                 form.save()
-                messages.success(request, f"{school.NameSchool} s'ha actualitzat correctament.")
+                messages.success(request, f"L'escola {school.NameSchool} s'ha actualitzat correctament.")
                 return redirect('school_crud') 
             else:
                 print("Errors en el formulari d'actualització:", form.errors)  
@@ -178,7 +178,7 @@ def school_crud(request):
             print("Intentant crear una nova escola:", request.POST)  
             if form.is_valid():  # Check if form is valid
                 school = form.save()
-                messages.success(request, f"{school.NameSchool} s'ha creat correctament.")
+                messages.success(request, f"L'escola {school.NameSchool} s'ha creat correctament.")
                 return redirect('school_crud')  
             else:
                 print("Errors en el formulari de creació:", form.errors)  
@@ -217,7 +217,7 @@ def degree_crud(request):
                 degree = Degree.objects.get(pk=degree_id)
                 degree_name = degree.NameDegree  # Store the name for the message
                 degree.delete()
-                messages.success(request, f"{degree_name} s'ha eliminat correctament.")
+                messages.success(request, f"El grau {degree_name} s'ha eliminat correctament.")
                 return redirect('degree_crud')
             except Degree.DoesNotExist:
                 messages.error(request, "Error: El grau no existeix.")
@@ -231,7 +231,7 @@ def degree_crud(request):
             form = DegreeForm(request.POST, instance=degree)
             if form.is_valid():  # Check if form is valid
                 form.save()
-                messages.success(request, f"{degree.NameDegree} s'ha actualitzat correctament.")
+                messages.success(request, f"El grau {degree.NameDegree} s'ha actualitzat correctament.")
                 return redirect('degree_crud')
             else:
                 print("Errors en el formulari d'actualització:", form.errors)
@@ -243,7 +243,7 @@ def degree_crud(request):
             print("Intentant crear un nou grau:", request.POST)
             if form.is_valid():  # Check if form is valid
                 degree = form.save()
-                messages.success(request, f"{degree.NameDegree} s'ha creat correctament.")
+                messages.success(request, f"El grau {degree.NameDegree} s'ha creat correctament.")
                 return redirect('degree_crud')
             else:
                 print("Errors en el formulari de creació:", form.errors)
@@ -267,8 +267,56 @@ def degree_crud(request):
         'deleting': deleting,
     })
 
+### COURSES ###
 def course_crud(request):
-    pass
+    courses = Courses.objects.all()
+    form = CoursesForm()
+    deleting = None
+
+    if request.method == "POST":
+        # Handle delete confirmation
+        if 'confirm_delete' in request.POST:
+            course_id = request.POST.get('confirm_delete')
+            course = get_object_or_404(Courses, pk=course_id)
+            course_name = course.NameCourse
+            course.delete()
+            messages.success(request, f"El curs {course_name} s'ha eliminat correctament.")
+            return redirect('courses_crud')
+
+        # Handle update
+        if 'idCourse' in request.POST:
+            course_id = request.POST.get('idCourse')
+            course = get_object_or_404(Courses, pk=course_id)
+            form = CoursesForm(request.POST, instance=course)
+            if form.is_valid():
+                form.save()
+                messages.success(request, f"El curs {course.NameCourse} s'ha actualitzat correctament.")
+                return redirect('courses_crud')
+
+        # Handle create
+        else:
+            form = CoursesForm(request.POST)
+            if form.is_valid():
+                course = form.save()
+                messages.success(request, f"El curs {course.NameCourse} s'ha creat correctament.")
+                return redirect('courses_crud')
+
+    # Handle edit
+    if 'edit' in request.GET:
+        course_id = request.GET.get('edit')
+        course = get_object_or_404(Courses, pk=course_id)
+        form = CoursesForm(instance=course)
+
+    # Handle initial delete confirmation
+    if 'confirm_delete' in request.GET:
+        course_id = request.GET.get('confirm_delete')
+        deleting = get_object_or_404(Courses, pk=course_id)
+
+    return render(request, 'courses_crud.html', {
+        'form': form,
+        'courses': courses,
+        'deleting': deleting,
+    })
 
 ### TYPE PROFESSOR ###
 def type_professor_crud(request):
@@ -283,7 +331,7 @@ def type_professor_crud(request):
             type_professor = get_object_or_404(TypeProfessor, pk=type_professor_id)
             type_professor_name = type_professor.Name
             type_professor.delete()
-            messages.success(request, f"{type_professor_name} s'ha eliminat correctament.")
+            messages.success(request, f"El tipus de professor {type_professor_name} s'ha eliminat correctament.")
             return redirect('type_professor_crud')
 
         # Handle update
@@ -293,7 +341,7 @@ def type_professor_crud(request):
             form = TypeProfessorForm(request.POST, instance=type_professor)
             if form.is_valid():
                 form.save()
-                messages.success(request, f"{type_professor.Name} s'ha actualitzat correctament.")
+                messages.success(request, f"El tipus de professor {type_professor.Name} s'ha actualitzat correctament.")
                 return redirect('type_professor_crud')
 
         # Handle create
@@ -301,7 +349,7 @@ def type_professor_crud(request):
             form = TypeProfessorForm(request.POST)
             if form.is_valid():
                 type_professor = form.save()
-                messages.success(request, f"{type_professor.Name} s'ha creat correctament.")
+                messages.success(request, f"El tipus de professor {type_professor.Name} s'ha creat correctament.")
                 return redirect('type_professor_crud')
 
     # Handle edit
@@ -335,7 +383,7 @@ def lenguage_crud(request):
             lenguage = get_object_or_404(Lenguage, pk=lenguage_id)
             lenguage_name = lenguage.Lenguage
             lenguage.delete()
-            messages.success(request, f"{lenguage_name} s'ha eliminat correctament.")
+            messages.success(request, f"La llengua {lenguage_name} s'ha eliminat correctament.")
             return redirect('lenguage_crud')
 
         # Handle update
@@ -345,7 +393,7 @@ def lenguage_crud(request):
             form = LenguageForm(request.POST, instance=lenguage)
             if form.is_valid():
                 form.save()
-                messages.success(request, f"{lenguage.Lenguage} s'ha actualitzat correctament.")
+                messages.success(request, f"La llengua {lenguage.Lenguage} s'ha actualitzat correctament.")
                 return redirect('lenguage_crud')
 
         # Handle create
@@ -353,7 +401,7 @@ def lenguage_crud(request):
             form = LenguageForm(request.POST)
             if form.is_valid():
                 lenguage = form.save()
-                messages.success(request, f"{lenguage.Lenguage} s'ha creat correctament.")
+                messages.success(request, f"La llengua {lenguage.Lenguage} s'ha creat correctament.")
                 return redirect('lenguage_crud')
 
     # Handle edit
@@ -373,6 +421,7 @@ def lenguage_crud(request):
         'deleting': deleting,
     })
 
+### YEAR ###
 def year_crud(request):
     years = Year.objects.all()
     form = YearForm()
