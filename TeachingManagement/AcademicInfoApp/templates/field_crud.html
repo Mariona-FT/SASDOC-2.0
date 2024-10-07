@@ -6,7 +6,7 @@
 
 <h2>{% if form.instance.pk %}Actualitzar Camp{% else %}Crear Camp{% endif %}</h2>
 
-<!-- Display messages success, warning, or error -->
+<!-- Display success, warning, or error messages -->
 {% if messages %}
     <div class="messages">
         {% for message in messages %}
@@ -29,21 +29,7 @@
     <button type="submit" class="btn btn-primary">{% if form.instance.pk %}Actualitzar{% else %}Crear{% endif %} Camp</button>
 </form>
 
-{% if deleting %}
-    <hr>
-    <!-- Confirm deletion -->
-    <h3>Estàs segur que vols eliminar {{ deleting.NameField }}?</h3>
-    <form method="post" action="{% url 'field_crud' %}">
-        {% csrf_token %}
-        <input type="hidden" name="confirm_delete" value="{{ deleting.pk }}">
-        <button type="submit" class="btn btn-danger">Sí, eliminar</button>
-        <a href="{% url 'field_crud' %}" class="btn btn-secondary">Cancel·lar</a>
-    </form>
-{% endif %}
-
-<hr>
-
-<!-- List all fields -->
+<!-- List of all fields -->
 <h3>Llista de Camps</h3>
 <table class="table table-striped">
     <thead>
@@ -64,13 +50,23 @@
                     <!-- Edit button -->
                     <a href="?edit={{ field.pk }}" class="btn btn-warning btn-sm">Editar</a>
 
-                    <!-- Delete form -->
-                    <a href="?confirm_delete={{ field.pk }}" class="btn btn-danger btn-sm">Eliminar</a>
-
+                    <!-- Delete form with JavaScript confirmation -->
+                    <form method="post" action="{% url 'field_crud' %}" style="display:inline;" onsubmit="return confirmDelete(('{{ field.NameField }}'));">
+                        {% csrf_token %}
+                        <input type="hidden" name="confirm_delete" value="{{ field.pk }}">
+                        <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                    </form>
                 </td>
             </tr>
         {% endfor %}
     </tbody>
 </table>
+
+<!-- JavaScript function for confirmation -->
+<script>
+    function confirmDelete(fieldName) {
+        return confirm("Estàs segur que vols eliminar aquest camp: " + fieldName + " ?");
+    }
+</script>
 
 {% endblock %}
