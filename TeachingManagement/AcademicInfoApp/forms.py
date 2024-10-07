@@ -1,5 +1,5 @@
 from django import forms
-from .models import Field,Section,School
+from .models import Field,Section,School,Degree
 
 class FieldForm(forms.ModelForm):
     class Meta:
@@ -15,3 +15,8 @@ class SchoolForm(forms.ModelForm):
     class Meta:
         model = School
         fields = ['NameSchool', 'Section','isActive']
+
+class DegreeForm(forms.ModelForm):
+    class Meta:
+        model = Degree
+        fields = ['NameDegree', 'School','isActive']
