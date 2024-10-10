@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'TeachingManagementApp',
     'UsersApp',
     'AcademicInfoApp',
+    'DirectorApp',
 ]
 
 MIDDLEWARE = [
@@ -57,7 +58,7 @@ ROOT_URLCONF = 'TeachingManagement.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [ ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

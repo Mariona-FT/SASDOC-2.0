@@ -10,24 +10,7 @@
                 {% if user.is_authenticated %}
                     <!-- Director Role -->
                     {% if user.role == 'director' %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'director_dashboard' %}">Tauler Director</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'register_professor' %}">Registar Professors</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'register_chief' %}">Registrar Caps de Sector</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'upload_professors' %}">Registrar Professors per excel </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#academicNavbar" aria-expanded="true" aria-controls="academicNavbar">
-                               Informació Acadèmica
-                            </a>
-                        </li>
+                        {% include 'navbars/navbar-director.html' %}
 
                     <!-- Sector Chief Role -->
                     {% elif user.role == 'sector_chief' %}
@@ -55,11 +38,11 @@
                 {% if user.is_authenticated %}
                     <li class="nav-item d-flex align-items-center">
                         <span class="navbar-text">Hola,<strong> {{ user.username }} </strong></span> &nbsp;&nbsp;
-                        <a class="nav-link" href="{% url 'logout' %}">Sortir</a>
+                        <a class="nav-link" href="{% url 'usersapp:logout' %}">Sortir</a>
                     </li>
                 {% else %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'login' %}">Iniciar Sessió</a>
+                        <a class="nav-link" href="{% url 'usersapp:login' %}">Iniciar Sessió</a>
                     </li>
 
                 {% endif %}
@@ -67,10 +50,3 @@
         </div>
     </div>
 </nav>
-
-<!-- Include the Academic Info Navbar Below the General Navbar -->
-<div class="collapse {% if '/academicinfo/' in request.path %}show{% endif %}" id="academicNavbar">
-    {% if user.role == 'director' %}
-        {% include 'base-template/navbar-academic-info.html' %}
-    {% endif %}
-</div>

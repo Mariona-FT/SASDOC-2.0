@@ -17,17 +17,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from django.shortcuts import redirect
+from .import views
+
+app_name='directorapp'
 
 urlpatterns = [
-    path('', lambda request: redirect('baseapp/', permanent=True)),  # Redirect root URL to /baseapp/
+    path('dashboard/', views.director_dashboard, name='director_dashboard'),
 
-    path('baseapp/',include('TeachingManagementApp.urls')),  # URL for every APP - TeachingManagementApp
-   
-    path('users/',include('UsersApp.urls')),  # URL for every APP - UsersApp
-    path('academicinfo/',include('AcademicInfoApp.urls')),  # URL for every APP - AcademicInfoApp
-    
-    path('director/',include('DirectorApp.urls')),  # URL for every APP - DirectorApp
-
-
-    path('admin/', admin.site.urls),
 ]

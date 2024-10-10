@@ -17,8 +17,8 @@ def is_director(user):
 
 @login_required
 @user_passes_test(is_director)
-def director_dashboard(request):
-    return render(request, 'users/director_dashboard.html')
+def redirect_director_dashboard(request):
+    return render(request, 'directorapp/director_dashboard.html')
 
 #SECTOR CHIEF views
 def is_sector_chief(user):
@@ -134,7 +134,7 @@ def login_session(request):
                 
                 # Check user role and redirect accordingly
                     if user.role == 'director':
-                        return redirect('director_dashboard')  # URL for Director
+                        return redirect('directorapp:director_dashboard')  # URL for Director
                     elif user.role == 'sector_chief':
                         return redirect('sector_chief_dashboard')  # URL for Sector Chief
                     elif user.role ==  'professor':

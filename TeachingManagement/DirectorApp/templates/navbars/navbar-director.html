@@ -1,0 +1,64 @@
+<!-- NAVBAR FOR A DIRECTOR -->
+<ul class="navbar-nav me-auto">
+    <li class="nav-item {% if request.path|slice:":16" == '/director/dashboard/' %}active{% endif %}">
+        <a class="nav-link" href="{% url 'directorapp:director_dashboard' %}">Tauler Director</a>
+    </li>
+    <li class="nav-item {% if request.path|slice:":26" == '/users/register-professor/' %}active{% endif %}">
+        <a class="nav-link" href="{% url 'usersapp:register_professor' %}">Registar Professors</a>
+    </li>
+    <li class="nav-item {% if request.path|slice:":22" == '/users/register-chief/' %}active{% endif %}">
+        <a class="nav-link" href="{% url 'usersapp:register_chief' %}">Registrar Caps de Sector</a>
+    </li>
+    <li class="nav-item {% if request.path|slice:":25" == '/users/upload-professors/' %}active{% endif %}">
+        <a class="nav-link" href="{% url 'usersapp:upload_professors' %}">Registrar Professors per excel</a>
+    </li>
+
+    <!-- Gestió de Professorat SUBNavbar -->
+    <li class="nav-item">
+        <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#professorsNavbar" aria-expanded="false" aria-controls="professorsNavbar" onclick="toggleNavbar(event, 'professorsNavbar', 'academicNavbar')">
+            Gestió de Professorat
+        </a>
+    </li>
+    <!-- Gestió de info Acadèmica SUBNavbar -->
+    <li class="nav-item">
+        <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#academicNavbar" aria-expanded="false" aria-controls="academicNavbar" onclick="toggleNavbar(event, 'academicNavbar', 'professorsNavbar')">
+            Informació Acadèmica
+        </a>
+    </li>
+</ul>
+
+<!-- Include the Gestió de Professorat Navbar Below the General Navbar -->
+<div class="collapse {% if '/usersinfo/' in request.path %}show{% endif %}" id="professorsNavbar">
+    {% if user.role == 'director' %}
+        {% include 'navbars/navbar-management-professors.html' %}
+    {% endif %}
+</div>
+
+<!-- Include the Academic Info Navbar Below the General Navbar -->
+<div class="collapse {% if '/academicinfo/' in request.path %}show{% endif %}" id="academicNavbar">
+    {% if user.role == 'director' %}
+        {% include 'navbars/navbar-academic-info.html' %}
+    {% endif %}
+</div>
+
+<!-- JavaScript for Toggle Functionality -->
+<script>
+    function toggleNavbar(event, targetNavbar, otherNavbar) {
+        const targetElement = document.getElementById(targetNavbar);
+        const otherElement = document.getElementById(otherNavbar);
+
+        // Prevent default action if the clicked navbar is already active
+        if (targetElement.classList.contains('show')) {
+            event.preventDefault();
+            return;
+        }
+
+        // Collapse the other navbar
+        if (otherElement.classList.contains('show')) {
+            otherElement.classList.remove('show');
+        }
+
+        // Collapse the target navbar
+        targetElement.classList.toggle('show');
+    }
+</script>

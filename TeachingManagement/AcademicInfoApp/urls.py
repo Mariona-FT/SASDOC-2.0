@@ -28,7 +28,4 @@ urlpatterns = [
     path('typeprofessor/', views.type_professor_crud, name='type_professor_crud'),
     path('lenguages/', views.lenguage_crud, name='lenguage_crud'),
     path('years/', views.year_crud, name='year_crud'),
-
-
-
 ]
