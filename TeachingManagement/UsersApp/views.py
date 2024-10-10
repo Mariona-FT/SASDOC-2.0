@@ -17,8 +17,8 @@ def is_director(user):
 
 @login_required
 @user_passes_test(is_director)
-def director_dashboard(request):
-    return render(request, 'users/director_dashboard.html')
+def redirect_director_dashboard(request):
+    return render(request, 'directorapp/director_dashboard.html')
 
 #SECTOR CHIEF views
 def is_sector_chief(user):

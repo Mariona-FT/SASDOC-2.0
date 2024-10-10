@@ -8,7 +8,7 @@ def home_page(request):
     if request.user.is_authenticated:
     # Redirect authenticated users to their dashboard based on role
         if request.user.role == 'director':
-            return redirect('director_dashboard')
+            return redirect('directorapp:director_dashboard')
         elif request.user.role == 'sector_chief':
             return redirect('sector_chief_dashboard')
         elif request.user.role == 'professor':
