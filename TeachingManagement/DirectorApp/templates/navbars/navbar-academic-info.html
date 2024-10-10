@@ -1,4 +1,3 @@
-
 <!-- Academic Info Navbar -->
 <nav class="navbar-sub-nav navbar-expand-lg navbar-light;">
     <div class="container-fluid">
@@ -31,16 +30,6 @@
             {% url 'type_professor_crud' as type_professor_crud_url %}
             <li class="nav-item {% if request.path == type_professor_crud_url %} active{% endif %}">
                 <a class="nav-link" href="{{ type_professor_crud_url }}">Gestió Tipus de Professor</a>
-            </li>
-
-            {% url 'lenguage_crud' as lenguage_crud_url %}
-            <li class="nav-item {% if request.path == lenguage_crud_url %} active{% endif %}">
-                <a class="nav-link" href="{{ lenguage_crud_url }}">Gestió de Llenguatges</a>
-            </li>
-
-            {% url 'year_crud' as year_crud_url %}
-            <li class="nav-item {% if request.path == year_crud_url %} active{% endif %}">
-                <a class="nav-link" href="{{ year_crud_url }}">Gestió d'Anys</a>
             </li>
         </ul>
     </div>

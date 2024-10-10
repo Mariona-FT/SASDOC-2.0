@@ -1,12 +1,12 @@
 import pandas as pd
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.hashers import make_password
 from django.contrib import messages
 from .forms import CustomLoginForm, ProfessorRegistrationForm,ChiefRegistrationForm, UploadFileForm # customized forms in forms.py
 from .models import Professor,Chief, CustomUser
-from .services import register_professor_form, process_professor_file #services of the app
+from .services import  process_professor_file #services of the app
 
 
 # Create your views here.
@@ -39,15 +39,94 @@ def professor_dashboard(request):
     return render(request, 'users/professor_dashboard.html')
 
 
+### PROFESSOR ###
+def professor_crud(request):
+    professors = Professor.objects.all()
+    form = ProfessorRegistrationForm()  # Use the registration form
+    deleting = None
+
+    if request.method == "POST":
+        # Handle delete confirmation
+        if 'confirm_delete' in request.POST:
+            professor_id = request.POST.get('confirm_delete')
+            professor = get_object_or_404(Professor, pk=professor_id)
+            professor_name = f"{professor.name} {professor.family_name}"
+            professor.delete()
+            messages.success(request, f"El professor {professor_name} s'ha eliminat correctament.")
+            return redirect('usersapp:professor_crud')
+
+        # Handle update
+        if 'idProfessor' in request.POST:
+            professor_id = request.POST.get('idProfessor')
+            professor = get_object_or_404(Professor, pk=professor_id)
+            form = ProfessorRegistrationForm(request.POST, instance=professor.user)  # Update user instance
+            if form.is_valid():
+                form.save()  # Save the user
+                # Update associated Professor instance
+                professor.idProfessor = form.cleaned_data['idprofessor']
+                professor.name = form.cleaned_data['name']
+                professor.family_name = form.cleaned_data['family_name']
+                professor.description = form.cleaned_data['description']
+                professor.comment = form.cleaned_data['comment']
+                professor.email = form.cleaned_data['email']
+                professor.isActive = form.cleaned_data['isactive']
+                professor.save()  # Save the Professor instance
+                messages.success(request, f"El professor {professor.name} {professor.family_name} s'ha actualitzat correctament.")
+                return redirect('usersapp:professor_crud')
+
+        # Handle create
+        else:
+            form = ProfessorRegistrationForm(request.POST)
+            if form.is_valid():
+                ProfessorRegistrationForm(form)  # Call your registration function
+                return redirect('usersapp:professor_crud')
+
+    # Handle edit
+    if 'edit' in request.GET:
+        professor_id = request.GET.get('edit')
+        professor = get_object_or_404(Professor, pk=professor_id)
+        # Pre-fill the form with the current user's data
+        form = ProfessorRegistrationForm(initial={
+            'idprofessor': professor.idProfessor,
+            'name': professor.name,
+            'family_name': professor.family_name,
+            'description': professor.description,
+            'comment': professor.comment,
+            'email': professor.email,
+            'isactive': professor.isActive,
+        })
+
+    # Handle initial delete confirmation
+    if 'confirm_delete' in request.GET:
+        professor_id = request.GET.get('confirm_delete')
+        deleting = get_object_or_404(Professor, pk=professor_id)
+
+    return render(request, 'users/professor_crud.html', {
+        'form': form,
+        'professors': professors,
+        'deleting': deleting,
+    })
+
 # REGISTER PROFESSOR MANUALLY - only for DIRECTOR
 @login_required
 @user_passes_test(is_director)
 def register_professor(request):
     if request.method == 'POST':
-        form = ProfessorRegistrationForm(request.POST)
-        if form.is_valid():
-            user = register_professor_form(form,request)
-            return redirect('register_professor')  
+            form = ProfessorRegistrationForm(request.POST)
+            if form.is_valid():
+                try:
+                    # Save the form, which handles user creation/updating
+                    user = form.save()
+
+                    messages.success(request, f"Professor {user.first_name} {user.last_name} creat correctament.")
+                    return redirect('usersapp:register_professor')
+
+                except Exception as e:
+                    print(f"Error in registering professor: {str(e)}")  # Debugging line
+                    messages.error(request, "Error al registrar el professor.")
+            else:
+                print(form.errors)  # Debugging line
+                messages.error(request, "Errors in the form. Please fix them and try again.")   
     else:
         form = ProfessorRegistrationForm()
 

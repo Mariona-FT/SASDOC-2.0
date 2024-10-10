@@ -1,21 +1,8 @@
 # services.py
-
 from django.contrib.auth.hashers import make_password
 from django.contrib import messages
 import pandas as pd
 from UsersApp.models import CustomUser, Professor
-
-#REGISTER PROFESSOR MANUALLY
-def register_professor_form(form, request):
-    try:
-        user = form.save()
-        messages.success(request, f"Professor {user.first_name} {user.last_name} creat correctament.")
-        print(f"User created: {user.username}, ID: {user.id}")  # Debugging line
-        return user
-    except Exception as e:
-        print(f"Error in register_professor_form: {str(e)}")  # Debugging line
-        messages.error(request, "Error al registrar el professor.")
-        return None
 
 #REGISTER PROFESSORS FILES
 def process_professor_file(file, request):

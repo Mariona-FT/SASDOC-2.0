@@ -21,8 +21,6 @@ body {
 .navbar-nav {
     flex-direction: column; /* Ensure the navbar items stack vertically */
 }
-
-
 /* Hover effect for navbar links */
 .navbar-nav .nav-link:hover {
     text-decoration: underline; /* Adds underline for clarity */
