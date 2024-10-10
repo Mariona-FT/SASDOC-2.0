@@ -23,6 +23,5 @@ app_name='directorapp'
 
 urlpatterns = [
     path('dashboard/', views.director_dashboard, name='director_dashboard'),
-    path('test-navbar/', views.test_director_navbar, name='test_director_navbar'),  # Add this line
 
 ]

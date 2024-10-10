@@ -134,7 +134,7 @@ def login_session(request):
                 
                 # Check user role and redirect accordingly
                     if user.role == 'director':
-                        return redirect('director_dashboard')  # URL for Director
+                        return redirect('directorapp:director_dashboard')  # URL for Director
                     elif user.role == 'sector_chief':
                         return redirect('sector_chief_dashboard')  # URL for Sector Chief
                     elif user.role ==  'professor':

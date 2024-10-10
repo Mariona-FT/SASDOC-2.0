@@ -10,7 +10,7 @@
                 {% if user.is_authenticated %}
                     <!-- Director Role -->
                     {% if user.role == 'director' %}
-                        {% include 'directorapp/navbars/navbar-director.html' %}
+                        {% include 'navbars/navbar-director.html' %}
 
                     <!-- Sector Chief Role -->
                     {% elif user.role == 'sector_chief' %}
