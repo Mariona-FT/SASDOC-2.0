@@ -440,11 +440,30 @@ def year_crud(request):
         # Handle update
         if 'idYear' in request.POST:
             year_id = request.POST.get('idYear')
-            year = get_object_or_404(Year, pk=year_id)
-            form = YearForm(request.POST, instance=year)
+            # Get the existing year object
+            original_year = get_object_or_404(Year, pk=year_id)
+            original_year1 = get_object_or_404(Year, pk=year_id)
+
+            print("original1",original_year.Year)
+
+            form = YearForm(request.POST, instance=original_year)
+
             if form.is_valid():
-                form.save()
-                messages.success(request, f"L'any {year.Year} s'ha actualitzat correctament.")
+                # Update the existing year without deleting
+                print("original2",original_year1.Year)
+
+                updated_year = form.save(commit=False)
+                print("Anys entrats",updated_year.Year,"original",original_year.Year)
+
+                # Check if a different year is being assigned (to avoid primary key conflicts)
+                if updated_year.Year != original_year1.Year:
+                    print("Anys entrats",updated_year.Year,"original",original_year1.Year)
+
+                    # Delete the original year if the value is being changed
+                    original_year1.delete()
+                
+                updated_year.save()  # Save the updated year
+                messages.success(request, f"L'any {updated_year.Year} s'ha actualitzat correctament.")
                 return redirect('year_crud')
 
         # Handle create
