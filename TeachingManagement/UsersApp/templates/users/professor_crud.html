@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<h2>{% if form.instance.pk %}Actualitzar Professor{% else %}Crear Professor{% endif %}</h2>
+<h2>{% if idProfessor %}Actualitzar Professor{% else %}Crear Professor{% endif %}</h2>
 
 <!-- Display success, warning, or error messages -->
 {% if messages %}
@@ -20,13 +20,13 @@
 <!-- Form for creating/updating professors -->
 <form method="post" class="mb-4">
     {% csrf_token %}
-    {% if form.instance.pk %}
-        <input type="hidden" name="idProfessor" value="{{ form.instance.pk }}">
-    {% endif %}
+        {% if idProfessor %}
+            <input type="hidden" name="idProfessor" value="{{ idProfessor }}">
+        {% endif %}
     <div class="mb-3">
         {{ form.as_p }}  <!-- This will use the custom labels from ProfessorForm -->
     </div>
-    <button type="submit" class="btn btn-primary">{% if form.instance.pk %}Actualitzar{% else %}Crear{% endif %} Professor</button>
+    <button type="submit" class="btn btn-primary">{% if idProfessor %}Actualitzar{% else %}Crear{% endif %} Professor</button>
 </form>
 
 <hr>

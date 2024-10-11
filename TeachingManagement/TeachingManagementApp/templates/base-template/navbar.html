@@ -8,9 +8,9 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
                 {% if user.is_authenticated %}
-                    <!-- Director Role -->
+                    <!-- NAVBAR of Director Role -->
                     {% if user.role == 'director' %}
-                        {% include 'navbars/navbar-director.html' %}
+                        {% include 'navbars/navbar-director.html' %} 
 
                     <!-- Sector Chief Role -->
                     {% elif user.role == 'sector_chief' %}
@@ -50,3 +50,22 @@
         </div>
     </div>
 </nav>
+<!-- Subnavbar DIRECTOR  Below the Main Navbar -->
+<div class="container-fluid mt-3">
+    {% if user.is_authenticated and user.role == 'director' %}
+    <!-- Subnavbar: Professors Management -->
+    <div class="collapse {% if '/users/' in request.path %}show{% endif %}" id="professorsNavbar">
+        {% include 'navbars/navbar-management-professors.html' %}
+    </div>
+
+    <!-- Subnavbar: Year and Languages Management -->
+    <div class="collapse {% if '/academicinfo/year' in request.path or '/academicinfo/lenguages' in request.path %}show{% endif %}" id="yearlenguageNavbar">
+        {% include 'navbars/navbar-yearlenguage.html' %}
+    </div>
+
+    <!-- Subnavbar: Academic Management -->
+    <div class="collapse {% if '/academicinfo/fields/' in request.path or '/academicinfo/sections/' in request.path or '/academicinfo/schools/' in request.path or '/academicinfo/degrees/' in request.path or '/academicinfo/courses/' in request.path or '/academicinfo/typeprofessor/' in request.path %}show{% endif %}" id="academicNavbar">
+        {% include 'navbars/navbar-academic-info.html' %}
+    </div>
+{% endif %}
+</div>
