@@ -26,7 +26,8 @@
     </li>
 </ul>
 
-<!-- Include the Gestió de Professorat Navbar Below the General Navbar -->
+{% comment %}
+ <!-- Include the Gestió de Professorat Navbar Below the General Navbar -->
 <div class="collapse {% if '/users/' in request.path %}show{% endif %}" id="professorsNavbar">
     {% include 'navbars/navbar-management-professors.html' %}
 </div>
@@ -43,7 +44,8 @@
     {% if user.role == 'director' %}
         {% include 'navbars/navbar-academic-info.html' %}
     {% endif %}
-</div>
+</div> 
+{% endcomment %}
 
 <!-- JavaScript for Toggle Functionality -->
 <script>
