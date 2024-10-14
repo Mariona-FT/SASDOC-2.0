@@ -423,7 +423,7 @@ def lenguage_crud(request):
 
 ### YEAR ###
 def year_crud(request):
-    years = Year.objects.all()
+    years = Year.objects.all().order_by('-Year')
     form = YearForm()
     deleting = None
 
@@ -442,13 +442,11 @@ def year_crud(request):
             year_id = request.POST.get('idYear')
             # Get the existing year object
             original_year = get_object_or_404(Year, pk=year_id)
-            print("original1",original_year.Year)
-
             form = YearForm(request.POST, instance=original_year)
 
             if form.is_valid():
                 # Update the existing year without deleting
-                updated_year = form.save(commit=False)
+                updated_year = form.save()
                 messages.success(request, f"L'any {updated_year.Year} s'ha actualitzat correctament.")
                 return redirect('year_crud')
 
