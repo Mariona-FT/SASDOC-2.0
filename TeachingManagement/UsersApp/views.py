@@ -57,15 +57,15 @@ def professor_crud(request):
 
         # Handle update
         if 'idProfessor' in request.POST:
-            professor_id = request.POST.get('idProfessor')
-            print(f"Updating Professor with ID: {professor_id}")  # Debugging
-            
+            professor_id = request.POST.get('idProfessor')            
             try:
                 professor = Professor.objects.get(user_id=professor_id)
                 user = professor.user  # Get the linked CustomUser
                 form = ProfessorRegistrationForm(request.POST, instance=user)
                 
                 if form.is_valid():
+                    if user.role != 'sector_chief':  
+                        user.role = 'professor' 
                     form.save()
                     messages.success(request, f"El professor {professor.name} {professor.family_name} s'ha actualitzat correctament.")
                     return redirect('usersapp:professor_crud')
@@ -78,11 +78,25 @@ def professor_crud(request):
         else:
             form = ProfessorRegistrationForm(request.POST)
             if form.is_valid():
-                user = form.save()
-                messages.success(request, f"Professor {user.first_name} {user.last_name} creat correctament.")
+                user = form.save(commit=True) 
+                user.role = 'professor'  #Create professor role has to be professor
+                user.save() 
+
+                # Now update the associated Professor instance
+                Professor.objects.update_or_create(
+                    user=user,
+                    defaults={
+                        'idProfessor': form.cleaned_data['idprofessor'],
+                        'name': form.cleaned_data['name'],
+                        'family_name': form.cleaned_data['family_name'],
+                        'description': form.cleaned_data['description'],
+                        'comment': form.cleaned_data['comment'],
+                        'isActive': form.cleaned_data['isactive'].lower(),
+                    }
+                )
+                messages.success(request, f"Professor {form.cleaned_data['name']} {form.cleaned_data['family_name']} creat correctament.")
                 return redirect('usersapp:professor_crud')
             else:
-                print(f"Form errors during create: {form.errors}")  # Debugging
                 messages.error(request, "Error en el form, torna a entrar les dades.")
 
     # Handle edit
@@ -125,16 +139,16 @@ def register_professor(request):
             if form.is_valid():
                 try:
                     # Save the form, which handles user creation/updating
-                    user = form.save()
-
+                    user = form.save(commit=True) 
+                    user.role = 'professor'  #Create professor role has to be professor
+                    user.save() 
                     messages.success(request, f"Professor {user.first_name} {user.last_name} creat correctament.")
                     return redirect('usersapp:register_professor')
 
                 except Exception as e:
-                    print(f"Error in registering professor: {str(e)}")  # Debugging line
                     messages.error(request, "Error al registrar el professor.")
             else:
-                print(form.errors)  # Debugging line
+                print(form.errors)  
                 messages.error(request, "Error al form modifica les dades.")   
     else:
         form = ProfessorRegistrationForm()
@@ -224,9 +238,9 @@ def login_session(request):
                     if user.role == 'director':
                         return redirect('directorapp:director_dashboard')  # URL for Director
                     elif user.role == 'sector_chief':
-                        return redirect('sector_chief_dashboard')  # URL for Sector Chief
+                        return redirect('usersapp:sector_chief_dashboard')  # URL for Sector Chief
                     elif user.role ==  'professor':
-                        return redirect('professor_dashboard')  # URL for Professor
+                        return redirect('usersapp:professor_dashboard')  # URL for Professor
                 else:
                     return render(request, 'actions/login.html', {'error': 'Invalid credentials'})
     else:

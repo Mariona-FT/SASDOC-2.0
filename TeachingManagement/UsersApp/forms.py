@@ -41,7 +41,9 @@ class ProfessorRegistrationForm(forms.ModelForm):
         user.first_name = self.cleaned_data.get('name')
         user.last_name = self.cleaned_data.get('family_name')
         user.email = self.cleaned_data.get('email')
-        user.role="professor"
+        generated_password = f"{user.first_name.lower()}_{user.last_name.lower()}"
+        user.password= make_password(generated_password)  # Hash the password
+
         if commit:
             user.save()  # Save the user instance
 
