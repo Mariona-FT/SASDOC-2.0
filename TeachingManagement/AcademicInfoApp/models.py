@@ -96,7 +96,8 @@ class Lenguage(models.Model):
         return self.Lenguage
 
 class Year(models.Model):
-    Year = models.IntegerField(primary_key=True,unique=True)
+    idYear = models.AutoField(primary_key=True) 
+    Year = models.IntegerField(unique=True)
     isEditable = models.BooleanField(default=False)
 
     class Meta:
