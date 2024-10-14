@@ -49,7 +49,6 @@ def professor_crud(request):
         # Handle delete confirmation
         if 'confirm_delete' in request.POST:
             professor_id = request.POST.get('confirm_delete')
-            print(f"Request to delete professor with ID {professor_id}")
             professor = get_object_or_404(Professor, pk=professor_id)
             professor_name = f"{professor.name} {professor.family_name}"
             professor.delete()
@@ -58,78 +57,78 @@ def professor_crud(request):
 
         # Handle update
         if 'idProfessor' in request.POST:
-            professor_id = request.POST.get('idProfessor')
-            print(f"Request to update professor with ID {professor_id}")
-
-            professor = get_object_or_404(Professor, pk=professor_id)
-            form = ProfessorRegistrationForm(request.POST, instance=professor.user)  # Update user instance
-            if form.is_valid():
-                print("Form is valid for update")
-
-                form.save()  # Save the user
-                # Update associated Professor instance
-                professor.idProfessor = form.cleaned_data['idprofessor']
-                professor.name = form.cleaned_data['name']
-                professor.family_name = form.cleaned_data['family_name']
-                professor.description = form.cleaned_data['description']
-                professor.comment = form.cleaned_data['comment']
-                professor.email = form.cleaned_data['email']
-                professor.isActive = form.cleaned_data['isactive']
-                professor.save()  # Save the Professor instance
-                print(f"Professor {professor.name} {professor.family_name} updated successfully")
-
-                messages.success(request, f"El professor {professor.name} {professor.family_name} s'ha actualitzat correctament.")
+            professor_id = request.POST.get('idProfessor')            
+            try:
+                professor = Professor.objects.get(user_id=professor_id)
+                user = professor.user  # Get the linked CustomUser
+                form = ProfessorRegistrationForm(request.POST, instance=user)
+                
+                if form.is_valid():
+                    if user.role != 'sector_chief':  
+                        user.role = 'professor' 
+                    form.save()
+                    messages.success(request, f"El professor {professor.name} {professor.family_name} s'ha actualitzat correctament.")
+                    return redirect('usersapp:professor_crud')
+            
+            except Professor.DoesNotExist:
+                messages.error(request, "No hi ha professor amb el ID de usuari donat.")
                 return redirect('usersapp:professor_crud')
 
         # Handle create
         else:
             form = ProfessorRegistrationForm(request.POST)
             if form.is_valid():
-                try:
-                    # Save the form, which handles user creation/updating
-                    user = form.save()
-                    messages.success(request, f"Professor {user.first_name} {user.last_name} creat correctament.")
-                    return redirect('usersapp:professor_crud')
+                user = form.save(commit=True) 
+                user.role = 'professor'  #Create professor role has to be professor
+                user.save() 
 
-                except Exception as e:
-                    print(f"Error in registering professor: {str(e)}")  # Debugging line
-                    messages.error(request, "Error al registrar el professor.")
+                # Now update the associated Professor instance
+                Professor.objects.update_or_create(
+                    user=user,
+                    defaults={
+                        'idProfessor': form.cleaned_data['idprofessor'],
+                        'name': form.cleaned_data['name'],
+                        'family_name': form.cleaned_data['family_name'],
+                        'description': form.cleaned_data['description'],
+                        'comment': form.cleaned_data['comment'],
+                        'isActive': form.cleaned_data['isactive'].lower(),
+                    }
+                )
+                messages.success(request, f"Professor {form.cleaned_data['name']} {form.cleaned_data['family_name']} creat correctament.")
+                return redirect('usersapp:professor_crud')
             else:
-                print(form.errors)  # Debugging line
-                messages.error(request, "Errors in the form. Please fix them and try again.")  
-
+                messages.error(request, "Error en el form, torna a entrar les dades.")
 
     # Handle edit
     if 'edit' in request.GET:
         professor_id = request.GET.get('edit')
-        professor = get_object_or_404(Professor, pk=professor_id)
-        print(f"Request to edit professor with ID {professor_id}")
-
-        # Pre-fill the form with the current user's data
-        form = ProfessorRegistrationForm(initial={
-            'idprofessor': professor.idProfessor,
-            'name': professor.name,
-            'family_name': professor.family_name,
-            'description': professor.description,
-            'comment': professor.comment,
-            'email': professor.email,
-            'isactive': professor.isActive,
-        })
+        try:
+            professor = get_object_or_404(Professor, pk=professor_id)
+            form = ProfessorRegistrationForm(initial={
+                'idprofessor': professor.idProfessor,
+                'username': professor.user.username,
+                'name': professor.name,
+                'family_name': professor.family_name,
+                'description': professor.description,
+                'comment': professor.comment,
+                'email': professor.email,
+                'isactive': professor.isActive,
+            }, instance=professor.user)
+        except Professor.DoesNotExist:
+            messages.error(request, "No hi ha professor amb el ID de usuari donat.")
+            return redirect('usersapp:professor_crud')
 
     # Handle initial delete confirmation
     if 'confirm_delete' in request.GET:
         professor_id = request.GET.get('confirm_delete')
-        print(f"Request to confirm delete for professor with ID {professor_id}")
-
         deleting = get_object_or_404(Professor, pk=professor_id)
 
     return render(request, 'users/professor_crud.html', {
         'form': form,
         'professors': professors,
         'deleting': deleting,
-        'idProfessor': professor.pk if 'edit' in request.GET else None,
-
     })
+
 
 # REGISTER PROFESSOR MANUALLY - only for DIRECTOR
 @login_required
@@ -140,17 +139,17 @@ def register_professor(request):
             if form.is_valid():
                 try:
                     # Save the form, which handles user creation/updating
-                    user = form.save()
-
+                    user = form.save(commit=True) 
+                    user.role = 'professor'  #Create professor role has to be professor
+                    user.save() 
                     messages.success(request, f"Professor {user.first_name} {user.last_name} creat correctament.")
                     return redirect('usersapp:register_professor')
 
                 except Exception as e:
-                    print(f"Error in registering professor: {str(e)}")  # Debugging line
                     messages.error(request, "Error al registrar el professor.")
             else:
-                print(form.errors)  # Debugging line
-                messages.error(request, "Errors in the form. Please fix them and try again.")   
+                print(form.errors)  
+                messages.error(request, "Error al form modifica les dades.")   
     else:
         form = ProfessorRegistrationForm()
 
@@ -166,7 +165,7 @@ def upload_professors(request):
         if form.is_valid():
             file = request.FILES['file']
             if process_professor_file(file, request):
-                return redirect('upload_professors')
+                return redirect('usersapp:upload_professors')
     else:
         form = UploadFileForm()
 
@@ -207,14 +206,14 @@ def register_chief(request):
             professor.user.save()  
             
             messages.success(request, f"Professor {professor.name} {professor.family_name} triat per ser cap de secció: {chief.section}.")
-            return redirect('register_chief')
+            return redirect('usersapp:register_chief')
         
         # If the form is not valid or professor_id is missing, display the errors
         if not professor_id:
             form.add_error('professor', 'Tria un professor per ser cap de secció.')  # Add error to the form
 
             messages.warning(request,f"Tria un professor per ser cap de secció.")
-            return redirect('register_chief')
+            return redirect('usersapp:register_chief')
             
     else:
         form = ChiefRegistrationForm()
@@ -239,9 +238,9 @@ def login_session(request):
                     if user.role == 'director':
                         return redirect('directorapp:director_dashboard')  # URL for Director
                     elif user.role == 'sector_chief':
-                        return redirect('sector_chief_dashboard')  # URL for Sector Chief
+                        return redirect('usersapp:sector_chief_dashboard')  # URL for Sector Chief
                     elif user.role ==  'professor':
-                        return redirect('professor_dashboard')  # URL for Professor
+                        return redirect('usersapp:professor_dashboard')  # URL for Professor
                 else:
                     return render(request, 'actions/login.html', {'error': 'Invalid credentials'})
     else:
