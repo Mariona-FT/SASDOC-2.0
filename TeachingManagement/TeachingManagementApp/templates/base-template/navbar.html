@@ -1,3 +1,4 @@
+<!-- Main Navbar -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
         <a class="navbar-brand" href="#">SASDOC 2.0</a>
@@ -10,15 +11,31 @@
                 {% if user.is_authenticated %}
                     <!-- NAVBAR of Director Role -->
                     {% if user.role == 'director' %}
-                        {% include 'navbars/navbar-director.html' %} 
-
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'directorapp:director_dashboard' %}">Inici</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#professorsNavbar" aria-expanded="false" aria-controls="professorsNavbar" onclick="toggleNavbar(event, 'professorsNavbar', ['academicNavbar','yearlenguageNavbar'])">
+                                Gestió de Professorat
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#academicNavbar" aria-expanded="false" aria-controls="academicNavbar" onclick="toggleNavbar(event, 'academicNavbar', ['professorsNavbar','yearlenguageNavbar'])">
+                                Gestió Acadèmica
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#yearlenguageNavbar" aria-expanded="false" aria-controls="yearlenguageNavbar" onclick="toggleNavbar(event, 'yearlenguageNavbar', ['professorsNavbar','academicNavbar'])">
+                                Gestió de Any i Llenguatges
+                            </a>
+                        </li>
                     <!-- Sector Chief Role -->
                     {% elif user.role == 'sector_chief' %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'usersapp:sector_chief_dashboard' %}">Tauler Cap de Sector</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link"  href="#">Funció Cap de Sector</a>
+                            <a class="nav-link" href="#">Funció Cap de Sector</a>
                         </li>
 
                     <!-- Professor Role -->
@@ -44,28 +61,53 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'usersapp:login' %}">Iniciar Sessió</a>
                     </li>
-
                 {% endif %}
             </ul>
         </div>
     </div>
 </nav>
-<!-- Subnavbar DIRECTOR  Below the Main Navbar -->
-<div class="container-fluid mt-3">
+
+<!-- Subnavbar DIRECTOR Below the Main Navbar -->
+<div class="container-fluid mt-1">
     {% if user.is_authenticated and user.role == 'director' %}
-    <!-- Subnavbar: Professors Management -->
-    <div class="collapse {% if '/users/' in request.path %}show{% endif %}" id="professorsNavbar">
-        {% include 'navbars/navbar-management-professors.html' %}
-    </div>
+        <!-- Subnavbar: Professors Management -->
+     <!-- Include the Gestió de Professorat Navbar Below the General Navbar -->
+        <div class="collapse {% if '/users/' in request.path %}show{% endif %}" id="professorsNavbar">
+            {% include 'navbars/navbar-management-professors.html' %}
+        </div>
 
-    <!-- Subnavbar: Year and Languages Management -->
-    <div class="collapse {% if '/academicinfo/year' in request.path or '/academicinfo/lenguages' in request.path %}show{% endif %}" id="yearlenguageNavbar">
-        {% include 'navbars/navbar-yearlenguage.html' %}
-    </div>
+        <!-- Include the Gestió d'Anys i Llengües Navbar -->
+        <div class="collapse {% if '/academicinfo/year' in request.path or '/academicinfo/lenguages' in request.path %}show{% endif %}" id="yearlenguageNavbar">
+            {% include 'navbars/navbar-yearlenguage.html' %}
+        </div>
 
-    <!-- Subnavbar: Academic Management -->
-    <div class="collapse {% if '/academicinfo/fields/' in request.path or '/academicinfo/sections/' in request.path or '/academicinfo/schools/' in request.path or '/academicinfo/degrees/' in request.path or '/academicinfo/courses/' in request.path or '/academicinfo/typeprofessor/' in request.path %}show{% endif %}" id="academicNavbar">
-        {% include 'navbars/navbar-academic-info.html' %}
-    </div>
-{% endif %}
+        <!-- Include the Gestió Acadèmica Navbar -->
+        <div class="collapse {% if '/academicinfo/fields/' in request.path or '/academicinfo/sections/' in request.path or '/academicinfo/schools/' in request.path or '/academicinfo/degrees/' in request.path or '/academicinfo/courses/' in request.path or '/academicinfo/typeprofessor/' in request.path %}show{% endif %}" id="academicNavbar">
+            {% include 'navbars/navbar-academic-info.html' %}
+        </div> 
+    {% endif %}
 </div>
+
+<!-- JavaScript for Toggle Functionality -->
+<script>
+    function toggleNavbar(event, targetNavbar, otherNavbars) {
+        const targetElement = document.getElementById(targetNavbar);
+
+        // Prevent default action if the clicked navbar is already active
+        if (targetElement.classList.contains('show')) {
+            event.preventDefault();
+            return;
+        }
+
+        // Collapse the other navbars
+        otherNavbars.forEach(navbar => {
+            const otherElement = document.getElementById(navbar);
+            if (otherElement.classList.contains('show')) {
+                otherElement.classList.remove('show');
+            }
+        });
+
+        // Toggle the target navbar
+        targetElement.classList.toggle('show');
+    }
+</script>
