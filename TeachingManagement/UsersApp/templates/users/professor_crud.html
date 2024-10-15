@@ -1,6 +1,6 @@
 {% extends 'base-template/base.html' %}
 
-{% block title %}Professor{% endblock %}
+{% block title %}Gestió Professors{% endblock %}
 
 {% block content %}
 
@@ -26,7 +26,7 @@
     {% endif %}
     
     <div class="mb-3">
-        {{ form.as_p }}  <!-- This will use the custom labels from ProfessorForm -->
+        {{ form.as_p }} 
     </div>
     <button type="submit" class="btn btn-primary">
         {% if form.instance.pk %}Actualitzar{% else %}Crear{% endif %} Professor
@@ -35,9 +35,31 @@
 
 <hr>
 
+<!-- Filter Fields -->
+<div class="form-group">
+    <label for="filter-name">Filtrar per Nom: </label>
+    <input type="text" id="filter-name" class="form-control" placeholder="Cerca per Nom">
+</div>
+
+<div class="form-group">
+    <label for="filter-family-name">Filtrar per Cognom: </label>
+    <input type="text" id="filter-family-name" class="form-control" placeholder="Cerca per Cognom">
+</div>
+
+<div class="form-group">
+    <label for="filter-active">Filtrar per si és Professorat actiu:</label>
+    <select id="filter-active" class="form-control">
+        <option value="">Tots</option>
+        <option value="yes">Actiu</option>
+        <option value="no">No Actiu</option>
+    </select>
+</div>
+
+<hr>
+
 <!-- List of all professors -->
 <h3>Llista de Professors</h3>
-<table class="table table-striped">
+<table class="table table-striped" id="professors-table">
     <thead>
         <tr>
             <th>Nom</th>
@@ -54,7 +76,11 @@
                     <td>{{ professor.name }}</td>
                     <td>{{ professor.family_name }}</td>
                     <td>{{ professor.email }}</td>
-                    <td>{{ professor.isActive|yesno:"Sí,No" }}</td>
+                    <td>{% if professor.isActive == 'yes' %}
+                        Sí
+                    {% else %}
+                        No
+                    {% endif %}</td>
                     <td>
                         <!-- Edit button -->
                         <a href="?edit={{ professor.pk }}" class="btn btn-warning btn-sm">Editar</a>
@@ -76,11 +102,80 @@
     </tbody>
 </table>
 
+<!-- No results message -->
+<div id="no-results-message" class="text-center text-danger" style="display:none;">
+    <span id="no-results-text"></span>
+</div>
 <!-- JavaScript function for confirmation -->
 <script>
     function confirmDelete(professorName) {
         return confirm("Estàs segur que vols eliminar aquest professor: " + professorName + "?");
     }
+   // JavaScript for Filtering
+   document.addEventListener('DOMContentLoaded', function () {
+    const filterName = document.getElementById('filter-name');
+    const filterFamilyName = document.getElementById('filter-family-name');
+    const filterActive = document.getElementById('filter-active');
+    const tableRows = document.querySelectorAll('#professors-table tbody tr');
+    const noResultsMessage = document.getElementById('no-results-message');
+    const noResultsText = document.getElementById('no-results-text');
+
+    function filterTable() {
+        const nameValue = filterName.value.toLowerCase();
+        const familyNameValue = filterFamilyName.value.toLowerCase();
+        const activeValue = filterActive.value;
+
+        let rowsVisible = 0; // Track how many rows are visible
+        let message = "Cap professor";
+
+        // Filtering logic
+        tableRows.forEach(row => {
+            const nameText = row.cells[0].textContent.toLowerCase();
+            const familyNameText = row.cells[1].textContent.toLowerCase();
+            const isActiveText = row.cells[4].textContent.trim(); // Get "Sí" or "No"
+            const isActive = isActiveText === 'Sí' ? 'yes' : 'no';
+
+            const matchesName = nameText.includes(nameValue);
+            const matchesFamilyName = familyNameText.includes(familyNameValue);
+            const matchesActive = (activeValue === '' || isActive === activeValue);
+
+            if (matchesName && matchesFamilyName && matchesActive) {
+                row.style.display = '';
+                rowsVisible++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        // Custom message logic for different filters
+        if (rowsVisible === 0) {
+            if (nameValue) {
+                message += ` amb el nom "${nameValue}"`;
+            }
+            if (familyNameValue) {
+                if (nameValue) {
+                    message += `,`;
+                }
+                message += ` amb el cognom "${familyNameValue}"`;
+            }
+            if (activeValue) {
+                if (nameValue || familyNameValue) {
+                    message += `, i`;
+                }
+                message += ` actiu "${activeValue === 'yes' ? 'Sí' : 'No'}"`;
+            }
+            message += ".";
+            noResultsText.textContent = message;
+            noResultsMessage.style.display = 'block';
+        } else {
+            noResultsMessage.style.display = 'none';
+        }
+    }
+
+    filterName.addEventListener('input', filterTable);
+    filterFamilyName.addEventListener('input', filterTable);
+    filterActive.addEventListener('change', filterTable);
+});
 </script>
 
 {% endblock %}

@@ -6,13 +6,13 @@
             <a class="nav-link" href="{% url 'usersapp:professor_crud' %}">Gestió de Professors</a>
         </li>
         <li class="nav-item {% if request.path|slice:":26" == '/users/register-professor/' %}active{% endif %}">
-            <a class="nav-link" href="{% url 'usersapp:register_professor' %}">Registar Professors</a>
+            <a class="nav-link" href="{% url 'usersapp:register_professor' %}">Registar Professor</a>
         </li>
         <li class="nav-item {% if request.path|slice:":22" == '/users/register-chief/' %}active{% endif %}">
-            <a class="nav-link" href="{% url 'usersapp:register_chief' %}">Registrar Caps de Sector</a>
+            <a class="nav-link" href="{% url 'usersapp:register_chief' %}">Registrar Caps de Secció</a>
         </li>
         <li class="nav-item {% if request.path|slice:":25" == '/users/upload-professors/' %}active{% endif %}">
-            <a class="nav-link" href="{% url 'usersapp:upload_professors' %}">Registrar Professors per excel</a>
+            <a class="nav-link" href="{% url 'usersapp:upload_professors' %}">Registrar Professors per Fitxer</a>
         </li>
     </ul>
 </nav>
