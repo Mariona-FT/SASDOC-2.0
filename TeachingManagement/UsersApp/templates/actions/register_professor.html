@@ -3,7 +3,11 @@
 {% block title %}Registrar Professor{% endblock %}
 
 {% block content %}
-<h2>Registrar Professor</h2>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-3">Registrar Professor Manualment</h2>
+    <a href="{% url 'usersapp:professor_crud' %}" class="button-return btn-sm">Tornar a Gestió de Professors</a>
+</div>
 
 <form method="post" novalidate class="mb-4">
     {% csrf_token %}

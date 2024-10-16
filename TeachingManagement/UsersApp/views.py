@@ -220,6 +220,9 @@ def register_chief(request):
         
     return render(request, 'actions/register_chief.html', {'form': form, 'professors': professors})
 
+def sectorchief_crud(request):
+    pass
+
 #LOGIN
 def login_session(request):
     if request.method == 'POST':

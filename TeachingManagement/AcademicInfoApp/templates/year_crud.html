@@ -26,7 +26,7 @@
     <div class="mb-3">
         {{ form.as_p }}  <!-- This will use the custom labels -->
     </div>
-    <button type="submit" class="btn btn-primary">{% if form.instance.pk %}Actualitzar{% else %}Crear{% endif %} Any</button>
+    <button type="submit" class="button-create btn-sm">{% if form.instance.pk %}Actualitzar{% else %}Crear{% endif %} Any</button>
 </form>
 
 <hr>
@@ -50,13 +50,13 @@
                     <td>
                         <!-- Edit button -->
                         {% if year.isEditable %}
-                        <a href="?edit={{ year.idYear }}"  class="btn btn-warning btn-sm">Editar</a>
+                        <a href="?edit={{ year.idYear }}"  class="button-edit btn-sm">Editar</a>
                         
                         <!-- Delete form with JavaScript confirmation -->
                         <form method="post" action="{% url 'year_crud' %}" style="display:inline;" onsubmit="return confirmDelete('{{ year.Year }}');">
                             {% csrf_token %}
                             <input type="hidden" name="confirm_delete" value="{{ year.pk }}">
-                            <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                            <button type="submit" class="button-delete btn-sm">Eliminar</button>
                         </form>
 
                         {% else %}

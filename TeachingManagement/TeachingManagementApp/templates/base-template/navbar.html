@@ -15,17 +15,18 @@
                             <a class="nav-link" href="{% url 'directorapp:director_dashboard' %}">Inici</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#professorsNavbar" aria-expanded="false" aria-controls="professorsNavbar" onclick="toggleNavbar(event, 'professorsNavbar', ['academicNavbar','yearlenguageNavbar'])">
-                                Gestió de Professorat
-                            </a>
+                            <a class="nav-link" href="{% url 'usersapp:professor_crud' %}">Gestió De Professors</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#academicNavbar" aria-expanded="false" aria-controls="academicNavbar" onclick="toggleNavbar(event, 'academicNavbar', ['professorsNavbar','yearlenguageNavbar'])">
+                            <a class="nav-link" href="{% url 'usersapp:sectorchief_crud' %}">Gestió De Caps de Secció</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#academicNavbar" aria-expanded="false" aria-controls="academicNavbar" onclick="toggleNavbar(event, 'academicNavbar', ['yearlenguageNavbar'])">
                                 Gestió Acadèmica
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#yearlenguageNavbar" aria-expanded="false" aria-controls="yearlenguageNavbar" onclick="toggleNavbar(event, 'yearlenguageNavbar', ['professorsNavbar','academicNavbar'])">
+                            <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#yearlenguageNavbar" aria-expanded="false" aria-controls="yearlenguageNavbar" onclick="toggleNavbar(event, 'yearlenguageNavbar', ['academicNavbar'])">
                                 Gestió de Any i Llenguatges
                             </a>
                         </li>
@@ -72,10 +73,11 @@
     {% if user.is_authenticated and user.role == 'director' %}
         <!-- Subnavbar: Professors Management -->
      <!-- Include the Gestió de Professorat Navbar Below the General Navbar -->
+        {% comment "" %}
         <div class="collapse {% if '/users/' in request.path %}show{% endif %}" id="professorsNavbar">
             {% include 'navbars/navbar-management-professors.html' %}
         </div>
-
+        {% endcomment %}
         <!-- Include the Gestió d'Anys i Llengües Navbar -->
         <div class="collapse {% if '/academicinfo/year' in request.path or '/academicinfo/lenguages' in request.path %}show{% endif %}" id="yearlenguageNavbar">
             {% include 'navbars/navbar-yearlenguage.html' %}

@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, Group, Permission # Customize user model
 from django.contrib.auth import get_user_model
 from django.utils import timezone
-
+from AcademicInfoApp.models import Year,Section
 # Create your models here.
 
 class CustomUser(AbstractUser):
@@ -65,11 +65,11 @@ class Chief(models.Model):
     
     professor = models.ForeignKey(Professor, on_delete=models.CASCADE)
 
-    year = models.CharField(max_length=4, default=str(timezone.now().year))  # Default is the current year
-    #year = models.ForeignKey('Year', on_delete=models.SET_NULL, null=True)
+    #year = models.CharField(max_length=4, default=str(timezone.now().year))  # Default is the current year
+    year = models.ForeignKey(Year, on_delete=models.SET_NULL, null=True)
 
-    section = models.CharField(max_length=100)
-    #section = models.ForeignKey('Section', on_delete=models.SET_NULL, null=True)
+    #section = models.CharField(max_length=100)
+    section = models.ForeignKey(Section, on_delete=models.SET_NULL, null=True)
     
     class Meta:
         verbose_name='section chief'
