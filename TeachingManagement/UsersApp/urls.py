@@ -27,10 +27,10 @@ urlpatterns = [
     path('logout/', views.logout_session, name='logout'),
 
     path('professor-management/', views.professor_crud, name='professor_crud'),
-
     path('register-professor/', views.register_professor, name='register_professor'),
     path('upload-professors/', views.upload_professors, name='upload_professors'),
 
+    path('sectorchief-management/', views.sectorchief_crud, name='sectorchief_crud'),
     path('register-chief/', views.register_chief, name='register_chief'),
 
  

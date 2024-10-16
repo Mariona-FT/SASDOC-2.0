@@ -73,6 +73,11 @@ class ChiefRegistrationForm(forms.ModelForm):
     class Meta:
         model = Chief
         fields = ['professor', 'year', 'section'] 
+        labels = {
+            'professor': 'Nom del Professor',
+            'year': 'Any',
+            'section':'Secció',
+        }
 
     
     def save(self, commit=True):
