@@ -76,7 +76,7 @@
                     <td>{{ professor.name }}</td>
                     <td>{{ professor.family_name }}</td>
                     <td>{{ professor.email }}</td>
-                    <td>{% if professor.isActive == 'yes' %}
+                    <td class="active-status">{% if professor.isActive == 'yes' %}
                         Sí
                     {% else %}
                         No
@@ -111,6 +111,7 @@
     function confirmDelete(professorName) {
         return confirm("Estàs segur que vols eliminar aquest professor: " + professorName + "?");
     }
+
    // JavaScript for Filtering
    document.addEventListener('DOMContentLoaded', function () {
     const filterName = document.getElementById('filter-name');
@@ -123,8 +124,7 @@
     function filterTable() {
         const nameValue = filterName.value.toLowerCase();
         const familyNameValue = filterFamilyName.value.toLowerCase();
-        const activeValue = filterActive.value;
-
+        const activeValue = filterActive.value;       
         let rowsVisible = 0; // Track how many rows are visible
         let message = "Cap professor";
 
@@ -132,7 +132,7 @@
         tableRows.forEach(row => {
             const nameText = row.cells[0].textContent.toLowerCase();
             const familyNameText = row.cells[1].textContent.toLowerCase();
-            const isActiveText = row.cells[4].textContent.trim(); // Get "Sí" or "No"
+            const isActiveText = row.querySelector('.active-status').textContent.trim(); // Get Si/No using the Class
             const isActive = isActiveText === 'Sí' ? 'yes' : 'no';
 
             const matchesName = nameText.includes(nameValue);

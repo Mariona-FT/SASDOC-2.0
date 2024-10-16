@@ -60,24 +60,36 @@
             </tr>
         </thead>
         <tbody>
-            {% for professor in professors %}
-            <tr>
-                <td>{{ professor.name }}</td>
-                <td>{{ professor.family_name }}</td>
-                <td>{{ professor.email }}</td>
-                <td>{{ professor.comment }}</td>
-                <td>{{ professor.isActive}}</td>
-                <td>
-                    {% if professor.user.role == 'sector_chief' %}
-                        {% with chief=professor.chief_set.first %}
-                            <span class="text-danger">Cap de Secció: {{ chief.section }}</span>
-                        {% endwith %}                    
+            {% if professors %}
+                {% for professor in professors %}
+                <tr>
+                    <td>{{ professor.name }}</td>
+                    <td>{{ professor.family_name }}</td>
+                    <td>{{ professor.email }}</td>
+                    <td>{{ professor.comment }}</td>
+                    <td class="active-status">{% if professor.isActive == 'yes' %}
+                        Sí
                     {% else %}
-                <input type="radio" name="professor" value="{{ professor.idProfessor }}" required>
-                    {% endif %}
-                    
-            </tr>
-            {% endfor %}
+                        No
+                    {% endif %}</td>
+                    <td>     
+                    <!--See if PROFESSOR is already a SECTOR CHIEF-->          
+                        {% if professor.user.role == 'sector_chief' %} 
+                            {% with chief=professor.chief_set.first %}
+                                <span class="text-danger">Cap de Secció: {{ chief.section }}</span>
+                            {% endwith %}                    
+                        {% else %}
+                    <!--if not already a SECTOR CHIEF PROFESSOR can be SELECTED-->
+                    <input type="radio" name="professor" value="{{ professor.idProfessor }}" required>
+                        {% endif %}
+                        
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="5" class="text-center">Cap professor en la taula.</td>
+                </tr>        
+            {% endif %}
         </tbody>
     </table>
 
@@ -107,6 +119,11 @@
     <button type="submit" class="btn btn-primary">Registrar</button>
 </form>
 
+<!-- No results message -->
+<div id="no-results-message" class="text-center text-danger" style="display:none;">
+    <span id="no-results-text"></span>
+</div>
+
 <!-- JavaScript for Filtering -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -123,8 +140,9 @@
             tableRows.forEach(row => {
                 const nameText = row.cells[0].textContent.toLowerCase();
                 const familyNameText = row.cells[1].textContent.toLowerCase();
-                const isActive = row.cells[4].textContent.toLowerCase(); // Capture the active status correctly
-
+                const isActiveText = row.querySelector('.active-status').textContent.trim(); // Get Si/No using the Class
+                const isActive = isActiveText === 'Sí' ? 'yes' : 'no';
+    
                 const matchesName = nameText.includes(nameValue);
                 const matchesFamilyName = familyNameText.includes(familyNameValue);
                 const matchesActive = (activeValue === '' || isActive === activeValue); // Use isActive instead of isActiveText
@@ -135,6 +153,30 @@
                     row.style.display = 'none';
                 }
             });
+
+            // Custom message logic for different filters
+            if (rowsVisible === 0) {
+                if (nameValue) {
+                    message += ` amb el nom "${nameValue}"`;
+                }
+                if (familyNameValue) {
+                    if (nameValue) {
+                        message += `,`;
+                    }
+                    message += ` amb el cognom "${familyNameValue}"`;
+                }
+                if (activeValue) {
+                    if (nameValue || familyNameValue) {
+                        message += `, i`;
+                    }
+                    message += ` actiu "${activeValue === 'yes' ? 'Sí' : 'No'}"`;
+                }
+                message += ".";
+                noResultsText.textContent = message;
+                noResultsMessage.style.display = 'block';
+            } else {
+                noResultsMessage.style.display = 'none';
+            }
         }
 
         filterName.addEventListener('input', filterTable);
