@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<h2>{% if form.instance.pk %}Actualitzar Professor{% else %}Crear Professor{% endif %}</h2>
+<h2>Gestió del Professorat</h2>
 
 <!-- Display success, warning, or error messages -->
 {% if messages %}
@@ -17,43 +17,56 @@
     </div>
 {% endif %}
 
-<!-- Form for creating/updating professors -->
-<form method="post" action="{% url 'usersapp:professor_crud' %}" class="mb-4">
-    {% csrf_token %}
-    <!-- Hidden input for idProfessor -->
-    {% if form.instance.pk %}
-        <input type="hidden" name="idProfessor" value="{{ form.instance.pk }}">
-    {% endif %}
-    
-    <div class="mb-3">
-        {{ form.as_p }} 
-    </div>
-    <button type="submit" class="btn btn-primary">
-        {% if form.instance.pk %}Actualitzar{% else %}Crear{% endif %} Professor
-    </button>
-</form>
-
-<hr>
-
 <!-- Filter Fields -->
-<div class="form-group">
-    <label for="filter-name">Filtrar per Nom: </label>
-    <input type="text" id="filter-name" class="form-control" placeholder="Cerca per Nom">
+<div class="row mb-3">
+    <div class="col-md-4">
+            <label for="filter-name">Filtrar per Nom: </label>
+            <input type="text" id="filter-name" class="form-control" placeholder="Cerca per Nom">
+        </div>
+
+        <div class="col-md-4">
+            <label for="filter-family-name">Filtrar per Cognom: </label>
+            <input type="text" id="filter-family-name" class="form-control" placeholder="Cerca per Cognom">
+        </div>
+
+        <div class="col-md-4">
+            <label for="filter-active">Filtrar per si és Professorat actiu:</label>
+            <select id="filter-active" class="form-control">
+                <option value="">Tots</option>
+                <option value="yes">Actiu</option>
+                <option value="no">No Actiu</option>
+            </select>
+        </div>
+    </div>
 </div>
 
-<div class="form-group">
-    <label for="filter-family-name">Filtrar per Cognom: </label>
-    <input type="text" id="filter-family-name" class="form-control" placeholder="Cerca per Cognom">
+
+<!-- Create Professor Buttons -->
+<div class="row mb-4">
+    <div class="col text-center">
+        <a href="{% url 'usersapp:register_professor' %}" class="btn btn-outline-primary btn-lg">Registrar Professor Manualment</a>
+        <a href="{% url 'usersapp:upload_professors' %}" class="btn btn-outline-primary btn-lg">Registrar Professor per Fitxer</a>
+    </div>
 </div>
 
-<div class="form-group">
-    <label for="filter-active">Filtrar per si és Professorat actiu:</label>
-    <select id="filter-active" class="form-control">
-        <option value="">Tots</option>
-        <option value="yes">Actiu</option>
-        <option value="no">No Actiu</option>
-    </select>
-</div>
+<!--Form to CREATE & UPDATE-->
+    <h2>{% if form.instance.pk %}Actualitzar Professor{% else %}Crear Professor{% endif %}</h2>
+
+    <!-- Form for creating/updating professors -->
+    <form method="post" action="{% url 'usersapp:professor_crud' %}" class="mb-4">
+        {% csrf_token %}
+        <!-- Hidden input for idProfessor to UPDATE-->
+        {% if form.instance.pk %}
+            <input type="hidden" name="idProfessor" value="{{ form.instance.pk }}">
+        {% endif %}
+        
+        <div class="mb-3">
+            {{ form.as_p }} 
+        </div>
+        <button type="submit" class="btn btn-primary">
+            {% if form.instance.pk %}Actualitzar{% else %}Crear{% endif %} Professor
+        </button>
+    </form>
 
 <hr>
 
@@ -83,7 +96,7 @@
                     {% endif %}</td>
                     <td>
                         <!-- Edit button -->
-                        <a href="?edit={{ professor.pk }}" class="btn btn-warning btn-sm">Editar</a>
+                        <a id="update-professor-btn" href="?edit={{ professor.pk }}" class="btn btn-warning btn-sm">Editar</a>
 
                         <!-- Delete form with JavaScript confirmation -->
                         <form method="post" action="{% url 'usersapp:professor_crud' %}" style="display:inline;" onsubmit="return confirmDelete('{{ professor.name }} {{ professor.family_name }}');">
@@ -96,7 +109,7 @@
             {% endfor %}
         {% else %}
             <tr>
-                <td colspan="5" class="text-center">Cap professor entrada.</td>
+                <td colspan="5" class="text-center">Cap professor en la taula.</td>
             </tr>        
         {% endif %}
     </tbody>
@@ -108,6 +121,22 @@
 </div>
 <!-- JavaScript function for confirmation -->
 <script>
+    const createProfessorBtn = document.getElementById('create-professor-btn');
+    const professorFormContainer = document.getElementById('professor-form-container');
+    const editProfessorBtns = document.querySelectorAll('.btn-warning'); // Select all buttons with class btn-warning
+
+         // Toggle form visibility
+    createProfessorBtn.addEventListener('click', function() {
+        professorFormContainer.style.display = professorFormContainer.style.display === 'none' ? 'block' : 'none';
+    });
+
+    // Handle edit buttons to show form and load data
+    editProfessorBtns.forEach(btn => {
+        btn.addEventListener('click', function (event) {
+            professorFormContainer.style.display = 'block';
+        });
+    });
+
     function confirmDelete(professorName) {
         return confirm("Estàs segur que vols eliminar aquest professor: " + professorName + "?");
     }

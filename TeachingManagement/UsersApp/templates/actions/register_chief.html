@@ -47,6 +47,15 @@
         </select>
     </div>
 
+    <div class="form-group">
+        <label for="filter-chief">Filtrar per si és Professorat es Cap de Secció:</label>
+        <select id="filter-chief" class="form-control">
+            <option value="">Tots</option>
+            <option value="yes">Ja Caps de secció</option>
+            <option value="no">No cap de Secció</option>
+        </select>
+    </div>
+
     <!-- Professors Table -->
     <table class="table table-striped" id="professors-table">
         <thead>
@@ -68,21 +77,22 @@
                     <td>{{ professor.email }}</td>
                     <td>{{ professor.comment }}</td>
                     <td class="active-status">{% if professor.isActive == 'yes' %}
-                        Sí
-                    {% else %}
-                        No
-                    {% endif %}</td>
+                            Sí
+                        {% else %}
+                            No
+                        {% endif %}
+                    </td>
                     <td>     
                     <!--See if PROFESSOR is already a SECTOR CHIEF-->          
                         {% if professor.user.role == 'sector_chief' %} 
                             {% with chief=professor.chief_set.first %}
-                                <span class="text-danger">Cap de Secció: {{ chief.section }}</span>
+                                <span class="already-chief" style="color:Tomato">Cap de Secció: {{ chief.section }}</span>
                             {% endwith %}                    
                         {% else %}
-                    <!--if not already a SECTOR CHIEF PROFESSOR can be SELECTED-->
-                    <input type="radio" name="professor" value="{{ professor.idProfessor }}" required>
+                            <!--if not already a SECTOR CHIEF PROFESSOR can be SELECTED-->
+                            <input type="radio" name="professor" value="{{ professor.idProfessor }}" required>
                         {% endif %}
-                        
+                    </td>      
                 </tr>
                 {% endfor %}
             {% else %}
@@ -130,49 +140,58 @@
         const filterName = document.getElementById('filter-name');
         const filterFamilyName = document.getElementById('filter-family-name');
         const filterActive = document.getElementById('filter-active');
+        const filterChief = document.getElementById('filter-chief');
+
         const tableRows = document.querySelectorAll('#professors-table tbody tr');
 
         function filterTable() {
             const nameValue = filterName.value.toLowerCase();
             const familyNameValue = filterFamilyName.value.toLowerCase();
             const activeValue = filterActive.value;
+            const chiefValue=filterChief.value;
+
+            let rowsVisible = 0;
+
 
             tableRows.forEach(row => {
                 const nameText = row.cells[0].textContent.toLowerCase();
                 const familyNameText = row.cells[1].textContent.toLowerCase();
                 const isActiveText = row.querySelector('.active-status').textContent.trim(); // Get Si/No using the Class
                 const isActive = isActiveText === 'Sí' ? 'yes' : 'no';
-    
+             
+                const isChiefBoolean = row.querySelector('.already-chief') ? 'yes' : 'no'; //YES if are Chiefs NO if not
+
                 const matchesName = nameText.includes(nameValue);
                 const matchesFamilyName = familyNameText.includes(familyNameValue);
-                const matchesActive = (activeValue === '' || isActive === activeValue); // Use isActive instead of isActiveText
+                const matchesActive = (activeValue === '' || isActive === activeValue); 
+                const matchesChief = (chiefValue === '' || isChiefBoolean === chiefValue);
 
-                if (matchesName && matchesFamilyName && matchesActive) {
+                if (matchesName && matchesFamilyName && matchesActive && matchesChief) {
                     row.style.display = '';
                 } else {
                     row.style.display = 'none';
                 }
             });
 
-            // Custom message logic for different filters
+            const noResultsMessage = document.getElementById('no-results-message');
+            const noResultsText = document.getElementById('no-results-text');
+
+           // No results message logic
             if (rowsVisible === 0) {
+                let message = "Cap professor amb els criteris de cerca";
                 if (nameValue) {
                     message += ` amb el nom "${nameValue}"`;
                 }
                 if (familyNameValue) {
-                    if (nameValue) {
-                        message += `,`;
-                    }
                     message += ` amb el cognom "${familyNameValue}"`;
                 }
                 if (activeValue) {
-                    if (nameValue || familyNameValue) {
-                        message += `, i`;
-                    }
                     message += ` actiu "${activeValue === 'yes' ? 'Sí' : 'No'}"`;
                 }
-                message += ".";
-                noResultsText.textContent = message;
+                if (chiefValue) {
+                    message += ` cap de secció "${chiefValue === 'yes' ? 'Sí' : 'No'}"`;
+                }
+                noResultsText.textContent = message + ".";
                 noResultsMessage.style.display = 'block';
             } else {
                 noResultsMessage.style.display = 'none';
@@ -182,6 +201,8 @@
         filterName.addEventListener('input', filterTable);
         filterFamilyName.addEventListener('input', filterTable);
         filterActive.addEventListener('change', filterTable);
+        filterChief.addEventListener('change', filterTable);
+
     });
 </script>
 
