@@ -26,7 +26,7 @@
     <div class="mb-3">
         {{ form.as_p }}
     </div>
-    <button type="submit" class="btn btn-primary">{% if form.instance.pk %}Actualitzar{% else %}Crear{% endif %} Grau</button>
+    <button type="submit" class="button-create btn-sm">{% if form.instance.pk %}Actualitzar{% else %}Crear{% endif %} Grau</button>
 </form>
 
 <hr>
@@ -57,13 +57,13 @@
                     <td>{{ degree.isActive|yesno:"Sí,No" }}</td>
                     <td>
                         <!-- Edit button -->
-                        <a href="?edit={{ degree.pk }}" class="btn btn-warning btn-sm">Editar</a>
+                        <a href="?edit={{ degree.pk }}" class="button-edit btn-sm">Editar</a>
 
                         <!-- Delete form with JavaScript confirmation -->
                         <form method="post" action="{% url 'degree_crud' %}" style="display:inline;" onsubmit="return confirmDelete('{{ degree.NameDegree }}');">
                             {% csrf_token %}
                             <input type="hidden" name="confirm_delete" value="{{ degree.pk }}">
-                            <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                            <button type="submit" class="button-delete btn-sm">Eliminar</button>
                         </form>
                     </td>
                 </tr>

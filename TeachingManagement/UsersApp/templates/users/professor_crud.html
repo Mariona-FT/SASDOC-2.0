@@ -39,13 +39,13 @@
         </div>
     </div>
 </div>
-
+<br>
 
 <!-- Create Professor Buttons -->
-<div class="row mb-4">
+<div class="row mb-2">
     <div class="col text-center">
-        <a href="{% url 'usersapp:register_professor' %}" class="btn btn-outline-primary btn-lg">Registrar Professor Manualment</a>
-        <a href="{% url 'usersapp:upload_professors' %}" class="btn btn-outline-primary btn-lg">Registrar Professor per Fitxer</a>
+        <a href="{% url 'usersapp:register_professor' %}" class="button-secondary btn-sm">Registrar Professor Manualment</a>
+        <a href="{% url 'usersapp:upload_professors' %}" class="button-secondary btn-sm">Registrar Professor per Fitxer</a>
     </div>
 </div>
 
@@ -63,7 +63,7 @@
         <div class="mb-3">
             {{ form.as_p }} 
         </div>
-        <button type="submit" class="btn btn-primary">
+        <button type="submit" class="button-create btn-sm">
             {% if form.instance.pk %}Actualitzar{% else %}Crear{% endif %} Professor
         </button>
     </form>
@@ -96,13 +96,13 @@
                     {% endif %}</td>
                     <td>
                         <!-- Edit button -->
-                        <a id="update-professor-btn" href="?edit={{ professor.pk }}" class="btn btn-warning btn-sm">Editar</a>
+                        <a id="update-professor-btn" href="?edit={{ professor.pk }}" class="button-edit btn-sm">Editar</a>
 
                         <!-- Delete form with JavaScript confirmation -->
                         <form method="post" action="{% url 'usersapp:professor_crud' %}" style="display:inline;" onsubmit="return confirmDelete('{{ professor.name }} {{ professor.family_name }}');">
                             {% csrf_token %}
                             <input type="hidden" name="confirm_delete" value="{{ professor.pk }}">
-                            <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                            <button type="submit" class="button-delete btn-sm">Eliminar</button>
                         </form>
                     </td>
                 </tr>
@@ -125,10 +125,12 @@
     const professorFormContainer = document.getElementById('professor-form-container');
     const editProfessorBtns = document.querySelectorAll('.btn-warning'); // Select all buttons with class btn-warning
 
-         // Toggle form visibility
+    {%comment%}
+    // Toggle form visibility
     createProfessorBtn.addEventListener('click', function() {
         professorFormContainer.style.display = professorFormContainer.style.display === 'none' ? 'block' : 'none';
     });
+    {%endcomment%}
 
     // Handle edit buttons to show form and load data
     editProfessorBtns.forEach(btn => {

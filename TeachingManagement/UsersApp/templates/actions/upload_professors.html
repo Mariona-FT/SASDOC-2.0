@@ -4,8 +4,8 @@
 
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="mb-3">Registrar per Fitxer</h2>
-    <a href="{% url 'usersapp:professor_crud' %}" class="btn btn-secondary">Tornar a Gestió de Professors</a>
+    <h2 class="mb-3">Registrar Professors per Fitxer</h2>
+    <a href="{% url 'usersapp:professor_crud' %}" class="button-return btn-sm">Tornar a Gestió de Professors</a>
 </div>
 
 <form method="post" enctype="multipart/form-data">
@@ -16,7 +16,7 @@
         {{ form.file }}
     </div>
     <br>
-    <button type="submit" class="btn btn-primary">Pujar Fitxer</button>
+    <button type="submit" class="button-create btn-sm">Pujar Fitxer</button>
     <br>
 </div>
 
