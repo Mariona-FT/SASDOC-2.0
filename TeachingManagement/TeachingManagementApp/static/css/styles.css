@@ -60,7 +60,6 @@ body {
     font-size: 16px; /* Adjust the size to make it more readable */
     padding: 8px 15px; /* Adjust the spacing around the links */
     margin-right: 20px; /* Adds space between links */
-    text-transform: capitalize; /* Optional: Make the first letter capital */
     text-align: center; /* Ensures the text is centered in the link */
     display: inline-block; /* Makes each link an inline block for spacing */
 }

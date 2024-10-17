@@ -1,10 +1,10 @@
 {% extends 'base-template/base.html' %}
 
-{% block title %}Tipus de Professor{% endblock %}
+{% block title %}Tipus de Professorat{% endblock %}
 
 {% block content %}
 
-<h2>{% if form.instance.pk %}Actualitzar Tipus de Professor{% else %}Crear Tipus de Professor{% endif %}</h2>
+<h2>{% if form.instance.pk %}Actualitzar Tipus de Professorat{% else %}Crear Tipus de Professorat{% endif %}</h2>
 
 <!-- Display success, warning, or error messages -->
 {% if messages %}
@@ -26,18 +26,18 @@
     <div class="mb-3">
         {{ form.as_p }}  <!-- This will use the custom labels -->
     </div>
-    <button type="submit" class="button-create btn-sm">{% if form.instance.pk %}Actualitzar{% else %}Crear{% endif %} Tipus de Professor</button>
+    <button type="submit" class="button-create btn-sm">{% if form.instance.pk %}Actualitzar{% else %}Crear{% endif %} Tipus de Professorat</button>
 </form>
 
 <hr>
 
 <!-- List of all types of professors -->
-<h3>Llista de Tipus de Professors</h3>
+<h3>Llista de Tipus de Professorats</h3>
 <table class="table table-striped">
     <thead>
         <tr>
             <th>Nom</th>
-            <th>Temps Completo</th>
+            <th>Temps Complert</th>
             <th>Permanent</th>
             <th>Comentaris</th>
             <th>Actiu</th>
@@ -68,7 +68,7 @@
             {% endfor %}
         {% else %}
             <tr>
-                <td colspan="5" class="text-center">Cap tipus de professor entrat.</td>
+                <td colspan="5" class="text-center">Cap tipus de professorat entrat.</td>
             </tr>        
         {% endif %}
     </tbody>

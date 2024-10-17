@@ -1,10 +1,10 @@
 {% extends 'base-template/base.html' %}
 
-{% block title %}Informació del Grau{% endblock %}
+{% block title %}Gestió de Titulacions{% endblock %}
 
 {% block content %}
 
-<h2>{% if form.instance.pk %}Actualitzar Grau{% else %}Crear Grau{% endif %}</h2>
+<h2>{% if form.instance.pk %}Actualitzar Titulació{% else %}Crear Titulació{% endif %}</h2>
 
 <!-- Display success, warning, or error messages -->
 {% if messages %}
@@ -26,17 +26,17 @@
     <div class="mb-3">
         {{ form.as_p }}
     </div>
-    <button type="submit" class="button-create btn-sm">{% if form.instance.pk %}Actualitzar{% else %}Crear{% endif %} Grau</button>
+    <button type="submit" class="button-create btn-sm">{% if form.instance.pk %}Actualitzar{% else %}Crear{% endif %} Titulació</button>
 </form>
 
 <hr>
 
 <!-- List of all degrees -->
-<h3>Llista de Graus</h3>
+<h3>Llista de titulacions</h3>
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>Nom del Grau</th>
+            <th>Nom de la Titulació</th>
             <th>Escola</th>
             <th>Actiu</th>
             <th>Accions</th>
@@ -70,7 +70,7 @@
             {% endfor %}
         {% else %}
             <tr>
-                <td colspan="4" class="text-center">Cap grau entrada.</td>
+                <td colspan="4" class="text-center">Cap titulació entrada.</td>
             </tr>        
         {% endif %}
     </tbody>
@@ -79,7 +79,7 @@
 <!-- JavaScript function for confirmation -->
 <script>
     function confirmDelete(fieldName) {
-        return confirm("Estàs segur que vols eliminar aquest grau: " + fieldName + "?");
+        return confirm("Estàs segur que vols eliminar aquesta titulació: " + fieldName + "?");
     }
 </script>
 
