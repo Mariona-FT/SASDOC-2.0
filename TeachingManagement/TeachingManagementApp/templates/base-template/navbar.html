@@ -15,19 +15,13 @@
                             <a class="nav-link" href="{% url 'directorapp:director_dashboard' %}">Inici</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'usersapp:professor_crud' %}">Gestió De Professors</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'usersapp:sectorchief_crud' %}">Gestió De Caps de Secció</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#academicNavbar" aria-expanded="false" aria-controls="academicNavbar" onclick="toggleNavbar(event, 'academicNavbar', ['yearlenguageNavbar'])">
-                                Gestió Acadèmica
+                            <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#generalParametersNavbar" aria-expanded="false" aria-controls="generalParametersNavbar" onclick="toggleNavbar(event, 'generalParametersNavbar', ['courseParametersNavbar'])">
+                                Paràmetres Generals
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#yearlenguageNavbar" aria-expanded="false" aria-controls="yearlenguageNavbar" onclick="toggleNavbar(event, 'yearlenguageNavbar', ['academicNavbar'])">
-                                Gestió de Any i Llenguatges
+                            <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#courseParametersNavbar" aria-expanded="false" aria-controls="courseParametersNavbar" onclick="toggleNavbar(event, 'courseParametersNavbar', ['generalParametersNavbar'])">
+                                Paràmetres del Curs Actual
                             </a>
                         </li>
                     <!-- Sector Chief Role -->
@@ -71,22 +65,15 @@
 <!-- Subnavbar DIRECTOR Below the Main Navbar -->
 <div class="container-fluid mt-1">
     {% if user.is_authenticated and user.role == 'director' %}
-        <!-- Subnavbar: Professors Management -->
-     <!-- Include the Gestió de Professorat Navbar Below the General Navbar -->
-        {% comment "" %}
-        <div class="collapse {% if '/users/' in request.path %}show{% endif %}" id="professorsNavbar">
-            {% include 'navbars/navbar-management-professors.html' %}
-        </div>
-        {% endcomment %}
-        <!-- Include the Gestió d'Anys i Llengües Navbar -->
-        <div class="collapse {% if '/academicinfo/year' in request.path or '/academicinfo/lenguages' in request.path %}show{% endif %}" id="yearlenguageNavbar">
-            {% include 'navbars/navbar-yearlenguage.html' %}
+        <!-- Include General Parameters Navbar -->
+        <div class="collapse {% if '/users/professor-management/' in request.path or '/users/register-chief/' in request.path or '/academicinfo/fields/' in request.path or '/academicinfo/sections/' in request.path or '/academicinfo/schools/' in request.path or '/academicinfo/degrees/' in request.path or '/academicinfo/courses/' in request.path or '/academicinfo/typeprofessor/' in request.path or '/academicinfo/year' in request.path or '/academicinfo/lenguages' in request.path %}show{% endif %}" id="generalParametersNavbar">
+            {% include 'navbars/navbar-general-parameters.html' %}
+        </div> 
+          <!-- Include Course Parameters Subnavbar -->
+          <div class="collapse {% if request.path == '/users/register-professor/' %}show{% endif %}" id="courseParametersNavbar">
+            {% include 'navbars/navbar-course-parameters.html' %}
         </div>
 
-        <!-- Include the Gestió Acadèmica Navbar -->
-        <div class="collapse {% if '/academicinfo/fields/' in request.path or '/academicinfo/sections/' in request.path or '/academicinfo/schools/' in request.path or '/academicinfo/degrees/' in request.path or '/academicinfo/courses/' in request.path or '/academicinfo/typeprofessor/' in request.path %}show{% endif %}" id="academicNavbar">
-            {% include 'navbars/navbar-academic-info.html' %}
-        </div> 
     {% endif %}
 </div>
 

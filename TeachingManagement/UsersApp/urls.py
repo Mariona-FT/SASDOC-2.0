@@ -32,7 +32,6 @@ urlpatterns = [
 
     path('sectorchief-management/', views.sectorchief_crud, name='sectorchief_crud'),
     path('register-chief/', views.register_chief, name='register_chief'),
-
  
     path('director/', views.redirect_director_dashboard, name='redirect_director_dashboard'),
     path('sector-chief/', views.sector_chief_dashboard, name='sector_chief_dashboard'),
