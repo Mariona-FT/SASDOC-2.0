@@ -3,11 +3,11 @@
     <ul class="navbar-nav">
         {% url 'usersapp:professor_crud' as professor_crud_url %}
         <li class="nav-item {% if request.path == professor_crud_url %} active{% endif %}">
-            <a class="nav-link" href="{{professor_crud_url}}">Gestió Del Professorat</a>
+            <a class="nav-link" href="{{professor_crud_url}}">Gestió del Professorat</a>
         </li>
         {% url 'usersapp:register_chief' as register_chief_url %}
         <li class="nav-item {% if request.path == register_chief_url %} active{% endif %}">
-            <a class="nav-link" href="{{register_chief_url}}">Gestió De Caps de Secció</a>
+            <a class="nav-link" href="{{register_chief_url}}">Gestió de Caps de Secció</a>
         </li>
 
         {% url 'field_crud' as field_crud_url %}
@@ -27,7 +27,7 @@
 
         {% url 'degree_crud' as degree_crud_url %}
         <li class="nav-item {% if request.path == degree_crud_url %} active{% endif %}">
-            <a class="nav-link" href="{{ degree_crud_url }}">Gestió de Graus</a>
+            <a class="nav-link" href="{{ degree_crud_url }}">Gestió de Titulacions</a>
         </li>
 
         {% url 'courses_crud' as courses_crud_url %}
@@ -37,7 +37,7 @@
 
         {% url 'type_professor_crud' as type_professor_crud_url %}
         <li class="nav-item {% if request.path == type_professor_crud_url %} active{% endif %}">
-            <a class="nav-link" href="{{ type_professor_crud_url }}">Gestió Tipus de Professor</a>
+            <a class="nav-link" href="{{ type_professor_crud_url }}">Gestió Tipus de Professorat</a>
         </li>
         {% url 'lenguage_crud' as lenguage_crud_url %}
         <li class="nav-item {% if request.path == lenguage_crud_url %} active{% endif %}">

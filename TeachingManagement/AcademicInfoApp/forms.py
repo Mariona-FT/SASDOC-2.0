@@ -35,7 +35,7 @@ class DegreeForm(forms.ModelForm):
         model = Degree
         fields = ['NameDegree', 'School','isActive']
         labels = {
-            'NameDegree': 'Nom del Grau',
+            'NameDegree': 'Nom de la titulació',
             'School': 'Escola',
             'isActive': 'És Actiu?',
         }
