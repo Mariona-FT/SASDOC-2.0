@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, Group, Permission # Customize user model
 from django.contrib.auth import get_user_model
 from django.utils import timezone
-from AcademicInfoApp.models import Year,Section
+from AcademicInfoApp.models import Year,Section,TypeProfessor
 # Create your models here.
 
 class CustomUser(AbstractUser):
@@ -51,6 +51,7 @@ class Professor(models.Model):
     ]
     
     isActive = models.CharField(max_length=3, choices=ACTIVE_CHOICES, default='yes')
+    current_contract = models.ForeignKey(TypeProfessor, on_delete=models.SET_NULL, null=True, blank=True)
     
     class Meta:
         verbose_name='professor'

@@ -26,13 +26,17 @@ urlpatterns = [
     path('login/', views.login_session, name='login'),
     path('logout/', views.logout_session, name='logout'),
 
+    #Professors
     path('professor-management/', views.professor_crud, name='professor_crud'),
-    path('register-professor/', views.register_professor, name='register_professor'),
-    path('upload-professors/', views.upload_professors, name='upload_professors'),
+    path('professor-create/', views.create_professor_view, name='create_professor'),
+    path('professor-edit/<int:professor_id>/', views.edit_professor_view, name='edit_professor'),
+    path('professor-upload/', views.upload_professors, name='upload_professors'),
 
+    #Sector chiefs
     path('sectorchief-management/', views.sectorchief_crud, name='sectorchief_crud'),
     path('register-chief/', views.register_chief, name='register_chief'),
  
+    #Dashboards
     path('director/', views.redirect_director_dashboard, name='redirect_director_dashboard'),
     path('sector-chief/', views.sector_chief_dashboard, name='sector_chief_dashboard'),
     path('professor/', views.professor_dashboard, name='professor_dashboard'),
