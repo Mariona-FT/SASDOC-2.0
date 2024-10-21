@@ -44,13 +44,13 @@
         {% if languages %}
             {% for language in languages %}
                 <tr>
-                    <td>{{ languages.Language }}</td>
+                    <td>{{ language.Language }}</td>
                     <td>
                         <!-- Edit button -->
                         <a href="?edit={{ language.pk }}" class="button-edit btn-sm">Editar</a>
 
                         <!-- Delete form with JavaScript confirmation -->
-                        <form method="post" action="{% url 'language' %}" style="display:inline;" onsubmit="return confirmDelete('{{ language.Language }}');">
+                        <form method="post" action="{% url 'language_crud' %}" style="display:inline;" onsubmit="return confirmDelete('{{ language.Language }}');">
                             {% csrf_token %}
                             <input type="hidden" name="confirm_delete" value="{{ language.pk }}">
                             <button type="submit" class="button-delete btn-sm">Eliminar</button>

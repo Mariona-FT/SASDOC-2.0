@@ -28,7 +28,7 @@ urlpatterns = [
 
     #Professors
     path('professor-management/', views.professor_crud, name='professor_crud'),
-    path('professor-information/', views.extrainformation_professor, name='info_professor'),
+    path('professor-information/<int:professor_id>', views.extrainformation_professor, name='extrainfo_professor'),
 
     path('professor-create/', views.create_professor_view, name='create_professor'),
     path('professor-edit/<int:professor_id>/', views.edit_professor_view, name='edit_professor'),

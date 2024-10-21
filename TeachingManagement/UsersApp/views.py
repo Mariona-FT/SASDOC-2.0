@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required,user_passes_test
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.hashers import make_password
 from django.contrib import messages
-from .forms import CustomLoginForm, ProfessorRegistrationForm,ChiefRegistrationForm, UploadFileForm # customized forms in forms.py
+from .forms import CustomLoginForm, ProfessorRegistrationForm,ExtraInfoProfessor,ChiefRegistrationForm, UploadFileForm # customized forms in forms.py
 from .models import Professor,Chief, CustomUser
 from .services import  process_professor_file #services of the app
 from django.db import IntegrityError
@@ -131,8 +131,25 @@ def edit_professor_view(request, professor_id):
 
     return render(request, 'users/professor/professor_form.html', {'form': form})
 
-def extrainformation_professor(request):
-    pass
+
+def extrainformation_professor(request,professor_id):
+    professor = get_object_or_404(Professor, pk=professor_id)
+
+    if request.method == 'POST':
+        form = ExtraInfoProfessor(request.POST, instance=professor)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"Informació extra per a {professor.name} {professor.family_name} actualitzada correctament.")
+            return redirect('usersapp:professor_crud')
+        else:
+            messages.warning(request, f"Informació extra per a {professor.name} {professor.family_name} no s'ha actualitzat correctament.")
+
+    else:
+        form = ExtraInfoProfessor(instance=professor) #enter information of the professor - 
+
+    return render(request, 'users/professor/professor_extrainfo.html', {'form': form,'professor':professor})
+
+
 
 # REGISTER PROFESSOR - only for DIRECTOR - USING CSV or EXCEL
 @login_required

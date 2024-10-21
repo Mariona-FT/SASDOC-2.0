@@ -73,6 +73,9 @@
                                     <!-- Edit button -->
                                     <a href="{% url 'usersapp:edit_professor' professor.pk %}" class="button-edit btn-sm">Editar</a>
 
+                                    <!-- Extra Info button -->
+                                    <a href="{% url 'usersapp:extrainfo_professor' professor.pk %}" class="button-secondary btn-sm">Informació Extra</a>
+
                                     <!-- Delete form with JavaScript confirmation -->
                                     <form method="post" action="{% url 'usersapp:professor_crud' %}" style="display:inline;" onsubmit="return confirmDelete('{{ professor.name }} {{ professor.family_name }}');">
                                         {% csrf_token %}
