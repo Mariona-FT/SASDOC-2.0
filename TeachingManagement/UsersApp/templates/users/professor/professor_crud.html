@@ -3,7 +3,6 @@
 {% block title %}Gestió Professorat{% endblock %}
 
 {% block content %}
-
 <div class="container-fluid">
     <h2 style="text-align:center">Gestió del Professorat</h2>
 
@@ -20,25 +19,24 @@
    
     <hr>
 
-    
     <div class="row">
-        <div class="col-md-9">
+        <div class="col-lg-9">
             <!-- Filter Fields -->
             <h3>Filtres pel Llistat del Professorat</h3>
-            <div class="d-flex justify-content-between row mb-3">
+            <div class="d-flex justify-content-between row mb-2">
                 <!-- Filters section -->
                 <div class="filters d-flex flex-wrap">
-                    <div class="col-md-4 mb-2">
+                    <div class="col-md-4">
                         <label for="filter-name">Filtrar per Nom:</label>
                         <input type="text" id="filter-name" class="form-control" placeholder="Cerca per Nom">
                     </div>
 
-                    <div class="col-md-4 mb-2">
+                    <div class="col-md-4">
                         <label for="filter-family-name">Filtrar per Cognom:</label>
                         <input type="text" id="filter-family-name" class="form-control" placeholder="Cerca per Cognom">
                     </div>
 
-                    <div class="col-md-4 mb-2">
+                    <div class="col-md-4">
                         <label for="filter-active">Filtrar per si és Professorat actiu:</label>
                         <select id="filter-active" class="form-control">
                             <option value="">Tots</option>
@@ -94,16 +92,14 @@
         </div>
 
         <!-- Buttons section fixed on the right -->
-        <div class="col-md-3">
+        <div class="col-lg-3">
             <div class="sticky-top" style="top: 1rem">
-                <div class="buttons mb-2 d-flex flex-column align-items-center"> 
-                        <br>
-                        <a href="{% url 'usersapp:create_professor' %}" class="button-secondary btn-sm mb-2" style="width: 100%; ">Registrar Professor</a>
-                        <a href="{% url 'usersapp:upload_professors' %}" class="button-secondary btn-sm" style="width: 100%; ">Registrar Professor per Fitxer</a>
-               </div>
+                <div class="buttons mb-2 d-flex flex-column align-items-center">
+                    <a href="{% url 'usersapp:create_professor' %}" class="button-secondary btn-sm mb-2" style="width: 100%; ">Registrar Professor</a>
+                    <a href="{% url 'usersapp:upload_professors' %}" class="button-secondary btn-sm" style="width: 100%; ">Registrar Professor per Fitxer</a>
+                </div>
             </div>
         </div>
-    
     </div>
 </div>
 
@@ -138,7 +134,7 @@
             tableRows.forEach(row => {
                 const nameText = row.cells[0].textContent.toLowerCase();
                 const familyNameText = row.cells[1].textContent.toLowerCase();
-                const isActiveText = row.querySelector('.active-status').textContent.trim(); // Get Si/No using the Class
+                const isActiveText = row.querySelector('.active-status').textContent.trim();
                 const isActive = isActiveText === 'Sí' ? 'yes' : 'no';
 
                 const matchesName = nameText.includes(nameValue);
@@ -153,7 +149,6 @@
                 }
             });
 
-            // Custom message logic for different filters
             if (rowsVisible === 0) {
                 if (nameValue) {
                     message += ` amb el nom "${nameValue}"`;
