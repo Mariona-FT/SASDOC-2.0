@@ -43,9 +43,10 @@ def professor_dashboard(request):
 
 
 ### PROFESSOR ###
+@login_required
+@user_passes_test(is_director)
 def professor_crud(request):
     professors = Professor.objects.all()
-    form = ProfessorRegistrationForm()  # Use the registration form
     deleting = None
 
     if request.method == "POST":
@@ -64,7 +65,6 @@ def professor_crud(request):
         deleting = get_object_or_404(Professor, pk=professor_id)
 
     return render(request, 'users/professor/professor_crud.html', {
-        'form': form,
         'professors': professors,
         'deleting': deleting,
     })
@@ -131,8 +131,35 @@ def edit_professor_view(request, professor_id):
 
     return render(request, 'users/professor/professor_form.html', {'form': form})
 
+def extrainfo_professor_crud(request):
+    professors = Professor.objects.all()
+    deleting = None
 
-def extrainformation_professor(request,professor_id):
+    if request.method == "POST":
+        # Handle delete confirmation
+        if 'confirm_delete' in request.POST:
+            professor_id = request.POST.get('confirm_delete')
+            professor = get_object_or_404(Professor, pk=professor_id)
+            professor_name = f"{professor.name} {professor.family_name}"
+            professor.delete()
+            messages.success(request, f"El professor {professor_name} s'ha eliminat correctament.")
+            return redirect('usersapp:extrainfo_professor_crud')
+
+    # Handle initial delete confirmation
+    if 'confirm_delete' in request.GET:
+        professor_id = request.GET.get('confirm_delete')
+        deleting = get_object_or_404(Professor, pk=professor_id)
+
+    return render(request, 'users/professor/professor_extrainfo_crud.html', {
+        'professors': professors,
+        'deleting': deleting,
+    })
+
+
+
+@login_required
+@user_passes_test(is_director)
+def enter_extrainfo_professor(request,professor_id):
     professor = get_object_or_404(Professor, pk=professor_id)
 
     if request.method == 'POST':
@@ -140,14 +167,14 @@ def extrainformation_professor(request,professor_id):
         if form.is_valid():
             form.save()
             messages.success(request, f"Informació extra per a {professor.name} {professor.family_name} actualitzada correctament.")
-            return redirect('usersapp:professor_crud')
+            return redirect('usersapp:extrainfo_professor_crud')
         else:
             messages.warning(request, f"Informació extra per a {professor.name} {professor.family_name} no s'ha actualitzat correctament.")
 
     else:
         form = ExtraInfoProfessor(instance=professor) #enter information of the professor - 
 
-    return render(request, 'users/professor/professor_extrainfo.html', {'form': form,'professor':professor})
+    return render(request, 'users/professor/professor_extrainfo_form.html', {'form': form,'professor':professor})
 
 
 

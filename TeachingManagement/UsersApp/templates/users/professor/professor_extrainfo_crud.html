@@ -1,0 +1,132 @@
+{% extends 'base-template/base.html' %}
+
+{% block title %}Gestió Informació Extra Professorat{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h2 style="text-align:center">Gestió d'Informació Extra del Professorat</h2>
+
+    <!-- Display success, warning, or error messages -->
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="{% if message.tags %}alert alert-{{ message.tags }}{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+    <hr>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Ensure no margins or padding here -->
+            <div class="col-lg-12 px-0">
+                <!-- Filter Fields -->
+                <h3>Filtres pel Llistat del Professorat</h3>
+                <div class="d-flex justify-content-between row mb-2">
+                    <!-- Filters section -->
+                    <div class="filters d-flex flex-wrap">
+                        <div class="col-md-4">
+                            <label for="filter-name">Filtrar per Nom:</label>
+                            <input type="text" id="filter-name" class="form-control" placeholder="Cerca per Nom">
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="filter-family-name">Filtrar per Cognom:</label>
+                            <input type="text" id="filter-family-name" class="form-control" placeholder="Cerca per Cognom">
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="filter-active">Filtrar per si és Professorat actiu:</label>
+                            <select id="filter-active" class="form-control">
+                                <option value="">Tots</option>
+                                <option value="yes">Actiu</option>
+                                <option value="no">No Actiu</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+                <!-- List of all professors -->
+                <h3>Llista del Professorat</h3>
+                <table class="table table-striped" id="professors-table">
+                    <thead>
+                        <tr>
+                            <th>Nom i Cognoms</th>
+                            <th>Contracte Actual</th>
+                            <th>Camps d'estudi</th>
+                            <th>Llengües</th>
+                            <th>Accions</th>                    
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if professors %}
+                        {% for professor in professors %}
+                            <tr>
+                                <td>{{ professor.name }} {{ professor.family_name }}</td>
+                                <td> {% if  professor.current_contract.exists %}
+                                        <span class="professor-fields" style="color:Tomato">{{ professor.current_contract }}</span>
+                                {% else %}
+                                    <span>No té cap contracte assignat</span>
+                                {% endif %}
+                                </td>
+                                <td>
+                                    {% if professor.professor_fields.exists %}
+                                        {% for field in professor.professor_fields.all %}
+                                            <span class="professor-fields" style="color:Tomato">{{ field.Field.NameField }}</span>{% if not forloop.last %}, {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        <span>No té camps d'estudi assignats</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if professor.professor_languages.exists %}
+                                        {% for language in professor.professor_languages.all %}
+                                            <span class="professor-languages" style="color:Blue">{{ language.Language.Language }}</span>{% if not forloop.last %}, {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        <span>No té llengües assignades</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <!-- Extra Info button -->
+                                    <a href="{% url 'usersapp:enter_extrainfo_professor' professor.pk %}" class="button-secondary btn-sm">Informació Extra</a>                            
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center">Cap professor en la taula.</td>
+                        </tr>        
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Buttons section fixed on the right -->
+            <div class="col-lg-3">
+                <div class="sticky-top" style="top: 1rem">
+                    <div class="buttons mb-2 d-flex flex-column align-items-center">
+                        <a href="{% url 'usersapp:create_professor' %}" class="button-secondary btn-sm mb-2" style="width: 100%; ">Registrar Professor</a>
+                        <a href="{% url 'usersapp:upload_professors' %}" class="button-secondary btn-sm" style="width: 100%; ">Registrar Professor per Fitxer</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- No results message -->
+<div id="no-results-message" class="text-center text-danger" style="display:none;">
+    <span id="no-results-text"></span>
+</div>
+
+<!-- JavaScript function for confirmation and filtering remains unchanged -->
+<script>
+    // (Your existing JavaScript)
+</script>
+
+{% endblock %}
