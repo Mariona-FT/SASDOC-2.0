@@ -131,6 +131,8 @@ def edit_professor_view(request, professor_id):
 
     return render(request, 'users/professor/professor_form.html', {'form': form})
 
+def extrainformation_professor(request):
+    pass
 
 # REGISTER PROFESSOR - only for DIRECTOR - USING CSV or EXCEL
 @login_required

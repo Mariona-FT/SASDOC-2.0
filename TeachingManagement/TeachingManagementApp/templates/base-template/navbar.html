@@ -66,7 +66,7 @@
 <div class="container-fluid mt-1">
     {% if user.is_authenticated and user.role == 'director' %}
         <!-- Include General Parameters Navbar -->
-        <div class="collapse {% if '/users/professor-management/' in request.path or '/users/professor-create/' in request.path or '/users/professor-edit/' in request.path or '/users/professor-upload/' in request.path or '/users/register-chief/' in request.path or '/academicinfo/fields/' in request.path or '/academicinfo/sections/' in request.path or '/academicinfo/schools/' in request.path or '/academicinfo/degrees/' in request.path or '/academicinfo/courses/' in request.path or '/academicinfo/typeprofessor/' in request.path or '/academicinfo/year' in request.path or '/academicinfo/lenguages' in request.path %}show{% endif %}" id="generalParametersNavbar">
+        <div class="collapse {% if '/users/professor-management/' in request.path or '/users/professor-create/' in request.path or '/users/professor-edit/' in request.path or '/users/professor-upload/' in request.path or '/users/register-chief/' in request.path or '/academicinfo/fields/' in request.path or '/academicinfo/sections/' in request.path or '/academicinfo/schools/' in request.path or '/academicinfo/degrees/' in request.path or '/academicinfo/courses/' in request.path or '/academicinfo/typeprofessor/' in request.path or '/academicinfo/year' in request.path or '/academicinfo/languages' in request.path %}show{% endif %}" id="generalParametersNavbar">
             {% include 'navbars/navbar-general-parameters.html' %}
         </div> 
           <!-- Include Course Parameters Subnavbar -->

@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.contrib import messages
 from django.shortcuts import render, redirect,get_object_or_404
-from .models import Field,Section,School,Degree,Courses,TypeProfessor,Lenguage,Year
-from .forms import FieldForm,SectionForm,SchoolForm,DegreeForm,CoursesForm,TypeProfessorForm,LenguageForm,YearForm
+from .models import Field,Section,School,Degree,Courses,TypeProfessor,Language,Year
+from .forms import FieldForm,SectionForm,SchoolForm,DegreeForm,CoursesForm,TypeProfessorForm,LanguageForm,YearForm
 
 # Create your views here.
 
@@ -370,54 +370,54 @@ def type_professor_crud(request):
     })
 
 
-### LENGUAGES ###
-def lenguage_crud(request):
-    lenguages = Lenguage.objects.all()
-    form = LenguageForm()
+### LANGUAGES ###
+def language_crud(request):
+    languages = Language.objects.all()
+    form = LanguageForm()
     deleting = None
 
     if request.method == "POST":
         # Handle delete confirmation
         if 'confirm_delete' in request.POST:
-            lenguage_id = request.POST.get('confirm_delete')
-            lenguage = get_object_or_404(Lenguage, pk=lenguage_id)
-            lenguage_name = lenguage.Lenguage
-            lenguage.delete()
-            messages.success(request, f"La llengua {lenguage_name} s'ha eliminat correctament.")
-            return redirect('lenguage_crud')
+            language_id = request.POST.get('confirm_delete')
+            language = get_object_or_404(Language, pk=language_id)
+            language_name = language.Language
+            language.delete()
+            messages.success(request, f"La llengua {language_name} s'ha eliminat correctament.")
+            return redirect('language_crud')
 
         # Handle update
-        if 'idLenguage' in request.POST:
-            lenguage_id = request.POST.get('idLenguage')
-            lenguage = get_object_or_404(Lenguage, pk=lenguage_id)
-            form = LenguageForm(request.POST, instance=lenguage)
+        if 'idLanguage' in request.POST:
+            language_id = request.POST.get('idLanguage')
+            language = get_object_or_404(Language, pk=language_id)
+            form = LanguageForm(request.POST, instance=language)
             if form.is_valid():
                 form.save()
-                messages.success(request, f"La llengua {lenguage.Lenguage} s'ha actualitzat correctament.")
-                return redirect('lenguage_crud')
+                messages.success(request, f"La llengua {language.Language} s'ha actualitzat correctament.")
+                return redirect('language_crud')
 
         # Handle create
         else:
-            form = LenguageForm(request.POST)
+            form = LanguageForm(request.POST)
             if form.is_valid():
-                lenguage = form.save()
-                messages.success(request, f"La llengua {lenguage.Lenguage} s'ha creat correctament.")
-                return redirect('lenguage_crud')
+                language = form.save()
+                messages.success(request, f"La llengua {language.Language} s'ha creat correctament.")
+                return redirect('language_crud')
 
     # Handle edit
     if 'edit' in request.GET:
-        lenguage_id = request.GET.get('edit')
-        lenguage = get_object_or_404(Lenguage, pk=lenguage_id)
-        form = LenguageForm(instance=lenguage)
+        language_id = request.GET.get('edit')
+        language = get_object_or_404(Language, pk=language_id)
+        form = LanguageForm(instance=language)
 
     # Handle initial delete confirmation
     if 'confirm_delete' in request.GET:
-        lenguage_id = request.GET.get('confirm_delete')
-        deleting = get_object_or_404(Lenguage, pk=lenguage_id)
+        laguage_id = request.GET.get('confirm_delete')
+        deleting = get_object_or_404(Language, pk=language_id)
 
-    return render(request, 'lenguage_crud.html', {
+    return render(request, 'language_crud.html', {
         'form': form,
-        'lenguages': lenguages,
+        'languages': languages,
         'deleting': deleting,
     })
 

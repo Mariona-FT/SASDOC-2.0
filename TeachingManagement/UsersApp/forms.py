@@ -83,6 +83,11 @@ class ProfessorRegistrationForm(forms.ModelForm):
 
         return user
     
+class ExtraInfoProfessor(forms.Form):
+
+    pass
+
+
 #To upload files .csv 
 class UploadFileForm(forms.Form):
     file = forms.FileField(label="Puja un fitxer de tipus CSV o Excel:")
