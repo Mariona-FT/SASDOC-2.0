@@ -28,10 +28,13 @@ urlpatterns = [
 
     #Professors
     path('professor-management/', views.professor_crud, name='professor_crud'),
-    path('professor-information/<int:professor_id>', views.extrainformation_professor, name='extrainfo_professor'),
-
+    
     path('professor-create/', views.create_professor_view, name='create_professor'),
     path('professor-edit/<int:professor_id>/', views.edit_professor_view, name='edit_professor'),
+    
+    path('professor-information/', views.extrainfo_professor_crud, name='extrainfo_professor_crud'),
+    path('professor-information/<int:professor_id>', views.enter_extrainfo_professor, name='enter_extrainfo_professor'),
+
     path('professor-upload/', views.upload_professors, name='upload_professors'),
 
     #Sector chiefs

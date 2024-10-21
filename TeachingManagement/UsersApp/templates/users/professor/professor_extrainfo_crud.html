@@ -1,0 +1,198 @@
+{% extends 'base-template/base.html' %}
+
+{% block title %}Gestió Informació Extra Professorat{% endblock %}
+
+{% block content %}
+<div class="container-fluid d-flex" style="min-height: 100vh;">
+    <div class="col-lg-10 mx-auto">
+        <h2 style="text-align:center">Gestió d'Informació Extra del Professorat</h2>
+
+        <!-- Display success, warning, or error messages -->
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="{% if message.tags %}alert alert-{{ message.tags }}{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        <hr>
+
+        <div class="row">
+            <div class="col-lg-10">
+                
+                <!-- Filter Fields -->
+                <h3>Filtres pel Llistat del Professorat</h3>
+                <div class="d-flex justify-content-between row mb-2">
+                    <!-- Filters section -->
+                    <div class="filters d-flex flex-wrap">
+                        <div class="col-md-12 mb-2">
+                            <label for="filter-name-cognom">Filtrar per Nom i Cognom:</label>
+                            <input type="text" id="filter-name-cognom" class="form-control" placeholder="Cerca per Nom o Cognom">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="filter-contract">Filtrar per Contracte:</label>
+                            <select id="filter-contract" class="form-control">
+                                <option value="">Tots</option>
+                                <option value="yes">Amb Contracte</option>
+                                <option value="no">Sense Contracte</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="filter-fields">Filtrar per Camps d'estudi:</label>
+                            <select id="filter-fields" class="form-control">
+                                <option value="">Tots</option>
+                                <option value="yes">Amb Camps d'estudi</option>
+                                <option value="no">Sense Camps d'estudi</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="filter-languages">Filtrar per Llengües:</label>
+                            <select id="filter-languages" class="form-control">
+                                <option value="">Tots</option>
+                                <option value="yes">Amb Llengües</option>
+                                <option value="no">Sense Llengües</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+                <!-- List of all professors -->
+                <h3>Llista del Professorat</h3>
+                <table class="table table-striped" id="professors-table">
+                    <thead>
+                        <tr>
+                            <th>Nom i Cognoms</th>
+                            <th>Contracte Actual</th>
+                            <th>Camps d'estudi</th>
+                            <th>Llengües</th>
+                            <th>Accions</th>                    
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if professors %}
+                        {% for professor in professors %}
+                            <tr>
+                                <td>{{ professor.name }} {{ professor.family_name }}</td>
+                                <td> 
+                                    {% if professor.current_contract %}
+                                        <span class="professor-fields" style="color:blue">{{ professor.current_contract }}</span>
+                                    {% else %}
+                                        <span>No té cap contracte assignat</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if professor.professor_fields.exists %}
+                                        {% for field in professor.professor_fields.all %}
+                                            <span class="professor-fields" style="color:blue">{{ field.Field.NameField }}</span>{% if not forloop.last %}, {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        <span>No té camps d'estudi assignats</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if professor.professor_languages.exists %}
+                                        {% for language in professor.professor_languages.all %}
+                                            <span class="professor-languages" style="color:blue">{{ language.Language.Language }}</span>{% if not forloop.last %}, {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        <span>No té llengües assignades</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <!-- Extra Info button -->
+                                    <a href="{% url 'usersapp:enter_extrainfo_professor' professor.pk %}" class="button-secondary btn-sm">Informació Extra</a>                            
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="5" class="text-center">Cap professor en la taula.</td>
+                            </tr>        
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Buttons section fixed on the right -->
+            <div class="col-lg-2">
+                <div class="sticky-top" style="top: 1rem">
+                    <div class="buttons mb-2 d-flex flex-column align-items-center">
+                        <a href="{% url 'usersapp:create_professor' %}" class="button-secondary btn-sm mb-2" style="width: 100%; ">Registrar Professor</a>
+                        <a href="{% url 'usersapp:upload_professors' %}" class="button-secondary btn-sm" style="width: 100%; ">Registrar Professor per Fitxer</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- No results message -->
+<div id="no-results-message" class="text-center text-danger" style="display:none;">
+    <span id="no-results-text"></span>
+</div>
+
+<!-- JavaScript function for confirmation and filtering -->
+<script>
+    // Existing JavaScript for filtering
+    document.addEventListener('DOMContentLoaded', function () {
+        const filterNameCognom = document.getElementById('filter-name-cognom');
+        const filterContract = document.getElementById('filter-contract');
+        const filterFields = document.getElementById('filter-fields');
+        const filterLanguages = document.getElementById('filter-languages');
+        const tableRows = document.querySelectorAll('#professors-table tbody tr');
+        const noResultsMessage = document.getElementById('no-results-message');
+        const noResultsText = document.getElementById('no-results-text');
+
+        function filterTable() {
+    const nameCognomValue = filterNameCognom.value.toLowerCase();
+            const contractValue = filterContract.value;
+            const fieldsValue = filterFields.value;
+            const languagesValue = filterLanguages.value;
+            let rowsVisible = 0; // Track how many rows are visible
+            let message = "Cap professor";
+
+            // Filtering logic
+            tableRows.forEach(row => {
+                const nameText = row.cells[0].textContent.toLowerCase();
+                const currentContractText = row.cells[1].textContent.trim();
+                const hasContract = currentContractText !== "No té cap contracte assignat";
+                const hasFields = row.cells[2].textContent.includes("No té camps d'estudi assignats") ? false : true;
+                const hasLanguages = row.cells[3].textContent.includes("No té llengües assignades") ? false : true;
+
+                const matchesNameCognom = nameText.includes(nameCognomValue);
+                const matchesContract = (contractValue === '' || (contractValue === 'yes' && hasContract) || (contractValue === 'no' && !hasContract));
+                const matchesFields = (fieldsValue === '' || (fieldsValue === 'yes' && hasFields) || (fieldsValue === 'no' && !hasFields));
+                const matchesLanguages = (languagesValue === '' || (languagesValue === 'yes' && hasLanguages) || (languagesValue === 'no' && !hasLanguages));
+
+                if (matchesNameCognom && matchesContract && matchesFields && matchesLanguages) {
+                    row.style.display = '';
+                    rowsVisible++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            if (rowsVisible === 0) {
+                message += ".";
+                noResultsText.textContent = message;
+                noResultsMessage.style.display = 'block';
+            } else {
+                noResultsMessage.style.display = 'none';
+            }
+        }
+
+        filterNameCognom.addEventListener('input', filterTable);
+        filterContract.addEventListener('change', filterTable);
+        filterFields.addEventListener('change', filterTable);
+        filterLanguages.addEventListener('change', filterTable);
+    });
+</script>
+
+{% endblock %}

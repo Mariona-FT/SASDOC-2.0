@@ -5,6 +5,12 @@
         <li class="nav-item {% if request.path == professor_crud_url %} active{% endif %}">
             <a class="nav-link" href="{{professor_crud_url}}">Gestió del Professorat</a>
         </li>
+        
+        {% url 'usersapp:extrainfo_professor_crud' as extrainfo_professor_crud_url %}
+        <li class="nav-item {% if request.path == extrainfo_professor_crud_url %} active{% endif %}">
+            <a class="nav-link" href="{{extrainfo_professor_crud_url}}">Gestió Informació Extra del Professorat</a>
+        </li>
+
         {% url 'usersapp:register_chief' as register_chief_url %}
         <li class="nav-item {% if request.path == register_chief_url %} active{% endif %}">
             <a class="nav-link" href="{{register_chief_url}}">Gestió de Caps de Secció</a>
