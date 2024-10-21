@@ -1,5 +1,5 @@
 from django import forms
-from .models import Field,Section,School,Degree,Courses,TypeProfessor,Lenguage,Year
+from .models import Field,Section,School,Degree,Courses,TypeProfessor,Language,Year
 
 class FieldForm(forms.ModelForm):
     class Meta:
@@ -65,12 +65,12 @@ class TypeProfessorForm(forms.ModelForm):
             'isActive': 'És Actiu?',
         }
 
-class LenguageForm(forms.ModelForm):
+class LanguageForm(forms.ModelForm):
     class Meta:
-        model = Lenguage
-        fields = ['Lenguage']
+        model = Language
+        fields = ['Language']
         labels = {
-            'Lenguage': 'Llenguatge',
+            'Language': 'Llenguatge',
         }
 
 class YearForm(forms.ModelForm):

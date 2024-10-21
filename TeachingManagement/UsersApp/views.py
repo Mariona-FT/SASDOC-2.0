@@ -4,9 +4,10 @@ from django.contrib.auth.decorators import login_required,user_passes_test
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.hashers import make_password
 from django.contrib import messages
-from .forms import CustomLoginForm, ProfessorRegistrationForm,ChiefRegistrationForm, UploadFileForm # customized forms in forms.py
+from .forms import CustomLoginForm, ProfessorRegistrationForm,ExtraInfoProfessor,ChiefRegistrationForm, UploadFileForm # customized forms in forms.py
 from .models import Professor,Chief, CustomUser
 from .services import  process_professor_file #services of the app
+from django.db import IntegrityError
 
 
 # Create your views here.
@@ -27,6 +28,7 @@ def is_sector_chief(user):
 @login_required
 @user_passes_test(is_sector_chief)
 def sector_chief_dashboard(request):
+    #Delete this dashboard in the future
     return render(request, 'users/sectorchief_dashboard.html')
 
 #PROFESSOR views
@@ -36,7 +38,8 @@ def is_professor(user):
 @login_required
 @user_passes_test(is_professor)
 def professor_dashboard(request):
-    return render(request, 'users/professor_dashboard.html')
+    #Delete this dashboard in the future
+    return render(request, 'users/professor/professor_dashboard.html')
 
 
 ### PROFESSOR ###
@@ -55,55 +58,63 @@ def professor_crud(request):
             messages.success(request, f"El professor {professor_name} s'ha eliminat correctament.")
             return redirect('usersapp:professor_crud')
 
-        # Handle update
-        if 'idProfessor' in request.POST:
-            professor_id = request.POST.get('idProfessor')            
+    # Handle initial delete confirmation
+    if 'confirm_delete' in request.GET:
+        professor_id = request.GET.get('confirm_delete')
+        deleting = get_object_or_404(Professor, pk=professor_id)
+
+    return render(request, 'users/professor/professor_crud.html', {
+        'form': form,
+        'professors': professors,
+        'deleting': deleting,
+    })
+
+@login_required
+@user_passes_test(is_director)
+def create_professor_view(request):
+    if request.method == 'POST':
+        form = ProfessorRegistrationForm(request.POST)
+        if form.is_valid():
             try:
-                professor = Professor.objects.get(user_id=professor_id)
-                user = professor.user  # Get the linked CustomUser
-                form = ProfessorRegistrationForm(request.POST, instance=user)
-                
-                if form.is_valid():
-                    if user.role != 'sector_chief':  
-                        user.role = 'professor' 
-                    form.save()
-                    messages.success(request, f"El professor {professor.name} {professor.family_name} s'ha actualitzat correctament.")
-                    return redirect('usersapp:professor_crud')
+                # Save the user (CustomUser) but do not commit yet
+                user = form.save(commit=True)
+                user.role = 'professor' 
+                user.save()
+
+                messages.success(request, f"Professor {user.first_name} {user.last_name} s'ha creat correctament.")
+                return redirect('usersapp:professor_crud')
             
-            except Professor.DoesNotExist:
-                messages.error(request, "No hi ha professor amb el ID de usuari donat.")
-                return redirect('usersapp:professor_crud')
-
-        # Handle create
+            except IntegrityError as e:
+                # Add an error message to the form for the user to correct it
+                form.add_error(None, f"Error: No es pot crear el professor. {str(e)}")
         else:
-            form = ProfessorRegistrationForm(request.POST)
-            if form.is_valid():
-                user = form.save(commit=True) 
-                user.role = 'professor'  #Create professor role has to be professor
-                user.save() 
+            messages.error(request, "Formulari no vàlid. Revisa les dades i torna-ho a intentar.")
 
-                # Now update the associated Professor instance
-                Professor.objects.update_or_create(
-                    user=user,
-                    defaults={
-                        'idProfessor': form.cleaned_data['idprofessor'],
-                        'name': form.cleaned_data['name'],
-                        'family_name': form.cleaned_data['family_name'],
-                        'description': form.cleaned_data['description'],
-                        'comment': form.cleaned_data['comment'],
-                        'isActive': form.cleaned_data['isactive'].lower(),
-                    }
-                )
-                messages.success(request, f"Professor {form.cleaned_data['name']} {form.cleaned_data['family_name']} creat correctament.")
-                return redirect('usersapp:professor_crud')
-            else:
-                messages.error(request, "Error en el form, torna a entrar les dades.")
+    else:
+        form = ProfessorRegistrationForm()
 
-    # Handle edit
-    if 'edit' in request.GET:
-        professor_id = request.GET.get('edit')
+    return render(request, 'users/professor/professor_form.html', {'form': form})
+
+@login_required
+@user_passes_test(is_director)
+def edit_professor_view(request, professor_id):
+       # Retrieve the professor by ID, or return a 404 error
+    professor = get_object_or_404(Professor, pk=professor_id)
+    user = professor.user  # Get the linked CustomUser instance
+
+    if request.method == 'POST':
+        form = ProfessorRegistrationForm(request.POST, instance=user)  # Use the related user instance
+        if form.is_valid():
+            # Save the CustomUser (user) details
+            if user.role != 'sector_chief':  
+                user.role = 'professor' 
+            form.save()
+            
+            messages.success(request, f"El professor {professor.name} {professor.family_name} s'ha actualitzat correctament.")
+            return redirect('usersapp:professor_crud')
+    else:
+        # Populate the form with the current user's and professor's information
         try:
-            professor = get_object_or_404(Professor, pk=professor_id)
             form = ProfessorRegistrationForm(initial={
                 'idprofessor': professor.idProfessor,
                 'username': professor.user.username,
@@ -118,42 +129,26 @@ def professor_crud(request):
             messages.error(request, "No hi ha professor amb el ID de usuari donat.")
             return redirect('usersapp:professor_crud')
 
-    # Handle initial delete confirmation
-    if 'confirm_delete' in request.GET:
-        professor_id = request.GET.get('confirm_delete')
-        deleting = get_object_or_404(Professor, pk=professor_id)
-
-    return render(request, 'users/professor_crud.html', {
-        'form': form,
-        'professors': professors,
-        'deleting': deleting,
-    })
+    return render(request, 'users/professor/professor_form.html', {'form': form})
 
 
-# REGISTER PROFESSOR MANUALLY - only for DIRECTOR
-@login_required
-@user_passes_test(is_director)
-def register_professor(request):
+def extrainformation_professor(request,professor_id):
+    professor = get_object_or_404(Professor, pk=professor_id)
+
     if request.method == 'POST':
-            form = ProfessorRegistrationForm(request.POST)
-            if form.is_valid():
-                try:
-                    # Save the form, which handles user creation/updating
-                    user = form.save(commit=True) 
-                    user.role = 'professor'  #Create professor role has to be professor
-                    user.save() 
-                    messages.success(request, f"Professor {user.first_name} {user.last_name} creat correctament.")
-                    return redirect('usersapp:register_professor')
+        form = ExtraInfoProfessor(request.POST, instance=professor)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"Informació extra per a {professor.name} {professor.family_name} actualitzada correctament.")
+            return redirect('usersapp:professor_crud')
+        else:
+            messages.warning(request, f"Informació extra per a {professor.name} {professor.family_name} no s'ha actualitzat correctament.")
 
-                except Exception as e:
-                    messages.error(request, "Error al registrar el professor.")
-            else:
-                print(form.errors)  
-                messages.error(request, "Error al form modifica les dades.")   
     else:
-        form = ProfessorRegistrationForm()
+        form = ExtraInfoProfessor(instance=professor) #enter information of the professor - 
 
-    return render(request, 'actions/register_professor.html', {'form': form})
+    return render(request, 'users/professor/professor_extrainfo.html', {'form': form,'professor':professor})
+
 
 
 # REGISTER PROFESSOR - only for DIRECTOR - USING CSV or EXCEL

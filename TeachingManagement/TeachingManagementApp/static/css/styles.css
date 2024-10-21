@@ -91,24 +91,27 @@ body {
 
 /*CREATE/UPDATE*/
 .button-create {
-    background-color: #28a745; /* Green color */
-    font-size: 16px; /* Adjust the size to make it more readable */
-    color: white; /* Change text color */
+    background-color: #b7e3c1; /* Light green background */
+    font-size: 16px; /* Adjust the size */
+    color: #176d2b; /* Darker green text color */
+    border: 1px solid #28a745; /* Border with a darker shade */
     padding: 8px 12px; /* Adjust padding */
     border-radius: 4px; /* Optional: rounded corners */
     cursor: pointer; /* Pointer cursor on hover */
     text-decoration: none; /* Remove underline */
 
 }
-.button-edit:hover {
-    background-color: #218838; /* Darker shade on hover */
+.button-create:hover {
+    background-color: #9fc6a8; /* Slightly darker green on hover */
+    color: #176d2b; /* Darker green text color */
 }
 
 /*EDIT*/
 .button-edit {
-    background-color: orange; /* Adjust the color as needed */
-    font-size: 16px; /* Adjust the size to make it more readable */
-    color: white; /* Change text color */
+    background-color: #f6c261; /* Light background color */
+    font-size: 16px; /* Adjust the size */
+    color:#a56505; /* Darker text color */
+    border: 1px solid #9e640c; /* Border with a darker shade */
     padding: 8px 12px; /* Adjust padding */
     border-radius: 4px; /* Optional: rounded corners */
     cursor: pointer; /* Pointer cursor on hover */
@@ -117,14 +120,15 @@ body {
 }
 
 .button-edit:hover {
-    background-color: darkorange; /* Darker shade on hover */
+    background-color: #ebae51; /* Slightly darker on hover */
+    color:#a56505; /* Text color remains the same */
 }
 /*DELETE*/
 .button-delete {
-    background-color:#DC3545; /* Change to your desired color */
+    background-color: #f8b0b5; /* Light background color */
     font-size: 16px; /* Adjust the size to make it more readable */
-    color: white; /* Change text color */
-    border: none; /* Remove border */
+    color: #c92d39; /* Darker text color */
+    border: 1px solid #c92d39; /* Border with a darker shade */
     padding: 8px 12px; /* Adjust padding */
     border-radius: 4px; /* Optional: rounded corners */
     cursor: pointer; /* Pointer cursor on hover */
@@ -132,18 +136,21 @@ body {
 }
 
 .button-delete:hover {
-    background-color: darkred; /* Darker shade on hover */
+    background-color: #f4999e; /* Slightly darker on hover */
+    color: #9f1f2b; /* Darker text color */
 }
 
 /*RETURN*/
 .button-return {
-    background-color: #f8f9fa; /* Light background color */
+    background-color: #ceced3; /* Light background color */
     color: #333; /* Dark text color for contrast */
-    border: 1px solid #ccc; /* Grey border */
-    padding: 6px 12px; /* Reduced padding for a smaller button */
+    border: 1px solid #6f7273;
+    padding: 6px 10px; /* Reduced padding for a smaller button */
     border-radius: 4px; /* Rounded corners */
     text-decoration: none; /* Remove underline */
     font-size: 12px; /* Smaller font size */
+    display: inline-block;
+
 }
 
 .button-return:hover {
@@ -152,17 +159,19 @@ body {
 }
 
 .button-secondary {
-    background-color:#f2f2f2; /* Slightly darker light grey */
-    color: #333; /* Darker text color for better readability */
-    border: 1px solid #bbb; /* Slightly darker grey border */
+    background-color: #b3d3ea;
+    color: #214159;
+    border: 1px solid #98bfe9; /* Slightly darker grey border */
     padding: 8px 16px; /* Padding for a comfortable size */
     border-radius: 4px; /* Rounded corners */
     text-decoration: none; /* Remove underline */
     font-size: 14px; /* Standard font size */
-    transition: background-color 0.3s, color 0.3s; /* Smooth transition */
+    text-align: center; /* Ensures the text is centered in the link */
+
 }
 
 .button-secondary:hover {
-    background-color: #d0d0d0; /* Darker grey on hover */
-    color: #111; /* Darker text color on hover */
+    background-color: #a0c7e4;
+    box-shadow: none;
+    color: #2c5777;
 }

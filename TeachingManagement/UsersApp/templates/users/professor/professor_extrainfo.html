@@ -1,0 +1,20 @@
+{% extends 'base-template/base.html' %}
+
+{% block title %}Informació Extra - {{ professor.name }}{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Informació Extra per a {{ professor.name }} {{ professor.family_name }}</h2>
+    <a href="{% url 'usersapp:professor_crud' %}" class="button-return btn-sm">Tornar a Gestió de Professors</a>
+</div>
+
+<div class="container">
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button type="submit" class="button-create mb">Guardar informació</button>
+    </form>
+</div>
+{% endblock %}

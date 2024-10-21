@@ -84,16 +84,16 @@ class TypeProfessor(models.Model):
     def __str__(self):
         return self.Name
 
-class Lenguage(models.Model):
-    idLenguage = models.AutoField(primary_key=True)
-    Lenguage = models.CharField(max_length=20,unique=True)
+class Language(models.Model):
+    idLanguage = models.AutoField(primary_key=True)
+    Language = models.CharField(max_length=20,unique=True)
 
     class Meta:
-        verbose_name='lenguage'
-        verbose_name_plural='lenguages'
+        verbose_name='language'
+        verbose_name_plural='languages'
 
     def __str__(self):
-        return self.Lenguage
+        return self.Language
 
 class Year(models.Model):
     idYear = models.AutoField(primary_key=True) 

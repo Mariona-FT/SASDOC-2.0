@@ -39,9 +39,9 @@
         <li class="nav-item {% if request.path == type_professor_crud_url %} active{% endif %}">
             <a class="nav-link" href="{{ type_professor_crud_url }}">Gestió Tipus de Professorat</a>
         </li>
-        {% url 'lenguage_crud' as lenguage_crud_url %}
-        <li class="nav-item {% if request.path == lenguage_crud_url %} active{% endif %}">
-            <a class="nav-link" href="{{ lenguage_crud_url }}">Gestió de Llenguatges</a>
+        {% url 'language_crud' as language_crud_url %}
+        <li class="nav-item {% if request.path == language_crud_url %} active{% endif %}">
+            <a class="nav-link" href="{{ language_crud_url }}">Gestió de Llenguatges</a>
         </li>
 
         {% url 'year_crud' as year_crud_url %}

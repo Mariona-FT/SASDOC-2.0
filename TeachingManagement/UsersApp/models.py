@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, Group, Permission # Customize user model
 from django.contrib.auth import get_user_model
 from django.utils import timezone
-from AcademicInfoApp.models import Year,Section
+from AcademicInfoApp.models import Year,Section,TypeProfessor,Field,Language
 # Create your models here.
 
 class CustomUser(AbstractUser):
@@ -51,6 +51,7 @@ class Professor(models.Model):
     ]
     
     isActive = models.CharField(max_length=3, choices=ACTIVE_CHOICES, default='yes')
+    current_contract = models.ForeignKey(TypeProfessor, on_delete=models.SET_NULL, null=True, blank=True)
     
     class Meta:
         verbose_name='professor'
@@ -59,6 +60,25 @@ class Professor(models.Model):
     def __str__(self):
         return f"{self.name} {self.family_name}"
 
+
+# PROFESSOR-FIELD MODEL (Many-to-Many)
+class ProfessorField(models.Model):
+    idProfessorField = models.AutoField(primary_key=True)
+    Professor = models.ForeignKey(Professor, on_delete=models.CASCADE, related_name='professor_fields')
+    Field = models.ForeignKey(Field, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.Professor.name} - {self.field.NameField}"
+
+# PROFESSOR-LANGUAGE MODEL (Many-to-Many)
+class ProfessorLanguage(models.Model):
+    idProfessorLanguage = models.AutoField(primary_key=True)
+    Professor = models.ForeignKey(Professor, on_delete=models.CASCADE, related_name='professor_languages')
+    Language = models.ForeignKey(Language, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.Professor.name} - {self.Language.Language}"
+    
 
 #CHIEF MODEL
 class Chief(models.Model):

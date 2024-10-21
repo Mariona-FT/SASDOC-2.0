@@ -21,7 +21,7 @@
 <form method="post" class="mb-4">
     {% csrf_token %}
     {% if form.instance.pk %}
-        <input type="hidden" name="idLenguage" value="{{ form.instance.pk }}">
+        <input type="hidden" name="idLanguage" value="{{ form.instance.pk }}">
     {% endif %}
     <div class="mb-3">
         {{ form.as_p }}  <!-- This will use the custom labels -->
@@ -41,18 +41,18 @@
         </tr>
     </thead>
     <tbody>
-        {% if lenguages %}
-            {% for lenguage in lenguages %}
+        {% if languages %}
+            {% for language in languages %}
                 <tr>
-                    <td>{{ lenguage.Lenguage }}</td>
+                    <td>{{ language.Language }}</td>
                     <td>
                         <!-- Edit button -->
-                        <a href="?edit={{ lenguage.pk }}" class="button-edit btn-sm">Editar</a>
+                        <a href="?edit={{ language.pk }}" class="button-edit btn-sm">Editar</a>
 
                         <!-- Delete form with JavaScript confirmation -->
-                        <form method="post" action="{% url 'lenguage_crud' %}" style="display:inline;" onsubmit="return confirmDelete('{{ lenguage.Lenguage }}');">
+                        <form method="post" action="{% url 'language_crud' %}" style="display:inline;" onsubmit="return confirmDelete('{{ language.Language }}');">
                             {% csrf_token %}
-                            <input type="hidden" name="confirm_delete" value="{{ lenguage.pk }}">
+                            <input type="hidden" name="confirm_delete" value="{{ language.pk }}">
                             <button type="submit" class="button-delete btn-sm">Eliminar</button>
                         </form>
                     </td>
