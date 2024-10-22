@@ -135,6 +135,11 @@ def extrainfo_professor_crud(request):
     professors = Professor.objects.all()
     deleting = None
 
+    incomplete_count = 0
+    for professor in professors:
+        if not professor.current_contract or not professor.professor_fields.exists() or not professor.professor_languages.exists():
+            incomplete_count += 1
+
     if request.method == "POST":
         # Handle delete confirmation
         if 'confirm_delete' in request.POST:
@@ -153,6 +158,7 @@ def extrainfo_professor_crud(request):
     return render(request, 'users/professor/professor_extrainfo_crud.html', {
         'professors': professors,
         'deleting': deleting,
+        'incomplete_count': incomplete_count,
     })
 
 

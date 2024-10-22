@@ -43,18 +43,23 @@ class ProfessorRegistrationForm(forms.ModelForm):
         username = cleaned_data.get('username')
         email = cleaned_data.get('email')
 
-        # Check if a user with the same username or email already exists
-        if CustomUser.objects.filter(username=username).exists():
+        # Get the current instance to exclude it from the uniqueness check
+        user_instance = self.instance
+
+        # Check if a user with the same username already exists, excluding the current user
+        if CustomUser.objects.filter(username=username).exclude(pk=user_instance.pk).exists():
             raise ValidationError(f'El nom d\'usuari "{username}" ja està en ús.')
 
-        if CustomUser.objects.filter(email=email).exists():
+        # Check if a user with the same email already exists, excluding the current user
+        if CustomUser.objects.filter(email=email).exclude(pk=user_instance.pk).exists():
             raise ValidationError(f'El correu electrònic "{email}" ja està en ús.')
 
-        # Check if a professor with the same ID already exists
-        if Professor.objects.filter(idProfessor=idprofessor).exists():
+        # Check if a professor with the same ID already exists, excluding the current professor
+        if Professor.objects.filter(idProfessor=idprofessor).exclude(user=user_instance).exists():
             raise ValidationError(f'El ID del professor "{idprofessor}" ja està en ús.')
 
         return cleaned_data
+
     def save(self, commit=True):
         # Get the CustomUser instance from the form
         user = self.instance
