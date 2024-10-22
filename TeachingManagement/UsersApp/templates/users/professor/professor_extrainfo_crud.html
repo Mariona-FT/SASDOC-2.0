@@ -62,8 +62,15 @@
                 </div>
 
                 <hr>
+
                 <!-- List of all professors -->
-                <h3>Llista del Professorat</h3>
+                <h3>Llista del Professorat</h3>                 
+                
+                <!-- Count Professors without all attributes -->
+                <h5 style="font-style:italic;">
+                    Professors sense totes les dades assignades: {{ incomplete_count }}
+                </h5>
+
                 <table class="table table-striped" id="professors-table">
                     <thead>
                         <tr>
@@ -77,39 +84,48 @@
                     <tbody>
                         {% if professors %}
                         {% for professor in professors %}
-                            <tr>
-                                <td>{{ professor.name }} {{ professor.family_name }}</td>
-                                <td> 
-                                    {% if professor.current_contract %}
-                                        <span class="professor-fields" style="color:blue">{{ professor.current_contract }}</span>
-                                    {% else %}
-                                        <span>No té cap contracte assignat</span>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if professor.professor_fields.exists %}
-                                        {% for field in professor.professor_fields.all %}
-                                            <span class="professor-fields" style="color:blue">{{ field.Field.NameField }}</span>{% if not forloop.last %}, {% endif %}
-                                        {% endfor %}
-                                    {% else %}
-                                        <span>No té camps d'estudi assignats</span>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if professor.professor_languages.exists %}
-                                        {% for language in professor.professor_languages.all %}
-                                            <span class="professor-languages" style="color:blue">{{ language.Language.Language }}</span>{% if not forloop.last %}, {% endif %}
-                                        {% endfor %}
-                                    {% else %}
-                                        <span>No té llengües assignades</span>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    <!-- Extra Info button -->
-                                    <a href="{% url 'usersapp:enter_extrainfo_professor' professor.pk %}" class="button-secondary btn-sm">Informació Extra</a>                            
-                                </td>
-                            </tr>
-                        {% endfor %}
+                                {% if professor.isActive == 'yes' %}
+                                <tr style="background-color: 
+                                {% if not professor.current_contract or not professor.professor_fields.exists or not professor.professor_languages.exists %}
+                                    #f8e1e1;; <!-- Red for incomplete -->
+                                {% else %}
+                                    #ffffff; <!-- White for complete -->
+                                {% endif %}
+                                    ">
+                                    <td>{{ professor.name }} {{ professor.family_name }}</td>
+                                    <td> 
+                                        {% if professor.current_contract %}
+                                            <span class="professor-fields" style="color:blue">{{ professor.current_contract }}</span>
+                                        {% else %}
+                                            <span class="no-data">No contracte assignat</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if professor.professor_fields.exists %}
+                                            {% for field in professor.professor_fields.all %}
+                                                <span class="professor-fields" style="color:blue">{{ field.Field.NameField }}</span>{% if not forloop.last %}, {% endif %}
+                                            {% endfor %}
+                                        {% else %}
+                                            <span class="no-data">No camps d'estudi assignats</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if professor.professor_languages.exists %}
+                                            {% for language in professor.professor_languages.all %}
+                                                <span class="professor-languages" style="color:blue">{{ language.Language.Language }}</span>{% if not forloop.last %}, {% endif %}
+                                            {% endfor %}
+                                        {% else %}
+                                            <span class="no-data">No llengües assignades</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <!-- Extra Info button -->
+                                        <a href="{% url 'usersapp:enter_extrainfo_professor' professor.pk %}" class="button-secondary btn-sm"> Editar Informació</a>  
+                                                                
+                                    </td>
+                                </tr>
+                                {%endif %}
+                            {% endfor %}
                         {% else %}
                             <tr>
                                 <td colspan="5" class="text-center">Cap professor en la taula.</td>

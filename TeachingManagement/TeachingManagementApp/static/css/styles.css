@@ -175,3 +175,8 @@ body {
     box-shadow: none;
     color: #2c5777;
 }
+
+.no-data {
+    color:#761d23; /* Darker text color */
+    font-family: "Georgia", serif; /* Different font family for these messages */
+}
