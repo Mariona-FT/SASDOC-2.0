@@ -36,6 +36,7 @@
 <table class="table table-striped">
     <thead>
         <tr>
+            <th>Codi de l'Escola</th>
             <th>Nom de l'Escola</th>
             <th>Secció</th>
             <th>Actiu</th>
@@ -46,6 +47,7 @@
         {% if schools %}
             {% for school in schools %}
                 <tr>
+                    <td>{{ school.CodeSchool }}</td>
                     <td>{{ school.NameSchool }}</td>
                     <td>
                         {% if school.Section %}

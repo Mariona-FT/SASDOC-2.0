@@ -36,6 +36,7 @@
 <table class="table table-striped">
     <thead>
         <tr>
+            <th>Lletra de la Secció</th>
             <th>Nom de la Secció</th>
             <th>Actiu</th>
             <th>Accions</th>
@@ -45,6 +46,7 @@
         {% if sections %}
             {% for section in sections %}
                 <tr>
+                    <td> {{section.LetterSection}}</td>
                     <td>{{ section.NameSection }}</td>
                     <td>{{ section.isActive|yesno:"Sí,No" }}</td>
                     <td>

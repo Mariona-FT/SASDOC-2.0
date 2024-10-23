@@ -4,7 +4,7 @@ from django.db import models
 
 class Field(models.Model):
     idField = models.AutoField(primary_key=True)
-    NameField = models.CharField(max_length=100)
+    NameField = models.CharField(max_length=100,unique=True)
     Description = models.TextField(blank=True, null=True)
     isActive = models.BooleanField(default=True)
 
@@ -17,7 +17,8 @@ class Field(models.Model):
     
 class Section(models.Model):
     idSection = models.AutoField(primary_key=True)
-    NameSection = models.CharField(max_length=100)
+    NameSection = models.CharField(max_length=100,unique=True)
+    LetterSection=models.CharField(max_length=2, unique=True)
     isActive = models.BooleanField(default=True)
 
     class Meta:
@@ -29,7 +30,8 @@ class Section(models.Model):
 
 class School(models.Model):
     idSchool = models.AutoField(primary_key=True)
-    NameSchool = models.CharField(max_length=100)
+    NameSchool = models.CharField(max_length=100,unique=True)
+    CodeSchool = models.IntegerField(unique=True)
     Section = models.ForeignKey('Section', on_delete=models.SET_NULL, null=True) #do not eliminate schools if section eliminated
     isActive = models.BooleanField(default=True)
 
@@ -43,6 +45,7 @@ class School(models.Model):
 class Degree(models.Model):
     idDegree = models.AutoField(primary_key=True)
     NameDegree = models.CharField(max_length=100)
+    CodeDegree = models.IntegerField(unique=True)
     School = models.ForeignKey('School', on_delete=models.SET_NULL, null=True) #do not eliminate degree if school eliminated
     isActive = models.BooleanField(default=True)
 
@@ -56,7 +59,7 @@ class Degree(models.Model):
 class Courses(models.Model):
     idCourse = models.AutoField(primary_key=True)
     NameCourse = models.CharField(max_length=100)
-    CodeCourse = models.IntegerField()
+    CodeCourse = models.IntegerField(unique=True)
     ECTS = models.IntegerField()
     Degree = models.ForeignKey('Degree', on_delete=models.CASCADE, null=True) #eliminate course if degree eliminated
     Field = models.ForeignKey('Field', on_delete=models.SET_NULL, null=True) #do not course if field eliminated
@@ -71,7 +74,7 @@ class Courses(models.Model):
     
 class TypeProfessor(models.Model):
     idTypeProfessor = models.AutoField(primary_key=True)
-    Name = models.CharField(max_length=100)
+    Name = models.CharField(max_length=100,unique=True)
     isFullTime = models.BooleanField(default=False)
     isPermanent = models.BooleanField(default=False)
     Comment = models.TextField(blank=True, null=True)
