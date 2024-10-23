@@ -66,9 +66,10 @@ class ProfessorField(models.Model):
     idProfessorField = models.AutoField(primary_key=True)
     Professor = models.ForeignKey(Professor, on_delete=models.CASCADE, related_name='professor_fields')
     Field = models.ForeignKey(Field, on_delete=models.CASCADE)
+    Comment=models.TextField(null=True,blank=True)
 
     def __str__(self):
-        return f"{self.Professor.name} - {self.field.NameField}"
+        return f"{self.Professor.name} - {self.Field.NameField}"
 
 # PROFESSOR-LANGUAGE MODEL (Many-to-Many)
 class ProfessorLanguage(models.Model):

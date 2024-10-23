@@ -3,58 +3,62 @@
 {% block title %}Registrar Caps Secció{% endblock %}
 
 {% block content %}
-<h2>Registrar Caps de Secció</h2>
+<div class="container-fluid d-flex" style="min-height: 100vh;">
+    <div class="col-lg-10 mx-auto">
+        <h2 style="text-align:center">Registrar Caps de Secció</h2>
 
-<form method="post">
-    {% csrf_token %}
-    {% if messages %}
-    <div class="messages">
-        {% for message in messages %}
-            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
-                {{ message }}
-            </div>
-        {% endfor %}
-    </div>
-    {% endif %}
-
-    {% if form.errors %}
-    <div class="alert alert-danger">
-        <ul>
-            {% for field, errors in form.errors.items %}
-                {{ field }}: {{ errors|join:", " }}
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                    {{ message }}
+                </div>
             {% endfor %}
-        </ul>
-    </div>
-    {% endif %}
+        </div>
+        {% endif %}
+        <hr>
 
-    <!-- Filter Fields -->
-    <div class="form-group">
-        <label for="filter-name">Filtrar per Nom: </label>
-        <input type="text" id="filter-name" class="form-control" placeholder="Cerca per Nom">
-    </div>
+        <div class="row">
+            <div class="col-lg-10"> 
+                <!-- Filter Fields -->
+                <h3>Filtres pel Llistat del Professorat</h3>
+                <div class="d-flex justify-content-between row mb-2">
+                    <!-- Filters section -->
+                    <div class="filters d-flex flex-wrap">
+                        <div class="col-md-6">
+                            <label for="filter-name">Filtrar per Nom: </label>
+                            <input type="text" id="filter-name" class="form-control" placeholder="Cerca per Nom">
+                        </div>
 
-    <div class="form-group">
-        <label for="filter-family-name">Filtrar per Cognom: </label>
-        <input type="text" id="filter-family-name" class="form-control" placeholder="Cerca per Cognom">
-    </div>
+                        <div class="col-md-6">
+                            <label for="filter-family-name">Filtrar per Cognom: </label>
+                            <input type="text" id="filter-family-name" class="form-control" placeholder="Cerca per Cognom">
+                        </div>
 
-    <div class="form-group">
-        <label for="filter-active">Filtrar per si és Professorat actiu:</label>
-        <select id="filter-active" class="form-control">
-            <option value="">Tots</option>
-            <option value="yes">Actiu</option>
-            <option value="no">No Actiu</option>
-        </select>
-    </div>
+                        <div class="col-md-4">
+                            <label for="filter-active">Filtrar per si és Professorat actiu:</label>
+                            <select id="filter-active" class="form-control">
+                                <option value="">Tots</option>
+                                <option value="yes">Actiu</option>
+                                <option value="no">No Actiu</option>
+                            </select>
+                        </div>
 
-    <div class="form-group">
-        <label for="filter-chief">Filtrar per si és Professorat es Cap de Secció:</label>
-        <select id="filter-chief" class="form-control">
-            <option value="">Tots</option>
-            <option value="yes">Ja Caps de secció</option>
-            <option value="no">No cap de Secció</option>
-        </select>
-    </div>
+                        <div class="col-md-4">
+                            <label for="filter-chief">Filtrar per si és Professorat es Cap de Secció:</label>
+                            <select id="filter-chief" class="form-control">
+                                <option value="">Tots</option>
+                                <option value="yes">Ja Caps de secció</option>
+                                <option value="no">No cap de Secció</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+
+                <!-- List of all professors -->
+                <h3>Llista del Professorat</h3>                 
 
     <!-- Professors Table -->
     <table class="table table-striped" id="professors-table">
