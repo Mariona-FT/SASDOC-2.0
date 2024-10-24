@@ -16,9 +16,9 @@
             <a class="nav-link" href="{{register_chief_url}}">Gestió de Caps de Secció</a>
         </li>
 
-        {% url 'field_crud' as field_crud_url %}
-        <li class="nav-item {% if request.path == field_crud_url %} active{% endif %}">
-            <a class="nav-link" href="{{ field_crud_url }}">Gestió de Camps</a>
+        {% url 'field_list' as field_list_url %}
+        <li class="nav-item {% if request.path == field_list_url %} active{% endif %}">
+            <a class="nav-link" href="{{ field_list_url }}">Gestió de Camps</a>
         </li>
 
         {% url 'section_crud' as section_crud_url %}

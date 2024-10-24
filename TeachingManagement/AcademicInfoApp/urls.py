@@ -20,7 +20,13 @@ from django.shortcuts import redirect
 from .import views
 
 urlpatterns = [
-    path('fields/', views.field_crud, name='field_crud'),
+
+    #FIELD ACTIONS
+    path('fields/', views.field_list, name='field_list'),
+    path('fields/create/', views.field_create_edit, name='field_create'),
+    path('fields/edit/<int:idField>', views.field_create_edit, name='field_edit'),
+
+
     path('sections/', views.section_crud, name='section_crud'),
     path('schools/', views.school_crud, name='school_crud'),
     path('degrees/', views.degree_crud, name='degree_crud'),
