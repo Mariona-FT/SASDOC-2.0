@@ -3,7 +3,6 @@
 {% block title %}Informació del Camp{% endblock %}
 
 {% block content %}
-
 <div class="container-fluid d-flex" style="min-height: 100vh;">
     <div class="col-lg-10 mx-auto">
         <h2 style="text-align:center">Gestió de les Camps</h2>
@@ -23,7 +22,7 @@
 
         <div class="row">
             <div class="col-lg-10">
-                 <!-- Filter Fields -->
+                <!-- Filter Fields -->
                 <h3>Filtres pels Camps</h3>
                 <div class="d-flex justify-content-between row mb-2">
                     <!-- Filters section -->
@@ -32,6 +31,7 @@
                             <label for="filter-all">Filtrar contingut:</label>
                             <input type="text" id="filter-all" class="form-control" placeholder="Cerca per Nom o Descripció">
                         </div>
+
                         <div class="col-md-2">
                             <label for="filter-active">Filtrar per si és Camp actiu:</label>
                             <select id="filter-active" class="form-control">
@@ -42,11 +42,13 @@
                         </div>
                     </div>
                 </div>
+
                 <hr>
 
                 <!-- List of all fields -->
                 <h3>Llista de Camps</h3>
-                <table class="table table-striped" id="professors-table">
+                <table class="table table-striped" id="fields-table">
+                    
                     <thead>
                         <tr>
                             <th>Nom del Camp</th>
@@ -55,7 +57,8 @@
                             <th>Accions</th>
                         </tr>
                     </thead>
-                    <tbody id="fields-table-body">
+
+                    <tbody>
                         {% if fields %}
                             {% for field in fields %}
                                 <tr data-name="{{ field.NameField }}" data-description="{{ field.Description }}" data-active="{{ field.isActive|yesno:'yes,no' }}">
@@ -82,23 +85,24 @@
                         {% endif %}
                     </tbody>
                 </table>
+
+                <!-- No results message -->
+                <div id="no-results-message" class="text-center text-danger" style="display:none;">
+                    <span id="no-results-text"></span>
+                </div>
             </div>
 
             <!-- Buttons section fixed on the right -->
             <div class="col-lg-2">
-                <div class="sticky-top" style="top: 1rem">
+                <div class="sticky-top" style="top: 1rem;">
                     <div class="buttons mb-2 d-flex flex-column align-items-center">
                         <a href="{% url 'field_create' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Afegir Camp</a>
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
-</div>
-
-<!-- No results message -->
-<div id="no-results-message" class="text-center text-danger" style="display:none;">
-    <span id="no-results-text"></span>
 </div>
 
 <!-- JavaScript function for confirmation -->
@@ -108,39 +112,49 @@
     }
 
     // JavaScript for dynamic filtering
-    document.getElementById('filter-all').addEventListener('input', function () {
-        filterTable();
-    });
-
-    document.getElementById('filter-active').addEventListener('change', function () {
-        filterTable();
-    });
+    document.getElementById('filter-all').addEventListener('input', filterTable);
+    document.getElementById('filter-active').addEventListener('change', filterTable);
 
     function filterTable() {
-        let searchValue = document.getElementById('filter-all').value.toLowerCase();
-        let activeFilter = document.getElementById('filter-active').value;
-        let tableRows = document.querySelectorAll('#fields-table-body tr');
+        const searchValue = document.getElementById('filter-all').value.toLowerCase();
+        const activeFilter = document.getElementById('filter-active').value;
+        const tableRows = document.querySelectorAll('#fields-table tbody tr');
+
+        let rowsVisible = 0;
 
         tableRows.forEach(row => {
-            let fieldName = row.getAttribute('data-name').toLowerCase();
-            let fieldDescription = row.getAttribute('data-description').toLowerCase();
-            let isActive = row.getAttribute('data-active');
+            const fieldName = row.getAttribute('data-name').toLowerCase();
+            const fieldDescription = row.getAttribute('data-description').toLowerCase();
+            const isActive = row.getAttribute('data-active');
 
-            let matchesSearch = fieldName.includes(searchValue) || fieldDescription.includes(searchValue);
-            let matchesActiveFilter = (activeFilter === '' || isActive === activeFilter);
+            const matchesSearch = fieldName.includes(searchValue) || fieldDescription.includes(searchValue);
+            const matchesActiveFilter = (activeFilter === '' || isActive === activeFilter);
 
             if (matchesSearch && matchesActiveFilter) {
                 row.style.display = '';
+                rowsVisible++;
             } else {
                 row.style.display = 'none';
             }
         });
 
-        // Show or hide "No results" message
-        let visibleRows = Array.from(tableRows).some(row => row.style.display !== 'none');
-        document.getElementById('no-results-message').style.display = visibleRows ? 'none' : 'block';
-        document.getElementById('no-results-text').textContent = visibleRows ? '' : 'No hi ha camps que coincideixin amb la cerca.';
+        const noResultsMessage = document.getElementById('no-results-message');
+        const noResultsText = document.getElementById('no-results-text');
+
+        // No results message logic
+        if (rowsVisible === 0) {
+            let message = "Cap camp amb els criteris de cerca";
+            if (searchValue) {
+                message += ` amb el terme "${searchValue}"`;
+            }
+            if (activeFilter) {
+                message += ` actiu "${activeFilter === 'yes' ? 'Sí' : 'No'}"`;
+            }
+            noResultsText.textContent = message + ".";
+            noResultsMessage.style.display = 'block';
+        } else {
+            noResultsMessage.style.display = 'none';
+        }
     }
 </script>
-
 {% endblock %}
