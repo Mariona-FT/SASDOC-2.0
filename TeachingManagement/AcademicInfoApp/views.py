@@ -124,69 +124,57 @@ def sections_create_edit(request,idSection=None):
 
 
 ### SCHOOLS ###
-def school_crud(request):
+def school_list(request):
     schools = School.objects.all()
-    form = SchoolForm()  # Initialize the form
     deleting = None
-
+   
     if request.method == "POST":
-        # FINAL DELETE
+       # FINAL DELETE
         if 'confirm_delete' in request.POST:
-            school_id = request.POST.get('confirm_delete')  # id passed in request
-            print("Intentant eliminar l'escola amb ID:", school_id)  
+            school_id = request.POST.get('confirm_delete') # id passed in url
             try:
                 school = School.objects.get(pk=school_id)
                 school_name = school.NameSchool  # Store the name for the message
                 school.delete()
                 messages.success(request, f"L'escola {school_name} s'ha eliminat correctament.")
-                return redirect('school_crud') 
+                return redirect('school_list') 
             except School.DoesNotExist:
-                messages.error(request, "Error: L'escola no existeix.")
-                print("Error: L'escola amb ID", school_id, "no existeix.")  
-
-        # UPDATE
-        if 'idSchool' in request.POST:  
-            school_id = request.POST.get('idSchool')
-            print("Intentant actualitzar l'escola amb ID:", school_id)  
-            school = get_object_or_404(School, pk=school_id)  # Check if school exists
-            form = SchoolForm(request.POST, instance=school) 
-            if form.is_valid():  # Check if form is valid
-                form.save()
-                messages.success(request, f"L'escola {school.NameSchool} s'ha actualitzat correctament.")
-                return redirect('school_crud') 
-            else:
-                print("Errors en el formulari d'actualització:", form.errors)  
-                messages.error(request, "Error en actualitzar l'escola. Si us plau, revisa els camps.")
-
-        # CREATE
-        else:
-            form = SchoolForm(request.POST)  # Initialize form with POST data
-            print("Intentant crear una nova escola:", request.POST)  
-            if form.is_valid():  # Check if form is valid
-                school = form.save()
-                messages.success(request, f"L'escola {school.NameSchool} s'ha creat correctament.")
-                return redirect('school_crud')  
-            else:
-                print("Errors en el formulari de creació:", form.errors)  
-                messages.error(request, "Error en crear l'escola. Si us plau, revisa els camps.")
-
-    # UPDATE FORM
-    if 'edit' in request.GET:
-        school_id = request.GET.get('edit')
-        print("Intentant editar l'escola amb ID:", school_id)  
-        school = get_object_or_404(School, pk=school_id)
-        form = SchoolForm(instance=school)
+                messages.error(request, "Error: La secció no existeix.")
     
     # ACTION OF INITIAL DELETE
     if 'confirm_delete' in request.GET:
         school_id = request.GET.get('confirm_delete')
-        deleting = get_object_or_404(School, pk=school_id)  # Get school to delete
-
-    return render(request, 'school_crud.html', {
-        'form': form,
+        deleting = get_object_or_404(School, pk=school_id)  # Get id school to delete
+    
+    return render(request, 'school_list_actions.html', {
         'schools': schools,
         'deleting': deleting,
     })
+
+#Function to create or edit a school - depends if is passed a idschool 
+def school_create_edit(request,idSchool=None):
+    if idSchool:
+        # If idschool is passed, we are editing an existing school
+        school = get_object_or_404(School, pk=idSchool)
+        if request.method == 'POST':
+            form = SchoolForm(request.POST, instance=school)
+            if form.is_valid():
+                form.save()
+                messages.success(request, f"L'Escola {school.NameSchool} s\'ha actualitzat correctament.")
+                return redirect('school_list')
+        else:
+            form = SchoolForm(instance=school)
+    else:
+        # No idSchool, we are creating a new school
+        if request.method == 'POST':
+            form = SchoolForm(request.POST)
+            if form.is_valid():
+                new_school = form.save()
+                messages.success(request, f"L'escola {new_school.NameSchool} s\'ha afegit correctament.")
+                return redirect('school_list')
+        else:
+            form = SchoolForm()
+    return render(request, 'school_form.html', {'form': form})
     
 ### DEGREE ###
 def degree_crud(request):

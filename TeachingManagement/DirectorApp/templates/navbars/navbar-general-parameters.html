@@ -26,9 +26,9 @@
             <a class="nav-link" href="{{ section_List_url }}">Gestió de Seccions</a>
         </li>
 
-        {% url 'school_crud' as school_crud_url %}
-        <li class="nav-item {% if request.path == school_crud_url %} active{% endif %}">
-            <a class="nav-link" href="{{ school_crud_url }}">Gestió d'Escoles</a>
+        {% url 'school_list' as school_list_url %}
+        <li class="nav-item {% if request.path == school_list_url %} active{% endif %}">
+            <a class="nav-link" href="{{ school_list_url }}">Gestió d'Escoles</a>
         </li>
 
         {% url 'degree_crud' as degree_crud_url %}
