@@ -66,69 +66,62 @@ def field_create_edit(request, idField=None):
 
 
 ### SECTION ###
-def section_crud(request):
-    sections = Section.objects.all()
-    form = SectionForm()  # Initialize the form
-    deleting = None
 
+## Section list to manage - listing and actions of edit, delete and add section
+def section_list(request):
+    sections = Section.objects.all()
+    deleting = None
+   
     if request.method == "POST":
-        # FINAL DELETE
+
+       # FINAL DELETE
         if 'confirm_delete' in request.POST:
-            section_id = request.POST.get('confirm_delete')  # id passed in request
-            print("Intentant eliminar la secció amb ID:", section_id)  
+            section_id = request.POST.get('confirm_delete') # id passed in url
             try:
                 section = Section.objects.get(pk=section_id)
                 section_name = section.NameSection  # Store the name for the message
                 section.delete()
-                messages.success(request, f"la secció {section_name} s'ha eliminat correctament.")
-                return redirect('section_crud') 
+                messages.success(request, f"La secció {section_name} s'ha eliminat correctament.")
+                return redirect('section_list') 
             except Section.DoesNotExist:
                 messages.error(request, "Error: La secció no existeix.")
-                print("Error: La secció amb ID", section_id, "no existeix.")  
-
-        # UPDATE
-        if 'idSection' in request.POST:  
-            section_id = request.POST.get('idSection')
-            print("Intentant actualitzar la secció amb ID:", section_id)  
-            section = get_object_or_404(Section, pk=section_id)  # Check if section exists
-            form = SectionForm(request.POST, instance=section) 
-            if form.is_valid():  # Check if form is valid
-                form.save()
-                messages.success(request, f"La secció {section.NameSection} s'ha actualitzat correctament.")
-                return redirect('section_crud') 
-            else:
-                print("Errors en el formulari d'actualització:", form.errors)  
-                messages.error(request, "Error en actualitzar la secció. Si us plau, revisa els camps.")
-
-        # CREATE
-        else:
-            form = SectionForm(request.POST)  # Initialize form with POST data
-            print("Intentant crear una nova secció:", request.POST)  
-            if form.is_valid():  # Check if form is valid
-                section = form.save()
-                messages.success(request, f"La secció {section.NameSection} s'ha creat correctament.")
-                return redirect('section_crud')  
-            else:
-                print("Errors en el formulari de creació:", form.errors)  
-                messages.error(request, "Error en crear la secció. Si us plau, revisa els camps.")
-
-    # UPDATE FORM
-    if 'edit' in request.GET:
-        section_id = request.GET.get('edit')
-        print("Intentant editar la secció amb ID:", section_id)  
-        section = get_object_or_404(Section, pk=section_id)
-        form = SectionForm(instance=section)
     
     # ACTION OF INITIAL DELETE
     if 'confirm_delete' in request.GET:
         section_id = request.GET.get('confirm_delete')
-        deleting = get_object_or_404(Section, pk=section_id)  # Get section to delete
+        deleting = get_object_or_404(Section, pk=section_id)  # Get id section to delete
 
-    return render(request, 'section_crud.html', {
-        'form': form,
+    return render(request, 'section_list_actions.html', {
         'sections': sections,
         'deleting': deleting,
     })
+
+#Function to create or edit a section - depends if is passed a idSection 
+def sections_create_edit(request,idSection=None):
+    if idSection:
+        # If idSection is passed, we are editing an existing section
+        section = get_object_or_404(Section, pk=idSection)
+        if request.method == 'POST':
+            form = SectionForm(request.POST, instance=section)
+            if form.is_valid():
+                form.save()
+                messages.success(request, f'La secció {section.NameSection} s\'ha actualitzat correctament.')
+                return redirect('section_list')
+        else:
+            form = SectionForm(instance=section)
+    else:
+        # No idSection, we are creating a new section
+        if request.method == 'POST':
+            form = SectionForm(request.POST)
+            if form.is_valid():
+                new_section = form.save()
+                messages.success(request, f'La secció {new_section.NameSection} s\'ha afegit correctament.')
+                return redirect('section_list')
+        else:
+            form = SectionForm()
+
+    return render(request, 'section_form.html', {'form': form})
+
 
 ### SCHOOLS ###
 def school_crud(request):
