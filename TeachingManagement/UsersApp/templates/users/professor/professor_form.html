@@ -1,11 +1,11 @@
 {% extends 'base-template/base.html' %}
 
-{% block title %}{% if form.instance.pk %}Editar Professor{% else %}Registar Professor{% endif %}{% endblock %}
+{% block title %}{% if form.instance.pk %}Editar Professor{% else %}Afegir Professor{% endif %}{% endblock %}
 
 {% block content %}
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>{% if form.instance.pk %}Actualitzar Professor{% else %}Registrar Professor{% endif %}</h2>
+    <h2>{% if form.instance.pk %}Actualitzar Professor{% else %}Afegir Professor{% endif %}</h2>
     <a href="{% url 'usersapp:professor_crud' %}" class="button-return btn-sm">Tornar a Gestió de Professors</a>
 </div>
 
@@ -34,7 +34,7 @@
         </div>
 
         <button type="submit" class="button-create btn-sm">
-            {% if form.instance.pk %}Actualitzar{% else %}Registrar{% endif %} Professor
+            {% if form.instance.pk %}Actualitzar{% else %}Afegir{% endif %} Professor
         </button>
     </form>
 {% endblock %}

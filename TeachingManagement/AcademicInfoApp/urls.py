@@ -20,9 +20,22 @@ from django.shortcuts import redirect
 from .import views
 
 urlpatterns = [
-    path('fields/', views.field_crud, name='field_crud'),
-    path('sections/', views.section_crud, name='section_crud'),
-    path('schools/', views.school_crud, name='school_crud'),
+
+    #FIELD ACTIONS
+    path('fields/', views.field_list, name='field_list'),
+    path('fields/create/', views.field_create_edit, name='field_create'),
+    path('fields/edit/<int:idField>', views.field_create_edit, name='field_edit'),
+
+    #SECTIONS ACTIONS
+    path('sections/', views.section_list, name='section_list'),
+    path('sections/create/', views.sections_create_edit, name='section_create'),
+    path('sections/edit/<int:idSection>', views.sections_create_edit, name='section_edit'),
+
+    #SCHOOLS ACTIONS
+    path('schools/', views.school_list, name='school_list'),
+    path('schools/create/', views.school_create_edit, name='school_create'),
+    path('schools/edit/<int:idSchool>', views.school_create_edit, name='school_edit'),
+
     path('degrees/', views.degree_crud, name='degree_crud'),
     path('courses/', views.course_crud, name='courses_crud'),
     path('typeprofessor/', views.type_professor_crud, name='type_professor_crud'),

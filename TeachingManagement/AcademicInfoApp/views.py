@@ -7,9 +7,10 @@ from .forms import FieldForm,SectionForm,SchoolForm,DegreeForm,CoursesForm,TypeP
 # Create your views here.
 
 ### FIELD ###
-def field_crud(request):
+
+## Field list to manage - listing and actions of edit, delete and add field
+def field_list(request):
     fields = Field.objects.all()
-    form = FieldForm()  # Initialize the form
     deleting = None
 
     if request.method == "POST":
@@ -17,190 +18,163 @@ def field_crud(request):
        # FINAL DELETE
         if 'confirm_delete' in request.POST:
             field_id = request.POST.get('confirm_delete') # id passed in url
-            print("Intentant eliminar el camp amb ID:", field_id)  
             try:
                 field = Field.objects.get(pk=field_id)
                 field_name = field.NameField  # Store the name for the message
                 field.delete()
                 messages.success(request, f"El camp {field_name} s'ha eliminat correctament.")
-                return redirect('field_crud') 
+                return redirect('field_list') 
             except Field.DoesNotExist:
                 messages.error(request, "Error: El camp no existeix.")
                 print("Error: El camp amb ID", field_id, "no existeix.")  
-
-        # UPDATE
-        if 'idField' in request.POST:  
-            field_id = request.POST.get('idField')
-            print("Intentant actualitzar el camp amb ID:", field_id)  
-            field = get_object_or_404(Field, pk=field_id) #Check if field is in bd
-            form = FieldForm(request.POST, instance=field) 
-            if form.is_valid(): #Check form correct
-                form.save()
-                messages.success(request, f"El camp {field.NameField} s'ha actualitzat correctament.")
-                return redirect('field_crud') 
-            else:
-                print("Errors en el formulari d'actualització:", form.errors)  
-                messages.error(request, "Error en actualitzar el camp. Si us plau, revisa els camps.")
-
-        # CREATE
-        else:
-            form = FieldForm(request.POST) #enter all the info of the form
-            print("Intentant crear un nou camp:", request.POST)  
-            if form.is_valid(): #Check form correct
-                field = form.save()
-                messages.success(request, f"El camp {field.NameField} s'ha creat correctament.")
-                return redirect('field_crud')  
-            else:
-                print("Errors en el formulari de creació:", form.errors)  
-                messages.error(request, "Error en crear el camp. Si us plau, revisa els camps.")
-
-    # UPDATE FORM
-    if 'edit' in request.GET:
-        field_id = request.GET.get('edit')
-        print("Intentant editar el camp amb ID:", field_id)  
-        field = get_object_or_404(Field, pk=field_id)
-        form = FieldForm(instance=field)
     
     # ACTION OF INITIAL DELETE
     if 'confirm_delete' in request.GET:
         field_id = request.GET.get('confirm_delete')
         deleting = get_object_or_404(Field, pk=field_id)  # Get id field to delete
 
-    return render(request, 'field_crud.html', {
-        'form': form,
+    return render(request, 'field_list_actions.html', {
         'fields': fields,
         'deleting': deleting,
     })
 
-### SECTION ###
-def section_crud(request):
-    sections = Section.objects.all()
-    form = SectionForm()  # Initialize the form
-    deleting = None
+#Function to create or edit a field - depends if is passed a idField 
+def field_create_edit(request, idField=None):
+    if idField:
+        # If idField is passed, we are editing an existing field
+        field = get_object_or_404(Field, pk=idField)
+        if request.method == 'POST':
+            form = FieldForm(request.POST, instance=field)
+            if form.is_valid():
+                form.save()
+                messages.success(request, f'El camp "{field.NameField}" s\'ha actualitzat correctament.')
+                return redirect('field_list')
+        else:
+            form = FieldForm(instance=field)
+    else:
+        # No idField, we are creating a new field
+        if request.method == 'POST':
+            form = FieldForm(request.POST)
+            if form.is_valid():
+                new_field = form.save()
+                messages.success(request, f'El camp "{new_field.NameField}" s\'ha afegit correctament.')
+                return redirect('field_list')
+        else:
+            form = FieldForm()
 
+    return render(request, 'field_form.html', {'form': form})
+
+
+### SECTION ###
+
+## Section list to manage - listing and actions of edit, delete and add section
+def section_list(request):
+    sections = Section.objects.all()
+    deleting = None
+   
     if request.method == "POST":
-        # FINAL DELETE
+
+       # FINAL DELETE
         if 'confirm_delete' in request.POST:
-            section_id = request.POST.get('confirm_delete')  # id passed in request
-            print("Intentant eliminar la secció amb ID:", section_id)  
+            section_id = request.POST.get('confirm_delete') # id passed in url
             try:
                 section = Section.objects.get(pk=section_id)
                 section_name = section.NameSection  # Store the name for the message
                 section.delete()
-                messages.success(request, f"la secció {section_name} s'ha eliminat correctament.")
-                return redirect('section_crud') 
+                messages.success(request, f"La secció {section_name} s'ha eliminat correctament.")
+                return redirect('section_list') 
             except Section.DoesNotExist:
                 messages.error(request, "Error: La secció no existeix.")
-                print("Error: La secció amb ID", section_id, "no existeix.")  
-
-        # UPDATE
-        if 'idSection' in request.POST:  
-            section_id = request.POST.get('idSection')
-            print("Intentant actualitzar la secció amb ID:", section_id)  
-            section = get_object_or_404(Section, pk=section_id)  # Check if section exists
-            form = SectionForm(request.POST, instance=section) 
-            if form.is_valid():  # Check if form is valid
-                form.save()
-                messages.success(request, f"La secció {section.NameSection} s'ha actualitzat correctament.")
-                return redirect('section_crud') 
-            else:
-                print("Errors en el formulari d'actualització:", form.errors)  
-                messages.error(request, "Error en actualitzar la secció. Si us plau, revisa els camps.")
-
-        # CREATE
-        else:
-            form = SectionForm(request.POST)  # Initialize form with POST data
-            print("Intentant crear una nova secció:", request.POST)  
-            if form.is_valid():  # Check if form is valid
-                section = form.save()
-                messages.success(request, f"La secció {section.NameSection} s'ha creat correctament.")
-                return redirect('section_crud')  
-            else:
-                print("Errors en el formulari de creació:", form.errors)  
-                messages.error(request, "Error en crear la secció. Si us plau, revisa els camps.")
-
-    # UPDATE FORM
-    if 'edit' in request.GET:
-        section_id = request.GET.get('edit')
-        print("Intentant editar la secció amb ID:", section_id)  
-        section = get_object_or_404(Section, pk=section_id)
-        form = SectionForm(instance=section)
     
     # ACTION OF INITIAL DELETE
     if 'confirm_delete' in request.GET:
         section_id = request.GET.get('confirm_delete')
-        deleting = get_object_or_404(Section, pk=section_id)  # Get section to delete
+        deleting = get_object_or_404(Section, pk=section_id)  # Get id section to delete
 
-    return render(request, 'section_crud.html', {
-        'form': form,
+    return render(request, 'section_list_actions.html', {
         'sections': sections,
         'deleting': deleting,
     })
 
-### SCHOOLS ###
-def school_crud(request):
-    schools = School.objects.all()
-    form = SchoolForm()  # Initialize the form
-    deleting = None
+#Function to create or edit a section - depends if is passed a idSection 
+def sections_create_edit(request,idSection=None):
+    if idSection:
+        # If idSection is passed, we are editing an existing section
+        section = get_object_or_404(Section, pk=idSection)
+        if request.method == 'POST':
+            form = SectionForm(request.POST, instance=section)
+            if form.is_valid():
+                form.save()
+                messages.success(request, f'La secció {section.NameSection} s\'ha actualitzat correctament.')
+                return redirect('section_list')
+        else:
+            form = SectionForm(instance=section)
+    else:
+        # No idSection, we are creating a new section
+        if request.method == 'POST':
+            form = SectionForm(request.POST)
+            if form.is_valid():
+                new_section = form.save()
+                messages.success(request, f'La secció {new_section.NameSection} s\'ha afegit correctament.')
+                return redirect('section_list')
+        else:
+            form = SectionForm()
 
+    return render(request, 'section_form.html', {'form': form})
+
+
+### SCHOOLS ###
+def school_list(request):
+    schools = School.objects.all()
+    deleting = None
+   
     if request.method == "POST":
-        # FINAL DELETE
+       # FINAL DELETE
         if 'confirm_delete' in request.POST:
-            school_id = request.POST.get('confirm_delete')  # id passed in request
-            print("Intentant eliminar l'escola amb ID:", school_id)  
+            school_id = request.POST.get('confirm_delete') # id passed in url
             try:
                 school = School.objects.get(pk=school_id)
                 school_name = school.NameSchool  # Store the name for the message
                 school.delete()
                 messages.success(request, f"L'escola {school_name} s'ha eliminat correctament.")
-                return redirect('school_crud') 
+                return redirect('school_list') 
             except School.DoesNotExist:
-                messages.error(request, "Error: L'escola no existeix.")
-                print("Error: L'escola amb ID", school_id, "no existeix.")  
-
-        # UPDATE
-        if 'idSchool' in request.POST:  
-            school_id = request.POST.get('idSchool')
-            print("Intentant actualitzar l'escola amb ID:", school_id)  
-            school = get_object_or_404(School, pk=school_id)  # Check if school exists
-            form = SchoolForm(request.POST, instance=school) 
-            if form.is_valid():  # Check if form is valid
-                form.save()
-                messages.success(request, f"L'escola {school.NameSchool} s'ha actualitzat correctament.")
-                return redirect('school_crud') 
-            else:
-                print("Errors en el formulari d'actualització:", form.errors)  
-                messages.error(request, "Error en actualitzar l'escola. Si us plau, revisa els camps.")
-
-        # CREATE
-        else:
-            form = SchoolForm(request.POST)  # Initialize form with POST data
-            print("Intentant crear una nova escola:", request.POST)  
-            if form.is_valid():  # Check if form is valid
-                school = form.save()
-                messages.success(request, f"L'escola {school.NameSchool} s'ha creat correctament.")
-                return redirect('school_crud')  
-            else:
-                print("Errors en el formulari de creació:", form.errors)  
-                messages.error(request, "Error en crear l'escola. Si us plau, revisa els camps.")
-
-    # UPDATE FORM
-    if 'edit' in request.GET:
-        school_id = request.GET.get('edit')
-        print("Intentant editar l'escola amb ID:", school_id)  
-        school = get_object_or_404(School, pk=school_id)
-        form = SchoolForm(instance=school)
+                messages.error(request, "Error: La secció no existeix.")
     
     # ACTION OF INITIAL DELETE
     if 'confirm_delete' in request.GET:
         school_id = request.GET.get('confirm_delete')
-        deleting = get_object_or_404(School, pk=school_id)  # Get school to delete
-
-    return render(request, 'school_crud.html', {
-        'form': form,
+        deleting = get_object_or_404(School, pk=school_id)  # Get id school to delete
+    
+    return render(request, 'school_list_actions.html', {
         'schools': schools,
         'deleting': deleting,
     })
+
+#Function to create or edit a school - depends if is passed a idschool 
+def school_create_edit(request,idSchool=None):
+    if idSchool:
+        # If idschool is passed, we are editing an existing school
+        school = get_object_or_404(School, pk=idSchool)
+        if request.method == 'POST':
+            form = SchoolForm(request.POST, instance=school)
+            if form.is_valid():
+                form.save()
+                messages.success(request, f"L'Escola {school.NameSchool} s\'ha actualitzat correctament.")
+                return redirect('school_list')
+        else:
+            form = SchoolForm(instance=school)
+    else:
+        # No idSchool, we are creating a new school
+        if request.method == 'POST':
+            form = SchoolForm(request.POST)
+            if form.is_valid():
+                new_school = form.save()
+                messages.success(request, f"L'escola {new_school.NameSchool} s\'ha afegit correctament.")
+                return redirect('school_list')
+        else:
+            form = SchoolForm()
+    return render(request, 'school_form.html', {'form': form})
     
 ### DEGREE ###
 def degree_crud(request):

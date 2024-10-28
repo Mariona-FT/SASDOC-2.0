@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser,Professor,Chief
+from .models import CustomUser,Professor,Chief,ProfessorField,ProfessorLanguage
 
 # Register your models here.
 
@@ -27,3 +27,13 @@ class CheifAdmin(admin.ModelAdmin):
     list_display=["professor","year","section"]
 
 admin.site.register(Chief, CheifAdmin)
+
+class ProfessorFieldAdmin(admin.ModelAdmin):
+    list_display=["idProfessorField","Professor","Field"]
+
+admin.site.register(ProfessorField,ProfessorFieldAdmin)
+
+class ProfessorLanguageAdmin(admin.ModelAdmin):
+    list_display=["idProfessorLanguage","Professor","Language"]
+
+admin.site.register(ProfessorLanguage,ProfessorLanguageAdmin)

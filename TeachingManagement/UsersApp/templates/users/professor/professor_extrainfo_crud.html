@@ -68,7 +68,7 @@
                 
                 <!-- Count Professors without all attributes -->
                 <h5 style="font-style:italic;">
-                    Professors sense totes les dades assignades: {{ incomplete_count }}
+                    Professorat Actiu sense totes les dades assignades: {{ incomplete_count }}
                 </h5>
 
                 <table class="table table-striped" id="professors-table">
@@ -103,7 +103,7 @@
                                     <td>
                                         {% if professor.professor_fields.exists %}
                                             {% for field in professor.professor_fields.all %}
-                                                <span class="professor-fields" style="color:blue">{{ field.Field.NameField }}</span>{% if not forloop.last %}, {% endif %}
+                                                <span class="professor-fields" style="color:blue;">{{ field.Field.NameField }}</span>{% if not forloop.last %}, {% endif %}
                                             {% endfor %}
                                         {% else %}
                                             <span class="no-data">No camps d'estudi assignats</span>
@@ -120,7 +120,13 @@
                                     </td>
                                     <td>
                                         <!-- Extra Info button -->
-                                        <a href="{% url 'usersapp:enter_extrainfo_professor' professor.pk %}" class="button-secondary btn-sm"> Editar Informació</a>  
+                                        <a href="{% url 'usersapp:enter_extrainfo_professor' professor.pk %}" class="button-secondary btn-sm"> Entrar Informació</a>  
+
+                                        {% comment %} {% if not professor.current_contract or not professor.professor_fields.exists or not professor.professor_languages.exists %}
+                                            <a href="{% url 'usersapp:enter_extrainfo_professor' professor.pk %}" class="button-secondary btn-sm" style="background-color:#f8e1e1; color:red; border: 1px solid red:"> Entrar Informació</a>  
+                                        {% else %}
+                                            <a href="{% url 'usersapp:enter_extrainfo_professor' professor.pk %}" class="button-secondary btn-sm"> Editar Informació</a>  
+                                        {% endif %} {% endcomment %}
                                                                 
                                     </td>
                                 </tr>
@@ -178,9 +184,9 @@
             tableRows.forEach(row => {
                 const nameText = row.cells[0].textContent.toLowerCase();
                 const currentContractText = row.cells[1].textContent.trim();
-                const hasContract = currentContractText !== "No té cap contracte assignat";
-                const hasFields = row.cells[2].textContent.includes("No té camps d'estudi assignats") ? false : true;
-                const hasLanguages = row.cells[3].textContent.includes("No té llengües assignades") ? false : true;
+                const hasContract = currentContractText !== "No contracte assignat";
+                const hasFields = row.cells[2].textContent.includes("No camps d'estudi assignats") ? false : true;
+                const hasLanguages = row.cells[3].textContent.includes("No llengües assignades") ? false : true;
 
                 const matchesNameCognom = nameText.includes(nameCognomValue);
                 const matchesContract = (contractValue === '' || (contractValue === 'yes' && hasContract) || (contractValue === 'no' && !hasContract));

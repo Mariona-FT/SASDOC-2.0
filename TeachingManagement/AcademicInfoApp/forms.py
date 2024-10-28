@@ -14,28 +14,39 @@ class FieldForm(forms.ModelForm):
 class SectionForm(forms.ModelForm):
     class Meta:
         model = Section
-        fields = ['NameSection', 'isActive']
+        fields = ['NameSection', 'LetterSection','isActive']
         labels = {
             'NameSection': 'Nom de la Secció',
+            'LetterSection':'Lletra de la Secció',
             'isActive': 'És Actiu?',
+        }
+        widgets = {
+            'NameSection': forms.TextInput(attrs={'required': 'required'}),
+            'LetterSection': forms.TextInput(attrs={'required': 'required'}),
         }
 
 class SchoolForm(forms.ModelForm):
     class Meta:
         model = School
-        fields = ['NameSchool', 'Section','isActive']
+        fields = ['NameSchool', 'CodeSchool','Section','isActive']
         labels = {
             'NameSchool': "Nom de l'Escola",
+            'CodeSchool': "Codi de l'Escola",
             'Section': 'Secció',
             'isActive': 'És Actiu?',
+        }
+        widgets = {
+            'NameSchool': forms.TextInput(attrs={'required': 'required'}),
+            'CodeSchool': forms.NumberInput(attrs={'required': 'required'}), 
         }
 
 class DegreeForm(forms.ModelForm):
     class Meta:
         model = Degree
-        fields = ['NameDegree', 'School','isActive']
+        fields = ['NameDegree','CodeDegree','School','isActive']
         labels = {
             'NameDegree': 'Nom de la titulació',
+            'CodeDegree': 'Codi de la titulació',
             'School': 'Escola',
             'isActive': 'És Actiu?',
         }

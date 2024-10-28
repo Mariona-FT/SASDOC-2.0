@@ -35,7 +35,7 @@ urlpatterns = [
     path('professor-information/', views.extrainfo_professor_crud, name='extrainfo_professor_crud'),
     path('professor-information/<int:professor_id>', views.enter_extrainfo_professor, name='enter_extrainfo_professor'),
 
-    path('professor-upload/', views.upload_professors, name='upload_professors'),
+    path('professor-upload/', views.upload_professors, name='upload_professors'), #for file
 
     #Sector chiefs
     path('sectorchief-management/', views.sectorchief_crud, name='sectorchief_crud'),
