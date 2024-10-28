@@ -87,7 +87,7 @@
                             {% endfor %}
                         {% else %}
                             <tr>
-                                <td colspan="4" class="text-center">Cap titulació entrada.</td>
+                                <td colspan="5" class="text-center">Cap titulació entrada.</td>
                             </tr>        
                         {% endif %}
                     </tbody>
@@ -115,7 +115,7 @@
 <!-- JavaScript function for confirmation -->
 <script>
     function confirmDelete(DegreeName) {
-        return confirm("Estàs segur que vols eliminar aquesta titulació: " + DegreeName + "?");
+        return confirm("Estàs segur que vols eliminar aquesta titulació: " + DegreeName + "?")|| false;
     }
 
     // JavaScript for dynamic filtering

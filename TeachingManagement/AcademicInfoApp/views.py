@@ -13,24 +13,22 @@ def field_list(request):
     fields = Field.objects.all()
     deleting = None
 
-    if request.method == "POST":
+    # FINAL DELETE
+    if request.method == "POST" and 'confirm_delete' in request.POST:
+        field_id = request.POST.get('confirm_delete') # id passed in url
+        try:
+            field = Field.objects.get(pk=field_id)
+            field_name = field.NameField  # Store the name for the message
+            field.delete()
+            messages.success(request, f"El camp {field_name} s'ha eliminat correctament.")
+            return redirect('field_list') 
+        except Field.DoesNotExist:
+            messages.error(request, "Error: El camp no existeix.")
 
-       # FINAL DELETE
-        if 'confirm_delete' in request.POST:
-            field_id = request.POST.get('confirm_delete') # id passed in url
-            try:
-                field = Field.objects.get(pk=field_id)
-                field_name = field.NameField  # Store the name for the message
-                field.delete()
-                messages.success(request, f"El camp {field_name} s'ha eliminat correctament.")
-                return redirect('field_list') 
-            except Field.DoesNotExist:
-                messages.error(request, "Error: El camp no existeix.")
-    
     # ACTION OF INITIAL DELETE
     if 'confirm_delete' in request.GET:
         field_id = request.GET.get('confirm_delete')
-        deleting = get_object_or_404(Field, pk=field_id)  # Get id field to delete
+        deleting = field_id  # Get id field to delete
 
     return render(request, 'field_list_actions.html', {
         'fields': fields,
@@ -70,25 +68,23 @@ def field_create_edit(request, idField=None):
 def section_list(request):
     sections = Section.objects.all()
     deleting = None
-   
-    if request.method == "POST":
 
-       # FINAL DELETE
-        if 'confirm_delete' in request.POST:
-            section_id = request.POST.get('confirm_delete') # id passed in url
-            try:
-                section = Section.objects.get(pk=section_id)
-                section_name = section.NameSection  # Store the name for the message
-                section.delete()
-                messages.success(request, f"La secció {section_name} s'ha eliminat correctament.")
-                return redirect('section_list') 
-            except Section.DoesNotExist:
-                messages.error(request, "Error: La secció no existeix.")
+    # FINAL DELETE
+    if request.method == "POST" and 'confirm_delete' in request.POST:
+        section_id = request.POST.get('confirm_delete') # id passed in url
+        try:
+            section = Section.objects.get(pk=section_id)
+            section_name = section.NameSection  # Store the name for the message
+            section.delete()
+            messages.success(request, f"La secció {section_name} s'ha eliminat correctament.")
+            return redirect('section_list') 
+        except Section.DoesNotExist:
+            messages.error(request, "Error: La secció no existeix.")
     
     # ACTION OF INITIAL DELETE
     if 'confirm_delete' in request.GET:
         section_id = request.GET.get('confirm_delete')
-        deleting = get_object_or_404(Section, pk=section_id)  # Get id section to delete
+        deleting = section_id # Get id section to delete
 
     return render(request, 'section_list_actions.html', {
         'sections': sections,
@@ -127,23 +123,22 @@ def school_list(request):
     schools = School.objects.all()
     deleting = None
    
-    if request.method == "POST":
-       # FINAL DELETE
-        if 'confirm_delete' in request.POST:
-            school_id = request.POST.get('confirm_delete') # id passed in url
-            try:
-                school = School.objects.get(pk=school_id)
-                school_name = school.NameSchool  # Store the name for the message
-                school.delete()
-                messages.success(request, f"L'escola {school_name} s'ha eliminat correctament.")
-                return redirect('school_list') 
-            except School.DoesNotExist:
-                messages.error(request, "Error: L'escola no existeix.")
+    if request.method == "POST" and 'confirm_delete' in request.POST:       
+        # FINAL DELETE
+        school_id = request.POST.get('confirm_delete') # id passed in url
+        try:
+            school = School.objects.get(pk=school_id)
+            school_name = school.NameSchool  # Store the name for the message
+            school.delete()
+            messages.success(request, f"L'escola {school_name} s'ha eliminat correctament.")
+            return redirect('school_list') 
+        except School.DoesNotExist:
+            messages.error(request, "Error: L'escola no existeix.")
     
     # ACTION OF INITIAL DELETE
     if 'confirm_delete' in request.GET:
         school_id = request.GET.get('confirm_delete')
-        deleting = get_object_or_404(School, pk=school_id)  # Get id school to delete
+        deleting = school_id  # Get id school to delete
     
     return render(request, 'school_list_actions.html', {
         'schools': schools,
@@ -180,23 +175,22 @@ def degree_list(request):
     degrees = Degree.objects.all()
     deleting = None
    
-    if request.method == "POST":
+    if request.method == "POST" and 'confirm_delete' in request.POST:
        # FINAL DELETE
-        if 'confirm_delete' in request.POST:
-            degree_id = request.POST.get('confirm_delete') # id passed in url
-            try:
-                degree = Degree.objects.get(pk=degree_id)
-                degree_name = degree.NameDegree  # Store the name for the message
-                degree.delete()
-                messages.success(request, f"La Titulació {degree_name} s'ha eliminat correctament.")
-                return redirect('degree_list') 
-            except Degree.DoesNotExist:
-                messages.error(request, "Error: La Titulació no existeix.")
+        degree_id = request.POST.get('confirm_delete') # id passed in url
+        try:
+            degree = Degree.objects.get(pk=degree_id)
+            degree_name = degree.NameDegree  # Store the name for the message
+            degree.delete()
+            messages.success(request, f"La Titulació {degree_name} s'ha eliminat correctament.")
+            return redirect('degree_list') 
+        except Degree.DoesNotExist:
+            messages.error(request, "Error: La Titulació no existeix.")
     
     # ACTION OF INITIAL DELETE
     if 'confirm_delete' in request.GET:
         degree_id = request.GET.get('confirm_delete')
-        deleting = get_object_or_404(Degree, pk=degree_id)  # Get id degree to delete
+        deleting = degree_id  # Only pass the ID for now
     
     return render(request, 'degree_list_actions.html', {
         'degrees': degrees,
@@ -227,7 +221,8 @@ def degree_create_edit(request,idDegree=None):
         else:
             form = DegreeForm()
     return render(request, 'degree_form.html', {'form': form})
-    
+
+########################################################################################################
 
 ### COURSES ###
 def course_crud(request):

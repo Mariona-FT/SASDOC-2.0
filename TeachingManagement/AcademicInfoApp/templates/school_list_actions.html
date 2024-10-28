@@ -27,17 +27,17 @@
                 <div class="d-flex justify-content-between row mb-2">
                     <!-- Filters schools -->
                     <div class="filters d-flex flex-wrap">
-                        <div class="col-md-10">
-                            <label for="filter-all">Filtrar contingut:</label>
-                            <input type="text" id="filter-all" class="form-control" placeholder="Cerca per Nom, Secció o Codi">
+                        <div class="col-md-9">
+                            <label for="filter-all">Filtrar per contingut:</label>
+                            <input type="text" id="filter-all" class="form-control" placeholder="Cerca per Codi, Nom o Secció">
                         </div>
 
-                        <div class="col-md-2">
-                            <label for="filter-active">Filtrar per si és Camp actiu:</label>
+                        <div class="col-md-3">
+                            <label for="filter-active">Filtrar per si és Escola activa: </label>
                             <select id="filter-active" class="form-control">
                                 <option value="">Tots</option>
-                                <option value="yes">Actiu</option>
-                                <option value="no">No Actiu</option>
+                                <option value="yes">Activa</option>
+                                <option value="no">No Activa</option>
                             </select>
                         </div>
                     </div>
@@ -88,7 +88,7 @@
                             {% endfor %}
                         {% else %}
                             <tr>
-                                <td colspan="4" class="text-center">Cap escola entrada.</td>
+                                <td colspan="5" class="text-center">Cap escola entrada.</td>
                             </tr>        
                         {% endif %}
                     </tbody>
