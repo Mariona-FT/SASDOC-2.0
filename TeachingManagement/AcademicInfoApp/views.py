@@ -26,7 +26,6 @@ def field_list(request):
                 return redirect('field_list') 
             except Field.DoesNotExist:
                 messages.error(request, "Error: El camp no existeix.")
-                print("Error: El camp amb ID", field_id, "no existeix.")  
     
     # ACTION OF INITIAL DELETE
     if 'confirm_delete' in request.GET:
@@ -139,7 +138,7 @@ def school_list(request):
                 messages.success(request, f"L'escola {school_name} s'ha eliminat correctament.")
                 return redirect('school_list') 
             except School.DoesNotExist:
-                messages.error(request, "Error: La secció no existeix.")
+                messages.error(request, "Error: L'escola no existeix.")
     
     # ACTION OF INITIAL DELETE
     if 'confirm_delete' in request.GET:
@@ -177,69 +176,58 @@ def school_create_edit(request,idSchool=None):
     return render(request, 'school_form.html', {'form': form})
     
 ### DEGREE ###
-def degree_crud(request):
+def degree_list(request):
     degrees = Degree.objects.all()
-    form = DegreeForm()  # Initialize the form
     deleting = None
-
+   
     if request.method == "POST":
-        # FINAL DELETE
+       # FINAL DELETE
         if 'confirm_delete' in request.POST:
-            degree_id = request.POST.get('confirm_delete')
-            print("Intentant eliminar el grau amb ID:", degree_id)
+            degree_id = request.POST.get('confirm_delete') # id passed in url
             try:
                 degree = Degree.objects.get(pk=degree_id)
                 degree_name = degree.NameDegree  # Store the name for the message
                 degree.delete()
-                messages.success(request, f"El grau {degree_name} s'ha eliminat correctament.")
-                return redirect('degree_crud')
+                messages.success(request, f"La Titulació {degree_name} s'ha eliminat correctament.")
+                return redirect('degree_list') 
             except Degree.DoesNotExist:
-                messages.error(request, "Error: El grau no existeix.")
-                print("Error: El grau amb ID", degree_id, "no existeix.")
-
-        # UPDATE
-        if 'idDegree' in request.POST:
-            degree_id = request.POST.get('idDegree')
-            print("Intentant actualitzar el grau amb ID:", degree_id)
-            degree = get_object_or_404(Degree, pk=degree_id)  # Check if degree exists
-            form = DegreeForm(request.POST, instance=degree)
-            if form.is_valid():  # Check if form is valid
-                form.save()
-                messages.success(request, f"El grau {degree.NameDegree} s'ha actualitzat correctament.")
-                return redirect('degree_crud')
-            else:
-                print("Errors en el formulari d'actualització:", form.errors)
-                messages.error(request, "Error en actualitzar el grau. Si us plau, revisa els camps.")
-
-        # CREATE
-        else:
-            form = DegreeForm(request.POST)  # Initialize form with POST data
-            print("Intentant crear un nou grau:", request.POST)
-            if form.is_valid():  # Check if form is valid
-                degree = form.save()
-                messages.success(request, f"El grau {degree.NameDegree} s'ha creat correctament.")
-                return redirect('degree_crud')
-            else:
-                print("Errors en el formulari de creació:", form.errors)
-                messages.error(request, "Error en crear el grau. Si us plau, revisa els camps.")
-
-    # UPDATE FORM
-    if 'edit' in request.GET:
-        degree_id = request.GET.get('edit')
-        print("Intentant editar el grau amb ID:", degree_id)
-        degree = get_object_or_404(Degree, pk=degree_id)
-        form = DegreeForm(instance=degree)
-
+                messages.error(request, "Error: La Titulació no existeix.")
+    
     # ACTION OF INITIAL DELETE
     if 'confirm_delete' in request.GET:
         degree_id = request.GET.get('confirm_delete')
-        deleting = get_object_or_404(Degree, pk=degree_id)  # Get degree to delete
-
-    return render(request, 'degree_crud.html', {
-        'form': form,
+        deleting = get_object_or_404(Degree, pk=degree_id)  # Get id degree to delete
+    
+    return render(request, 'degree_list_actions.html', {
         'degrees': degrees,
         'deleting': deleting,
     })
+
+#Function to create or edit a degree - depends if is passed a idegree 
+def degree_create_edit(request,idDegree=None):
+    if idDegree:
+        # If idDegree is passed, we are editing an existing degree
+        degree = get_object_or_404(Degree, pk=idDegree)
+        if request.method == 'POST':
+            form = DegreeForm(request.POST, instance=degree)
+            if form.is_valid():
+                form.save()
+                messages.success(request, f"La Titulació {degree.NameDegree} s\'ha actualitzat correctament.")
+                return redirect('degree_list')
+        else:
+            form = DegreeForm(instance=degree)
+    else:
+        # No idDegree, we are creating a new degree
+        if request.method == 'POST':
+            form = DegreeForm(request.POST)
+            if form.is_valid():
+                new_degree = form.save()
+                messages.success(request, f"La Titulació {new_degree.NameDegree} s\'ha afegit correctament.")
+                return redirect('degree_list')
+        else:
+            form = DegreeForm()
+    return render(request, 'degree_form.html', {'form': form})
+    
 
 ### COURSES ###
 def course_crud(request):
