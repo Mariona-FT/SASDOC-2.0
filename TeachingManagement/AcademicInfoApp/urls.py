@@ -36,9 +36,21 @@ urlpatterns = [
     path('schools/create/', views.school_create_edit, name='school_create'),
     path('schools/edit/<int:idSchool>', views.school_create_edit, name='school_edit'),
 
-    path('degrees/', views.degree_crud, name='degree_crud'),
-    path('courses/', views.course_crud, name='courses_crud'),
-    path('typeprofessor/', views.type_professor_crud, name='type_professor_crud'),
+    #DEGREE ACTIONS
+    path('degrees/', views.degree_list, name='degree_list'),
+    path('degrees/create/', views.degree_create_edit, name='degree_create'),
+    path('degrees/edit/<int:idDegree>', views.degree_create_edit, name='degree_edit'),
+
+    #COURSES ACTIONS
+    path('courses/', views.course_list, name='course_list'),
+    path('courses/create/', views.course_create_edit, name='course_create'),
+    path('courses/edit/<int:idCourse>', views.course_create_edit, name='course_edit'),
+
+    #TYPEPROFESSOR ACTIONS
+    path('typeprofessor/', views.typeprofessor_list, name='typeprofessor_list'),
+    path('typeprofessor/create/', views.typeprofessor_create_edit, name='typeprofessor_create'),
+    path('typeprofessor/edit/<int:idTypeProfessor>', views.typeprofessor_create_edit, name='typeprofessor_edit'),
+
     path('languages/', views.language_crud, name='language_crud'),
     path('years/', views.year_crud, name='year_crud'),
 ]

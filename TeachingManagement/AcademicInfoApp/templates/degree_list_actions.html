@@ -1,11 +1,11 @@
 {% extends 'base-template/base.html' %}
 
-{% block title %}Informació del Camp{% endblock %}
+{% block title %}Gestió de Titulacions{% endblock %}
 
 {% block content %}
 <div class="container-fluid d-flex" style="min-height: 100vh;">
     <div class="col-lg-10 mx-auto">
-        <h2 style="text-align:center">Gestió de les Camps</h2>
+        <h2 style="text-align:center">Gestió de les Titulacions</h2>
 
         <!-- Display success, warning, or error messages -->
         {% if messages %}
@@ -23,21 +23,21 @@
         <div class="row">
             <div class="col-lg-10">
                 <!-- Filter Fields -->
-                <h3>Filtres pels Camps</h3>
+                <h3>Filtres per les Titulacions</h3>
                 <div class="d-flex justify-content-between row mb-2">
                     <!-- Filters section -->
                     <div class="filters d-flex flex-wrap">
                         <div class="col-md-9">
                             <label for="filter-all">Filtrar per contingut:</label>
-                            <input type="text" id="filter-all" class="form-control" placeholder="Cerca per Nom o Descripció">
+                            <input type="text" id="filter-all" class="form-control" placeholder="Cerca per Codi, Nom o Escola">
                         </div>
 
                         <div class="col-md-3">
-                            <label for="filter-active">Filtrar per si és un Camp actiu:</label>
+                            <label for="filter-active">Filtrar per si és Titulació activa:</label>
                             <select id="filter-active" class="form-control">
                                 <option value="">Tots</option>
-                                <option value="yes">Actiu</option>
-                                <option value="no">No Actiu</option>
+                                <option value="yes">Activa</option>
+                                <option value="no">No Activa</option>
                             </select>
                         </div>
                     </div>
@@ -45,34 +45,41 @@
 
                 <hr>
 
-                <!-- List of all fields -->
-                <h3>Llista de Camps</h3>
-                <table class="table table-striped" id="fields-table">
-                    
+
+                <!-- List of all degrees -->
+                <h3>Llista de Titulacions</h3>
+                <table class="table table-striped" id="degrees-table">
                     <thead>
                         <tr>
-                            <th>Nom del Camp</th>
-                            <th>Descripció</th>
+                            <th>Codi de la Titulació</th>
+                            <th>Nom de la Titulació</th>
+                            <th>Escola</th>
                             <th>Actiu</th>
                             <th>Accions</th>
                         </tr>
                     </thead>
-
                     <tbody>
-                        {% if fields %}
-                            {% for field in fields %}
-                                <tr data-name="{{ field.NameField }}" data-description="{{ field.Description }}" data-active="{{ field.isActive|yesno:'yes,no' }}">
-                                    <td>{{ field.NameField }}</td>
-                                    <td>{{ field.Description }}</td>
-                                    <td>{{ field.isActive|yesno:"Sí,No" }}</td>
+                        {% if degrees %}
+                            {% for degree in degrees %}
+                                <tr data-code="{{ degree.CodeDegree }}" data-name="{{degree.NameDegree }}" data-school="{{ degree.School.NameSchool }}" data-active="{{ degree.isActive|yesno:'yes,no' }}">
+                                    <td>{{ degree.CodeDegree }}</td>
+                                    <td>{{ degree.NameDegree }}</td>
+                                    <td>
+                                        {% if degree.School %}
+                                            {{ degree.School.NameSchool }}
+                                        {% else %}
+                                            N/A
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ degree.isActive|yesno:"Sí,No" }}</td>
                                     <td>
                                         <!-- Edit button -->
-                                        <a href="{% url 'field_edit' field.pk %}" class="button-edit btn-sm">Editar</a>
+                                        <a href="{% url 'degree_edit' degree.pk %}" class="button-edit btn-sm">Editar</a>
 
                                         <!-- Delete form with JavaScript confirmation -->
-                                        <form method="post" action="{% url 'field_list' %}" style="display:inline;" onsubmit="return confirmDelete('{{ field.NameField }}');">
+                                        <form method="post" action="{% url 'degree_list' %}" style="display:inline;" onsubmit="return confirmDelete('{{ degree.NameDegree }}');">
                                             {% csrf_token %}
-                                            <input type="hidden" name="confirm_delete" value="{{ field.pk }}">
+                                            <input type="hidden" name="confirm_delete" value="{{ degree.pk }}">
                                             <button type="submit" class="button-delete btn-sm">Eliminar</button>
                                         </form>
                                     </td>
@@ -80,8 +87,8 @@
                             {% endfor %}
                         {% else %}
                             <tr>
-                                <td colspan="4" class="text-center">Cap camp entrat.</td>
-                            </tr>
+                                <td colspan="5" class="text-center">Cap titulació entrada.</td>
+                            </tr>        
                         {% endif %}
                     </tbody>
                 </table>
@@ -96,7 +103,7 @@
             <div class="col-lg-2">
                 <div class="sticky-top" style="top: 1rem;">
                     <div class="buttons mb-2 d-flex flex-column align-items-center">
-                        <a href="{% url 'field_create' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Afegir Camp</a>
+                        <a href="{% url 'degree_create' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Afegir Titulació</a>
                     </div>
                 </div>
             </div>
@@ -107,8 +114,8 @@
 
 <!-- JavaScript function for confirmation -->
 <script>
-    function confirmDelete(fieldName) {
-        return confirm("Estàs segur que vols eliminar aquest camp: " + fieldName + " ?");
+    function confirmDelete(DegreeName) {
+        return confirm("Estàs segur que vols eliminar aquesta titulació: " + DegreeName + "?")|| false;
     }
 
     // JavaScript for dynamic filtering
@@ -118,16 +125,17 @@
     function filterTable() {
         const searchValue = document.getElementById('filter-all').value.toLowerCase();
         const activeFilter = document.getElementById('filter-active').value;
-        const tableRows = document.querySelectorAll('#fields-table tbody tr');
+        const tableRows = document.querySelectorAll('#degrees-table tbody tr');
 
         let rowsVisible = 0;
 
         tableRows.forEach(row => {
+            const fieldCode = row.getAttribute('data-code').toLowerCase();
             const fieldName = row.getAttribute('data-name').toLowerCase();
-            const fieldDescription = row.getAttribute('data-description').toLowerCase();
+            const fieldSchool = row.getAttribute('data-school').toLowerCase();
             const isActive = row.getAttribute('data-active');
 
-            const matchesSearch = fieldName.includes(searchValue) || fieldDescription.includes(searchValue);
+            const matchesSearch =  fieldCode.includes(searchValue) || fieldName.includes(searchValue) || fieldSchool.includes(searchValue);
             const matchesActiveFilter = (activeFilter === '' || isActive === activeFilter);
 
             if (matchesSearch && matchesActiveFilter) {
@@ -143,7 +151,7 @@
 
         // No results message logic
         if (rowsVisible === 0) {
-            let message = "Cap camp amb els criteris de cerca";
+            let message = "Cap Titulació amb els criteris de cerca";
             if (searchValue) {
                 message += ` amb el terme "${searchValue}"`;
             }
@@ -156,5 +164,7 @@
             noResultsMessage.style.display = 'none';
         }
     }
+
 </script>
+
 {% endblock %}
