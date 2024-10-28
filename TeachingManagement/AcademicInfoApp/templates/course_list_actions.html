@@ -1,11 +1,11 @@
 {% extends 'base-template/base.html' %}
 
-{% block title %}Gestió de Titulacions{% endblock %}
+{% block title %}Gestió de Cursos{% endblock %}
 
 {% block content %}
 <div class="container-fluid d-flex" style="min-height: 100vh;">
     <div class="col-lg-10 mx-auto">
-        <h2 style="text-align:center">Gestió de les Titulacions</h2>
+        <h2 style="text-align:center">Gestió dels Cursos</h2>
 
         <!-- Display success, warning, or error messages -->
         {% if messages %}
@@ -23,21 +23,21 @@
         <div class="row">
             <div class="col-lg-10">
                 <!-- Filter Fields -->
-                <h3>Filtres per les Titulacions</h3>
+                <h3>Filtres pels Cursos</h3>
                 <div class="d-flex justify-content-between row mb-2">
                     <!-- Filters section -->
                     <div class="filters d-flex flex-wrap">
                         <div class="col-md-9">
                             <label for="filter-all">Filtrar per contingut:</label>
-                            <input type="text" id="filter-all" class="form-control" placeholder="Cerca per Codi, Nom o Escola">
+                            <input type="text" id="filter-all" class="form-control" placeholder="Cerca per Codi, Nom, ECTS, Grau o Àrea">
                         </div>
 
                         <div class="col-md-3">
-                            <label for="filter-active">Filtrar per si és Titulació activa:</label>
+                            <label for="filter-active">Filtrar per si és Curs actiu:</label>
                             <select id="filter-active" class="form-control">
                                 <option value="">Tots</option>
-                                <option value="yes">Activa</option>
-                                <option value="no">No Activa</option>
+                                <option value="yes">Actiu</option>
+                                <option value="no">No Actiu</option>
                             </select>
                         </div>
                     </div>
@@ -45,41 +45,38 @@
 
                 <hr>
 
-
-                <!-- List of all degrees -->
-                <h3>Llista de Titulacions</h3>
-                <table class="table table-striped" id="degrees-table">
+                <!-- List of all courses -->
+                <h3>Llista de Cursos</h3>
+                <table class="table table-striped" id="courses-table">
                     <thead>
                         <tr>
-                            <th>Codi de la Titulació</th>
-                            <th>Nom de la Titulació</th>
-                            <th>Escola</th>
+                            <th>Codi del Curs</th>    
+                            <th>Nom del Curs</th>
+                            <th>ECTS</th>
+                            <th>Grau</th>
+                            <th>Àrea</th>
                             <th>Actiu</th>
                             <th>Accions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% if degrees %}
-                            {% for degree in degrees %}
-                                <tr data-code="{{ degree.CodeDegree }}" data-name="{{degree.NameDegree }}" data-school="{{ degree.School.NameSchool }}" data-active="{{ degree.isActive|yesno:'yes,no' }}">
-                                    <td>{{ degree.CodeDegree }}</td>
-                                    <td>{{ degree.NameDegree }}</td>
-                                    <td>
-                                        {% if degree.School %}
-                                            {{ degree.School.NameSchool }}
-                                        {% else %}
-                                            N/A
-                                        {% endif %}
-                                    </td>
-                                    <td>{{ degree.isActive|yesno:"Sí,No" }}</td>
+                        {% if courses %}
+                            {% for course in courses %}
+                                <tr data-code="{{ course.CodeCourse }}" data-name="{{  course.NameCourse }}"  data-etcs="{{  course.ECTS }}" data-degree="{{  course.Degree }}" data-field="{{  course.Field }}" data-active="{{ course.isActive|yesno:'yes,no' }}">
+                                    <td>{{ course.CodeCourse }}</td>
+                                    <td>{{ course.NameCourse }}</td>
+                                    <td>{{ course.ECTS }}</td>
+                                    <td>{{ course.Degree }}</td>
+                                    <td>{{ course.Field }}</td>
+                                    <td>{{ course.isActive|yesno:"Sí,No" }}</td>
                                     <td>
                                         <!-- Edit button -->
-                                        <a href="{% url 'degree_edit' degree.pk %}" class="button-edit btn-sm">Editar</a>
+                                        <a href="{% url 'course_edit' course.pk %}" class="button-edit btn-sm">Editar</a>
 
                                         <!-- Delete form with JavaScript confirmation -->
-                                        <form method="post" action="{% url 'degree_list' %}" style="display:inline;" onsubmit="return confirmDelete('{{ degree.NameDegree }}');">
+                                        <form method="post" action="{% url 'course_list' %}" style="display:inline;" onsubmit="return confirmDelete('{{ course.NameCourse }}');">
                                             {% csrf_token %}
-                                            <input type="hidden" name="confirm_delete" value="{{ degree.pk }}">
+                                            <input type="hidden" name="confirm_delete" value="{{ course.pk }}">
                                             <button type="submit" class="button-delete btn-sm">Eliminar</button>
                                         </form>
                                     </td>
@@ -87,7 +84,7 @@
                             {% endfor %}
                         {% else %}
                             <tr>
-                                <td colspan="5" class="text-center">Cap titulació entrada.</td>
+                                <td colspan="7" class="text-center">Cap curs entrada.</td>
                             </tr>        
                         {% endif %}
                     </tbody>
@@ -103,7 +100,7 @@
             <div class="col-lg-2">
                 <div class="sticky-top" style="top: 1rem;">
                     <div class="buttons mb-2 d-flex flex-column align-items-center">
-                        <a href="{% url 'degree_create' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Afegir Titulació</a>
+                        <a href="{% url 'course_create' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Afegir Curs</a>
                     </div>
                 </div>
             </div>
@@ -114,8 +111,8 @@
 
 <!-- JavaScript function for confirmation -->
 <script>
-    function confirmDelete(DegreeName) {
-        return confirm("Estàs segur que vols eliminar aquesta titulació: " + DegreeName + "?")|| false;
+    function confirmDelete(fieldName) {
+        return confirm("Estàs segur que vols eliminar aquest curs: " + fieldName + "?");
     }
 
     // JavaScript for dynamic filtering
@@ -125,17 +122,20 @@
     function filterTable() {
         const searchValue = document.getElementById('filter-all').value.toLowerCase();
         const activeFilter = document.getElementById('filter-active').value;
-        const tableRows = document.querySelectorAll('#degrees-table tbody tr');
+        const tableRows = document.querySelectorAll('#courses-table tbody tr');
 
         let rowsVisible = 0;
 
         tableRows.forEach(row => {
             const fieldCode = row.getAttribute('data-code').toLowerCase();
             const fieldName = row.getAttribute('data-name').toLowerCase();
-            const fieldSchool = row.getAttribute('data-school').toLowerCase();
+            const fieldEtcs = row.getAttribute('data-etcs').toLowerCase();
+            const fieldDegree = row.getAttribute('data-degree').toLowerCase();
+            const fieldField = row.getAttribute('data-field').toLowerCase();
+
             const isActive = row.getAttribute('data-active');
 
-            const matchesSearch =  fieldCode.includes(searchValue) || fieldName.includes(searchValue) || fieldSchool.includes(searchValue);
+            const matchesSearch =  fieldCode.includes(searchValue) || fieldName.includes(searchValue) || fieldEtcs.includes(searchValue) || fieldDegree.includes(searchValue) || fieldField.includes(searchValue);
             const matchesActiveFilter = (activeFilter === '' || isActive === activeFilter);
 
             if (matchesSearch && matchesActiveFilter) {
@@ -151,7 +151,7 @@
 
         // No results message logic
         if (rowsVisible === 0) {
-            let message = "Cap Titulació amb els criteris de cerca";
+            let message = "Cap Curs amb els criteris de cerca";
             if (searchValue) {
                 message += ` amb el terme "${searchValue}"`;
             }
@@ -164,7 +164,7 @@
             noResultsMessage.style.display = 'none';
         }
     }
-
+ 
 </script>
 
 {% endblock %}

@@ -41,7 +41,11 @@ urlpatterns = [
     path('degrees/create/', views.degree_create_edit, name='degree_create'),
     path('degrees/edit/<int:idDegree>', views.degree_create_edit, name='degree_edit'),
 
-    path('courses/', views.course_crud, name='courses_crud'),
+    #COURSES ACTIONS
+    path('courses/', views.course_list, name='course_list'),
+    path('courses/create/', views.course_create_edit, name='course_create'),
+    path('courses/edit/<int:idCourse>', views.course_create_edit, name='course_edit'),
+
     path('typeprofessor/', views.type_professor_crud, name='type_professor_crud'),
     path('languages/', views.language_crud, name='language_crud'),
     path('years/', views.year_crud, name='year_crud'),

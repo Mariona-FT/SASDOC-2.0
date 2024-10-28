@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.contrib import messages
 from django.shortcuts import render, redirect,get_object_or_404
-from .models import Field,Section,School,Degree,Courses,TypeProfessor,Language,Year
-from .forms import FieldForm,SectionForm,SchoolForm,DegreeForm,CoursesForm,TypeProfessorForm,LanguageForm,YearForm
+from .models import Field,Section,School,Degree,Course,TypeProfessor,Language,Year
+from .forms import FieldForm,SectionForm,SchoolForm,DegreeForm,CourseForm,TypeProfessorForm,LanguageForm,YearForm
 
 # Create your views here.
 
@@ -119,6 +119,8 @@ def sections_create_edit(request,idSection=None):
 
 
 ### SCHOOLS ###
+
+## Schools list to manage - listing and actions of edit, delete and add schools
 def school_list(request):
     schools = School.objects.all()
     deleting = None
@@ -171,6 +173,8 @@ def school_create_edit(request,idSchool=None):
     return render(request, 'school_form.html', {'form': form})
     
 ### DEGREE ###
+
+## Degree list to manage - listing and actions of edit, delete and add degree
 def degree_list(request):
     degrees = Degree.objects.all()
     deleting = None
@@ -222,58 +226,64 @@ def degree_create_edit(request,idDegree=None):
             form = DegreeForm()
     return render(request, 'degree_form.html', {'form': form})
 
-########################################################################################################
 
 ### COURSES ###
-def course_crud(request):
-    courses = Courses.objects.all()
-    form = CoursesForm()
+
+## Course list to manage - listing and actions of edit, delete and add course
+def course_list(request):
+    courses = Course.objects.all()
     deleting = None
-
-    if request.method == "POST":
-        # Handle delete confirmation
-        if 'confirm_delete' in request.POST:
-            course_id = request.POST.get('confirm_delete')
-            course = get_object_or_404(Courses, pk=course_id)
-            course_name = course.NameCourse
+   
+    if request.method == "POST" and 'confirm_delete' in request.POST:
+       # FINAL DELETE
+        course_id = request.POST.get('confirm_delete') # id passed in url
+        try:
+            course = Course.objects.get(pk=course_id)
+            course_name = course.NameCourse  # Store the name for the message
             course.delete()
-            messages.success(request, f"El curs {course_name} s'ha eliminat correctament.")
-            return redirect('courses_crud')
-
-        # Handle update
-        if 'idCourse' in request.POST:
-            course_id = request.POST.get('idCourse')
-            course = get_object_or_404(Courses, pk=course_id)
-            form = CoursesForm(request.POST, instance=course)
-            if form.is_valid():
-                form.save()
-                messages.success(request, f"El curs {course.NameCourse} s'ha actualitzat correctament.")
-                return redirect('courses_crud')
-
-        # Handle create
-        else:
-            form = CoursesForm(request.POST)
-            if form.is_valid():
-                course = form.save()
-                messages.success(request, f"El curs {course.NameCourse} s'ha creat correctament.")
-                return redirect('courses_crud')
-
-    # Handle edit
-    if 'edit' in request.GET:
-        course_id = request.GET.get('edit')
-        course = get_object_or_404(Courses, pk=course_id)
-        form = CoursesForm(instance=course)
-
-    # Handle initial delete confirmation
+            messages.success(request, f"El Curs {course_name} s'ha eliminat correctament.")
+            return redirect('course_list') 
+        except Course.DoesNotExist:
+            messages.error(request, "Error: El Curs no existeix.")
+    
+    # ACTION OF INITIAL DELETE
     if 'confirm_delete' in request.GET:
         course_id = request.GET.get('confirm_delete')
-        deleting = get_object_or_404(Courses, pk=course_id)
+        deleting = course_id  # Only pass the ID for now
 
-    return render(request, 'courses_crud.html', {
-        'form': form,
+    return render(request, 'course_list_actions.html', {
         'courses': courses,
         'deleting': deleting,
     })
+
+
+#Function to create or edit a course - depends if is passed a idCourse 
+def course_create_edit(request,idCourse=None):
+    if idCourse:
+        # If idCourse is passed, we are editing an existing courses
+        course = get_object_or_404(Course, pk=idCourse)
+        if request.method == 'POST':
+            form = CourseForm(request.POST, instance=course)
+            if form.is_valid():
+                form.save()
+                messages.success(request, f"El curs {course.NameCourse} s\'ha actualitzat correctament.")
+                return redirect('course_list')
+        else:
+            form = CourseForm(instance=course)
+    else:
+        # No idCourse, we are creating a new course
+        if request.method == 'POST':
+            form = CourseForm(request.POST)
+            if form.is_valid():
+                new_course = form.save()
+                messages.success(request, f"El curs {new_course.NameCourse} s\'ha afegit correctament.")
+                return redirect('course_list')
+        else:
+            form = CourseForm()
+    return render(request, 'course_form.html', {'form': form})
+
+########################################################################################################
+
 
 ### TYPE PROFESSOR ###
 def type_professor_crud(request):

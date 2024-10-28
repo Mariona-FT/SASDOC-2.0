@@ -56,13 +56,13 @@ class Degree(models.Model):
     def __str__(self):
         return self.NameDegree
     
-class Courses(models.Model):
+class Course(models.Model):
     idCourse = models.AutoField(primary_key=True)
     NameCourse = models.CharField(max_length=100)
     CodeCourse = models.IntegerField(unique=True)
     ECTS = models.IntegerField()
     Degree = models.ForeignKey('Degree', on_delete=models.CASCADE, null=True) #eliminate course if degree eliminated
-    Field = models.ForeignKey('Field', on_delete=models.SET_NULL, null=True) #do not course if field eliminated
+    Field = models.ForeignKey('Field', on_delete=models.SET_NULL, null=True) #do not eliminate course if field eliminated
     isActive = models.BooleanField(default=True)
 
     class Meta:
@@ -74,7 +74,7 @@ class Courses(models.Model):
     
 class TypeProfessor(models.Model):
     idTypeProfessor = models.AutoField(primary_key=True)
-    Name = models.CharField(max_length=100,unique=True)
+    NameContract = models.CharField(max_length=100)
     isFullTime = models.BooleanField(default=False)
     isPermanent = models.BooleanField(default=False)
     Comment = models.TextField(blank=True, null=True)
@@ -85,7 +85,7 @@ class TypeProfessor(models.Model):
         verbose_name_plural = 'types of professors'
 
     def __str__(self):
-        return self.Name
+        return self.NameContract
 
 class Language(models.Model):
     idLanguage = models.AutoField(primary_key=True)

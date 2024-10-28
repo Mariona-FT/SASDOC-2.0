@@ -1,5 +1,5 @@
 from django import forms
-from .models import Field,Section,School,Degree,Courses,TypeProfessor,Language,Year
+from .models import Field,Section,School,Degree,Course,TypeProfessor,Language,Year
 
 class FieldForm(forms.ModelForm):
     class Meta:
@@ -51,9 +51,9 @@ class DegreeForm(forms.ModelForm):
             'isActive': 'És Actiu?',
         }
 
-class CoursesForm(forms.ModelForm):
+class CourseForm(forms.ModelForm):
     class Meta:
-        model = Courses
+        model = Course
         fields = ['NameCourse', 'CodeCourse', 'ECTS', 'Degree', 'Field', 'isActive']
         labels = {
             'NameCourse': 'Nom del Curs',
@@ -67,9 +67,9 @@ class CoursesForm(forms.ModelForm):
 class TypeProfessorForm(forms.ModelForm):
     class Meta:
         model = TypeProfessor
-        fields = ['Name', 'isFullTime', 'isPermanent', 'Comment', 'isActive']
+        fields = ['NameContract', 'isFullTime', 'isPermanent', 'Comment', 'isActive']
         labels = {
-            'Name': 'Tipus del Professor',
+            'NameContract': 'Tipus del Professor',
             'isFullTime': 'És a Temps Complet?',
             'isPermanent': 'És Permanent?',
             'Comment': 'Comentari',

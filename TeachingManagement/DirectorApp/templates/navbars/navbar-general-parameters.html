@@ -36,9 +36,9 @@
             <a class="nav-link" href="{{ degree_list_url }}">Gestió de Titulacions</a>
         </li>
 
-        {% url 'courses_crud' as courses_crud_url %}
-        <li class="nav-item {% if request.path == courses_crud_url %} active{% endif %}">
-            <a class="nav-link" href="{{ courses_crud_url }}">Gestió de Cursos</a>
+        {% url 'course_list' as course_list_url %}
+        <li class="nav-item {% if request.path == course_list_url %} active{% endif %}">
+            <a class="nav-link" href="{{ course_list_url }}">Gestió de Cursos</a>
         </li>
 
         {% url 'type_professor_crud' as type_professor_crud_url %}
