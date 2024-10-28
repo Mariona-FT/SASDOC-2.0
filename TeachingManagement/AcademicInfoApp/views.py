@@ -282,59 +282,62 @@ def course_create_edit(request,idCourse=None):
             form = CourseForm()
     return render(request, 'course_form.html', {'form': form})
 
-########################################################################################################
-
-
 ### TYPE PROFESSOR ###
-def type_professor_crud(request):
-    type_professors = TypeProfessor.objects.all()
-    form = TypeProfessorForm()
+
+## typeprofessor list to manage - listing and actions of edit, delete and add typeprofessor
+def typeprofessor_list(request):
+    typeprofessors = TypeProfessor.objects.all()
     deleting = None
-
-    if request.method == "POST":
-        # Handle delete confirmation
-        if 'confirm_delete' in request.POST:
-            type_professor_id = request.POST.get('confirm_delete')
-            type_professor = get_object_or_404(TypeProfessor, pk=type_professor_id)
-            type_professor_name = type_professor.Name
-            type_professor.delete()
-            messages.success(request, f"El tipus de professor {type_professor_name} s'ha eliminat correctament.")
-            return redirect('type_professor_crud')
-
-        # Handle update
-        if 'idTypeProfessor' in request.POST:
-            type_professor_id = request.POST.get('idTypeProfessor')
-            type_professor = get_object_or_404(TypeProfessor, pk=type_professor_id)
-            form = TypeProfessorForm(request.POST, instance=type_professor)
-            if form.is_valid():
-                form.save()
-                messages.success(request, f"El tipus de professor {type_professor.Name} s'ha actualitzat correctament.")
-                return redirect('type_professor_crud')
-
-        # Handle create
-        else:
-            form = TypeProfessorForm(request.POST)
-            if form.is_valid():
-                type_professor = form.save()
-                messages.success(request, f"El tipus de professor {type_professor.Name} s'ha creat correctament.")
-                return redirect('type_professor_crud')
-
-    # Handle edit
-    if 'edit' in request.GET:
-        type_professor_id = request.GET.get('edit')
-        type_professor = get_object_or_404(TypeProfessor, pk=type_professor_id)
-        form = TypeProfessorForm(instance=type_professor)
-
-    # Handle initial delete confirmation
+   
+    if request.method == "POST" and 'confirm_delete' in request.POST:
+       # FINAL DELETE
+        typeprofessor_id = request.POST.get('confirm_delete') # id passed in url
+        try:
+            typeprofessor = TypeProfessor.objects.get(pk=typeprofessor_id)
+            typeprofessor_name = typeprofessor.NameContract  # Store the name for the message
+            typeprofessor.delete()
+            messages.success(request, f"El Tipus de Professor {typeprofessor_name} s'ha eliminat correctament.")
+            return redirect('typeprofessor_list') 
+        except TypeProfessor.DoesNotExist:
+            messages.error(request, "Error: El Tipus de professor no existeix.")
+    
+    # ACTION OF INITIAL DELETE
     if 'confirm_delete' in request.GET:
-        type_professor_id = request.GET.get('confirm_delete')
-        deleting = get_object_or_404(TypeProfessor, pk=type_professor_id)
+        typeprofessor_id = request.GET.get('confirm_delete')
+        deleting = typeprofessor_id  # Only pass the ID for now
 
-    return render(request, 'type_professor_crud.html', {
-        'form': form,
-        'type_professors': type_professors,
+    return render(request, 'typeprofessor_list_actions.html', {
+        'type_professors': typeprofessors,
         'deleting': deleting,
     })
+
+
+#Function to create or edit a typeprofessor - depends if is passed a idTypeProfessor 
+def typeprofessor_create_edit(request,idTypeProfessor=None):
+    if idTypeProfessor:
+        # If idTypeProfessor is passed, we are editing an existing TypeProfessor
+        typeprofessor = get_object_or_404(TypeProfessor, pk=idTypeProfessor)
+        if request.method == 'POST':
+            form = TypeProfessorForm(request.POST, instance=typeprofessor)
+            if form.is_valid():
+                form.save()
+                messages.success(request, f"El curs {typeprofessor.NameContract} s\'ha actualitzat correctament.")
+                return redirect('typeprofessor_list')
+        else:
+            form = TypeProfessorForm(instance=typeprofessor)
+    else:
+        # No idTypeProfessor, we are creating a new typeprofessor
+        if request.method == 'POST':
+            form = TypeProfessorForm(request.POST)
+            if form.is_valid():
+                new_typeprofessor = form.save()
+                messages.success(request, f"El curs {new_typeprofessor.NameContract} s\'ha afegit correctament.")
+                return redirect('typeprofessor_list')
+        else:
+            form = TypeProfessorForm()
+    return render(request, 'typeprofessor_form.html', {'form': form})
+
+########################################################################################################
 
 
 ### LANGUAGES ###

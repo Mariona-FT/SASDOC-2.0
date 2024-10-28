@@ -46,7 +46,11 @@ urlpatterns = [
     path('courses/create/', views.course_create_edit, name='course_create'),
     path('courses/edit/<int:idCourse>', views.course_create_edit, name='course_edit'),
 
-    path('typeprofessor/', views.type_professor_crud, name='type_professor_crud'),
+    #TYPEPROFESSOR ACTIONS
+    path('typeprofessor/', views.typeprofessor_list, name='typeprofessor_list'),
+    path('typeprofessor/create/', views.typeprofessor_create_edit, name='typeprofessor_create'),
+    path('typeprofessor/edit/<int:idTypeProfessor>', views.typeprofessor_create_edit, name='typeprofessor_edit'),
+
     path('languages/', views.language_crud, name='language_crud'),
     path('years/', views.year_crud, name='year_crud'),
 ]

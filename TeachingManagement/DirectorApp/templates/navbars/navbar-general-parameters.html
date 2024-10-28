@@ -41,9 +41,9 @@
             <a class="nav-link" href="{{ course_list_url }}">Gestió de Cursos</a>
         </li>
 
-        {% url 'type_professor_crud' as type_professor_crud_url %}
-        <li class="nav-item {% if request.path == type_professor_crud_url %} active{% endif %}">
-            <a class="nav-link" href="{{ type_professor_crud_url }}">Gestió Tipus de Professorat</a>
+        {% url 'typeprofessor_list' as typeprofessor_list_url %}
+        <li class="nav-item {% if request.path == typeprofessor_list_url %} active{% endif %}">
+            <a class="nav-link" href="{{ typeprofessor_list_url }}">Gestió Tipus de Professorat</a>
         </li>
         {% url 'language_crud' as language_crud_url %}
         <li class="nav-item {% if request.path == language_crud_url %} active{% endif %}">
