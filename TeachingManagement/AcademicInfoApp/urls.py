@@ -51,6 +51,12 @@ urlpatterns = [
     path('typeprofessor/create/', views.typeprofessor_create_edit, name='typeprofessor_create'),
     path('typeprofessor/edit/<int:idTypeProfessor>', views.typeprofessor_create_edit, name='typeprofessor_edit'),
 
-    path('languages/', views.language_crud, name='language_crud'),
-    path('years/', views.year_crud, name='year_crud'),
+    #LANGUAGE ACTIONS
+    path('languages/', views.language_list, name='language_list'),
+    path('languages/create/', views.language_create_edit, name='language_create'),
+    path('languages/edit/<int:idLanguage>', views.language_create_edit, name='language_edit'),
+
+    path('years/', views.year_list, name='year_list'),
+    path('years/create/', views.year_create_edit, name='year_create'),
+    path('years/edit/<int:idYear>', views.year_create_edit, name='year_edit'),
 ]

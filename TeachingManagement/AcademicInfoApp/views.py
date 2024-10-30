@@ -66,7 +66,7 @@ def field_create_edit(request, idField=None):
 
 ## Section list to manage - listing and actions of edit, delete and add section
 def section_list(request):
-    sections = Section.objects.all()
+    sections = Section.objects.all().order_by('LetterSection')
     deleting = None
 
     # FINAL DELETE
@@ -122,7 +122,7 @@ def sections_create_edit(request,idSection=None):
 
 ## Schools list to manage - listing and actions of edit, delete and add schools
 def school_list(request):
-    schools = School.objects.all()
+    schools = School.objects.all().order_by('CodeSchool')
     deleting = None
    
     if request.method == "POST" and 'confirm_delete' in request.POST:       
@@ -176,7 +176,7 @@ def school_create_edit(request,idSchool=None):
 
 ## Degree list to manage - listing and actions of edit, delete and add degree
 def degree_list(request):
-    degrees = Degree.objects.all()
+    degrees = Degree.objects.all().order_by('CodeDegree')
     deleting = None
    
     if request.method == "POST" and 'confirm_delete' in request.POST:
@@ -194,7 +194,7 @@ def degree_list(request):
     # ACTION OF INITIAL DELETE
     if 'confirm_delete' in request.GET:
         degree_id = request.GET.get('confirm_delete')
-        deleting = degree_id  # Only pass the ID for now
+        deleting = degree_id  # Only pass the ID
     
     return render(request, 'degree_list_actions.html', {
         'degrees': degrees,
@@ -231,7 +231,7 @@ def degree_create_edit(request,idDegree=None):
 
 ## Course list to manage - listing and actions of edit, delete and add course
 def course_list(request):
-    courses = Course.objects.all()
+    courses = Course.objects.all().order_by('CodeCourse')
     deleting = None
    
     if request.method == "POST" and 'confirm_delete' in request.POST:
@@ -249,7 +249,7 @@ def course_list(request):
     # ACTION OF INITIAL DELETE
     if 'confirm_delete' in request.GET:
         course_id = request.GET.get('confirm_delete')
-        deleting = course_id  # Only pass the ID for now
+        deleting = course_id  # Only pass the ID
 
     return render(request, 'course_list_actions.html', {
         'courses': courses,
@@ -296,15 +296,15 @@ def typeprofessor_list(request):
             typeprofessor = TypeProfessor.objects.get(pk=typeprofessor_id)
             typeprofessor_name = typeprofessor.NameContract  # Store the name for the message
             typeprofessor.delete()
-            messages.success(request, f"El Tipus de Professor {typeprofessor_name} s'ha eliminat correctament.")
+            messages.success(request, f"El tipus de Professor {typeprofessor_name} s'ha eliminat correctament.")
             return redirect('typeprofessor_list') 
         except TypeProfessor.DoesNotExist:
-            messages.error(request, "Error: El Tipus de professor no existeix.")
+            messages.error(request, "Error: El tipus de professor no existeix.")
     
     # ACTION OF INITIAL DELETE
     if 'confirm_delete' in request.GET:
         typeprofessor_id = request.GET.get('confirm_delete')
-        deleting = typeprofessor_id  # Only pass the ID for now
+        deleting = typeprofessor_id  # Only pass the ID
 
     return render(request, 'typeprofessor_list_actions.html', {
         'type_professors': typeprofessors,
@@ -321,7 +321,7 @@ def typeprofessor_create_edit(request,idTypeProfessor=None):
             form = TypeProfessorForm(request.POST, instance=typeprofessor)
             if form.is_valid():
                 form.save()
-                messages.success(request, f"El curs {typeprofessor.NameContract} s\'ha actualitzat correctament.")
+                messages.success(request, f"El tipus de professor {typeprofessor.NameContract} s\'ha actualitzat correctament.")
                 return redirect('typeprofessor_list')
         else:
             form = TypeProfessorForm(instance=typeprofessor)
@@ -331,116 +331,117 @@ def typeprofessor_create_edit(request,idTypeProfessor=None):
             form = TypeProfessorForm(request.POST)
             if form.is_valid():
                 new_typeprofessor = form.save()
-                messages.success(request, f"El curs {new_typeprofessor.NameContract} s\'ha afegit correctament.")
+                messages.success(request, f"El tipus de professor {new_typeprofessor.NameContract} s\'ha afegit correctament.")
                 return redirect('typeprofessor_list')
         else:
             form = TypeProfessorForm()
     return render(request, 'typeprofessor_form.html', {'form': form})
 
-########################################################################################################
-
-
 ### LANGUAGES ###
-def language_crud(request):
-    languages = Language.objects.all()
-    form = LanguageForm()
-    deleting = None
 
-    if request.method == "POST":
-        # Handle delete confirmation
-        if 'confirm_delete' in request.POST:
-            language_id = request.POST.get('confirm_delete')
-            language = get_object_or_404(Language, pk=language_id)
-            language_name = language.Language
+## language list to manage - listing and actions of edit, delete and add language
+def language_list(request):
+    languages = Language.objects.all()
+    deleting = None
+   
+    if request.method == "POST" and 'confirm_delete' in request.POST:
+       # FINAL DELETE
+        language_id = request.POST.get('confirm_delete') # id passed in url
+        try:
+            language = Language.objects.get(pk=language_id)
+            language_name = language.Language  # Store the name for the message
             language.delete()
             messages.success(request, f"La llengua {language_name} s'ha eliminat correctament.")
-            return redirect('language_crud')
-
-        # Handle update
-        if 'idLanguage' in request.POST:
-            language_id = request.POST.get('idLanguage')
-            language = get_object_or_404(Language, pk=language_id)
-            form = LanguageForm(request.POST, instance=language)
-            if form.is_valid():
-                form.save()
-                messages.success(request, f"La llengua {language.Language} s'ha actualitzat correctament.")
-                return redirect('language_crud')
-
-        # Handle create
-        else:
-            form = LanguageForm(request.POST)
-            if form.is_valid():
-                language = form.save()
-                messages.success(request, f"La llengua {language.Language} s'ha creat correctament.")
-                return redirect('language_crud')
-
-    # Handle edit
-    if 'edit' in request.GET:
-        language_id = request.GET.get('edit')
-        language = get_object_or_404(Language, pk=language_id)
-        form = LanguageForm(instance=language)
-
-    # Handle initial delete confirmation
+            return redirect('language_list') 
+        except Language.DoesNotExist:
+            messages.error(request, "Error: La llengua no existeix.")
+    
+    # ACTION OF INITIAL DELETE
     if 'confirm_delete' in request.GET:
-        laguage_id = request.GET.get('confirm_delete')
-        deleting = get_object_or_404(Language, pk=language_id)
+        language_id = request.GET.get('confirm_delete')
+        deleting = language_id  # Only pass the ID
 
-    return render(request, 'language_crud.html', {
-        'form': form,
+    return render(request, 'language_list_actions.html', {
         'languages': languages,
         'deleting': deleting,
     })
 
-### YEAR ###
-def year_crud(request):
-    years = Year.objects.all().order_by('-Year')
-    form = YearForm()
-    deleting = None
-
-    if request.method == "POST":
-        # Handle delete confirmation
-        if 'confirm_delete' in request.POST:
-            year_id = request.POST.get('confirm_delete')
-            year = get_object_or_404(Year, pk=year_id)
-            year_value = year.Year
-            year.delete()
-            messages.success(request, f"L'any {year_value} s'ha eliminat correctament.")
-            return redirect('year_crud')
-
-        # Handle update
-        if 'idYear' in request.POST:
-            year_id = request.POST.get('idYear')
-            # Get the existing year object
-            original_year = get_object_or_404(Year, pk=year_id)
-            form = YearForm(request.POST, instance=original_year)
-
+#Function to create or edit a language - depends if is passed a idLanguage 
+def language_create_edit(request,idLanguage=None):
+    if idLanguage:
+        # If idLanguage is passed, we are editing an existing language
+        language = get_object_or_404(Language, pk=idLanguage)
+        if request.method == 'POST':
+            form = LanguageForm(request.POST, instance=language)
             if form.is_valid():
-                # Update the existing year without deleting
-                updated_year = form.save()
-                messages.success(request, f"L'any {updated_year.Year} s'ha actualitzat correctament.")
-                return redirect('year_crud')
-
-        # Handle create
+                form.save()
+                messages.success(request, f"La llengua {language.Language} s\'ha actualitzat correctament.")
+                return redirect('language_list')
         else:
-            form = YearForm(request.POST)
+            form = LanguageForm(instance=language)
+    else:
+        # No idLanguage, we are creating a new language
+        if request.method == 'POST':
+            form = LanguageForm(request.POST)
             if form.is_valid():
-                year = form.save()
-                messages.success(request, f"L'any {year.Year} s'ha creat correctament.")
-                return redirect('year_crud')
+                new_language = form.save()
+                messages.success(request, f"La llengua {new_language.Language} s\'ha afegit correctament.")
+                return redirect('language_list')
+        else:
+            form = LanguageForm()
+    return render(request, 'language_form.html', {'form': form})
 
-    # Handle edit
-    if 'edit' in request.GET:
-        year_id = request.GET.get('edit')
-        year = get_object_or_404(Year, pk=year_id)
-        form = YearForm(instance=year)
 
-    # Handle initial delete confirmation
+### YEAR ###
+
+## year list to manage - listing and actions of edit, delete and add year
+def year_list(request):
+    years = Year.objects.all().order_by('Year')
+    deleting = None
+   
+    if request.method == "POST" and 'confirm_delete' in request.POST:
+       # FINAL DELETE
+        year_id = request.POST.get('confirm_delete') # id passed in url
+        try:
+            year = Year.objects.get(pk=year_id)
+            year_name = year.Year  # Store the name for the message
+            year.delete()
+            messages.success(request, f"L'Any {year_name} s'ha eliminat correctament.")
+            return redirect('year_list') 
+        except Year.DoesNotExist:
+            messages.error(request, "Error: L'any no existeix.")
+    
+    # ACTION OF INITIAL DELETE
     if 'confirm_delete' in request.GET:
         year_id = request.GET.get('confirm_delete')
-        deleting = get_object_or_404(Year, pk=year_id)
+        deleting = year_id  # Only pass the ID
 
-    return render(request, 'year_crud.html', {
-        'form': form,
+    return render(request, 'year_list_actions.html', {
         'years': years,
         'deleting': deleting,
     })
+
+#Function to create or edit a year - depends if is passed a idYear 
+def year_create_edit(request,idYear=None):
+    if idYear:
+        # If idYear is passed, we are editing an existing Year
+        year = get_object_or_404(Year, pk=idYear)
+        if request.method == 'POST':
+            form = YearForm(request.POST, instance=year)
+            if form.is_valid():
+                form.save()
+                messages.success(request, f"L'any {year.Year} s\'ha actualitzat correctament.")
+                return redirect('year_list')
+        else:
+            form = YearForm(instance=year)
+    else:
+        # No idYear, we are creating a new year
+        if request.method == 'POST':
+            form = YearForm(request.POST)
+            if form.is_valid():
+                new_year = form.save()
+                messages.success(request, f"L'any {new_year.Year} s\'ha afegit correctament.")
+                return redirect('year_list')
+        else:
+            form = YearForm()
+    return render(request, 'year_form.html', {'form': form})

@@ -1,0 +1,159 @@
+{% extends 'base-template/base.html' %}
+
+{% block title %}Gestió Anys{% endblock %}
+
+{% block content %}
+<div class="container-fluid d-flex" style="min-height: 100vh;">
+    <div class="col-lg-10 mx-auto">
+        <h2 style="text-align:center">Gestió dels Anys</h2>
+
+        <!-- Display success, warning, or error messages -->
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <hr>
+
+        <div class="row">
+            <div class="col-lg-10">
+                <!-- Filter Fields -->
+                <h3>Filtres pels Anys</h3>
+                <div class="d-flex justify-content-between row mb-2">
+                    <!-- Filters section -->
+                    <div class="filters d-flex flex-wrap">
+                        <div class="col-md-9">
+                            <label for="filter-all">Filtrar per contingut:</label>
+                            <input type="text" id="filter-all" class="form-control" placeholder="Cerca per Any">
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="filter-edit">Filtrar per si és Any Edtitable:</label>
+                            <select id="filter-edit" class="form-control">
+                                <option value="">Tots</option>
+                                <option value="yes">Editable</option>
+                                <option value="no">No Editable</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+
+
+                <!-- List of all years -->
+                <h3>Llista d'Anys</h3>
+                <table class="table table-striped" id="years-table">
+                    <thead>
+                        <tr>
+                            <th>Any</th>
+                            <th>Es Editable</th>
+                            <th>Accions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if years %}
+                            {% for year in years %}
+                                <tr data-year="{{ year.Year }}" data-editable="{{ year.isEditable|yesno:'yes,no' }}">
+                                    <td>{{ year.Year }}</td>
+                                    <td>{{ year.isEditable|yesno:"Sí,No" }}</td>
+                                    <td>
+                                        <!-- Edit button -->
+                                        <a href="{% url 'year_edit' year.pk %}" class="button-edit btn-sm">Editar</a>
+
+                                        <!-- Delete form with JavaScript confirmation -->
+                                        <form method="post" action="{% url 'year_list' %}" style="display:inline;" onsubmit="return confirmDelete('{{ year.Year }}');">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="confirm_delete" value="{{ year.pk }}">
+                                            <button type="submit" class="button-delete btn-sm">Eliminar</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="3" class="text-center">Cap any entrat.</td>
+                            </tr>        
+                        {% endif %}
+                    </tbody>
+                </table>
+
+                <!-- No results message -->
+                <div id="no-results-message" class="text-center text-danger" style="display:none;">
+                    <span id="no-results-text"></span>
+                </div>
+            </div>
+
+            <!-- Buttons section fixed on the right -->
+            <div class="col-lg-2">
+                <div class="sticky-top" style="top: 1rem;">
+                    <div class="buttons mb-2 d-flex flex-column align-items-center">
+                        <a href="{% url 'year_create' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Afegir Any</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript function for confirmation -->
+<script>
+    function confirmDelete(year) {
+        return confirm("Estàs segur que vols eliminar aquest any: " + year + "?");
+    }
+
+    // JavaScript for dynamic filtering
+    document.getElementById('filter-all').addEventListener('input', filterTable);
+    document.getElementById('filter-edit').addEventListener('change', filterTable);
+
+    function filterTable() {
+        const searchValue = document.getElementById('filter-all').value.toLowerCase();
+        const editFilter = document.getElementById('filter-edit').value;
+        const tableRows = document.querySelectorAll('#years-table tbody tr');
+
+        let rowsVisible = 0;
+
+        tableRows.forEach(row => {
+            const fieldYear = row.getAttribute('data-year').toLowerCase();
+            const isEditable = row.getAttribute('data-editable');
+
+            const matchesSearch =  fieldYear.includes(searchValue);
+            const matchesEditFilter = (editFilter === '' || isEditable === editFilter);
+
+            if (matchesSearch && matchesEditFilter) {
+                row.style.display = '';
+                rowsVisible++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        const noResultsMessage = document.getElementById('no-results-message');
+        const noResultsText = document.getElementById('no-results-text');
+
+        // No results message logic
+        if (rowsVisible === 0) {
+            let message = "Cap Any amb els criteris de cerca";
+            if (searchValue) {
+                message += ` amb l'any "${searchValue}"`;
+            }
+            if (editFilter) {
+                message += ` actiu "${editFilter === 'yes' ? 'Sí' : 'No'}"`;
+            }
+            noResultsText.textContent = message + ".";
+            noResultsMessage.style.display = 'block';
+        } else {
+            noResultsMessage.style.display = 'none';
+        }
+    }
+
+
+</script>
+
+{% endblock %}

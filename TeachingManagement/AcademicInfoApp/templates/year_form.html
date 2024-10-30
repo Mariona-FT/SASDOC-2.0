@@ -1,6 +1,6 @@
 {% extends 'base-template/base.html' %}
 
-{% block title %}{% if form.instance.pk %}Editar Titulació{% else %}Afegir Titulació{% endif %}{% endblock %}
+{% block title %}{% if form.instance.pk %}Editar Any{% else %}Afegir Any{% endif %}{% endblock %}
 
 {% block content %}
 
@@ -13,7 +13,7 @@
         <div class="row">
             <div class="col-lg-10">
                 <div class="d-flex justify-content-center align-items-center">
-                    <h3>{% if form.instance.pk %}Actualitzar Titulació{% else %}Afegir Titulació{% endif %}</h3>
+                    <h3>{% if form.instance.pk %}Actualitzar Any{% else %}Afegir Any{% endif %}</h3>
                 </div>
                 <br>
 
@@ -34,7 +34,7 @@
                         {% endif %}
                         
                         {% if form.instance.pk %}
-                            <input type="hidden" name="idDegree" value="{{ form.instance.pk }}">
+                            <input type="hidden" name="idYear" value="{{ form.instance.pk }}">
                         {% endif %}
                         
                         <!--FORM-->
@@ -44,7 +44,7 @@
 
                         <div class="d-flex justify-content-center">
                             <button type="submit" class="button-create btn-sm">
-                                {% if form.instance.pk %}Actualitzar{% else %}Afegir{% endif %} Titulació
+                                {% if form.instance.pk %}Actualitzar{% else %}Afegir{% endif %} Any
                             </button>
                         </div>
                     </form>
@@ -55,7 +55,7 @@
             <div class="col-lg-2">
                 <div class="sticky-top" style="top: 1rem">
                     <div class="buttons mb-2 d-flex flex-column align-items-center">
-                        <a href="{% url 'field_list' %}" class="button-return btn-sm mb-2;">Tornar a Gestió de les Titulacions</a>
+                        <a href="{% url 'year_list' %}" class="button-return btn-sm mb-2;">Tornar a Gestió d'Anys</a>
                     </div>
                 </div>
             </div>
