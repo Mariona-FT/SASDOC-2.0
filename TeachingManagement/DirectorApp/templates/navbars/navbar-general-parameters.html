@@ -11,9 +11,9 @@
             <a class="nav-link" href="{{extrainfo_professor_crud_url}}">Gestió Informació Extra del Professorat</a>
         </li>
 
-        {% url 'usersapp:register_chief' as register_chief_url %}
-        <li class="nav-item {% if request.path == register_chief_url %} active{% endif %}">
-            <a class="nav-link" href="{{register_chief_url}}">Gestió de Caps de Secció</a>
+        {% url 'usersapp:sectorchief_list' as sectorchief_list_url %}
+        <li class="nav-item {% if request.path == sectorchief_list_url %} active{% endif %}">
+            <a class="nav-link" href="{{sectorchief_list_url}}">Gestió de Caps de Secció</a>
         </li>
 
         {% url 'field_list' as field_list_url %}

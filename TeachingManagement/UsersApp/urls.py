@@ -38,8 +38,9 @@ urlpatterns = [
     path('professor-upload/', views.upload_professors, name='upload_professors'), #for file
 
     #Sector chiefs
-    path('sectorchief-management/', views.sectorchief_crud, name='sectorchief_crud'),
-    path('register-chief/', views.register_chief, name='register_chief'),
+    path('sectorchief/', views.sectorchief_list, name='sectorchief_list'),
+    path('sectorchief/create/', views.sectorchief_create_edit, name='sectorchief_create'),
+    path('sectorchief/edit/<int:idChief>', views.sectorchief_create_edit, name='sectorchief_edit'),
  
     #Dashboards
     path('director/', views.redirect_director_dashboard, name='redirect_director_dashboard'),
