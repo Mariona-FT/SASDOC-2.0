@@ -199,57 +199,67 @@ def upload_professors(request):
 
     return render(request, 'actions/upload_professors.html', {'form': form})
 
-#REGISTER CHEIF
-@login_required
-@user_passes_test(is_director)
-def register_chief(request):
-    
-    professors = Professor.objects.all()  # Fetch all professors
 
-    if request.method == 'POST':
-        form = ChiefRegistrationForm(request.POST)
-        professor_id = request.POST.get('professor')  # Get the professor ID from the submitted data
-
-        if form.is_valid() and professor_id:
-            chief = form.save(commit=False)
-            # Fetch the professor based on the ID
-            try:
-                professor = Professor.objects.get(idProfessor=professor_id)
-                
-                # Check if this professor is already a sector chief
-                if professor.user.role == 'sector_chief':
-                    messages.warning(request, "Aquest professor ja és cap de secció.")
-                    return render(request, 'actions/register_chief.html', {'form': form, 'professors': professors})
-
-            except Professor.DoesNotExist:
-                form.add_error(None, 'Selected professor does not exist.')
-                return render(request, 'actions/register_chief.html', {'form': form, 'professors': professors})
-            
-            
-            chief.save()
-            
-            # Update the professor's user role
+def sectorchief_list(request):
+    professors = Professor.objects.all()
+    deleting = None
+   
+    if request.method == "POST" and 'confirm_delete' in request.POST:
+       # FINAL DELETE
+        chief_id = request.POST.get('confirm_delete')  # ID passed in url
+        try:
+            # Fetch the Chief instance by id
+            chief = Chief.objects.get(pk=chief_id)
             professor = chief.professor 
-            professor.user.role = 'sector_chief'
-            professor.user.save()  
-            
-            messages.success(request, f"Professor {professor.name} {professor.family_name} triat per ser cap de secció: {chief.section}.")
-            return redirect('usersapp:register_chief')
-        
-        # If the form is not valid or professor_id is missing, display the errors
-        if not professor_id:
-            form.add_error('professor', 'Tria un professor per ser cap de secció.')  # Add error to the form
+            professor_name = f"{professor.name} {professor.family_name}"  
+            chief.delete()
 
-            messages.warning(request,f"Tria un professor per ser cap de secció.")
-            return redirect('usersapp:register_chief')
-            
+            # Check if the professor still has any Chief records
+            if not professor.chief_set.exists():
+                professor.user.role = 'professor'
+                professor.user.save()
+
+            messages.success(request, f"El Cap de secció {professor_name} s'ha eliminat correctament.")
+            return redirect('usersapp:sectorchief_list')
+
+        except Chief.DoesNotExist:
+            messages.error(request, "Error: El Cap de Secció no existeix.")
+        except Exception as e:  # Catch any other exceptions
+            messages.error(request, f"Error inesperat: {str(e)}")
+    
+    # ACTION OF INITIAL DELETE
+    if 'confirm_delete' in request.GET:
+        chief_id = request.GET.get('confirm_delete')
+        deleting = chief_id  # Only pass the ID
+
+    return render(request, 'users/sectorchief/sectorchief_list_actions.html', {
+        'professors': professors,
+        'deleting': deleting,
+    })
+
+#Function to create or edit a Section Chief - depends if is passed a idChief 
+def sectorchief_create_edit(request, idChief=None):
+    if idChief:
+        # If idChief is passed, we are editing an existing chief
+        chief = get_object_or_404(Chief, pk=idChief)
+
+        if request.method == 'POST':
+            form = ChiefRegistrationForm(request.POST, instance=chief)
+            if form.is_valid():
+                new_chief = form.save()  
+                messages.success(request, f"El Cap de secció {chief.professor.name} {chief.professor.family_name} s'ha actualitzat correctament.")
+                return redirect('usersapp:sectorchief_list')
+        else:
+            form = ChiefRegistrationForm(instance=chief)
     else:
-        form = ChiefRegistrationForm()
+        # NO idChief, create a new chief
+        form = ChiefRegistrationForm(request.POST or None)
+        if request.method == 'POST' and form.is_valid():
+            new_chief = form.save()
+            messages.success(request, f"El Cap de secció {new_chief.professor.name} {new_chief.professor.family_name} s'ha afegit correctament.")
+            return redirect('usersapp:sectorchief_list')
         
-    return render(request, 'actions/register_chief.html', {'form': form, 'professors': professors})
-
-def sectorchief_crud(request):
-    pass
+    return render(request, 'users/sectorchief/sectorchief_form.html', {'form': form})
 
 #LOGIN
 def login_session(request):

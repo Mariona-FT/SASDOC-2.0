@@ -163,7 +163,23 @@ class ChiefRegistrationForm(forms.ModelForm):
     def save(self, commit=True):
         # Create or update the chief instance
         chief = super().save(commit=False)
+        
+        # Check if we are updating an existing chief
+        if chief.pk:  # If the chief already exists
+            old_professor = Chief.objects.get(pk=chief.pk).professor
+            # Check if the professor being changed
+            if chief.professor != old_professor:
+                # Revert old professor's role if they have no other chiefs
+                if old_professor.chief_set.count() == 1:
+                    old_professor.user.role = 'professor'
+                    old_professor.user.save()
+        
+        # Set the new role for the new professor
+        chief.professor.user.role = 'sector_chief'
 
         if commit:
-            chief.save()
+            # Save the professor's role and the chief instance
+            chief.professor.user.save()  
+            chief.save() 
+             
         return chief
