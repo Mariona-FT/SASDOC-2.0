@@ -194,7 +194,7 @@ def degree_list(request):
     # ACTION OF INITIAL DELETE
     if 'confirm_delete' in request.GET:
         degree_id = request.GET.get('confirm_delete')
-        deleting = degree_id  # Only pass the ID for now
+        deleting = degree_id  # Only pass the ID
     
     return render(request, 'degree_list_actions.html', {
         'degrees': degrees,
@@ -249,7 +249,7 @@ def course_list(request):
     # ACTION OF INITIAL DELETE
     if 'confirm_delete' in request.GET:
         course_id = request.GET.get('confirm_delete')
-        deleting = course_id  # Only pass the ID for now
+        deleting = course_id  # Only pass the ID
 
     return render(request, 'course_list_actions.html', {
         'courses': courses,
@@ -304,7 +304,7 @@ def typeprofessor_list(request):
     # ACTION OF INITIAL DELETE
     if 'confirm_delete' in request.GET:
         typeprofessor_id = request.GET.get('confirm_delete')
-        deleting = typeprofessor_id  # Only pass the ID for now
+        deleting = typeprofessor_id  # Only pass the ID
 
     return render(request, 'typeprofessor_list_actions.html', {
         'type_professors': typeprofessors,
@@ -337,59 +337,61 @@ def typeprofessor_create_edit(request,idTypeProfessor=None):
             form = TypeProfessorForm()
     return render(request, 'typeprofessor_form.html', {'form': form})
 
-########################################################################################################
-
-
 ### LANGUAGES ###
-def language_crud(request):
+
+## language list to manage - listing and actions of edit, delete and add language
+def language_list(request):
     languages = Language.objects.all()
-    form = LanguageForm()
     deleting = None
-
-    if request.method == "POST":
-        # Handle delete confirmation
-        if 'confirm_delete' in request.POST:
-            language_id = request.POST.get('confirm_delete')
-            language = get_object_or_404(Language, pk=language_id)
-            language_name = language.Language
+   
+    if request.method == "POST" and 'confirm_delete' in request.POST:
+       # FINAL DELETE
+        language_id = request.POST.get('confirm_delete') # id passed in url
+        try:
+            language = Language.objects.get(pk=language_id)
+            language_name = language.Language  # Store the name for the message
             language.delete()
-            messages.success(request, f"La llengua {language_name} s'ha eliminat correctament.")
-            return redirect('language_crud')
-
-        # Handle update
-        if 'idLanguage' in request.POST:
-            language_id = request.POST.get('idLanguage')
-            language = get_object_or_404(Language, pk=language_id)
-            form = LanguageForm(request.POST, instance=language)
-            if form.is_valid():
-                form.save()
-                messages.success(request, f"La llengua {language.Language} s'ha actualitzat correctament.")
-                return redirect('language_crud')
-
-        # Handle create
-        else:
-            form = LanguageForm(request.POST)
-            if form.is_valid():
-                language = form.save()
-                messages.success(request, f"La llengua {language.Language} s'ha creat correctament.")
-                return redirect('language_crud')
-
-    # Handle edit
-    if 'edit' in request.GET:
-        language_id = request.GET.get('edit')
-        language = get_object_or_404(Language, pk=language_id)
-        form = LanguageForm(instance=language)
-
-    # Handle initial delete confirmation
+            messages.success(request, f"El Tipus de Professor {language_name} s'ha eliminat correctament.")
+            return redirect('language_list') 
+        except Language.DoesNotExist:
+            messages.error(request, "Error: El Tipus de professor no existeix.")
+    
+    # ACTION OF INITIAL DELETE
     if 'confirm_delete' in request.GET:
-        laguage_id = request.GET.get('confirm_delete')
-        deleting = get_object_or_404(Language, pk=language_id)
+        language_id = request.GET.get('confirm_delete')
+        deleting = language_id  # Only pass the ID
 
-    return render(request, 'language_crud.html', {
-        'form': form,
+    return render(request, 'language_list_actions.html', {
         'languages': languages,
         'deleting': deleting,
     })
+
+#Function to create or edit a language - depends if is passed a idLanguage 
+def language_create_edit(request,idLanguage=None):
+    if idLanguage:
+        # If idLanguage is passed, we are editing an existing language
+        language = get_object_or_404(Language, pk=idLanguage)
+        if request.method == 'POST':
+            form = LanguageForm(request.POST, instance=language)
+            if form.is_valid():
+                form.save()
+                messages.success(request, f"El curs {language.Language} s\'ha actualitzat correctament.")
+                return redirect('language_list')
+        else:
+            form = LanguageForm(instance=language)
+    else:
+        # No idLanguage, we are creating a new language
+        if request.method == 'POST':
+            form = LanguageForm(request.POST)
+            if form.is_valid():
+                new_language = form.save()
+                messages.success(request, f"El curs {new_language.Language} s\'ha afegit correctament.")
+                return redirect('language_list')
+        else:
+            form = LanguageForm()
+    return render(request, 'language_form.html', {'form': form})
+
+########################################################################################################
 
 ### YEAR ###
 def year_crud(request):
