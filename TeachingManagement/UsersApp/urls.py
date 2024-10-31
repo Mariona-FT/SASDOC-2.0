@@ -26,7 +26,7 @@ urlpatterns = [
     path('login/', views.login_session, name='login'),
     path('logout/', views.logout_session, name='logout'),
 
-    #Professors
+    #Professors antic
     path('professor-management/', views.professor_crud, name='professor_crud'),
     
     path('professor-create/', views.create_professor_view, name='create_professor'),
@@ -34,6 +34,12 @@ urlpatterns = [
     
     path('professor-information/', views.extrainfo_professor_crud, name='extrainfo_professor_crud'),
     path('professor-information/<int:professor_id>', views.enter_extrainfo_professor, name='enter_extrainfo_professor'),
+
+
+    #Professors
+    path('professor/', views.professor_list, name='professor_list'),
+    path('professor/create/', views.professor_create_edit, name='professor_create'),
+    path('professor/edit/<int:idProfessor>', views.professor_create_edit, name='professor_edit'),
 
     path('professor-upload/', views.upload_professors, name='upload_professors'), #for file
 

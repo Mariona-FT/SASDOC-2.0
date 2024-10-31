@@ -1,0 +1,206 @@
+{% extends 'base-template/base.html' %}
+
+{% block title %}Gestió Professorat{% endblock %}
+
+{% block content %}
+<div class="container-fluid d-flex" style="min-height: 100vh;">
+    <div class="col-lg-10 mx-auto">
+        <h2 style="text-align:center">Gestió del Professorat NOU</h2>
+
+        <!-- Display success, warning, or error messages -->
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="{% if message.tags %}alert alert-{{ message.tags }}{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <hr>
+
+        <div class="row">
+            <div class="col-lg-11">
+                <!-- Filter Fields -->
+                <h3>Filtres pel Llistat del Professorat</h3>
+                <div class="d-flex justify-content-between row mb-2">
+                    <!-- Filters section -->
+                    <div class="filters d-flex flex-wrap">
+                        <div class="col-md-10">
+                            <label for="filter-all">Filtrar per contingut:</label>
+                            <input type="text" id="filter-all" class="form-control" placeholder="Cerca per Nom, Cognom, Contracte, Àreas o Idiomes">
+                        </div>
+
+                        <div class="col-md-2">
+                            <label for="filter-active">Filtrar per si és actiu:</label>
+                            <select id="filter-active" class="form-control">
+                                <option value="">Tots</option>
+                                <option value="yes">Actiu</option>
+                                <option value="no">No Actiu</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+
+                <!-- List of all professors -->
+                <h3>Llista del Professorat</h3>
+                <table class="table" id="professors-table">
+                    <thead>
+                        <tr>
+                            <th>Nom i Cognoms</th>
+                            <th>Correu electrònic</th>
+                            <th>Contracte Actual</th>
+                            <th>Camps d'estudi</th>
+                            <th>Llengües</th>
+                            <th>Està Actiu</th>
+                            <th>Accions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if professors %}
+                            {% for professor in professors %}
+                                <tr style="background-color: 
+                                {% if professor.isActive == "no" %}
+                                    #d9d9d9  ; 
+                                {% elif  not professor.current_contract or not professor.professor_fields.exists or not professor.professor_languages.exists %}
+                                    #ffe6e6 ; 
+                                {% else %}
+                                    #e6ffea  ; 
+                                {% endif %};"
+                                data-name="{{ professor.name }} {{ professor.family_name }}" 
+                                data-email="{{ professor.email }}" 
+                                data-contract="{{ professor.current_contract|default:'No contracte' }}" 
+                                data-fields="{% for field in professor.professor_fields.all %}{{ field.Field.NameField }}{% if not forloop.last %},{% endif %}{% endfor %}"
+                                data-languages="{% for language in professor.professor_languages.all %}{{ language.Language.Language }}{% if not forloop.last %},{% endif %}{% endfor %}"
+                                data-active="{{ professor.isActive }}"
+                                >
+                                    <td>{{ professor.name }} {{ professor.family_name }}</td>
+                                    <td>{{ professor.email }}</td>
+                                    <td> 
+                                        {% if professor.current_contract %}
+                                            <span class="professor-info">{{ professor.current_contract }}</span>
+                                        {% else %}
+                                            <span class="no-data">No contracte</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if professor.professor_fields.exists %}
+                                            {% for field in professor.professor_fields.all %}
+                                                <span class="professor-info">{{ field.Field.NameField }}</span>{% if not forloop.last %}, {% endif %}
+                                            {% endfor %}
+                                        {% else %}
+                                            <span class="no-data">No camps d'estudi</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if professor.professor_languages.exists %}
+                                            {% for language in professor.professor_languages.all %}
+                                                <span class="professor-info">{{ language.Language.Language }}</span>{% if not forloop.last %}, {% endif %}
+                                            {% endfor %}
+                                        {% else %}
+                                            <span class="no-data">No llengües</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="active-status">{% if professor.isActive == 'yes' %}Sí{% else %}No{% endif %}</td>
+                                    <td>
+                                        <!-- Edit button -->
+                                        <a href="{% url 'usersapp:professor_edit' professor.pk %}" class="button-edit btn-sm">Editar</a>
+
+                                        <!-- Delete form with JavaScript confirmation -->
+                                        <form method="post" action="{% url 'usersapp:professor_list' %}" style="display:inline;" onsubmit="return confirmDelete('{{ professor.name }} {{ professor.family_name }}');">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="confirm_delete" value="{{ professor.pk }}">
+                                            <button type="submit" class="button-delete btn-sm">Eliminar</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="5" class="text-center">Cap professor en la taula.</td>
+                            </tr>        
+                        {% endif %}
+                    </tbody>
+                </table>
+                
+                <!-- No results message -->
+                <div id="no-results-message" class="text-center text-danger" style="display:none;">
+                    <span id="no-results-text"></span>
+                </div>
+            </div>
+
+            <!-- Buttons section fixed on the right -->
+            <div class="col-lg-1">
+                <div class="sticky-top" style="top: 1rem">
+                    <div class="buttons mb-2 d-flex flex-column align-items-center">
+                        <a href="{% url 'usersapp:professor_create' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Afegir Professor</a>
+                        <a href="{% url 'usersapp:upload_professors' %}" class="button-secondary btn-sm" style="width: 100%;">Afegir Professorat per Fitxer</a>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript function for confirmation -->
+<script>
+    function confirmDelete(professorName) {
+        return confirm("Estàs segur que vols eliminar aquest professor: " + professorName + "?");
+    }
+    // JavaScript for dynamic filtering
+    document.getElementById('filter-all').addEventListener('input', filterTable);
+    document.getElementById('filter-active').addEventListener('change', filterTable);
+
+    function filterTable() {
+        const searchValue = document.getElementById('filter-all').value.toLowerCase();
+        const activeFilter = document.getElementById('filter-active').value;
+        const tableRows = document.querySelectorAll('#professors-table tbody tr');
+
+        let rowsVisible = 0;
+
+        tableRows.forEach(row => {
+            const fieldName = row.getAttribute('data-name').toLowerCase();
+            const fieldEmail = row.getAttribute('data-email').toLowerCase();
+            const fieldContract = row.getAttribute('data-contract').toLowerCase();
+            const fieldField = row.getAttribute('data-fields').toLowerCase();
+            const fieldLanguage = row.getAttribute('data-languages').toLowerCase();
+
+            const isActive = row.getAttribute('data-active');
+
+            const matchesSearch =  fieldName.includes(searchValue) || fieldEmail.includes(searchValue) || fieldContract.includes(searchValue) || fieldField.includes(searchValue) || fieldLanguage.includes(searchValue);
+            const matchesActiveFilter = (activeFilter === '' || isActive === activeFilter);
+
+            if (matchesSearch && matchesActiveFilter) {
+                row.style.display = '';
+                rowsVisible++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        const noResultsMessage = document.getElementById('no-results-message');
+        const noResultsText = document.getElementById('no-results-text');
+
+        // No results message logic
+        if (rowsVisible === 0) {
+            let message = "Cap Professor amb els criteris de cerca";
+            if (searchValue) {
+                message += ` amb el terme "${searchValue}"`;
+            }
+            if (activeFilter) {
+                message += ` actiu "${activeFilter === 'yes' ? 'Sí' : 'No'}"`;
+            }
+            noResultsText.textContent = message + ".";
+            noResultsMessage.style.display = 'block';
+        } else {
+            noResultsMessage.style.display = 'none';
+        }
+    }
+ 
+</script>
+
+{% endblock %}

@@ -182,6 +182,36 @@ def enter_extrainfo_professor(request,professor_id):
 
     return render(request, 'users/professor/professor_extrainfo_form.html', {'form': form,'professor':professor})
 
+#Professor list to manage - listing and actions of edit, delete and add professors
+def professor_list(request):
+    professors = Professor.objects.all().order_by('family_name')
+    deleting = None
+
+    if request.method == "POST" and 'confirm_delete' in request.POST:
+        # FINAL DELETE
+        professor_id = request.POST.get('confirm_delete')
+        try:
+            professor = Professor.objects.get(pk=professor_id)
+            professor_name = f"{professor.name} {professor.family_name}"
+            professor.delete()
+            messages.success(request, f"El professor {professor_name} s'ha eliminat correctament.")
+            return redirect('usersapp:professor_list')
+        except Professor.DoesNotExist:
+            messages.error(request,"Error: El professor no existeix i no s'ha pogut borrar.")
+
+    # Handle initial delete confirmation
+    if 'confirm_delete' in request.GET:
+        professor_id = request.GET.get('confirm_delete')
+        deleting = professor_id
+
+    return render(request, 'users/professor/professor_list_actions.html', {
+        'professors': professors,
+        'deleting': deleting,
+    })
+
+#Function to create or edit a Professor - depends if is passed a idProfessor 
+def professor_create_edit(request, idProfessor=None):
+    pass
 
 
 # REGISTER PROFESSOR - only for DIRECTOR - USING CSV or EXCEL
@@ -199,7 +229,8 @@ def upload_professors(request):
 
     return render(request, 'actions/upload_professors.html', {'form': form})
 
-
+#SECTOR CHIEF 
+#Sector chief list to manage - listing and actions of edit, delete and add sector chiefs
 def sectorchief_list(request):
     professors = Professor.objects.all()
     deleting = None
