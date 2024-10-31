@@ -177,6 +177,10 @@ body {
 }
 
 .no-data {
-    color:#761d23; /* Darker text color */
-    font-family: "Georgia", serif; /* Different font family for these messages */
+    color: #7a7a7a; /* Soft gray color */
+    font-family: "Georgia", serif;
+    font-weight: 500; /* Medium weight for better visibility */
+}
+.professor-info {
+    color: #1e90ff; /* Brighter blue */
 }

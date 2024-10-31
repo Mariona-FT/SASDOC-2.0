@@ -11,6 +11,11 @@
             <a class="nav-link" href="{{extrainfo_professor_crud_url}}">Gestió Informació Extra del Professorat</a>
         </li>
 
+        {% url 'usersapp:professor_list' as professor_list_url %}
+        <li class="nav-item {% if request.path == professor_list_url %} active{% endif %}">
+            <a class="nav-link" href="{{professor_list_url}}">Gestió Professorat NOU </a>
+        </li>
+
         {% url 'usersapp:sectorchief_list' as sectorchief_list_url %}
         <li class="nav-item {% if request.path == sectorchief_list_url %} active{% endif %}">
             <a class="nav-link" href="{{sectorchief_list_url}}">Gestió de Caps de Secció</a>

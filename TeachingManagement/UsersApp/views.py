@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required,user_passes_test
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.hashers import make_password
 from django.contrib import messages
-from .forms import CustomLoginForm, ProfessorRegistrationForm,ExtraInfoProfessor,ChiefRegistrationForm, UploadFileForm # customized forms in forms.py
+from .forms import CustomLoginForm,ProfessorForm, ProfessorRegistrationForm,ExtraInfoProfessor,ChiefRegistrationForm, UploadFileForm # customized forms in forms.py
 from .models import Professor,Chief, CustomUser
 from .services import  process_professor_file #services of the app
 from django.db import IntegrityError
@@ -182,6 +182,90 @@ def enter_extrainfo_professor(request,professor_id):
 
     return render(request, 'users/professor/professor_extrainfo_form.html', {'form': form,'professor':professor})
 
+#Professor list to manage - listing and actions of edit, delete and add professors
+def professor_list(request):
+    professors = Professor.objects.all().order_by('family_name')
+    deleting = None
+
+    if request.method == "POST" and 'confirm_delete' in request.POST:
+        # FINAL DELETE
+        
+        professor_id = request.POST.get('confirm_delete')
+        print(f"Attempting to delete professor with ID: {professor_id}")  # Print the ID being passed
+
+        try:
+            professor = Professor.objects.get(idProfessor=professor_id)
+            professor_name = f"{professor.name} {professor.family_name}"
+
+            user = professor.user
+            if user:
+                print(f"Deleting associated CustomUser with ID: {user}")  # Print the user ID being deleted
+                user.delete()  # Delete the user
+
+            professor.delete()
+            messages.success(request, f"El professor {professor_name} s'ha eliminat correctament.")
+            return redirect('usersapp:professor_list')
+        except Professor.DoesNotExist:
+            messages.error(request,"Error: El professor no existeix i no s'ha pogut borrar.")
+            print(f"Professor with ID {professor_id} does not exist.")  # Print error information
+
+    # Handle initial delete confirmation
+    if 'confirm_delete' in request.GET:
+        professor_id = request.GET.get('confirm_delete')
+        deleting = professor_id
+        print("Delete confirmation for professor ID:", deleting)  # Print the ID being confirmed for deletion
+
+    return render(request, 'users/professor/professor_list_actions.html', {
+        'professors': professors,
+        'deleting': deleting,
+    })
+
+#Function to create or edit a Professor - depends if is passed a idProfessor 
+def professor_create_edit(request, idProfessor=None):
+    print(f"Received request to {'edit' if idProfessor else 'create'} a professor.")
+
+    if idProfessor:
+        # If idProfessor is passed, we are editing an existing courses
+        professor = get_object_or_404(Professor, idProfessor=idProfessor)
+        user = professor.user  # Get the related CustomUser instance
+
+        if request.method == 'POST':
+            form = ProfessorForm(request.POST, instance=user)
+           
+            if form.is_valid():
+                print("Form is valid. Edititng...")
+                form.save(commit=True)  # Save without changing role
+
+                professor.idProfessor=idProfessor
+                messages.success(request, f"El Professor {professor.name} {professor.family_name} s\'ha actualitzat correctament.")
+                return redirect('usersapp:professor_list')
+            else:
+                print("Form is invalid.")
+                print(form.errors)  # Print form errors for debugging
+        else:
+            print("Loading form with existing data.")
+            form = ProfessorForm(instance=professor)
+    else:
+        # No idProfessor, we are creating a new course
+        if request.method == 'POST':
+            print("POST request received for creating a new professor.")
+            form = ProfessorForm(request.POST)
+            if form.is_valid():
+                print("Form is valid. Saving new professor...")
+                user = form.save(commit=True)  # Save the user but don't commit yet
+                user.role = 'professor'  # Set the role to 'professor'
+                user.save()  # Now save the user to the database
+                new_professor = form.save()
+                messages.success(request, f"El Professor {new_professor.first_name} {new_professor.last_name} s\'ha afegit correctament.")
+                return redirect('usersapp:professor_list')
+            else:
+                print("Form is invalid.")
+                print(form.errors)  # Print form errors for debugging
+        else:
+            print("Loading empty form for new professor.")
+            form = ProfessorForm()
+    return render(request, 'users/professor/professor_form.html', {'form': form})
+
 
 
 # REGISTER PROFESSOR - only for DIRECTOR - USING CSV or EXCEL
@@ -199,7 +283,8 @@ def upload_professors(request):
 
     return render(request, 'actions/upload_professors.html', {'form': form})
 
-
+#SECTOR CHIEF 
+#Sector chief list to manage - listing and actions of edit, delete and add sector chiefs
 def sectorchief_list(request):
     professors = Professor.objects.all()
     deleting = None
