@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'UsersApp',
     'AcademicInfoApp',
     'DirectorApp',
+    'ProfSectionCapacityApp',
 ]
 
 MIDDLEWARE = [

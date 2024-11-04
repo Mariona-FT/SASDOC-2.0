@@ -17,19 +17,19 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from django.shortcuts import redirect
+from .import views
+
+app_name=''
 
 urlpatterns = [
-    path('', lambda request: redirect('baseapp/', permanent=True)),  # Redirect root URL to /baseapp/
-
-    path('baseapp/',include('TeachingManagementApp.urls')),  # URL for every APP - TeachingManagementApp
-   
-    path('users/',include('UsersApp.urls')),  # URL for every APP - UsersApp
-    path('academicinfo/',include('AcademicInfoApp.urls')),  # URL for every APP - AcademicInfoApp
     
-    path('director/',include('DirectorApp.urls')),  # URL for every APP - DirectorApp
+    #For the PROFESSOR
+    path('capacity-professors/', views.capacityprofessor_list, name='capacityprofessor_list'),
+    path('capacity-professors/create/', views.capacityprofessor_create_edit, name='capacityprofessor_create'),
+    path('capacity-professors/edit/<int:idProfessor>', views.capacityprofessor_create_edit, name='capacityprofessor_edit'),
 
-    path('professorsection/',include('ProfSectionCapacityApp.urls')),  # URL for every APP - ProfSectionCapacity
-
-
-    path('admin/', admin.site.urls),
+    #For the SECTIONS
+    path('capacity-section/', views.capacitysection_list, name='capacitysectio_list'),
+    path('capacity-section/create/', views.capacitysection_create_edit, name='capacitysection_create'),
+    path('capacity-section/edit/<int:idSection>', views.capacitysection_create_edit, name='capacitysection_edit'),
 ]
