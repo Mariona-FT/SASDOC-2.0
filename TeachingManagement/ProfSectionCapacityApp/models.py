@@ -24,6 +24,7 @@ class Free(models.Model):
     Professor = models.ForeignKey(Professor, on_delete=models.CASCADE)
     Year = models.ForeignKey(Year, on_delete=models.CASCADE)
     PointsFree = models.IntegerField(default=0)
+    Comment = models.TextField(blank=True, null=True)
 
     class Meta:
         verbose_name='free'

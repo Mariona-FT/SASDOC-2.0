@@ -22,4 +22,14 @@ from .import views
 app_name=''
 
 urlpatterns = [
+    
+    #For the PROFESSOR
+    path('capacity-professors/', views.capacityprofessor_list, name='capacityprofessor_list'),
+    path('capacity-professors/create/', views.capacityprofessor_create_edit, name='capacityprofessor_create'),
+    path('capacity-professors/edit/<int:idProfessor>', views.capacityprofessor_create_edit, name='capacityprofessor_edit'),
+
+    #For the SECTIONS
+    path('capacity-section/', views.capacitysection_list, name='capacitysectio_list'),
+    path('capacity-section/create/', views.capacitysection_create_edit, name='capacitysection_create'),
+    path('capacity-section/edit/<int:idSection>', views.capacitysection_create_edit, name='capacitysection_edit'),
 ]

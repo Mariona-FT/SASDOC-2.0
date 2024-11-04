@@ -8,7 +8,7 @@ class CapacityAdmin(admin.ModelAdmin):
 admin.site.register(Capacity,CapacityAdmin)
 
 class FreeAdmin(admin.ModelAdmin):
-    list_display=["idFree","Professor","Year","PointsFree"]
+    list_display=["idFree","Professor","Year","PointsFree","Comment"]
 
 admin.site.register(Free,FreeAdmin)
 
