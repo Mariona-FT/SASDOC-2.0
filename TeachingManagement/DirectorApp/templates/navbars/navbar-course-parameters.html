@@ -5,6 +5,17 @@
         <li class="nav-item {% if request.path == professor_crud_url %} active{% endif %}">
             <a class="nav-link" href="{{professor_crud_url}}">Gestió Capacitat del Professorat</a>
         </li>
+
+        {% url 'usersapp:professor_crud' as professor_crud_url %}
+        <li class="nav-item {% if request.path == professor_crud_url %} active{% endif %}">
+            <a class="nav-link" href="{{professor_crud_url}}">Gestió Capacitat de les Seccions</a>
+        </li>
+
+        {% url 'usersapp:professor_crud' as professor_crud_url %}
+        <li class="nav-item {% if request.path == professor_crud_url %} active{% endif %}">
+            <a class="nav-link" href="{{professor_crud_url}}">Gestió de les Assignatures</a>
+        </li>
+
         
     </ul>
 </nav>
