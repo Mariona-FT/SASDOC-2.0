@@ -1,8 +1,8 @@
-from django.shortcuts import render, redirect
-from .forms import CapacityFreeSectionForm
+from django.shortcuts import render, redirect,get_object_or_404
+from .forms import CapacityForm, FreeForm, CapacitySectionForm
 from .models import Professor, Capacity, Free, CapacitySection
 from UsersApp.models import Professor
-from AcademicInfoApp.models import Section
+from AcademicInfoApp.models import Section,Year
 from django.contrib import messages
 
 # Create your views here.
@@ -68,15 +68,151 @@ def capacityprofessor_list(request):
     })
 
 def capacityprofessor_create_edit(request,idProfessor=None):
-    if request.method == 'POST':
-        form = CapacityFreeSectionForm(request.POST)
-        if form.is_valid():
-            form.save()  # Save all instances
-            return redirect('')  # Redirect to a success page or the same page with a success message
-    else:
-        form = CapacityFreeSectionForm()
+    # Retrieve the professor instance if idProfessor is provided
+    professor = get_object_or_404(Professor, pk=idProfessor) if idProfessor else None
 
-    return render(request, 'capacityprofessor_form.html', {'form': form})
+    # Initialize forms for each model
+    capacity_form = CapacityForm(request.POST or None, prefix='capacity')
+    free_form = FreeForm(request.POST or None, prefix='free')
+    capacity_section_form = CapacitySectionForm(request.POST or None, prefix='capacity_section')
+
+    if request.method == 'POST':
+        # Process each form
+        if capacity_form.is_valid() and free_form.is_valid() and capacity_section_form.is_valid():
+            # Save Capacity form
+            capacity = capacity_form.save(commit=False)
+            capacity.Professor = professor
+            capacity.save()
+
+            # Save Free form
+            free = free_form.save(commit=False)
+            free.Professor = professor
+            free.save()
+
+            # Save CapacitySection form
+            capacity_section = capacity_section_form.save(commit=False)
+            capacity_section.Professor = professor
+            capacity_section.save()
+
+            # Redirect to a success page or the same page with a success message
+            return redirect('some_success_url')  # Replace with appropriate URL
+
+    # Retrieve existing records associated with the professor
+    capacities = Capacity.objects.filter(Professor=professor)
+    frees = Free.objects.filter(Professor=professor)
+    capacity_sections = CapacitySection.objects.filter(Professor=professor)
+
+    context = {
+        'capacity_form': capacity_form,
+        'free_form': free_form,
+        'capacity_section_form': capacity_section_form,
+        'professor': professor,
+        'capacities': capacities,
+        'frees': frees,
+        'capacity_sections': capacity_sections,
+    }
+    return render(request, 'capacityprofessor_form.html', context)
+
+#CAPACITY
+# Create a new Capacity entry
+def create_capacity(request, idProfessor):
+    professor = get_object_or_404(Professor, pk=idProfessor)
+
+    if request.method == 'POST':
+        form = CapacityForm(request.POST,professor=professor)
+        if form.is_valid():
+            form.save()  # Now save the instance
+            return redirect('capacityprofessor_edit', idProfessor=idProfessor)
+    else:
+        form = CapacityForm(professor=professor)
+
+    return render(request, 'capacity_form.html', {'form': form, 'professor': professor})
+
+# Edit an existing Capacity entry
+def edit_capacity(request, idCapacity):
+    capacity = get_object_or_404(Capacity, pk=idCapacity)
+    idProfessor = capacity.Professor.idProfessor  
+
+    if request.method == 'POST':
+        form = CapacityForm(request.POST, instance=capacity)
+        if form.is_valid():
+            form.save()
+            return redirect('capacityprofessor_edit', idProfessor=idProfessor)
+    else:
+        form = CapacityForm(instance=capacity)
+
+    return render(request, 'capacity_form.html', {'form': form, 'professor': capacity.Professor, 'year': capacity.Year})
+
+def delete_capacity(request, idCapacity):
+    capacity = get_object_or_404(Capacity, pk=idCapacity)
+    idProfessor = capacity.Professor.idProfessor  
+    try:
+        capacity.delete()
+        messages.success(request, 'Capacitat correctament eliminada.')
+    except Capacity.DoesNotExist:
+        messages.error(request, "Error: La capacitat no existeix.")
+
+    return redirect('capacityprofessor_edit', idProfessor=idProfessor)
+
+#FREE
+# Create a new Free entry
+def create_free(request, idProfessor):
+    professor = get_object_or_404(Professor, pk=idProfessor)
+
+    if request.method == 'POST':
+        form = FreeForm(request.POST)
+        if form.is_valid():
+            free = form.save()
+            free.save()
+            return redirect('capacityprofessor_list')
+    else:
+        form = FreeForm()
+
+    return render(request, 'free_form.html', {'form': form, 'professor': professor})
+
+# Edit an existing Capacity entry
+def edit_free(request, idFree):
+    free = get_object_or_404(Free, pk=idFree)
+
+    if request.method == 'POST':
+        form = FreeForm(request.POST, instance=free)
+        if form.is_valid():
+            form.save()
+            return redirect('capacityprofessor_list')
+    else:
+        form = FreeForm(instance=free)
+
+    return render(request, 'capacity_form.html', {'form': form, 'professor': free.Professor, 'year': free.Year})
+
+#CAPACITY SECTION
+# Create a new Capacity section entry
+def create_capacity_section(request, idProfessor):
+    professor = get_object_or_404(Professor, pk=idProfessor)
+
+    if request.method == 'POST':
+        form = CapacitySectionForm(request.POST)
+        if form.is_valid():
+            capsection = form.save()
+            capsection.save()
+            return redirect('capacityprofessor_list')
+    else:
+        form = CapacitySectionForm()
+
+    return render(request, 'capacity_form.html', {'form': form, 'professor': professor})
+
+# Edit an existing Capacity section entry
+def edit_capacity_section(request, idCapacitySection):
+    capsection = get_object_or_404(Free, pk=idCapacitySection)
+
+    if request.method == 'POST':
+        form = CapacitySectionForm(request.POST, instance=capsection)
+        if form.is_valid():
+            form.save()
+            return redirect('capacityprofessor_list')
+    else:
+        form = CapacitySectionForm(instance=capsection)
+
+    return render(request, 'capacity_form.html', {'form': form, 'professor': capsection.Professor, 'year': capsection.Year})
 
 
 #SECTIONS

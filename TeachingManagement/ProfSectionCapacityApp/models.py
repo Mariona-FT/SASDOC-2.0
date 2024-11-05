@@ -14,6 +14,8 @@ class Capacity(models.Model):
     class Meta:
         verbose_name='capacity'
         verbose_name_plural='capacitys'
+        unique_together = ('Professor', 'Year')  # Ensure unique combinations
+
 
     def __str__(self):
         return f"{self.Professor.name} {self.Professor.family_name} - {self.Year.Year} - Points: {self.Points}"
@@ -45,6 +47,7 @@ class CapacitySection(models.Model):
     class Meta:
         verbose_name='capacitysection'
         verbose_name_plural='capacitysections'
+        unique_together = ('Professor', 'Year','Section')  # Ensure unique combinations
 
     def __str__(self):
         return f"{self.Professor.name} {self.Professor.family_name} - {self.Year.Year} - {self.Section.NameSection} - Points: {self.Points}"
