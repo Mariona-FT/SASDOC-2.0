@@ -1,9 +1,9 @@
 <!-- Academic Info Navbar -->
 <nav class="navbar-sub-nav navbar-expand-lg navbar-light;">
     <ul class="navbar-nav">
-        {% url 'usersapp:professor_crud' as professor_crud_url %}
-        <li class="nav-item {% if request.path == professor_crud_url %} active{% endif %}">
-            <a class="nav-link" href="{{professor_crud_url}}">Gestió Capacitat del Professorat</a>
+        {% url 'capacityprofessor_list' as capacityprofessor_list_url %}
+        <li class="nav-item {% if request.path == capacityprofessor_list_url %} active{% endif %}">
+            <a class="nav-link" href="{{capacityprofessor_list_url}}">Gestió Capacitat del Professorat</a>
         </li>
 
         {% url 'usersapp:professor_crud' as professor_crud_url %}

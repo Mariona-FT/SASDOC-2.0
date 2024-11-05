@@ -70,7 +70,7 @@
             {% include 'navbars/navbar-general-parameters.html' %}
         </div> 
           <!-- Include Course Parameters Subnavbar -->
-          <div class="collapse {% if request.path == '/users/abc' %}show{% endif %}" id="courseParametersNavbar">
+          <div class="collapse {% if '/professorsection/' in request.path %}show{% endif %}" id="courseParametersNavbar">
             {% include 'navbars/navbar-course-parameters.html' %}
         </div>
 

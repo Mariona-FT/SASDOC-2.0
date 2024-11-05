@@ -40,6 +40,7 @@ class CapacitySection(models.Model):
     Year = models.ForeignKey(Year, on_delete=models.CASCADE)
     Section = models.ForeignKey(Section, on_delete=models.CASCADE)
     Points = models.IntegerField(default=0)
+    Comment = models.TextField(blank=True, null=True)
 
     class Meta:
         verbose_name='capacitysection'

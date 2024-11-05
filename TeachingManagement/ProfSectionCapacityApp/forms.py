@@ -19,12 +19,14 @@ class CapacitySectionForm(forms.ModelForm):
         fields = ['Professor', 'Year', 'Section', 'Points']
 
 
-class CombinedForm(forms.Form):
+class CapacityFreeSectionForm(forms.Form):
     professor = forms.ModelChoiceField(queryset=Professor.objects.all(), label='Professor')
     year = forms.ModelChoiceField(queryset=Year.objects.all(), label='Year')
     section = forms.ModelChoiceField(queryset=Section.objects.all(), label='Section')
     points = forms.IntegerField(initial=0, label='Capacity Points')
-    comment = forms.CharField(required=False, widget=forms.Textarea, label='Comment')
+    commentcapacity = forms.CharField(required=False, widget=forms.Textarea, label='Comment capacitat')
+    commentfree = forms.CharField(required=False, widget=forms.Textarea, label='Comment hores lliures')
+    commentcapacitysection = forms.CharField(required=False, widget=forms.Textarea, label='Comment capacitat secció')
     points_free = forms.IntegerField(initial=0, label='Free Points')
     capacity_section_points = forms.IntegerField(initial=0, label='Capacity Section Points')
 
@@ -32,32 +34,40 @@ class CombinedForm(forms.Form):
         professor = self.cleaned_data['professor']
         year = self.cleaned_data['year']
         section = self.cleaned_data['section']
+        
         points = self.cleaned_data['points']
-        comment = self.cleaned_data['comment']
+        commentcapacity = self.cleaned_data['commentcapacity']
+        
         points_free = self.cleaned_data['points_free']
+        commentfree = self.cleaned_data['commentfree']
+        
         capacity_section_points = self.cleaned_data['capacity_section_points']
+        commentcapacitysection=self.cleaned_data['commentcapacitysection']
 
         # Create Capacity
-        capacity = Capacity.objects.create(
+        # Handle Capacity - unique for Professor-Year
+        capacity, created = Capacity.objects.update_or_create(
             Professor=professor,
             Year=year,
-            Points=points,
-            Comment=comment
+            defaults={'Points': points, 'Comment': commentcapacity}
         )
 
-        # Create Free
-        free = Free.objects.create(
+
+        # Handle Free - unique for Professor-Year
+        free, created = Free.objects.update_or_create(
             Professor=professor,
             Year=year,
-            PointsFree=points_free
+            defaults={'PointsFree': points_free,'Comment':commentfree}
         )
+
 
         # Create CapacitySection
-        capacity_section = CapacitySection.objects.create(
+        capacity_section, created = CapacitySection.objects.update_or_create(
             Professor=professor,
             Year=year,
             Section=section,
-            Points=capacity_section_points
+            defaults={'Points': capacity_section_points,'Comment':commentcapacitysection}
         )
+
 
         return capacity, free, capacity_section
