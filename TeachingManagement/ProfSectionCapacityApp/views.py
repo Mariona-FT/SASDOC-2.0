@@ -67,6 +67,7 @@ def capacityprofessor_list(request):
         'deleting': deleting,
     })
 
+#INFO ONLY ONE PROFESSOR 
 def capacityprofessor_create_edit(request,idProfessor=None):
     # Retrieve the professor instance if idProfessor is provided
     professor = get_object_or_404(Professor, pk=idProfessor) if idProfessor else None
@@ -98,9 +99,9 @@ def capacityprofessor_create_edit(request,idProfessor=None):
             return redirect('some_success_url')  # Replace with appropriate URL
 
     # Retrieve existing records associated with the professor
-    capacities = Capacity.objects.filter(Professor=professor)
-    frees = Free.objects.filter(Professor=professor)
-    capacity_sections = CapacitySection.objects.filter(Professor=professor)
+    capacities = Capacity.objects.filter(Professor=professor).order_by('-Year__Year')
+    frees = Free.objects.filter(Professor=professor).order_by('-Year__Year')
+    capacity_sections = CapacitySection.objects.filter(Professor=professor).order_by('-Year__Year')
 
     context = {
         'capacity_form': capacity_form,
@@ -121,7 +122,8 @@ def create_capacity(request, idProfessor):
     if request.method == 'POST':
         form = CapacityForm(request.POST,professor=professor)
         if form.is_valid():
-            form.save()  # Now save the instance
+            form.save()  
+            messages.success(request, 'Capacitat correctament creada.')
             return redirect('capacityprofessor_edit', idProfessor=idProfessor)
     else:
         form = CapacityForm(professor=professor)
@@ -137,6 +139,7 @@ def edit_capacity(request, idCapacity):
         form = CapacityForm(request.POST, instance=capacity)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Capacitat correctament editada.')
             return redirect('capacityprofessor_edit', idProfessor=idProfessor)
     else:
         form = CapacityForm(instance=capacity)
@@ -149,8 +152,8 @@ def delete_capacity(request, idCapacity):
     try:
         capacity.delete()
         messages.success(request, 'Capacitat correctament eliminada.')
-    except Capacity.DoesNotExist:
-        messages.error(request, "Error: La capacitat no existeix.")
+    except Exception as e:
+        messages.error(request, f"Error: No s'ha pogut eliminar la capacitat ({e}).")
 
     return redirect('capacityprofessor_edit', idProfessor=idProfessor)
 
@@ -160,29 +163,42 @@ def create_free(request, idProfessor):
     professor = get_object_or_404(Professor, pk=idProfessor)
 
     if request.method == 'POST':
-        form = FreeForm(request.POST)
+        form = FreeForm(request.POST,professor=professor)
         if form.is_valid():
-            free = form.save()
-            free.save()
-            return redirect('capacityprofessor_list')
+            form.save()
+            messages.success(request, 'Punts Lliures correctament creats.')
+            return redirect('capacityprofessor_edit', idProfessor=idProfessor)
     else:
-        form = FreeForm()
+        form = FreeForm(professor=professor)
 
     return render(request, 'free_form.html', {'form': form, 'professor': professor})
 
 # Edit an existing Capacity entry
 def edit_free(request, idFree):
     free = get_object_or_404(Free, pk=idFree)
+    idProfessor = free.Professor.idProfessor  
 
     if request.method == 'POST':
         form = FreeForm(request.POST, instance=free)
         if form.is_valid():
             form.save()
-            return redirect('capacityprofessor_list')
+            messages.success(request, 'Punts Lliures correctament editats.')
+            return redirect('capacityprofessor_edit', idProfessor=idProfessor)
     else:
         form = FreeForm(instance=free)
 
     return render(request, 'capacity_form.html', {'form': form, 'professor': free.Professor, 'year': free.Year})
+
+def delete_free(request, idFree):
+    free = get_object_or_404(Free, pk=idFree)
+    idProfessor = free.Professor.idProfessor  
+    try:
+        free.delete()
+        messages.success(request, 'Punts Lliures correctament eliminats.')
+    except Exception as e:
+        messages.error(request, f"Error: No s'ha pogut eliminar els punts lliures ({e}).")
+
+    return redirect('capacityprofessor_edit', idProfessor=idProfessor)
 
 #CAPACITY SECTION
 # Create a new Capacity section entry
@@ -190,30 +206,42 @@ def create_capacity_section(request, idProfessor):
     professor = get_object_or_404(Professor, pk=idProfessor)
 
     if request.method == 'POST':
-        form = CapacitySectionForm(request.POST)
+        form = CapacitySectionForm(request.POST,professor=professor)
         if form.is_valid():
-            capsection = form.save()
-            capsection.save()
-            return redirect('capacityprofessor_list')
+            form.save()
+            messages.success(request, 'Capacitat en la Secció correctament creada.')
+            return redirect('capacityprofessor_edit', idProfessor=idProfessor)
     else:
-        form = CapacitySectionForm()
+        form = CapacitySectionForm(professor=professor)
 
-    return render(request, 'capacity_form.html', {'form': form, 'professor': professor})
+    return render(request, 'capacity_section_form.html', {'form': form, 'professor': professor})
 
 # Edit an existing Capacity section entry
 def edit_capacity_section(request, idCapacitySection):
-    capsection = get_object_or_404(Free, pk=idCapacitySection)
+    capsection = get_object_or_404(CapacitySection, pk=idCapacitySection)
+    idProfessor = capsection.Professor.idProfessor  
 
     if request.method == 'POST':
-        form = CapacitySectionForm(request.POST, instance=capsection)
+        form = CapacitySectionForm(request.POST, instance=capsection,professor=capsection.Professor)
         if form.is_valid():
             form.save()
-            return redirect('capacityprofessor_list')
+            messages.success(request, 'Capacitat en la Secció correctament editada.')
+            return redirect('capacityprofessor_edit', idProfessor=idProfessor)
     else:
-        form = CapacitySectionForm(instance=capsection)
+        form = CapacitySectionForm(instance=capsection,professor=capsection.Professor)
 
     return render(request, 'capacity_form.html', {'form': form, 'professor': capsection.Professor, 'year': capsection.Year})
 
+def delete_capacity_section(request, idCapacitySection):
+    capsection = get_object_or_404(CapacitySection, pk=idCapacitySection)
+    idProfessor = capsection.Professor.idProfessor  
+    try:
+        capsection.delete()
+        messages.success(request, 'Capacitat en la secció correctament eliminada.')
+    except Exception as e:
+        messages.error(request, f"Error: No s'ha pogut eliminar la capacitat ({e}).")
+
+    return redirect('capacityprofessor_edit', idProfessor=idProfessor)
 
 #SECTIONS
 def capacitysection_list(request):

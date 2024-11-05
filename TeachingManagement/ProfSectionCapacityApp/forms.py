@@ -12,7 +12,10 @@ class CapacityForm(forms.ModelForm):
             'Comment': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Optional comment'}),
         }
         labels = {
-            'Points': 'Total Capacity Points',
+            'Professor':'Professor',
+            'Year':'Any',
+            'Comment':'Comentari',
+            'Points': 'Punts totals de Capacitat',
         }
 
     def __init__(self, *args, **kwargs):
@@ -31,8 +34,19 @@ class FreeForm(forms.ModelForm):
             'Comment': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Optional comment'}),
         }
         labels = {
-            'PointsFree': 'Free Capacity Points',
+            'Professor':'Professor',
+            'Year':'Any',
+            'Comment':'Comentari',
+            'PointsFree': 'Punts lliures',
         }
+    
+    def __init__(self, *args, **kwargs):
+        professor = kwargs.pop('professor', None)
+        super().__init__(*args, **kwargs)
+        
+        if professor:
+            self.fields['Professor'].initial = professor
+            self.fields['Professor'].disabled = True  # Makes the field read-only
 
 class CapacitySectionForm(forms.ModelForm):
     class Meta:
@@ -42,5 +56,17 @@ class CapacitySectionForm(forms.ModelForm):
             'Comment': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Optional comment'}),
         }
         labels = {
-            'Points': 'Section Capacity Points',
+            'Professor':'Professor',
+            'Year':'Any',
+            'Section':'Secció',
+            'Comment':'Comentari',
+            'Points': 'Punts totals en la Secció',
         }
+    
+    def __init__(self, *args, **kwargs):
+        professor = kwargs.pop('professor', None)
+        super().__init__(*args, **kwargs)
+        
+        if professor:
+            self.fields['Professor'].initial = professor
+            self.fields['Professor'].disabled = True  # Makes the field read-only
