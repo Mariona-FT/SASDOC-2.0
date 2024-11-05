@@ -28,6 +28,23 @@ urlpatterns = [
     path('capacity-professors/create/', views.capacityprofessor_create_edit, name='capacityprofessor_create'),
     path('capacity-professors/edit/<int:idProfessor>', views.capacityprofessor_create_edit, name='capacityprofessor_edit'),
 
+
+    # For adding, editing, and deleting Capacity, Free, and CapacitySection entries
+    #GLOBAL CAPACITY
+    path('capacity-professors/capacity/create/<int:idProfessor>', views.create_capacity, name='create_capacity'),
+    path('capacity-professors/capacity/edit/<int:idCapacity>', views.edit_capacity, name='edit_capacity'),
+    path('delete_capacity/<int:idCapacity>/', views.delete_capacity, name='delete_capacity'),
+
+    #FREE CAPACITY
+    path('capacity-professors/free/create/<int:idProfessor>', views.create_free, name='create_free'),
+    path('capacity-professors/free/edit/<int:idFree>/', views.edit_free, name='edit_free'),
+    path('delete_free/<int:idFree>/', views.delete_free, name='delete_free'),
+
+    # #CAPACITY FOR SECTION PROFESSOR
+    path('capacity-professors/capacity-section/create/<int:idProfessor>', views.create_capacity_section, name='create_capacity_section'),
+    path('capacity-professors/capacity-section/edit/<int:idCapacitySection>', views.edit_capacity_section, name='edit_capacity_section'),
+    path('delete_capacity-section/<int:idCapacitySection>/', views.delete_capacity_section, name='delete_capacity_section'),
+
     #For the SECTIONS
     path('capacity-section/', views.capacitysection_list, name='capacitysectio_list'),
     path('capacity-section/create/', views.capacitysection_create_edit, name='capacitysection_create'),
