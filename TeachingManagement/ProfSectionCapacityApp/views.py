@@ -16,27 +16,39 @@ def capacityprofessor_list(request):
     deleting = None
 
     for professor in professors:
-        # Retrieve capacity points
-        capacity_points = Capacity.objects.filter(Professor=professor).first()
+        # Retrieve all capacity points for the professor
+        capacities = Capacity.objects.filter(Professor=professor).order_by('Year__Year')
         free_points = Free.objects.filter(Professor=professor).first()
 
-        # Retrieve and sum up section points
-        section_points = {section.NameSection: 0 for section in all_sections}
+        # Initialize section_points as a list of tuples (section_name, points)
+        section_points = [(section.NameSection, 0) for section in all_sections]
+        
+        # Update section points from CapacitySection
         for section_entry in CapacitySection.objects.filter(Professor=professor):
             section_name = section_entry.Section.NameSection
-            section_points[section_name] = section_entry.Points
+            # Update the section points tuple
+            section_points = [(name, section_entry.Points) if name == section_name else (name, points) for name, points in section_points]
 
-        # Append data for each professor
+        # If no capacity exists, set 'NA' for year
+        if not capacities:
+            year = "NA"
+            capacity_points = 0
+        else:
+            for capacity in capacities:
+                year = capacity.Year.Year  # Add the year for this capacity entry
+                capacity_points = capacity.Points
+
+        # Append data for each professor, including default year if no capacity data exists
         professor_data.append({
             'professor': professor,
-            'capacity_points': capacity_points.Points if capacity_points else 0,
+            'capacity_points': capacity_points,
+            'year': year,  # Use "NA" if no capacity for the professor
             'free_points': free_points.PointsFree if free_points else 0,
             'section_points': section_points,
         })
 
     if request.method == "POST" and 'confirm_delete' in request.POST:
         # FINAL DELETE
-        
         professor_id = request.POST.get('confirm_delete')
         print(f"Attempting to delete professor with ID: {professor_id}")  # Print the ID being passed
 
@@ -53,7 +65,7 @@ def capacityprofessor_list(request):
             messages.success(request, f"El professor {professor_name} s'ha eliminat correctament.")
             return redirect('usersapp:professor_list')
         except Professor.DoesNotExist:
-            messages.error(request,"Error: El professor no existeix i no s'ha pogut borrar.")
+            messages.error(request, "Error: El professor no existeix i no s'ha pogut borrar.")
             print(f"Professor with ID {professor_id} does not exist.")  # Print error information
 
     # Handle initial delete confirmation
@@ -64,7 +76,7 @@ def capacityprofessor_list(request):
 
     return render(request, 'capacityprofessor_list_actions.html', {
         'professor_data': professor_data,
-        'all_sections':all_sections,
+        'all_sections': all_sections,
         'deleting': deleting,
     })
 

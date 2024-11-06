@@ -51,37 +51,43 @@
                     <thead>
                         <tr>
                             <th>Nom i Cognoms</th>
-                            <th>Any<th>
+                            <th>Any</th>
                             <th>Capacitat</th>
                             <th>Lliure</th>
                             {% for section in all_sections %}
                                 <th>{{ section.NameSection }}</th>
                             {% endfor %}                            
-                        <th>Accions</th>
+                            <th>Accions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% if professor_data %}
-                            {% for data in professor_data %}
-                                <!-- Loop through professor capacities -->
-                                <tr data-name="{{ data.professor.name }} {{ data.professor.family_name }}" 
-                                    data-active="{{ data.professor.isActive }}"
-                                >
-                                    <td>{{ data.professor.name }} {{ data.professor.family_name }}</td>
-                                    <td>{{ data.capacity_points }}</td>
-                                    <td>{{ data.capacity_points.year }}</td>
-                                    <td>{{ data.free_points }}</td>
+                            {% for entry in professor_data %}
+                            <!-- Loop through professor capacities -->
+                                <tr data-name="{{ entry.professor.name }} {{ entry.professor.family_name }}" 
+                                    data-active="{{ entry.professor.isActive }}">
+                                    <td>{{ entry.professor.name }} {{ entry.professor.family_name }}</td>
+                                    <td>{{ entry.year }}</td>
+                                    <td>{{ entry.capacity_points }}</td>
+                                    <td>{{ entry.free_points }}</td>
+                                   <!-- Display section points dynamically for each section -->
                                     {% for section in all_sections %}
-                                        <td>{{ data.sections_points|default:0 }}</td>
+                                    <td>
+                                    {% for section_name, points in entry.section_points %}
+                                        {% if section_name == section.NameSection %}
+                                            {{ points }}
+                                        {% endif %}
                                     {% endfor %}
+                                    </td>
+                                {% endfor %}
                                     <td>
                                         <!-- Edit button -->
-                                        <a href="{% url 'capacityprofessor_edit' data.professor.pk %}" class="button-edit btn-sm">Editar</a>
+                                        <a href="{% url 'capacityprofessor_edit' entry.professor.pk %}" class="button-edit btn-sm">Editar</a>
                 
                                         <!-- Delete form with JavaScript confirmation -->
-                                        <form method="post" action="{% url 'capacityprofessor_list' %}" style="display:inline;" onsubmit="return confirmDelete('{{ data.professor.name }} {{ data.professor.family_name }}');">
+                                        <form method="post" action="{% url 'capacityprofessor_list' %}" style="display:inline;" onsubmit="return confirmDelete('{{ entry.professor.name }} {{entry.professor.family_name }}');">
                                             {% csrf_token %}
-                                            <input type="hidden" name="confirm_delete" value="{{ data.professor.pk }}">
+                                            <input type="hidden" name="confirm_delete" value="{{ entry.professor.pk }}">
                                             <button type="submit" class="button-delete btn-sm">Eliminar</button>
                                         </form>
                                     </td>
