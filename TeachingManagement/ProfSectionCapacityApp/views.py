@@ -4,6 +4,7 @@ from .models import Professor, Capacity, Free, CapacitySection
 from UsersApp.models import Professor
 from AcademicInfoApp.models import Section,Year
 from django.contrib import messages
+from itertools import chain
 
 # Create your views here.
 
@@ -103,6 +104,13 @@ def capacityprofessor_create_edit(request,idProfessor=None):
     frees = Free.objects.filter(Professor=professor).order_by('-Year__Year')
     capacity_sections = CapacitySection.objects.filter(Professor=professor).order_by('-Year__Year')
 
+    # Extract unique years from all three querysets
+    years = sorted(set(chain(
+        capacities.values_list('Year__Year', flat=True),
+        frees.values_list('Year__Year', flat=True),
+        capacity_sections.values_list('Year__Year', flat=True)
+    )))
+
     context = {
         'capacity_form': capacity_form,
         'free_form': free_form,
@@ -111,7 +119,9 @@ def capacityprofessor_create_edit(request,idProfessor=None):
         'capacities': capacities,
         'frees': frees,
         'capacity_sections': capacity_sections,
+        'years': years,
     }
+
     return render(request, 'capacityprofessor_form.html', context)
 
 #CAPACITY

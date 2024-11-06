@@ -29,7 +29,7 @@
                     <div class="filters d-flex flex-wrap">
                         <div class="col-md-10">
                             <label for="filter-all">Filtrar per contingut:</label>
-                            <input type="text" id="filter-all" class="form-control" placeholder="Cerca per Nom, Cognom, Contracte, Àreas o Idiomes">
+                            <input type="text" id="filter-all" class="form-control" placeholder="Cerca per Nom i Cognom ">
                         </div>
 
                         <div class="col-md-2">
@@ -51,6 +51,7 @@
                     <thead>
                         <tr>
                             <th>Nom i Cognoms</th>
+                            <th>Any<th>
                             <th>Capacitat</th>
                             <th>Lliure</th>
                             {% for section in all_sections %}
@@ -62,17 +63,16 @@
                     <tbody>
                         {% if professor_data %}
                             {% for data in professor_data %}
+                                <!-- Loop through professor capacities -->
                                 <tr data-name="{{ data.professor.name }} {{ data.professor.family_name }}" 
-                                    data-contract="{{ data.professor.current_contract|default:'No contracte' }}" 
-                                    data-fields="{% for field in data.professor.professor_fields.all %}{{ field.Field.NameField }}{% if not forloop.last %},{% endif %}{% endfor %}"
-                                    data-languages="{% for language in data.professor.professor_languages.all %}{{ language.Language.Language }}{% if not forloop.last %},{% endif %}{% endfor %}"
                                     data-active="{{ data.professor.isActive }}"
                                 >
                                     <td>{{ data.professor.name }} {{ data.professor.family_name }}</td>
                                     <td>{{ data.capacity_points }}</td>
+                                    <td>{{ data.capacity_points.year }}</td>
                                     <td>{{ data.free_points }}</td>
                                     {% for section in all_sections %}
-                                        <td>{{ data.section_points.section.NameSection }}</td>
+                                        <td>{{ data.sections_points|default:0 }}</td>
                                     {% endfor %}
                                     <td>
                                         <!-- Edit button -->
@@ -132,14 +132,9 @@
 
         tableRows.forEach(row => {
             const fieldName = row.getAttribute('data-name').toLowerCase();
-            const fieldEmail = row.getAttribute('data-email').toLowerCase();
-            const fieldContract = row.getAttribute('data-contract').toLowerCase();
-            const fieldField = row.getAttribute('data-fields').toLowerCase();
-            const fieldLanguage = row.getAttribute('data-languages').toLowerCase();
-
             const isActive = row.getAttribute('data-active');
 
-            const matchesSearch =  fieldName.includes(searchValue) || fieldEmail.includes(searchValue) || fieldContract.includes(searchValue) || fieldField.includes(searchValue) || fieldLanguage.includes(searchValue);
+            const matchesSearch = fieldName.includes(searchValue);
             const matchesActiveFilter = (activeFilter === '' || isActive === activeFilter);
 
             if (matchesSearch && matchesActiveFilter) {
@@ -168,7 +163,6 @@
             noResultsMessage.style.display = 'none';
         }
     }
- 
 </script>
 
 {% endblock %}
