@@ -25,23 +25,12 @@ urlpatterns = [
     # use names for easy calls + functions reverse() and {% url %}  
     path('login/', views.login_session, name='login'),
     path('logout/', views.logout_session, name='logout'),
-
-    #Professors antic
-    path('professor-management/', views.professor_crud, name='professor_crud'),
     
-    path('professor-create/', views.create_professor_view, name='create_professor'),
-    path('professor-edit/<int:professor_id>/', views.edit_professor_view, name='edit_professor'),
-    
-    path('professor-information/', views.extrainfo_professor_crud, name='extrainfo_professor_crud'),
-    path('professor-information/<int:professor_id>', views.enter_extrainfo_professor, name='enter_extrainfo_professor'),
-
-
-    #Professors
+    #Professors 
     path('professor/', views.professor_list, name='professor_list'),
     path('professor/create/', views.professor_create_edit, name='professor_create'),
     path('professor/edit/<int:idProfessor>', views.professor_create_edit, name='professor_edit'),
-
-    path('professor-upload/', views.upload_professors, name='upload_professors'), #for file
+    path('professor/upload/', views.upload_professors, name='upload_professors'), #for file
 
     #Sector chiefs
     path('sectorchief/', views.sectorchief_list, name='sectorchief_list'),
@@ -49,7 +38,7 @@ urlpatterns = [
     path('sectorchief/edit/<int:idChief>', views.sectorchief_create_edit, name='sectorchief_edit'),
  
     #Dashboards
-    path('director/', views.redirect_director_dashboard, name='redirect_director_dashboard'),
-    path('sector-chief/', views.sector_chief_dashboard, name='sector_chief_dashboard'),
-    path('professor/', views.professor_dashboard, name='professor_dashboard'),
+    path('dashdirector/', views.redirect_director_dashboard, name='redirect_director_dashboard'),
+    path('dashsector-chief/', views.sector_chief_dashboard, name='sector_chief_dashboard'),
+    path('dashprofessor/', views.professor_dashboard, name='professor_dashboard'),
     ]

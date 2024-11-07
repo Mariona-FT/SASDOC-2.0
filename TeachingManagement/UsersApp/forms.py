@@ -14,6 +14,7 @@ User = get_user_model()
 class CustomLoginForm(AuthenticationForm):
     pass
 
+#Final Form for Professor
 class ProfessorForm(forms.ModelForm):
     username = forms.CharField(max_length=150, required=True, label="Nom d'usuari")
     idprofessor = forms.CharField(max_length=10, required=True, label="ID/DNI del Professor")
@@ -153,6 +154,7 @@ class ProfessorForm(forms.ModelForm):
                 
         return user
 
+#Basic form for professor - Not USED
 class ProfessorRegistrationForm(forms.ModelForm):
     # Fields for the professor-specific information
     idprofessor = forms.CharField(max_length=10, required=True, label="ID/DNI del Professor")
@@ -228,7 +230,8 @@ class ProfessorRegistrationForm(forms.ModelForm):
         )
 
         return user
-    
+
+#Form to enter extra info in professor - NOT USED  
 class ExtraInfoProfessor(forms.ModelForm):
     # Multiple choice fields for related models (fields and languages)
     possible_fields = forms.ModelMultipleChoiceField(

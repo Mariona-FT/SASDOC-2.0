@@ -1,16 +1,6 @@
 <!-- Academic Info Navbar -->
 <nav class="navbar-sub-nav navbar-expand-lg navbar-light;">
     <ul class="navbar-nav">
-        {% url 'usersapp:professor_crud' as professor_crud_url %}
-        <li class="nav-item {% if request.path == professor_crud_url %} active{% endif %}">
-            <a class="nav-link" href="{{professor_crud_url}}">Professorat</a>
-        </li>
-        
-        {% url 'usersapp:extrainfo_professor_crud' as extrainfo_professor_crud_url %}
-        <li class="nav-item {% if request.path == extrainfo_professor_crud_url %} active{% endif %}">
-            <a class="nav-link" href="{{extrainfo_professor_crud_url}}">Gestió Informació Extra del Professorat</a>
-        </li>
-
         {% url 'year_list' as year_list_url %}
         <li class="nav-item {% if request.path == year_list_url %} active{% endif %}">
             <a class="nav-link" href="{{ year_list_url }}">Anys</a>
@@ -18,7 +8,7 @@
 
         {% url 'usersapp:professor_list' as professor_list_url %}
         <li class="nav-item {% if request.path == professor_list_url %} active{% endif %}">
-            <a class="nav-link" href="{{professor_list_url}}">Professorat NOU </a>
+            <a class="nav-link" href="{{professor_list_url}}">Professorat</a>
         </li>
 
         {% url 'section_list' as section_List_url %}
