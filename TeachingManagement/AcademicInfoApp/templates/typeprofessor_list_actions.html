@@ -115,53 +115,58 @@
         return confirm("Estàs segur que vols eliminar aquest tipus de professor: " + TypeProfessorName + "?");
     }
 
-       // JavaScript for dynamic filtering
-       document.getElementById('filter-all').addEventListener('input', filterTable);
-       document.getElementById('filter-active').addEventListener('change', filterTable);
-   
-       function filterTable() {
-           const searchValue = document.getElementById('filter-all').value.toLowerCase();
-           const activeFilter = document.getElementById('filter-active').value;
-           const tableRows = document.querySelectorAll('#typeprofessors-table tbody tr');
-   
-           let rowsVisible = 0;
-   
-           tableRows.forEach(row => {
-               const fieldContract = row.getAttribute('data-contract').toLowerCase();
-               const fieldComment = row.getAttribute('data-comment').toLowerCase();
-               const isFulltime = row.getAttribute('data-active');
-               const isPermanent = row.getAttribute('data-permanent');
-               const isActive = row.getAttribute('data-active');
-   
-               const matchesSearch =  fieldContract.includes(searchValue) || fieldComment.includes(searchValue) || isFulltime.includes(searchValue)  || isPermanent.includes(searchValue);
-               const matchesActiveFilter = (activeFilter === '' || isActive === activeFilter);
-   
-               if (matchesSearch && matchesActiveFilter) {
-                   row.style.display = '';
-                   rowsVisible++;
-               } else {
-                   row.style.display = 'none';
-               }
-           });
-   
-           const noResultsMessage = document.getElementById('no-results-message');
-           const noResultsText = document.getElementById('no-results-text');
-   
-           // No results message logic
-           if (rowsVisible === 0) {
-               let message = "Cap Tipus de Professor amb els criteris de cerca";
-               if (searchValue) {
-                   message += ` amb el terme "${searchValue}"`;
-               }
-               if (activeFilter) {
-                   message += ` actiu "${activeFilter === 'yes' ? 'Sí' : 'No'}"`;
-               }
-               noResultsText.textContent = message + ".";
-               noResultsMessage.style.display = 'block';
-           } else {
-               noResultsMessage.style.display = 'none';
-           }
-       }
+    //Not using  accents in the filter and in the data
+    function normalizeString(str) {
+        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    }
+
+    // JavaScript for dynamic filtering
+    document.getElementById('filter-all').addEventListener('input', filterTable);
+    document.getElementById('filter-active').addEventListener('change', filterTable);
+
+    function filterTable() {
+        const searchValue = normalizeString(document.getElementById('filter-all').value);
+        const activeFilter = document.getElementById('filter-active').value;
+        const tableRows = document.querySelectorAll('#typeprofessors-table tbody tr');
+
+        let rowsVisible = 0;
+
+        tableRows.forEach(row => {
+            const fieldContract = normalizeString(row.getAttribute('data-contract').toLowerCase());
+            const fieldComment = normalizeString(row.getAttribute('data-comment').toLowerCase());
+            const isFulltime = normalizeString(row.getAttribute('data-active'));
+            const isPermanent = normalizeString(row.getAttribute('data-permanent'));
+            const isActive = normalizeString(row.getAttribute('data-active'));
+
+            const matchesSearch =  fieldContract.includes(searchValue) || fieldComment.includes(searchValue) || isFulltime.includes(searchValue)  || isPermanent.includes(searchValue);
+            const matchesActiveFilter = (activeFilter === '' || isActive === activeFilter);
+
+            if (matchesSearch && matchesActiveFilter) {
+                row.style.display = '';
+                rowsVisible++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        const noResultsMessage = document.getElementById('no-results-message');
+        const noResultsText = document.getElementById('no-results-text');
+
+        // No results message logic
+        if (rowsVisible === 0) {
+            let message = "Cap Tipus de Professor amb els criteris de cerca";
+            if (searchValue) {
+                message += ` amb el terme "${searchValue}"`;
+            }
+            if (activeFilter) {
+                message += ` actiu "${activeFilter === 'yes' ? 'Sí' : 'No'}"`;
+            }
+            noResultsText.textContent = message + ".";
+            noResultsMessage.style.display = 'block';
+        } else {
+            noResultsMessage.style.display = 'none';
+        }
+    }
 </script>
 
 {% endblock %}

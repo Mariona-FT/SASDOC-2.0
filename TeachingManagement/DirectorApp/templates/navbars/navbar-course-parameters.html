@@ -3,17 +3,17 @@
     <ul class="navbar-nav">
         {% url 'capacityprofessor_list' as capacityprofessor_list_url %}
         <li class="nav-item {% if request.path == capacityprofessor_list_url %} active{% endif %}">
-            <a class="nav-link" href="{{capacityprofessor_list_url}}">Gestió Capacitat del Professorat</a>
+            <a class="nav-link" href="{{capacityprofessor_list_url}}">Capacitat del Professorat</a>
         </li>
 
         {% url 'usersapp:professor_crud' as professor_crud_url %}
         <li class="nav-item {% if request.path == professor_crud_url %} active{% endif %}">
-            <a class="nav-link" href="{{professor_crud_url}}">Gestió Capacitat de les Seccions</a>
+            <a class="nav-link" href="{{professor_crud_url}}">Capacitat de les Seccions</a>
         </li>
 
         {% url 'usersapp:professor_crud' as professor_crud_url %}
         <li class="nav-item {% if request.path == professor_crud_url %} active{% endif %}">
-            <a class="nav-link" href="{{professor_crud_url}}">Gestió de les Assignatures</a>
+            <a class="nav-link" href="{{professor_crud_url}}">Capacitat de les Assignatures</a>
         </li>
 
         

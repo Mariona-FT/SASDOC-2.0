@@ -351,10 +351,10 @@ def language_list(request):
             language = Language.objects.get(pk=language_id)
             language_name = language.Language  # Store the name for the message
             language.delete()
-            messages.success(request, f"La llengua {language_name} s'ha eliminat correctament.")
+            messages.success(request, f"L'idioma {language_name} s'ha eliminat correctament.")
             return redirect('language_list') 
         except Language.DoesNotExist:
-            messages.error(request, "Error: La llengua no existeix.")
+            messages.error(request, "Error: L'idioma no existeix.")
     
     # ACTION OF INITIAL DELETE
     if 'confirm_delete' in request.GET:
@@ -375,7 +375,7 @@ def language_create_edit(request,idLanguage=None):
             form = LanguageForm(request.POST, instance=language)
             if form.is_valid():
                 form.save()
-                messages.success(request, f"La llengua {language.Language} s\'ha actualitzat correctament.")
+                messages.success(request, f"L'idioma {language.Language} s\'ha actualitzat correctament.")
                 return redirect('language_list')
         else:
             form = LanguageForm(instance=language)
@@ -385,7 +385,7 @@ def language_create_edit(request,idLanguage=None):
             form = LanguageForm(request.POST)
             if form.is_valid():
                 new_language = form.save()
-                messages.success(request, f"La llengua {new_language.Language} s\'ha afegit correctament.")
+                messages.success(request, f"L'idioma {new_language.Language} s\'ha afegit correctament.")
                 return redirect('language_list')
         else:
             form = LanguageForm()

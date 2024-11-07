@@ -29,7 +29,7 @@
                     <div class="filters d-flex flex-wrap">
                         <div class="col-md-10">
                             <label for="filter-all">Filtrar per contingut:</label>
-                            <input type="text" id="filter-all" class="form-control" placeholder="Cerca per Nom, Cognom, Contracte, Àreas o Idiomes">
+                            <input type="text" id="filter-all" class="form-control" placeholder="Cerca per Nom, Cognom, Contracte, Camps d'Estudi o Idiomes">
                         </div>
 
                         <div class="col-md-2">
@@ -54,7 +54,7 @@
                             <th>Correu electrònic</th>
                             <th>Contracte Actual</th>
                             <th>Camps d'estudi</th>
-                            <th>Llengües</th>
+                            <th>Idiomes</th>
                             <th>Està Actiu</th>
                             <th>Accions</th>
                         </tr>
@@ -101,7 +101,7 @@
                                                 <span class="professor-info">{{ language.Language.Language }}</span>{% if not forloop.last %}, {% endif %}
                                             {% endfor %}
                                         {% else %}
-                                            <span class="no-data">No llengües</span>
+                                            <span class="no-data">No Idiomes</span>
                                         {% endif %}
                                     </td>
                                     <td class="active-status">{% if professor.isActive == 'yes' %}Sí{% else %}No{% endif %}</td>
@@ -151,23 +151,29 @@
     function confirmDelete(professorName) {
         return confirm("Estàs segur que vols eliminar aquest professor: " + professorName + "?");
     }
+
+    //Not using  accents in the filter and in the data
+    function normalizeString(str) {
+        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    }
+
     // JavaScript for dynamic filtering
     document.getElementById('filter-all').addEventListener('input', filterTable);
     document.getElementById('filter-active').addEventListener('change', filterTable);
 
     function filterTable() {
-        const searchValue = document.getElementById('filter-all').value.toLowerCase();
+        const searchValue = normalizeString(document.getElementById('filter-all').value);
         const activeFilter = document.getElementById('filter-active').value;
         const tableRows = document.querySelectorAll('#professors-table tbody tr');
 
         let rowsVisible = 0;
 
         tableRows.forEach(row => {
-            const fieldName = row.getAttribute('data-name').toLowerCase();
-            const fieldEmail = row.getAttribute('data-email').toLowerCase();
-            const fieldContract = row.getAttribute('data-contract').toLowerCase();
-            const fieldField = row.getAttribute('data-fields').toLowerCase();
-            const fieldLanguage = row.getAttribute('data-languages').toLowerCase();
+            const fieldName = normalizeString(row.getAttribute('data-name'));
+            const fieldEmail = normalizeString(row.getAttribute('data-email'));
+            const fieldContract = normalizeString(row.getAttribute('data-contract'));
+            const fieldField = normalizeString(row.getAttribute('data-fields'));
+            const fieldLanguage = normalizeString(row.getAttribute('data-languages'));
 
             const isActive = row.getAttribute('data-active');
 

@@ -81,7 +81,7 @@ class LanguageForm(forms.ModelForm):
         model = Language
         fields = ['Language']
         labels = {
-            'Language': 'Llenguatge',
+            'Language': 'Idioma',
         }
 
 class YearForm(forms.ModelForm):

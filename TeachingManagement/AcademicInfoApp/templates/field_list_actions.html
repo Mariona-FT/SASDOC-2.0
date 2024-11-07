@@ -5,7 +5,7 @@
 {% block content %}
 <div class="container-fluid d-flex" style="min-height: 100vh;">
     <div class="col-lg-10 mx-auto">
-        <h2 style="text-align:center">Gestió de les Camps</h2>
+        <h2 style="text-align:center">Gestió dels Camps</h2>
 
         <!-- Display success, warning, or error messages -->
         {% if messages %}
@@ -111,21 +111,26 @@
         return confirm("Estàs segur que vols eliminar aquest camp: " + fieldName + " ?");
     }
 
+    //Not using  accents in the filter and in the data
+    function normalizeString(str) {
+        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    }
+
     // JavaScript for dynamic filtering
     document.getElementById('filter-all').addEventListener('input', filterTable);
     document.getElementById('filter-active').addEventListener('change', filterTable);
 
     function filterTable() {
-        const searchValue = document.getElementById('filter-all').value.toLowerCase();
+        const searchValue = normalizeString(document.getElementById('filter-all').value);
         const activeFilter = document.getElementById('filter-active').value;
         const tableRows = document.querySelectorAll('#fields-table tbody tr');
 
         let rowsVisible = 0;
 
         tableRows.forEach(row => {
-            const fieldName = row.getAttribute('data-name').toLowerCase();
-            const fieldDescription = row.getAttribute('data-description').toLowerCase();
-            const isActive = row.getAttribute('data-active');
+            const fieldName = normalizeString(row.getAttribute('data-name').toLowerCase());
+            const fieldDescription = normalizeString(row.getAttribute('data-description').toLowerCase());
+            const isActive = normalizeString(row.getAttribute('data-active'));
 
             const matchesSearch = fieldName.includes(searchValue) || fieldDescription.includes(searchValue);
             const matchesActiveFilter = (activeFilter === '' || isActive === activeFilter);
