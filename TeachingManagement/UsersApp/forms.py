@@ -39,7 +39,7 @@ class ProfessorForm(forms.ModelForm):
         queryset=Language.objects.all(),
         widget=forms.CheckboxSelectMultiple,
         required=False,
-        label="Assignar Llenguatges"
+        label="Assignar Idiomes"
     )
 
     # Single choice field for the current contract (TypeProfessor)
@@ -241,7 +241,7 @@ class ExtraInfoProfessor(forms.ModelForm):
         queryset=Language.objects.all(),
         widget=forms.CheckboxSelectMultiple,
         required=False,
-        label="Assignar Llenguatges"
+        label="Assignar Idiomes"
     )
 
     # Single choice field for the current contract (TypeProfessor)

@@ -29,14 +29,14 @@
                     <div class="filters d-flex flex-wrap">
                         <div class="col-md-9">
                             <label for="filter-all">Filtrar per contingut:</label>
-                            <input type="text" id="filter-all" class="form-control" placeholder="Cerca per Lletra, Nom o Descripció">
+                            <input type="text" id="filter-all" class="form-control" placeholder="Cerca per Lletra o Nom de la Secció">
                         </div>
 
                         <div class="col-md-3">
                             <label for="filter-active">Filtrar per si és Secció activa:</label>
                             <select id="filter-active" class="form-control">
                                 <option value="">Tots</option>
-                                <option value="yes">Actiba</option>
+                                <option value="yes">Activa</option>
                                 <option value="no">No Activa</option>
                             </select>
                         </div>
@@ -111,52 +111,57 @@
         return confirm("Estàs segur que vols eliminar aquesta secció: " + fieldName + "?");
     }
 
-     // JavaScript for dynamic filtering
-     document.getElementById('filter-all').addEventListener('input', filterTable);
-     document.getElementById('filter-active').addEventListener('change', filterTable);
- 
-     function filterTable() {
-         const searchValue = document.getElementById('filter-all').value.toLowerCase();
-         const activeFilter = document.getElementById('filter-active').value;
-         const tableRows = document.querySelectorAll('#sections-table tbody tr');
- 
-         let rowsVisible = 0;
- 
-         tableRows.forEach(row => {
-            const fieldLetter = row.getAttribute('data-letter').toLowerCase();
-            const fieldName = row.getAttribute('data-name').toLowerCase();
+    //Not using  accents in the filter and in the data
+    function normalizeString(str) {
+        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    }
 
-             const isActive = row.getAttribute('data-active');
- 
-             const matchesSearch = fieldLetter.includes(searchValue) || fieldName.includes(searchValue);
-             const matchesActiveFilter = (activeFilter === '' || isActive === activeFilter);
- 
-             if (matchesSearch && matchesActiveFilter) {
-                 row.style.display = '';
-                 rowsVisible++;
-             } else {
-                 row.style.display = 'none';
-             }
-         });
- 
-         const noResultsMessage = document.getElementById('no-results-message');
-         const noResultsText = document.getElementById('no-results-text');
- 
-         // No results message logic
-         if (rowsVisible === 0) {
-             let message = "Cap secció amb els criteris de cerca";
-             if (searchValue) {
-                 message += ` amb el terme "${searchValue}"`;
-             }
-             if (activeFilter) {
-                 message += ` actiu "${activeFilter === 'yes' ? 'Sí' : 'No'}"`;
-             }
-             noResultsText.textContent = message + ".";
-             noResultsMessage.style.display = 'block';
-         } else {
-             noResultsMessage.style.display = 'none';
-         }
-     }
+    // JavaScript for dynamic filtering
+    document.getElementById('filter-all').addEventListener('input', filterTable);
+    document.getElementById('filter-active').addEventListener('change', filterTable);
+
+    function filterTable() {
+        const searchValue = normalizeString(document.getElementById('filter-all').value);
+        const activeFilter = document.getElementById('filter-active').value;
+        const tableRows = document.querySelectorAll('#sections-table tbody tr');
+
+        let rowsVisible = 0;
+
+        tableRows.forEach(row => {
+        const fieldLetter = normalizeString(row.getAttribute('data-letter').toLowerCase());
+        const fieldName = normalizeString(row.getAttribute('data-name').toLowerCase());
+
+            const isActive = row.getAttribute('data-active');
+
+            const matchesSearch = fieldLetter.includes(searchValue) || fieldName.includes(searchValue);
+            const matchesActiveFilter = (activeFilter === '' || isActive === activeFilter);
+
+            if (matchesSearch && matchesActiveFilter) {
+                row.style.display = '';
+                rowsVisible++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        const noResultsMessage = document.getElementById('no-results-message');
+        const noResultsText = document.getElementById('no-results-text');
+
+        // No results message logic
+        if (rowsVisible === 0) {
+            let message = "Cap secció amb els criteris de cerca";
+            if (searchValue) {
+                message += ` amb el terme "${searchValue}"`;
+            }
+            if (activeFilter) {
+                message += ` actiu "${activeFilter === 'yes' ? 'Sí' : 'No'}"`;
+            }
+            noResultsText.textContent = message + ".";
+            noResultsMessage.style.display = 'block';
+        } else {
+            noResultsMessage.style.display = 'none';
+        }
+    }
 
 </script>
 

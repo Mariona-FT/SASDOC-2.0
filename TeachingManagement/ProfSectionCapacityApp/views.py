@@ -4,68 +4,76 @@ from .models import Professor, Capacity, Free, CapacitySection
 from UsersApp.models import Professor
 from AcademicInfoApp.models import Section,Year
 from django.contrib import messages
+from itertools import chain
 
 # Create your views here.
 
 #PROFESSORS
 def capacityprofessor_list(request):
+    # Get all years for capacity selection
+    years = Capacity.objects.values_list('Year__Year', flat=True).distinct()
+    selected_year = request.GET.get('idYear')
+    
+    # Get all professors ordered by family name
     professors = Professor.objects.all().order_by('family_name')
-    all_sections = Section.objects.all()  
+    all_sections = Section.objects.all()
     professor_data = []
-    deleting = None
 
     for professor in professors:
-        # Retrieve capacity points
-        capacity_points = Capacity.objects.filter(Professor=professor).first()
+        # Filter capacities by professor and selected year
+        capacities = Capacity.objects.filter(Professor=professor, Year__Year=selected_year).order_by('Year__Year') if selected_year else None
         free_points = Free.objects.filter(Professor=professor).first()
-
-        # Retrieve and sum up section points
-        section_points = {section.NameSection: 0 for section in all_sections}
-        for section_entry in CapacitySection.objects.filter(Professor=professor):
+        
+        # Initialize section points list as tuples (section_name, points)
+        section_points = [(section.NameSection, 0) for section in all_sections]
+        
+        # Update section points from CapacitySection entries
+        for section_entry in CapacitySection.objects.filter(Professor=professor, Year__Year=selected_year):
             section_name = section_entry.Section.NameSection
-            section_points[section_name] = section_entry.Points
-
-        # Append data for each professor
+            section_points = [(name, section_entry.Points if name == section_name else points) for name, points in section_points]
+        
+        # Set capacity_points and year based on the selected year’s capacities
+        if capacities:
+            capacity_points = capacities[0].Points
+            year = capacities[0].Year.Year
+        else:
+            capacity_points = 0
+            year = "NA"
+        
+        # Calculate total section points sum
+        section_points_sum = sum(points for _, points in section_points)
+        
+        # Determine background color
+        if not selected_year:
+            background_color = '#d9d9d9'
+        elif capacity_points + (free_points.PointsFree if free_points else 0) == section_points_sum:
+            background_color = '#ffe6e6'
+        else:
+            background_color = '#e6ffea'
+        
+        # Append each professor's data
         professor_data.append({
             'professor': professor,
-            'capacity_points': capacity_points.Points if capacity_points else 0,
+            'capacity_points': capacity_points,
+            'year': year,
             'free_points': free_points.PointsFree if free_points else 0,
             'section_points': section_points,
+            'background_color': background_color,
         })
-
-    if request.method == "POST" and 'confirm_delete' in request.POST:
-        # FINAL DELETE
-        
-        professor_id = request.POST.get('confirm_delete')
-        print(f"Attempting to delete professor with ID: {professor_id}")  # Print the ID being passed
-
-        try:
-            professor = Professor.objects.get(idProfessor=professor_id)
-            professor_name = f"{professor.name} {professor.family_name}"
-
-            user = professor.user
-            if user:
-                print(f"Deleting associated CustomUser with ID: {user}")  # Print the user ID being deleted
-                user.delete()  # Delete the user
-
-            professor.delete()
-            messages.success(request, f"El professor {professor_name} s'ha eliminat correctament.")
-            return redirect('usersapp:professor_list')
-        except Professor.DoesNotExist:
-            messages.error(request,"Error: El professor no existeix i no s'ha pogut borrar.")
-            print(f"Professor with ID {professor_id} does not exist.")  # Print error information
-
-    # Handle initial delete confirmation
-    if 'confirm_delete' in request.GET:
-        professor_id = request.GET.get('confirm_delete')
-        deleting = professor_id
-        print("Delete confirmation for professor ID:", deleting)  # Print the ID being confirmed for deletion
 
     return render(request, 'capacityprofessor_list_actions.html', {
         'professor_data': professor_data,
-        'all_sections':all_sections,
-        'deleting': deleting,
+        'all_sections': all_sections,
+        'years': years,
+        'selected_year': selected_year,
     })
+
+def capacityprofessor_list_for_year(request,idYear):
+    pass
+
+def capacityprofessor_select(request):
+    professors = Professor.objects.all()  # Fetch all professors
+    return render(request, 'newcapacityprofessor_form.html', {'professors': professors})
 
 #INFO ONLY ONE PROFESSOR 
 def capacityprofessor_create_edit(request,idProfessor=None):
@@ -103,6 +111,13 @@ def capacityprofessor_create_edit(request,idProfessor=None):
     frees = Free.objects.filter(Professor=professor).order_by('-Year__Year')
     capacity_sections = CapacitySection.objects.filter(Professor=professor).order_by('-Year__Year')
 
+    # Extract unique years from all three querysets
+    years = sorted(set(chain(
+        capacities.values_list('Year__Year', flat=True),
+        frees.values_list('Year__Year', flat=True),
+        capacity_sections.values_list('Year__Year', flat=True)
+    )))
+
     context = {
         'capacity_form': capacity_form,
         'free_form': free_form,
@@ -111,7 +126,9 @@ def capacityprofessor_create_edit(request,idProfessor=None):
         'capacities': capacities,
         'frees': frees,
         'capacity_sections': capacity_sections,
+        'years': years,
     }
+
     return render(request, 'capacityprofessor_form.html', context)
 
 #CAPACITY

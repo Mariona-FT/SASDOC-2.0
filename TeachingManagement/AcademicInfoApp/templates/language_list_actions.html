@@ -1,11 +1,11 @@
 {% extends 'base-template/base.html' %}
 
-{% block title %}Llenguatges{% endblock %}
+{% block title %}Idiomes{% endblock %}
 
 {% block content %}
 <div class="container-fluid d-flex" style="min-height: 100vh;">
     <div class="col-lg-10 mx-auto">
-        <h2 style="text-align:center">Gestió dels Llenguagtes</h2>
+        <h2 style="text-align:center">Gestió dels Idiomes</h2>
 
         <!-- Display success, warning, or error messages -->
         {% if messages %}
@@ -23,7 +23,7 @@
         <div class="row">
             <div class="col-lg-10">
                 <!-- Filter Fields -->
-                <h3>Filtres pels Llenguatges</h3>
+                <h3>Filtres dels Idiomes</h3>
                 <div class="d-flex justify-content-between row mb-2">
                     <!-- Filters section -->
                     <div class="filters d-flex flex-wrap">
@@ -38,11 +38,11 @@
 
 
                 <!-- List of all languages -->
-                <h3>Llista de Llenguatges</h3>
+                <h3>Llista de Idiomes</h3>
                 <table class="table table-striped" id="languages-table">
                     <thead>
                         <tr>
-                            <th>Llenguatge</th>
+                            <th>Idioma</th>
                             <th>Accions</th>
                         </tr>
                     </thead>
@@ -66,7 +66,7 @@
                             {% endfor %}
                         {% else %}
                             <tr>
-                                <td colspan="2" class="text-center">Cap llenguatge entrada.</td>
+                                <td colspan="2" class="text-center">Cap idioma entrat.</td>
                             </tr>        
                         {% endif %}
                     </tbody>
@@ -82,7 +82,7 @@
             <div class="col-lg-2">
                 <div class="sticky-top" style="top: 1rem;">
                     <div class="buttons mb-2 d-flex flex-column align-items-center">
-                        <a href="{% url 'language_create' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Afegir Llenguatge</a>
+                        <a href="{% url 'language_create' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Afegir Idioma</a>
                     </div>
                 </div>
             </div>
@@ -93,47 +93,52 @@
 
 <!-- JavaScript function for confirmation -->
 <script>
-    function confirmDelete(fieldName) {
-        return confirm("Estàs segur que vols eliminar aquest llenguatge: " + fieldName + "?");
+    function confirmDelete(lenguagename) {
+        return confirm("Estàs segur que vols eliminar aquest idioma: " + lenguagename + "?");
+    }
+    
+    //Not using  accents in the filter and in the data
+    function normalizeString(str) {
+        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
     }
 
     // JavaScript for dynamic filtering
-     document.getElementById('filter-all').addEventListener('input', filterTable);
- 
-     function filterTable() {
-         const searchValue = document.getElementById('filter-all').value.toLowerCase();
-         const tableRows = document.querySelectorAll('#languages-table tbody tr');
- 
-         let rowsVisible = 0;
- 
-         tableRows.forEach(row => {
-             const fieldLanguage = row.getAttribute('data-language').toLowerCase();
+    document.getElementById('filter-all').addEventListener('input', filterTable);
 
-             const matchesSearch =  fieldLanguage.includes(searchValue);
- 
-             if (matchesSearch) {
-                 row.style.display = '';
-                 rowsVisible++;
-             } else {
-                 row.style.display = 'none';
-             }
-         });
- 
-         const noResultsMessage = document.getElementById('no-results-message');
-         const noResultsText = document.getElementById('no-results-text');
- 
-         // No results message logic
-         if (rowsVisible === 0) {
-             let message = "Cap Llenguatge amb els criteris de cerca";
-             if (searchValue) {
-                 message += ` amb el terme "${searchValue}"`;
-             }
-             noResultsText.textContent = message + ".";
-             noResultsMessage.style.display = 'block';
-         } else {
-             noResultsMessage.style.display = 'none';
-         }
-     }
+    function filterTable() {
+        const searchValue = normalizeString(document.getElementById('filter-all').value);
+        const tableRows = document.querySelectorAll('#languages-table tbody tr');
+
+        let rowsVisible = 0;
+
+        tableRows.forEach(row => {
+            const fieldLanguage = normalizeString(row.getAttribute('data-language').toLowerCase());
+
+            const matchesSearch =  fieldLanguage.includes(searchValue);
+
+            if (matchesSearch) {
+                row.style.display = '';
+                rowsVisible++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        const noResultsMessage = document.getElementById('no-results-message');
+        const noResultsText = document.getElementById('no-results-text');
+
+        // No results message logic
+        if (rowsVisible === 0) {
+            let message = "Cap Idioma amb els criteris de cerca";
+            if (searchValue) {
+                message += ` amb el terme "${searchValue}"`;
+            }
+            noResultsText.textContent = message + ".";
+            noResultsMessage.style.display = 'block';
+        } else {
+            noResultsMessage.style.display = 'none';
+        }
+    }
 
 </script>
 

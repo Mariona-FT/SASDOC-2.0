@@ -119,21 +119,26 @@
         return confirm("Estàs segur que vols eliminar aquesta escola: " + SchoolName + "?");
     }
 
+    //Not using  accents in the filter and in the data
+    function normalizeString(str) {
+        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    }
+
      // JavaScript for dynamic filtering
      document.getElementById('filter-all').addEventListener('input', filterTable);
      document.getElementById('filter-active').addEventListener('change', filterTable);
  
      function filterTable() {
-         const searchValue = document.getElementById('filter-all').value.toLowerCase();
+        const searchValue = normalizeString(document.getElementById('filter-all').value);
          const activeFilter = document.getElementById('filter-active').value;
          const tableRows = document.querySelectorAll('#schools-table tbody tr');
  
          let rowsVisible = 0;
  
          tableRows.forEach(row => {
-            const fieldCode = row.getAttribute('data-code').toLowerCase();
-            const fieldName = row.getAttribute('data-name').toLowerCase();
-            const fieldSection = row.getAttribute('data-section').toLowerCase();
+            const fieldCode = normalizeString(row.getAttribute('data-code').toLowerCase());
+            const fieldName = normalizeString(row.getAttribute('data-name').toLowerCase());
+            const fieldSection = normalizeString(row.getAttribute('data-section').toLowerCase());
 
              const isActive = row.getAttribute('data-active');
  
