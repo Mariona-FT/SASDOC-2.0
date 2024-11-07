@@ -22,6 +22,7 @@
 
         <div class="row">
             <div class="col-lg-11">
+              
                 <!-- Filter Fields -->
                 <h3>Filtres pel Llistat del Professorat</h3>
                 <div class="d-flex justify-content-between row mb-2">
@@ -42,10 +43,24 @@
                         </div>
                     </div>
                 </div>
-
+                <!-- Year Filter Form -->
+                <form method="GET" action="{% url 'capacityprofessor_list' %}">
+                    <label for="year">Selecciona un any:</label>
+                    <select name="idYear" id="year">
+                        <option value="">-- Tria un any --</option>
+                        {% for year in years %}
+                            <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>{{ year }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit">Mostrar Professors</button>
+                </form>
                 <hr>
 
                 <!-- List of all professors -->
+                {% if selected_year %}
+                    <h3 style="align-center">Professors per l'any {{ selected_year }}</h3>
+                {% endif %}
+
                 <h3>Llista del Professorat</h3>
                 <table class="table table-striped" id="professors-table">
                     <thead>
@@ -63,9 +78,12 @@
                     <tbody>
                         {% if professor_data %}
                             {% for entry in professor_data %}
-                            <!-- Loop through professor capacities -->
-                                <tr data-name="{{ entry.professor.name }} {{ entry.professor.family_name }}" 
-                                    data-active="{{ entry.professor.isActive }}">
+               
+                            <!-- Check for background color based on condition -->
+                            <tr data-name="{{ entry.professor.name }} {{ entry.professor.family_name }}" 
+                                data-active="{{ entry.professor.isActive }}"
+                                style="background-color: {{ entry.background_color }};">
+
                                     <td>{{ entry.professor.name }} {{ entry.professor.family_name }}</td>
                                     <td>{{ entry.year }}</td>
                                     <td>{{ entry.capacity_points }}</td>
@@ -95,7 +113,7 @@
                             {% endfor %}
                         {% else %}
                             <tr>
-                                <td colspan="{{ 5|add:all_sections|length }}" class="text-center">Cap professor en la taula.</td>
+                                <td colspan="10" class="text-center">Cap professor en la taula.</td>
                             </tr>        
                         {% endif %}
                     </tbody>
@@ -111,7 +129,7 @@
             <div class="col-lg-1">
                 <div class="sticky-top" style="top: 1rem">
                     <div class="buttons mb-2 d-flex flex-column align-items-center">
-                        <a href="{% url 'capacityprofessor_create' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Afegir Capacitat per Professor</a>
+                        <a href="{% url 'capacityprofessor_select' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Afegir Capacitat per Professor</a>
                     </div>
                 </div>
             </div>

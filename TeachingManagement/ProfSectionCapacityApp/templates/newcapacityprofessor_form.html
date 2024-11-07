@@ -1,0 +1,52 @@
+{% extends 'base-template/base.html' %}
+
+{% block title %}Seleccionar Professor{% endblock %}
+
+{% block content %}
+<div class="container-fluid d-flex" style="min-height: 100vh;">
+    <div class="col-lg-10 mx-auto">
+
+        <h2 class="text-center">Selecciona un Professor per Gestionar la Capacitat</h2>
+        <hr>
+        <div class="row">
+            <div class="col-lg-10">
+
+                <!-- Dropdown or Filterable Table to Select Professor -->
+                <h3>Filtrar per Professor:</h3>
+                <select id="professorSelect" class="form-select mb-4">
+                    <option value="">Selecciona un Professor</option>
+                    {% for professor in professors %}
+                        <option value="{% url 'capacityprofessor_edit' professor.pk %}">
+                            {{ professor.name }} {{ professor.family_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+
+                <!-- Script to Redirect to Capacity Management Form for Selected Professor -->
+                <script>
+                    document.getElementById('professorSelect').addEventListener('change', function() {
+                        const selectedUrl = this.value;
+                        if (selectedUrl) {
+                            window.location.href = selectedUrl;
+                        }
+                    });
+                </script>
+
+                 <hr>   
+            </div> 
+                <!-- Buttons section fixed on the right -->
+                <div class="col-lg-2">
+                    <div class="sticky-top" style="top: 1rem">
+                        <div class="buttons mb-2 d-flex flex-column align-items-center">
+                            <a href="{% url 'capacityprofessor_list' %}" class="button-return mb-2">Tornar a Gestió Capacitat del Professorat</a>
+                        </div>
+                    </div>
+                </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}
