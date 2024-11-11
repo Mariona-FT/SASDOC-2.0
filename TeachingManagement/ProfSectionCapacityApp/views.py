@@ -61,7 +61,7 @@ def capacityprofessor_list(request):
             'background_color': background_color,
         })
 
-    return render(request, 'capacityprofessor_list_actions.html', {
+    return render(request, 'professor_capacity/capacityprofessor_list_actions.html', {
         'professor_data': professor_data,
         'all_sections': all_sections,
         'years': years,
@@ -73,7 +73,7 @@ def capacityprofessor_list_for_year(request,idYear):
 
 def capacityprofessor_select(request):
     professors = Professor.objects.all()  # Fetch all professors
-    return render(request, 'newcapacityprofessor_form.html', {'professors': professors})
+    return render(request, 'professor_capacity/new_professor_capacity.html', {'professors': professors})
 
 #INFO ONLY ONE PROFESSOR 
 def capacityprofessor_create_edit(request,idProfessor=None):
@@ -129,7 +129,7 @@ def capacityprofessor_create_edit(request,idProfessor=None):
         'years': years,
     }
 
-    return render(request, 'capacityprofessor_form.html', context)
+    return render(request, 'professor_capacity/overview_professor_capacity.html', context)
 
 #CAPACITY
 # Create a new Capacity entry
@@ -145,7 +145,7 @@ def create_capacity(request, idProfessor):
     else:
         form = CapacityForm(professor=professor)
 
-    return render(request, 'capacity_form.html', {'form': form, 'professor': professor})
+    return render(request, 'professor_capacity/professor_capacity_form.html', {'form': form, 'professor': professor})
 
 # Edit an existing Capacity entry
 def edit_capacity(request, idCapacity):
@@ -161,7 +161,7 @@ def edit_capacity(request, idCapacity):
     else:
         form = CapacityForm(instance=capacity)
 
-    return render(request, 'capacity_form.html', {'form': form, 'professor': capacity.Professor, 'year': capacity.Year})
+    return render(request, 'professor_capacity/professor_capacity_form.html', {'form': form, 'professor': capacity.Professor, 'year': capacity.Year})
 
 def delete_capacity(request, idCapacity):
     capacity = get_object_or_404(Capacity, pk=idCapacity)
@@ -188,7 +188,7 @@ def create_free(request, idProfessor):
     else:
         form = FreeForm(professor=professor)
 
-    return render(request, 'free_form.html', {'form': form, 'professor': professor})
+    return render(request, 'professor_capacity/professor_free_capacity_form.html', {'form': form, 'professor': professor})
 
 # Edit an existing Capacity entry
 def edit_free(request, idFree):
@@ -204,7 +204,7 @@ def edit_free(request, idFree):
     else:
         form = FreeForm(instance=free)
 
-    return render(request, 'capacity_form.html', {'form': form, 'professor': free.Professor, 'year': free.Year})
+    return render(request, 'professor_capacity/professor_capacity_form.html', {'form': form, 'professor': free.Professor, 'year': free.Year})
 
 def delete_free(request, idFree):
     free = get_object_or_404(Free, pk=idFree)
@@ -231,7 +231,7 @@ def create_capacity_section(request, idProfessor):
     else:
         form = CapacitySectionForm(professor=professor)
 
-    return render(request, 'capacity_section_form.html', {'form': form, 'professor': professor})
+    return render(request, 'professor_capacity/professor_capacity_section_form.html', {'form': form, 'professor': professor})
 
 # Edit an existing Capacity section entry
 def edit_capacity_section(request, idCapacitySection):
@@ -247,7 +247,7 @@ def edit_capacity_section(request, idCapacitySection):
     else:
         form = CapacitySectionForm(instance=capsection,professor=capsection.Professor)
 
-    return render(request, 'capacity_form.html', {'form': form, 'professor': capsection.Professor, 'year': capsection.Year})
+    return render(request, 'professor_capacity/professor_capacity_form.html', {'form': form, 'professor': capsection.Professor, 'year': capsection.Year})
 
 def delete_capacity_section(request, idCapacitySection):
     capsection = get_object_or_404(CapacitySection, pk=idCapacitySection)
