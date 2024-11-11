@@ -2,6 +2,14 @@ body {
     background-color: #f0f0f0;
 }
 
+/*TEXT */
+
+body {
+    font-size: 14px; /* Adjust as desired for smaller text */
+    line-height: 1.4;
+}
+
+
 /* Navbar background color and general styling */
 .navbar {
     background-color: #f8f9fa; /* Light background color */
@@ -57,7 +65,7 @@ body {
 /* Styling for navbar links */
 .navbar-sub-nav .nav-link {
     color: #4a4a4a; /* Dark grey for text */
-    font-size: 16px; /* Adjust the size to make it more readable */
+    font-size: 13px; /* Adjust the size to make it more readable */
     padding: 8px 15px; /* Adjust the spacing around the links */
     margin-right: 20px; /* Adds space between links */
     text-align: center; /* Ensures the text is centered in the link */
@@ -83,7 +91,7 @@ body {
     border-radius: 4px; /* Optional: rounded corners */
     cursor: pointer; /* Pointer cursor on hover */
     text-decoration: none; /* Remove underline */
-    font-size: 20px; /* Adjust font size as needed */
+    font-size: 15px; /* Adjust font size as needed */
     transition: background-color 0.3s; /* Smooth transition */
     width: 100%; /* Make buttons take full width of their container */
 }
@@ -92,13 +100,15 @@ body {
 /*CREATE/UPDATE*/
 .button-create {
     background-color: #b7e3c1; /* Light green background */
-    font-size: 16px; /* Adjust the size */
+    font-size: 14px; /* Adjust the size */
     color: #176d2b; /* Darker green text color */
     border: 1px solid #28a745; /* Border with a darker shade */
     padding: 8px 12px; /* Adjust padding */
     border-radius: 4px; /* Optional: rounded corners */
     cursor: pointer; /* Pointer cursor on hover */
     text-decoration: none; /* Remove underline */
+    box-sizing: border-box; /* Ensures padding doesn’t affect total height */
+    height: 40px; /* Sets a fixed height for consistency */
 
 }
 .button-create:hover {
@@ -109,13 +119,15 @@ body {
 /*EDIT*/
 .button-edit {
     background-color: #f6c261; /* Light background color */
-    font-size: 16px; /* Adjust the size */
+    font-size: 14px; /* Adjust the size */
     color:#a56505; /* Darker text color */
     border: 1px solid #9e640c; /* Border with a darker shade */
     padding: 8px 12px; /* Adjust padding */
     border-radius: 4px; /* Optional: rounded corners */
     cursor: pointer; /* Pointer cursor on hover */
     text-decoration: none; /* Remove underline */
+    box-sizing: border-box; /* Ensures padding doesn’t affect total height */
+    height: 40px; /* Sets a fixed height for consistency */
 
 }
 
@@ -126,13 +138,15 @@ body {
 /*DELETE*/
 .button-delete {
     background-color: #f8b0b5; /* Light background color */
-    font-size: 16px; /* Adjust the size to make it more readable */
+    font-size: 14px; /* Adjust the size to make it more readable */
     color: #c92d39; /* Darker text color */
     border: 1px solid #c92d39; /* Border with a darker shade */
     padding: 8px 12px; /* Adjust padding */
     border-radius: 4px; /* Optional: rounded corners */
     cursor: pointer; /* Pointer cursor on hover */
     text-decoration: none; /* Remove underline */
+    box-sizing: border-box; /* Ensures padding doesn’t affect total height */
+    height: 37px; /* Sets a fixed height for consistency */
 }
 
 .button-delete:hover {
@@ -177,10 +191,55 @@ body {
 }
 
 .no-data {
-    color: #7a7a7a; /* Soft gray color */
-    font-family: "Georgia", serif;
-    font-weight: 500; /* Medium weight for better visibility */
+    color: #6c757d; /* Slightly darker grey for better contrast */
+    padding: 10px 0; /* Adds spacing above and below the text */
+    font-style: italic; /* Adds a subtle emphasis */
 }
+
 .professor-info {
     color: #1e90ff; /* Brighter blue */
+}
+
+.text-content {
+    display: block;
+    max-height: 3em; /* Display only two lines */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: relative;
+    text-wrap: balance; 
+    font-style: italic; /* Adds a subtle emphasis */
+
+}
+
+/* CSS for setting column widths */
+/* Set table layout to fixed to prevent columns from expanding */
+.table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+/* Prevent text from wrapping and add ellipsis for overflow */
+.table th, .table td {
+    text-wrap: balance; 
+    overflow: hidden;     
+    text-overflow: ellipsis;  
+}
+
+
+.table th.name-c, .table td.name-c {
+    width: 10%;  
+    word-break: break-word; /* Ensure long words break */
+}
+
+.table th.email-c, .table td.email-c {
+    width: 15%;
+    word-break: break-word; /* Ensure long words break */
+}
+
+.table th.active-c, .table td.active-c {
+    width: 8%;
+}
+
+.table th.actions-c, .table td.actions-c {
+    width: 15%;
 }
