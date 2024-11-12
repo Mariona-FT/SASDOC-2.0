@@ -26,7 +26,7 @@ urlpatterns = [
     #For the PROFESSOR
     path('capacity-professors/', views.capacityprofessor_list, name='capacityprofessor_list'),
     path('capacity-professors/select/', views.capacityprofessor_select, name='capacityprofessor_select'),
-    path('capacity-professors/edit/<int:idProfessor>', views.capacityprofessor_create_edit, name='capacityprofessor_edit'),
+    path('capacity-professors/show/<int:idProfessor>', views.capacityprofessor_show, name='capacityprofessor_show'),
 
     # For adding, editing, and deleting Capacity, Free, and CapacitySection entries
     

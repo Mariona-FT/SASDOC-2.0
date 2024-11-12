@@ -112,8 +112,8 @@ def capacityprofessor_select(request):
     return render(request, 'professor_capacity/new_professor_capacity.html', {'professors': professors})
 
 #INFO ONLY ONE PROFESSOR 
-def capacityprofessor_create_edit(request,idProfessor=None):
-    # Retrieve the professor instance if idProfessor is provided
+def capacityprofessor_show(request,idProfessor=None):
+# Retrieve the professor instance if idProfessor is provided
     professor = get_object_or_404(Professor, pk=idProfessor) if idProfessor else None
 
     # Initialize forms for each model
@@ -121,39 +121,42 @@ def capacityprofessor_create_edit(request,idProfessor=None):
     free_form = FreeForm(request.POST or None, prefix='free')
     capacity_section_form = CapacitySectionForm(request.POST or None, prefix='capacity_section')
 
-    if request.method == 'POST':
-        # Process each form
-        if capacity_form.is_valid() and free_form.is_valid() and capacity_section_form.is_valid():
-            # Save Capacity form
-            capacity = capacity_form.save(commit=False)
-            capacity.Professor = professor
-            capacity.save()
+  
+    # Get the selected year from the GET parameters
+    selected_year_id = request.GET.get('year')  # Year id from the URL or form
+    selected_year = None  # Object year
 
-            # Save Free form
-            free = free_form.save(commit=False)
-            free.Professor = professor
-            free.save()
+    # Get the most recent year if no year is selected
+    if selected_year_id:
+        try:
+            selected_year = Year.objects.get(pk=int(selected_year_id))
+        except Year.DoesNotExist:
+           messages.error(request, "Any seleccionat no existeix.")
+    
+    if not selected_year:
+        most_recent_capacity = Capacity.objects.filter(Professor_id=idProfessor).order_by('Year').first()
+        if most_recent_capacity:
+            selected_year = most_recent_capacity.Year  # Assign the year from the most recent capacity entry
+        else:
+            selected_year = None 
 
-            # Save CapacitySection form
-            capacity_section = capacity_section_form.save(commit=False)
-            capacity_section.Professor = professor
-            capacity_section.save()
+    # Filter capacity, free, and capacity_section entries by the selected year
+    capacities = Capacity.objects.filter(Professor=professor, Year=selected_year).order_by('-Year__Year')
+    frees = Free.objects.filter(Professor=professor, Year=selected_year).order_by('-Year__Year')
+    capacity_sections = CapacitySection.objects.filter(Professor=professor, Year=selected_year).order_by('-Year__Year')
+  
+    # Extract unique Year objects from the available capacities, frees, and capacity_sections
+    # We will query the Year model directly and then deduplicate and sort the results
+    years_from_capacities = Capacity.objects.filter(Professor=professor).values_list('Year', flat=True)
+    years_from_frees = Free.objects.filter(Professor=professor).values_list('Year', flat=True)
+    years_from_capacity_sections = CapacitySection.objects.filter(Professor=professor).values_list('Year', flat=True)
 
-            # Redirect to a success page or the same page with a success message
-            return redirect('some_success_url')  # Replace with appropriate URL
+    # Combine all the year IDs and retrieve the corresponding Year objects
+    unique_year_ids = set(chain(years_from_capacities, years_from_frees, years_from_capacity_sections))
 
-    # Retrieve existing records associated with the professor
-    capacities = Capacity.objects.filter(Professor=professor).order_by('-Year__Year')
-    frees = Free.objects.filter(Professor=professor).order_by('-Year__Year')
-    capacity_sections = CapacitySection.objects.filter(Professor=professor).order_by('-Year__Year')
-
-    # Extract unique years from all three querysets
-    years = sorted(set(chain(
-        capacities.values_list('Year__Year', flat=True),
-        frees.values_list('Year__Year', flat=True),
-        capacity_sections.values_list('Year__Year', flat=True)
-    )))
-
+    # Query Year objects corresponding to these IDs
+    available_years = Year.objects.filter(idYear__in=unique_year_ids).order_by('-Year')
+    
     context = {
         'capacity_form': capacity_form,
         'free_form': free_form,
@@ -162,7 +165,8 @@ def capacityprofessor_create_edit(request,idProfessor=None):
         'capacities': capacities,
         'frees': frees,
         'capacity_sections': capacity_sections,
-        'years': years,
+        'available_years': available_years,
+        'selected_year': selected_year, 
     }
 
     return render(request, 'professor_capacity/overview_professor_capacity.html', context)
@@ -177,7 +181,7 @@ def create_capacity(request, idProfessor):
         if form.is_valid():
             form.save()  
             messages.success(request, 'Capacitat correctament creada.')
-            return redirect('capacityprofessor_edit', idProfessor=idProfessor)
+            return redirect('capacityprofessor_show', idProfessor=idProfessor)
     else:
         form = CapacityForm(professor=professor)
 
@@ -193,7 +197,7 @@ def edit_capacity(request, idCapacity):
         if form.is_valid():
             form.save()
             messages.success(request, 'Capacitat correctament editada.')
-            return redirect('capacityprofessor_edit', idProfessor=idProfessor)
+            return redirect('capacityprofessor_show', idProfessor=idProfessor)
     else:
         form = CapacityForm(instance=capacity)
 
@@ -208,7 +212,7 @@ def delete_capacity(request, idCapacity):
     except Exception as e:
         messages.error(request, f"Error: No s'ha pogut eliminar la capacitat ({e}).")
 
-    return redirect('capacityprofessor_edit', idProfessor=idProfessor)
+    return redirect('capacityprofessor_show', idProfessor=idProfessor)
 
 #FREE
 # Create a new Free entry
@@ -220,7 +224,7 @@ def create_free(request, idProfessor):
         if form.is_valid():
             form.save()
             messages.success(request, 'Punts Lliures correctament creats.')
-            return redirect('capacityprofessor_edit', idProfessor=idProfessor)
+            return redirect('capacityprofessor_show', idProfessor=idProfessor)
     else:
         form = FreeForm(professor=professor)
 
@@ -236,7 +240,7 @@ def edit_free(request, idFree):
         if form.is_valid():
             form.save()
             messages.success(request, 'Punts Lliures correctament editats.')
-            return redirect('capacityprofessor_edit', idProfessor=idProfessor)
+            return redirect('capacityprofessor_show', idProfessor=idProfessor)
     else:
         form = FreeForm(instance=free)
 
@@ -251,7 +255,7 @@ def delete_free(request, idFree):
     except Exception as e:
         messages.error(request, f"Error: No s'ha pogut eliminar els punts lliures ({e}).")
 
-    return redirect('capacityprofessor_edit', idProfessor=idProfessor)
+    return redirect('capacityprofessor_show', idProfessor=idProfessor)
 
 #CAPACITY SECTION
 # Create a new Capacity section entry
@@ -263,7 +267,7 @@ def create_capacity_section(request, idProfessor):
         if form.is_valid():
             form.save()
             messages.success(request, 'Capacitat en la Secció correctament creada.')
-            return redirect('capacityprofessor_edit', idProfessor=idProfessor)
+            return redirect('capacityprofessor_show', idProfessor=idProfessor)
     else:
         form = CapacitySectionForm(professor=professor)
 
@@ -279,7 +283,7 @@ def edit_capacity_section(request, idCapacitySection):
         if form.is_valid():
             form.save()
             messages.success(request, 'Capacitat en la Secció correctament editada.')
-            return redirect('capacityprofessor_edit', idProfessor=idProfessor)
+            return redirect('capacityprofessor_show', idProfessor=idProfessor)
     else:
         form = CapacitySectionForm(instance=capsection,professor=capsection.Professor)
 
@@ -294,7 +298,7 @@ def delete_capacity_section(request, idCapacitySection):
     except Exception as e:
         messages.error(request, f"Error: No s'ha pogut eliminar la capacitat ({e}).")
 
-    return redirect('capacityprofessor_edit', idProfessor=idProfessor)
+    return redirect('capacityprofessor_show', idProfessor=idProfessor)
 
 #SECTIONS
 def capacitysection_list(request):

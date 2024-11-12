@@ -24,14 +24,26 @@
         <div class="row">
             <div class="col-lg-10">
 
-                <!-- Year Filter Dropdown -->
-                <h3>Filtrar per Any:</h3>
-                    <select id="yearFilter" class="form-select">
-                        <option value="">Tots els Anys</option>
-                        {% for year in years %}
-                            <option value="{{ year }}">{{ year }}</option>
+               <!-- Year Filter Form -->
+               <form method="get" id="year-filter-form">
+                    <label for="year-select">Selecciona l'Any:</label>
+                   <!-- Centered message when no years are available -->
+                    {% if not available_years %}
+                        <div class="text-center text-muted my-2">
+                            <p>El professor encara no té assignada cap capacitat per cap any.</p>
+                        </div>
+                    {% endif %}
+                    <select name="year" id="year-select" class="form-control" 
+                    {% if not available_years %}disabled{% endif %}
+                    onchange="document.getElementById('year-filter-form').submit();">                        
+                        {% for year in available_years %}
+                            <!-- Use idYear as the value to send the ID, but display Year in the option text -->
+                            <option value="{{ year.idYear }}" {% if year == selected_year %}selected{% endif %}>
+                                {{ year.Year }}
+                            </option>
                         {% endfor %}
                     </select>
+                </form>
 
                 <!-- Display existing capacities -->
                 <h5 class="mt-4 d-flex justify-content-between align-items-center">

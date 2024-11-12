@@ -60,7 +60,14 @@
 
                 <!-- List of all professors -->
                 {% if selected_year %}
-                    <h5 style="text-align:center; color:blue">Professors per l'any {{ selected_year.Year }}</h5>
+                    <h5 style="text-align:center; color:blue">
+                            Professors per l'any 
+                        {{ selected_year.Year }} 
+
+                        {% if selected_year.Year != available_years.first.Year %}
+                            (Historial)
+                        {% endif %}
+                    </h5>
                 {% endif %}
 
                 <h3>Llista del Professorat</h3>

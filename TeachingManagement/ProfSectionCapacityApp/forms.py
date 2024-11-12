@@ -9,7 +9,7 @@ class CapacityForm(forms.ModelForm):
         model = Capacity
         fields = ['Professor', 'Year', 'Points', 'Comment']
         widgets = {
-            'Comment': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Optional comment'}),
+            'Comment': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Comentari opcional'}),
         }
         labels = {
             'Professor':'Professor',
@@ -31,7 +31,7 @@ class FreeForm(forms.ModelForm):
         model = Free
         fields = ['Professor', 'Year', 'PointsFree', 'Comment']
         widgets = {
-            'Comment': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Optional comment'}),
+            'Comment': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Comentari opcional'}),
         }
         labels = {
             'Professor':'Professor',
@@ -53,7 +53,7 @@ class CapacitySectionForm(forms.ModelForm):
         model = CapacitySection
         fields = ['Professor', 'Year', 'Section', 'Points', 'Comment']
         widgets = {
-            'Comment': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Optional comment'}),
+            'Comment': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Comentari opcional'}),
         }
         labels = {
             'Professor':'Professor',
