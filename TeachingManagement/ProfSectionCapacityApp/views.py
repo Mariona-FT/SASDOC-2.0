@@ -145,6 +145,14 @@ def capacityprofessor_show(request,idProfessor=None):
     frees = Free.objects.filter(Professor=professor, Year=selected_year).order_by('-Year__Year')
     capacity_sections = CapacitySection.objects.filter(Professor=professor, Year=selected_year).order_by('-Year__Year')
   
+
+    # Calculate the balance
+    capacity_points = sum(c.Points for c in capacities)
+    free_points = sum(f.PointsFree for f in frees)
+    section_points_sum = sum(s.Points for s in capacity_sections)
+
+    balance = capacity_points - free_points - section_points_sum
+
     # Extract unique Year objects from the available capacities, frees, and capacity_sections
     # We will query the Year model directly and then deduplicate and sort the results
     years_from_capacities = Capacity.objects.filter(Professor=professor).values_list('Year', flat=True)
@@ -165,6 +173,7 @@ def capacityprofessor_show(request,idProfessor=None):
         'capacities': capacities,
         'frees': frees,
         'capacity_sections': capacity_sections,
+        'balance':balance,
         'available_years': available_years,
         'selected_year': selected_year, 
     }
