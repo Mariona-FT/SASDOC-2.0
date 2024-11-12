@@ -16,7 +16,7 @@
                 <select id="professorSelect" class="form-select mb-4">
                     <option value="">Selecciona un Professor</option>
                     {% for professor in professors %}
-                        <option value="{% url 'capacityprofessor_edit' professor.pk %}">
+                        <option value="{% url 'capacityprofessor_show' professor.pk %}">
                             {{ professor.name }} {{ professor.family_name }}
                         </option>
                     {% endfor %}

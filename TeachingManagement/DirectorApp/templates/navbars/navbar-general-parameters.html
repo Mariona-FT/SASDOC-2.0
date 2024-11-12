@@ -1,53 +1,53 @@
 <!-- Academic Info Navbar -->
-<nav class="navbar-sub-nav navbar-expand-lg navbar-light;">
+<nav class="navbar-sub-nav navbar-expand-lg navbar-light d-flex justify-content-center">
     <ul class="navbar-nav">
         {% url 'year_list' as year_list_url %}
-        <li class="nav-item {% if request.path == year_list_url %} active{% endif %}">
+        <li class="nav-item me-4  {% if request.path == year_list_url %} active{% endif %}">
             <a class="nav-link" href="{{ year_list_url }}">Anys</a>
         </li>
 
         {% url 'usersapp:professor_list' as professor_list_url %}
-        <li class="nav-item {% if request.path == professor_list_url %} active{% endif %}">
+        <li class="nav-item me-4  {% if request.path == professor_list_url %} active{% endif %}">
             <a class="nav-link" href="{{professor_list_url}}">Professorat</a>
         </li>
 
         {% url 'section_list' as section_List_url %}
-        <li class="nav-item {% if request.path == section_List_url %} active{% endif %}">
+        <li class="nav-item me-4 {% if request.path == section_List_url %} active{% endif %}">
             <a class="nav-link" href="{{ section_List_url }}">Seccions</a>
         </li>
         
         {% url 'usersapp:sectorchief_list' as sectorchief_list_url %}
-        <li class="nav-item {% if request.path == sectorchief_list_url %} active{% endif %}">
+        <li class="nav-item me-4  {% if request.path == sectorchief_list_url %} active{% endif %}">
             <a class="nav-link" href="{{sectorchief_list_url}}">Caps de Secció</a>
         </li>
 
         {% url 'school_list' as school_list_url %}
-        <li class="nav-item {% if request.path == school_list_url %} active{% endif %}">
+        <li class="nav-item  me-4 {% if request.path == school_list_url %} active{% endif %}">
             <a class="nav-link" href="{{ school_list_url }}">Escoles</a>
         </li> 
 
         {% url 'degree_list' as degree_list_url %}
-        <li class="nav-item {% if request.path == degree_list_url %} active{% endif %}">
+        <li class="nav-item me-4  {% if request.path == degree_list_url %} active{% endif %}">
             <a class="nav-link" href="{{ degree_list_url }}">Titulacions</a>
         </li>
 
         {% url 'course_list' as course_list_url %}
-        <li class="nav-item {% if request.path == course_list_url %} active{% endif %}">
+        <li class="nav-item me-4  {% if request.path == course_list_url %} active{% endif %}">
             <a class="nav-link" href="{{ course_list_url }}">Cursos</a>
         </li>        
       
         {% url 'field_list' as field_list_url %}
-        <li class="nav-item {% if request.path == field_list_url %} active{% endif %}">
+        <li class="nav-item me-4  {% if request.path == field_list_url %} active{% endif %}">
             <a class="nav-link" href="{{ field_list_url }}">Camps</a>
         </li>
   
         {% url 'typeprofessor_list' as typeprofessor_list_url %}
-        <li class="nav-item {% if request.path == typeprofessor_list_url %} active{% endif %}">
+        <li class="nav-item me-4 {% if request.path == typeprofessor_list_url %} active{% endif %}">
             <a class="nav-link" href="{{ typeprofessor_list_url }}">Tipus de Professorat</a>
         </li>
         
         {% url 'language_list' as language_list_url %}
-        <li class="nav-item {% if request.path == language_list_url %} active{% endif %}">
+        <li class="nav-item me-4  {% if request.path == language_list_url %} active{% endif %}">
             <a class="nav-link" href="{{ language_list_url }}">Idiomes</a>
         </li>
     </ul>

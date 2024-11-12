@@ -50,13 +50,13 @@
                 <table class="table" id="professors-table">
                     <thead>
                         <tr>
-                            <th>Nom i Cognoms</th>
-                            <th>Correu electrònic</th>
-                            <th>Contracte Actual</th>
+                            <th class="name-c">Nom i Cognoms</th>
+                            <th class="email-c">Correu electrònic</th>
+                            <th class=>Contracte Actual</th>
                             <th>Camps d'estudi</th>
                             <th>Idiomes</th>
-                            <th>Està Actiu</th>
-                            <th>Accions</th>
+                            <th class="active-c">Està Actiu</th>
+                            <th class="actions-c">Accions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -64,11 +64,11 @@
                             {% for professor in professors %}
                                 <tr style="background-color: 
                                 {% if professor.isActive == "no" %}
-                                    #d9d9d9  ; 
+                                    #DCDCDC  ; 
                                 {% elif  not professor.current_contract or not professor.professor_fields.exists or not professor.professor_languages.exists %}
                                     #ffe6e6 ; 
                                 {% else %}
-                                    #e6ffea  ; 
+                                    #FFFFFF ; 
                                 {% endif %};"
                                 data-name="{{ professor.name }} {{ professor.family_name }}" 
                                 data-email="{{ professor.email }}" 
@@ -76,6 +76,7 @@
                                 data-fields="{% for field in professor.professor_fields.all %}{{ field.Field.NameField }}{% if not forloop.last %},{% endif %}{% endfor %}"
                                 data-languages="{% for language in professor.professor_languages.all %}{{ language.Language.Language }}{% if not forloop.last %},{% endif %}{% endfor %}"
                                 data-active="{{ professor.isActive }}"
+                                onclick="toggleDetails(this)"
                                 >
                                     <td>{{ professor.name }} {{ professor.family_name }}</td>
                                     <td>{{ professor.email }}</td>
@@ -117,6 +118,18 @@
                                         </form>
                                     </td>
                                 </tr>
+
+                                <!-- Expanded Row for Details -->
+                                <tr class="professor-details-row" style="display: none;">
+                                    <td colspan="7" class="professor-details">
+                                        <strong>Comentari</strong> (entrat per director):
+                                        <span class="text-content">{{ professor.comment|default:"No hi ha comentaris" }}</span>
+                                
+                                        <strong>Descripció</strong> (entrat per cap de secció):
+                                        <span class="text-content">{{ professor.description|default:"No hi ha descripció" }}</span>
+                                    </td>
+                                </tr>
+
                             {% endfor %}
                         {% else %}
                             <tr>
@@ -151,6 +164,15 @@
     function confirmDelete(professorName) {
         return confirm("Estàs segur que vols eliminar aquest professor: " + professorName + "?");
     }
+
+    function toggleDetails(row) {
+        // Find the next row, which is the details row
+        let detailsRow = row.nextElementSibling;
+        if (detailsRow && detailsRow.classList.contains('professor-details-row')) {
+            detailsRow.style.display = detailsRow.style.display === 'none' ? 'table-row' : 'none';
+        }
+    }
+
 
     //Not using  accents in the filter and in the data
     function normalizeString(str) {

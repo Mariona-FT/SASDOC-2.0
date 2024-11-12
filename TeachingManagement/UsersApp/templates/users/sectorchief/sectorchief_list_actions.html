@@ -74,12 +74,12 @@
                                             <td>{{ professor.name }} {{ professor.family_name }}</td>
                                             <td>{{ professor.email }}</td>
                                             <td>
-                                                <span style="color:Blue">{{ chief.section }}</span>
+                                                <span class="professor-info">{{ chief.section }}</span>
                                             </td>
                                             <td>
-                                                <span style="color:Blue">{{ chief.year }}</span>
+                                                <span class="professor-info">{{ chief.year }}</span>
                                             </td>
-                                            <td>{{ professor.comment }}</td>
+                                            <td class="no-data">{{ professor.comment }}</td>
                                             <td>{% if professor.isActive == 'yes' %}Sí{% else %}No{% endif %}</td>
                                             <td>
                                                 <!-- Edit button -->

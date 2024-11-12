@@ -44,35 +44,57 @@
                     </div>
                 </div>
                 <!-- Year Filter Form -->
-                <form method="GET" action="{% url 'capacityprofessor_list' %}">
-                    <label for="year">Selecciona un any:</label>
-                    <select name="idYear" id="year">
-                        <option value="">-- Tria un any --</option>
-                        {% for year in years %}
-                            <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>{{ year }}</option>
+                <form method="get" id="year-filter-form">
+                    <label for="year-select">Selecciona l'Any:</label>
+                    <select name="year" id="year-select" class="form-control" onchange="document.getElementById('year-filter-form').submit();">
+                        {% for year in available_years %}
+                            <!-- Use idYear as the value to send the ID, but display Year in the option text -->
+                            <option value="{{ year.idYear }}" {% if year == selected_year %}selected{% endif %}>
+                                {{ year.Year }}
+                            </option>
                         {% endfor %}
                     </select>
-                    <button type="submit">Mostrar Professors</button>
                 </form>
+
                 <hr>
 
                 <!-- List of all professors -->
                 {% if selected_year %}
-                    <h3 style="align-center">Professors per l'any {{ selected_year }}</h3>
+                    <h5 style="text-align:center; color:blue">
+                            Professors per l'any 
+                        {{ selected_year.Year }} 
+
+                        {% if selected_year.Year != available_years.first.Year %}
+                            (Historial)
+                        {% endif %}
+                    </h5>
                 {% endif %}
 
                 <h3>Llista del Professorat</h3>
+
+                <p><strong>Seccions:</strong> 
+                    {% for section in all_sections %}
+                        {{ section.LetterSection }} = {{ section.NameSection }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </p>
+                <p><strong>Llegenda de colors:</strong> 
+                    Si la fila és <span style="background-color: rgba(255, 255, 102, 0.3);">groga</span>  el balanç està en positiu i es necessita treure punts assignats,
+                    si és <span style="background-color: rgba(255, 99, 71, 0.2);">vermell</span> el balanç es negatiu i falta repartir més punts, 
+                    si no té <span style="background-color: white;"> cap color de fons</span> el balanç és correcte.
+                </p>
+
                 <table class="table table-striped" id="professors-table">
                     <thead>
                         <tr>
-                            <th>Nom i Cognoms</th>
-                            <th>Any</th>
-                            <th>Capacitat</th>
-                            <th>Lliure</th>
+                            <th class="name-c">Nom i Cognoms</th>
+                            <th class="name-c">Any</th>
+                            <th class="num-c" >Capacitat</th>
+                            <th class="num-c">Lliure</th>
                             {% for section in all_sections %}
-                                <th>{{ section.NameSection }}</th>
-                            {% endfor %}                            
-                            <th>Accions</th>
+                                <th class="num-c">{{ section.LetterSection }}</th>
+                            {% endfor %}   
+                            <th class="num-c" style="width:9%">Balanç</th>                    
+                            <th class="actions-c";>Accions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -82,38 +104,58 @@
                             <!-- Check for background color based on condition -->
                             <tr data-name="{{ entry.professor.name }} {{ entry.professor.family_name }}" 
                                 data-active="{{ entry.professor.isActive }}"
-                                style="background-color: {{ entry.background_color }};">
-
+                                {% if entry.balance == 0 %}
+                                    style="background-color: rgba(255, 255, 255, 0.6);"
+                                {% elif entry.balance < 0 %}
+                                   style="background-color: rgba(255, 99, 71, 0.2);"
+                                {% else %}
+                                    style="background-color: rgba(255, 255, 102, 0.3);"
+                                {% endif %}
+                                >
                                     <td>{{ entry.professor.name }} {{ entry.professor.family_name }}</td>
                                     <td>{{ entry.year }}</td>
-                                    <td>{{ entry.capacity_points }}</td>
-                                    <td>{{ entry.free_points }}</td>
+
+                                    <!-- Capacity points -->
+                                    <td>
+                                        {% if entry.capacity_points == 0 %}
+                                            -
+                                        {% else %}
+                                        <strong> {{ entry.capacity_points }} </strong>
+                                        {% endif %}
+                                    </td>
+
+                                    <!-- Free points -->
+                                    <td>
+                                        {% if entry.free_points == 0 %}
+                                            -
+                                        {% else %}
+                                           <strong> {{ entry.free_points }} </strong>
+                                        {% endif %}
+                                    </td>
                                    <!-- Display section points dynamically for each section -->
                                     {% for section in all_sections %}
                                     <td>
-                                    {% for section_name, points in entry.section_points %}
-                                        {% if section_name == section.NameSection %}
-                                            {{ points }}
-                                        {% endif %}
-                                    {% endfor %}
+                                        {% for section_letter, points in entry.section_points %}
+                                            {% if section_letter == section.LetterSection %}
+                                                {% if points == 0 %}
+                                                    -
+                                                {% else %}
+                                                    {{ points }}
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
                                     </td>
-                                {% endfor %}
+                                {% endfor %}                                    
+                                    <td style="color: blue"><strong>{{ entry.balance }}</strong></td>
                                     <td>
                                         <!-- Edit button -->
-                                        <a href="{% url 'capacityprofessor_edit' entry.professor.pk %}" class="button-edit btn-sm">Editar</a>
-                
-                                        <!-- Delete form with JavaScript confirmation -->
-                                        <form method="post" action="{% url 'capacityprofessor_list' %}" style="display:inline;" onsubmit="return confirmDelete('{{ entry.professor.name }} {{entry.professor.family_name }}');">
-                                            {% csrf_token %}
-                                            <input type="hidden" name="confirm_delete" value="{{ entry.professor.pk }}">
-                                            <button type="submit" class="button-delete btn-sm">Eliminar</button>
-                                        </form>
+                                        <a href="{% url 'capacityprofessor_show' entry.professor.pk %}" class="button-edit btn-sm">Editar</a>
                                     </td>
                                 </tr>
                             {% endfor %}
                         {% else %}
                             <tr>
-                                <td colspan="10" class="text-center">Cap professor en la taula.</td>
+                                <td colspan="12" class="text-center">Cap professor en la taula.</td>
                             </tr>        
                         {% endif %}
                     </tbody>
@@ -128,7 +170,7 @@
             <!-- Buttons section fixed on the right -->
             <div class="col-lg-1">
                 <div class="sticky-top" style="top: 1rem">
-                    <div class="buttons mb-2 d-flex flex-column align-items-center">
+                    <div class="buttons mb-2 d-flex flex-column ">
                         <a href="{% url 'capacityprofessor_select' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Afegir Capacitat per Professor</a>
                     </div>
                 </div>
@@ -143,19 +185,25 @@
     function confirmDelete(professorName) {
         return confirm("Estàs segur que vols eliminar aquest professor: " + professorName + "?");
     }
+
+    //Not using  accents in the filter and in the data
+    function normalizeString(str) {
+        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    }
+
     // JavaScript for dynamic filtering
     document.getElementById('filter-all').addEventListener('input', filterTable);
     document.getElementById('filter-active').addEventListener('change', filterTable);
 
     function filterTable() {
-        const searchValue = document.getElementById('filter-all').value.toLowerCase();
+        const searchValue = normalizeString(document.getElementById('filter-all').value);
         const activeFilter = document.getElementById('filter-active').value;
         const tableRows = document.querySelectorAll('#professors-table tbody tr');
 
         let rowsVisible = 0;
 
         tableRows.forEach(row => {
-            const fieldName = row.getAttribute('data-name').toLowerCase();
+            const fieldName =  normalizeString(row.getAttribute('data-name').toLowerCase());
             const isActive = row.getAttribute('data-active');
 
             const matchesSearch = fieldName.includes(searchValue);

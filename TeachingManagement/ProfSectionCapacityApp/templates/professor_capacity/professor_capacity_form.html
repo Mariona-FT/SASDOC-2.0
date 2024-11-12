@@ -2,9 +2,9 @@
 
 {% block title %} 
     {% if form.instance.pk %} 
-        Editar la Capacitat en Secció 
+        Editar la Capacitat 
     {% else %} 
-        Crear la Capacitat en Secció  
+        Crear nova Capacitat 
     {% endif %}
 {% endblock %}
 
@@ -12,7 +12,7 @@
 
 <div class="container-fluid d-flex" style="min-height: 100vh;">
     <div class="col-lg-10 mx-auto">
-        <h2 class="text-center">Gestió de Capacitats en Seccions de: {{ professor.name }} {{ professor.family_name }}</h2>
+        <h2 class="text-center">Gestió de Capacitat de: {{ professor.name }} {{ professor.family_name }}</h2>
         <hr>
     
         <!-- Header Form -->
@@ -21,9 +21,9 @@
                 <div class="d-flex justify-content-center align-items-center">
                     <h3>
                         {% if form.instance.pk %} 
-                            Actualitzar Capacitat en Seccions del Professor 
+                            Actualitzar Capacitat de Professor 
                         {% else %} 
-                            Afegir Capacitat en Seccions al Professor 
+                            Afegir Capacitat del Professor 
                         {% endif %} 
                         {{ professor.name }} {{ professor.family_name }} 
                     </h3>
@@ -58,7 +58,7 @@
                                 {% else %} 
                                     Afegir 
                                 {% endif %} 
-                                Capacitat en Seccions al Professor
+                                Capacitat Professor
                             </button>
                         </div>
                     </form>
@@ -69,7 +69,7 @@
             <div class="col-lg-2">
                 <div class="sticky-top" style="top: 1rem">
                     <div class="buttons mb-2 d-flex flex-column align-items-center">
-                        <a href="{% url 'capacityprofessor_edit' professor.pk %}" class="button-return btn-sm mb-2;">Tornar a Gestió del Capacitats Professorat</a>
+                        <a href="{% url 'capacityprofessor_show' professor.pk %}" class="button-return btn-sm mb-2;">Tornar a Gestió del Capacitats Professorat</a>
                     </div>
                 </div>
             </div>
