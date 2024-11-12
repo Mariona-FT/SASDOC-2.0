@@ -64,6 +64,13 @@
                 {% endif %}
 
                 <h3>Llista del Professorat</h3>
+
+                <p><strong>Seccions:</strong> 
+                    {% for section in all_sections %}
+                        {{ section.LetterSection }} = {{ section.NameSection }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                    </p>
+
                 <table class="table table-striped" id="professors-table">
                     <thead>
                         <tr>
@@ -72,7 +79,7 @@
                             <th>Capacitat</th>
                             <th>Lliure</th>
                             {% for section in all_sections %}
-                                <th>{{ section.NameSection }}</th>
+                                <th>{{ section.LetterSection }}</th>
                             {% endfor %}   
                             <th>Balanç</th>                    
                             <th>Accions</th>
@@ -96,19 +103,39 @@
 
                                     <td>{{ entry.professor.name }} {{ entry.professor.family_name }}</td>
                                     <td>{{ entry.year }}</td>
-                                    <td>{{ entry.capacity_points }}</td>
-                                    <td>{{ entry.free_points }}</td>
+
+                                    <!-- Capacity points -->
+                                    <td>
+                                        {% if entry.capacity_points == 0 %}
+                                            -
+                                        {% else %}
+                                        <strong> {{ entry.capacity_points }} </strong>
+                                        {% endif %}
+                                    </td>
+
+                                    <!-- Free points -->
+                                    <td>
+                                        {% if entry.free_points == 0 %}
+                                            -
+                                        {% else %}
+                                           <strong> {{ entry.free_points }} </strong>
+                                        {% endif %}
+                                    </td>
                                    <!-- Display section points dynamically for each section -->
                                     {% for section in all_sections %}
                                     <td>
-                                    {% for section_name, points in entry.section_points %}
-                                        {% if section_name == section.NameSection %}
-                                            {{ points }}
-                                        {% endif %}
-                                    {% endfor %}
+                                        {% for section_letter, points in entry.section_points %}
+                                            {% if section_letter == section.LetterSection %}
+                                                {% if points == 0 %}
+                                                    -
+                                                {% else %}
+                                                    {{ points }}
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
                                     </td>
                                 {% endfor %}                                    
-                                    <td>{{ entry.balance }}</td>
+                                    <td style="color: blue"><strong>{{ entry.balance }}</strong></td>
                                     <td>
                                         <!-- Edit button -->
                                         <a href="{% url 'capacityprofessor_edit' entry.professor.pk %}" class="button-edit btn-sm">Editar</a>

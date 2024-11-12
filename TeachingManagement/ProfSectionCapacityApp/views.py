@@ -47,12 +47,12 @@ def capacityprofessor_list(request):
         free_points = Free.objects.filter(Professor=professor, Year=selected_year).aggregate(free_points=Sum('PointsFree'))['free_points'] or 0
         
         # Initialize section points list
-        section_points = [(section.NameSection, 0) for section in all_sections]
+        section_points = [(section.LetterSection, 0) for section in all_sections]
         
         # Update section points based on CapacitySection entries
         for section_entry in CapacitySection.objects.filter(Professor=professor, Year=selected_year):
-            section_name = section_entry.Section.NameSection
-            section_points = [(name, section_entry.Points if name == section_name else points) for name, points in section_points]
+            section_letter = section_entry.Section.LetterSection
+            section_points = [(letter, section_entry.Points if letter == section_letter else points) for letter, points in section_points]
         
         # Calculate the section points sum
         section_points_sum = sum(points for _, points in section_points)
@@ -78,11 +78,11 @@ def capacityprofessor_list(request):
             # Initialize section points with zeroes for professors without capacities
             free_points = Free.objects.filter(Professor=professor, Year=selected_year).aggregate(free_points=Sum('PointsFree'))['free_points'] or 0
 
-            section_points = [(section.NameSection, 0) for section in all_sections]
+            section_points = [(section.LetterSection, 0) for section in all_sections]
            
             for section_entry in CapacitySection.objects.filter(Professor=professor, Year=selected_year):
-                section_name = section_entry.Section.NameSection
-                section_points = [(name, section_entry.Points if name == section_name else points) for name, points in section_points]
+                section_letter = section_entry.Section.LetterSection
+                section_points = [(letter, section_entry.Points if letter == section_letter else points) for letter, points in section_points]
         
              # Calculate the section points sum
             section_points_sum = sum(points for _, points in section_points)
