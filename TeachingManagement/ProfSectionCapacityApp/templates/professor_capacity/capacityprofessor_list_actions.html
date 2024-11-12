@@ -44,21 +44,23 @@
                     </div>
                 </div>
                 <!-- Year Filter Form -->
-                <form method="GET" action="{% url 'capacityprofessor_list' %}">
-                    <label for="year">Selecciona un any:</label>
-                    <select name="idYear" id="year">
-                        <option value="">-- Tria un any --</option>
-                        {% for year in years %}
-                            <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>{{ year }}</option>
+                <form method="get" id="year-filter-form">
+                    <label for="year-select">Selecciona l'Any:</label>
+                    <select name="year" id="year-select" class="form-control" onchange="document.getElementById('year-filter-form').submit();">
+                        {% for year in available_years %}
+                            <!-- Use idYear as the value to send the ID, but display Year in the option text -->
+                            <option value="{{ year.idYear }}" {% if year == selected_year %}selected{% endif %}>
+                                {{ year.Year }}
+                            </option>
                         {% endfor %}
                     </select>
-                    <button type="submit">Mostrar Professors</button>
                 </form>
+
                 <hr>
 
                 <!-- List of all professors -->
                 {% if selected_year %}
-                    <h3 style="align-center">Professors per l'any {{ selected_year }}</h3>
+                    <h5 style="text-align:center; color:blue">Professors per l'any {{ selected_year.Year }}</h5>
                 {% endif %}
 
                 <h3>Llista del Professorat</h3>
@@ -71,7 +73,8 @@
                             <th>Lliure</th>
                             {% for section in all_sections %}
                                 <th>{{ section.NameSection }}</th>
-                            {% endfor %}                            
+                            {% endfor %}   
+                            <th>Balanç</th>                    
                             <th>Accions</th>
                         </tr>
                     </thead>
@@ -82,7 +85,14 @@
                             <!-- Check for background color based on condition -->
                             <tr data-name="{{ entry.professor.name }} {{ entry.professor.family_name }}" 
                                 data-active="{{ entry.professor.isActive }}"
-                                style="background-color: {{ entry.background_color }};">
+                                {% if entry.balance == 0 %}
+                                    style="background-color: rgba(255, 255, 255, 0.6);"
+                                {% elif entry.balance < 0 %}
+                                    style="background-color: rgba(255, 255, 224, 0.3);"
+                                {% else %}
+                                    style="background-color: rgba(255, 99, 71, 0.2);"
+                                {% endif %}
+                                >
 
                                     <td>{{ entry.professor.name }} {{ entry.professor.family_name }}</td>
                                     <td>{{ entry.year }}</td>
@@ -97,7 +107,8 @@
                                         {% endif %}
                                     {% endfor %}
                                     </td>
-                                {% endfor %}
+                                {% endfor %}                                    
+                                    <td>{{ entry.balance }}</td>
                                     <td>
                                         <!-- Edit button -->
                                         <a href="{% url 'capacityprofessor_edit' entry.professor.pk %}" class="button-edit btn-sm">Editar</a>
@@ -113,7 +124,7 @@
                             {% endfor %}
                         {% else %}
                             <tr>
-                                <td colspan="10" class="text-center">Cap professor en la taula.</td>
+                                <td colspan="12" class="text-center">Cap professor en la taula.</td>
                             </tr>        
                         {% endif %}
                     </tbody>
@@ -143,19 +154,25 @@
     function confirmDelete(professorName) {
         return confirm("Estàs segur que vols eliminar aquest professor: " + professorName + "?");
     }
+
+    //Not using  accents in the filter and in the data
+    function normalizeString(str) {
+        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    }
+
     // JavaScript for dynamic filtering
     document.getElementById('filter-all').addEventListener('input', filterTable);
     document.getElementById('filter-active').addEventListener('change', filterTable);
 
     function filterTable() {
-        const searchValue = document.getElementById('filter-all').value.toLowerCase();
+        const searchValue = normalizeString(document.getElementById('filter-all').value);
         const activeFilter = document.getElementById('filter-active').value;
         const tableRows = document.querySelectorAll('#professors-table tbody tr');
 
         let rowsVisible = 0;
 
         tableRows.forEach(row => {
-            const fieldName = row.getAttribute('data-name').toLowerCase();
+            const fieldName =  normalizeString(row.getAttribute('data-name').toLowerCase());
             const isActive = row.getAttribute('data-active');
 
             const matchesSearch = fieldName.includes(searchValue);

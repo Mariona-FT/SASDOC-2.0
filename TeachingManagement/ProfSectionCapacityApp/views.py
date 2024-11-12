@@ -5,71 +5,107 @@ from UsersApp.models import Professor
 from AcademicInfoApp.models import Section,Year
 from django.contrib import messages
 from itertools import chain
+from django.db.models import Sum
+
 
 # Create your views here.
 
 #PROFESSORS
 def capacityprofessor_list(request):
     # Get all years for capacity selection
-    years = Capacity.objects.values_list('Year__Year', flat=True).distinct()
-    selected_year = request.GET.get('idYear')
-    
+    available_years = Year.objects.all().order_by('-Year').distinct()
+    selected_year_id = request.GET.get('year') #year id
+    selected_year = None # object year
+
     # Get all professors ordered by family name
     professors = Professor.objects.all().order_by('family_name')
     all_sections = Section.objects.all()
     professor_data = []
 
-    for professor in professors:
-        # Filter capacities by professor and selected year
-        capacities = Capacity.objects.filter(Professor=professor, Year__Year=selected_year).order_by('Year__Year') if selected_year else None
-        free_points = Free.objects.filter(Professor=professor).first()
+    #Get year selected - if not selected most recent year
+    if selected_year_id:
+        try:
+            selected_year = Year.objects.get(pk=int(selected_year_id))
+        except Year.DoesNotExist:
+            messages.error(request, "Any seleccionat no existeix.")
+    
+    if not selected_year:
+        selected_year = Year.objects.order_by('-Year').first()
+    
+    # Determine if the selected year is the most recent year
+    is_most_recent_year = selected_year == Year.objects.order_by('-Year').first()
+    
+    all_sections = Section.objects.all()
+    professor_data = [] #Dicc to save all info of the professors
+    
+    # Get capacities for the selected year
+    capacities = Capacity.objects.filter(Year_id=selected_year.idYear).order_by('Professor__family_name')
+    
+    # Process each capacity
+    for capacity in capacities:
+        professor = capacity.Professor
+        free_points = Free.objects.filter(Professor=professor, Year=selected_year).aggregate(free_points=Sum('PointsFree'))['free_points'] or 0
         
-        # Initialize section points list as tuples (section_name, points)
+        # Initialize section points list
         section_points = [(section.NameSection, 0) for section in all_sections]
         
-        # Update section points from CapacitySection entries
-        for section_entry in CapacitySection.objects.filter(Professor=professor, Year__Year=selected_year):
+        # Update section points based on CapacitySection entries
+        for section_entry in CapacitySection.objects.filter(Professor=professor, Year=selected_year):
             section_name = section_entry.Section.NameSection
             section_points = [(name, section_entry.Points if name == section_name else points) for name, points in section_points]
         
-        # Set capacity_points and year based on the selected year’s capacities
-        if capacities:
-            capacity_points = capacities[0].Points
-            year = capacities[0].Year.Year
-        else:
-            capacity_points = 0
-            year = "NA"
-        
-        # Calculate total section points sum
+        # Calculate the section points sum
         section_points_sum = sum(points for _, points in section_points)
-        
-        # Determine background color
-        if not selected_year:
-            background_color = '#d9d9d9'
-        elif capacity_points + (free_points.PointsFree if free_points else 0) == section_points_sum:
-            background_color = '#ffe6e6'
-        else:
-            background_color = '#e6ffea'
-        
-        # Append each professor's data
+
+        #return the number of balanced points
+        balance= capacity.Points - free_points - section_points_sum
+
+        # Append data for the professor with capacity
         professor_data.append({
             'professor': professor,
-            'capacity_points': capacity_points,
-            'year': year,
-            'free_points': free_points.PointsFree if free_points else 0,
+            'year': selected_year.Year,
+            'capacity_points': capacity.Points,
+            'free_points': free_points,
             'section_points': section_points,
-            'background_color': background_color,
+            'balance':balance,
         })
+    
+    # If the selected year is the most recent year, include professors without capacities for this year
+    if is_most_recent_year:
+        professors_without_capacity = Professor.objects.exclude(idProfessor__in=capacities.values('Professor'))
+        
+        for professor in professors_without_capacity:
+            # Initialize section points with zeroes for professors without capacities
+            free_points = Free.objects.filter(Professor=professor, Year=selected_year).aggregate(free_points=Sum('PointsFree'))['free_points'] or 0
+
+            section_points = [(section.NameSection, 0) for section in all_sections]
+           
+            for section_entry in CapacitySection.objects.filter(Professor=professor, Year=selected_year):
+                section_name = section_entry.Section.NameSection
+                section_points = [(name, section_entry.Points if name == section_name else points) for name, points in section_points]
+        
+             # Calculate the section points sum
+            section_points_sum = sum(points for _, points in section_points)
+
+            # Calculate the balance with zero capacity points (since no capacity entry exists)
+            balance = 0 - free_points - section_points_sum
+            
+            # Append data for professors without capacity
+            professor_data.append({
+                'professor': professor,
+                'year': "NA",
+                'capacity_points': 0,
+                'free_points': free_points,
+                'section_points': section_points,
+                'balance':balance,
+            })
 
     return render(request, 'professor_capacity/capacityprofessor_list_actions.html', {
         'professor_data': professor_data,
         'all_sections': all_sections,
-        'years': years,
+        'available_years': available_years,
         'selected_year': selected_year,
     })
-
-def capacityprofessor_list_for_year(request,idYear):
-    pass
 
 def capacityprofessor_select(request):
     professors = Professor.objects.all()  # Fetch all professors
