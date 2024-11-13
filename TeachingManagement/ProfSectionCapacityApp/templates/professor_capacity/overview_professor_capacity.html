@@ -45,6 +45,24 @@
                     </select>
                 </form>
 
+               <!-- Display the balance message if there is years -->
+                {% if available_years %}
+                    {% if balance > 0 %}
+                        <div class="mt-3" style="background-color: #f4e1a1; padding: 10px; border-radius: 5px; color: #000;">
+                            <strong>El balanç de punts és positiu:</strong> {{ balance }} punts. Es necessiten assignar més punts.
+                        </div>
+                    {% elif balance < 0 %}
+                        <div class="mt-3" style="background-color: #d9534f; padding: 10px; border-radius: 5px; color: #fff;">
+                            <strong>El balanç de punts és negatiu:</strong> {{ balance }} punts. Es necessiten treure punts ja assignats.
+                        </div>
+                    {% else %}
+                        <div class="mt-3" style="background-color: #6cbe6d; padding: 10px; border-radius: 5px; color: #fff;">
+                            <strong>El balanç de punts s'ha fet correctament:</strong> {{ balance }} punts.
+                        </div>
+                    {% endif %}
+                {% endif %}
+
+
                 <!-- Display existing capacities -->
                 <h5 class="mt-4 d-flex justify-content-between align-items-center">
                     Capacitats Existents:

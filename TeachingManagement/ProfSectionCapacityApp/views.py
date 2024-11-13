@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect,get_object_or_404
-from .forms import CapacityForm, FreeForm, CapacitySectionForm
-from .models import Professor, Capacity, Free, CapacitySection
+from .forms import CapacityForm, FreeForm, CapacitySectionForm,TypePointsForm
+from .models import Professor, Capacity, Free, CapacitySection,TypePoints
 from UsersApp.models import Professor
 from AcademicInfoApp.models import Section,Year
 from django.contrib import messages
@@ -18,7 +18,6 @@ def capacityprofessor_list(request):
     selected_year = None # object year
 
     # Get all professors ordered by family name
-    professors = Professor.objects.all().order_by('family_name')
     all_sections = Section.objects.all()
     professor_data = []
 
@@ -34,10 +33,7 @@ def capacityprofessor_list(request):
     
     # Determine if the selected year is the most recent year
     is_most_recent_year = selected_year == Year.objects.order_by('-Year').first()
-    
-    all_sections = Section.objects.all()
-    professor_data = [] #Dicc to save all info of the professors
-    
+        
     # Get capacities for the selected year
     capacities = Capacity.objects.filter(Year_id=selected_year.idYear).order_by('Professor__family_name')
     
@@ -72,7 +68,7 @@ def capacityprofessor_list(request):
     
     # If the selected year is the most recent year, include professors without capacities for this year
     if is_most_recent_year:
-        professors_without_capacity = Professor.objects.exclude(idProfessor__in=capacities.values('Professor'))
+        professors_without_capacity = Professor.objects.exclude(idProfessor__in=capacities.values('Professor')).order_by('family_name')
         
         for professor in professors_without_capacity:
             # Initialize section points with zeroes for professors without capacities
@@ -84,11 +80,12 @@ def capacityprofessor_list(request):
                 section_letter = section_entry.Section.LetterSection
                 section_points = [(letter, section_entry.Points if letter == section_letter else points) for letter, points in section_points]
         
-             # Calculate the section points sum
+            # Calculate the section points sum
             section_points_sum = sum(points for _, points in section_points)
+            
+            # Set balance to "NA" for professors without capacity
+            balance = "NA"  
 
-            # Calculate the balance with zero capacity points (since no capacity entry exists)
-            balance = 0 - free_points - section_points_sum
             
             # Append data for professors without capacity
             professor_data.append({
@@ -108,7 +105,7 @@ def capacityprofessor_list(request):
     })
 
 def capacityprofessor_select(request):
-    professors = Professor.objects.all()  # Fetch all professors
+    professors = Professor.objects.all().order_by('family_name')  # Fetch all professors
     return render(request, 'professor_capacity/new_professor_capacity.html', {'professors': professors})
 
 #INFO ONLY ONE PROFESSOR 
@@ -145,6 +142,14 @@ def capacityprofessor_show(request,idProfessor=None):
     frees = Free.objects.filter(Professor=professor, Year=selected_year).order_by('-Year__Year')
     capacity_sections = CapacitySection.objects.filter(Professor=professor, Year=selected_year).order_by('-Year__Year')
   
+
+    # Calculate the balance
+    capacity_points = sum(c.Points for c in capacities)
+    free_points = sum(f.PointsFree for f in frees)
+    section_points_sum = sum(s.Points for s in capacity_sections)
+
+    balance = capacity_points - free_points - section_points_sum
+
     # Extract unique Year objects from the available capacities, frees, and capacity_sections
     # We will query the Year model directly and then deduplicate and sort the results
     years_from_capacities = Capacity.objects.filter(Professor=professor).values_list('Year', flat=True)
@@ -165,6 +170,7 @@ def capacityprofessor_show(request,idProfessor=None):
         'capacities': capacities,
         'frees': frees,
         'capacity_sections': capacity_sections,
+        'balance':balance,
         'available_years': available_years,
         'selected_year': selected_year, 
     }
@@ -301,8 +307,108 @@ def delete_capacity_section(request, idCapacitySection):
     return redirect('capacityprofessor_show', idProfessor=idProfessor)
 
 #SECTIONS
+#Get all the capacity for each section for selected year
 def capacitysection_list(request):
-    pass
+    # Get all years for capacity selection
+    available_years = Year.objects.all().order_by('-Year').distinct()
+    selected_year_id = request.GET.get('year') #year id
+    selected_year = None # object year
 
-def capacitysection_create_edit(request,idSection=None):
-    pass
+    #Get year selected - if not selected most recent year
+    if selected_year_id:
+        try:
+            selected_year = Year.objects.get(pk=int(selected_year_id))
+        except Year.DoesNotExist:
+            messages.error(request, "Any seleccionat no existeix.")
+    
+    if not selected_year:
+        selected_year = Year.objects.order_by('-Year').first()
+    
+    # Determine if the selected year is the most recent year
+    is_most_recent_year = selected_year == Year.objects.order_by('-Year').first()
+    
+    all_typepoints = TypePoints.objects.filter(Year_id=selected_year.idYear)
+
+    # Prepare data to display section information with each type point
+    section_typepoints_info = []
+    for typepoint in all_typepoints:
+        
+        section = typepoint.Section  # Get the related section for each TypePoints
+        section_info = {
+            'NameSection': section.NameSection if section else 'N/A',  # Section Name
+            'LetterSection': section.LetterSection if section else 'N/A',  # Section Letter
+            'Typepoint_id': typepoint.idTypePoints if typepoint else None, 
+            'Year': typepoint.Year if typepoint else 'N/A',  # Section Year
+            'NamePointsA': typepoint.NamePointsA if typepoint else '-',  # Points A
+            'NamePointsB': typepoint.NamePointsB if typepoint else '-',  # Points B
+            'NamePointsC': typepoint.NamePointsC if typepoint else '-',  # Points C
+            'NamePointsD': typepoint.NamePointsD if typepoint else '-',  # Points D
+            'NamePointsE': typepoint.NamePointsE if typepoint else '-',  # Points E
+        }
+        section_typepoints_info.append(section_info)
+    context = {
+        'available_years': available_years,
+        'selected_year': selected_year,
+        'is_most_recent_year': is_most_recent_year,
+        'section_typepoints_info': section_typepoints_info,
+    }
+    
+    return render(request, 'section_capacity/capacitysection_list_actions.html', context)
+
+#INFO ONLY ONE SECTION ALL THE INFO IN ALL THE YEARS
+def capacitysection_show(request,idSection=None):
+    # Retrieve the section instance using the idSection
+    section = get_object_or_404(Section, pk=idSection)
+
+    # Retrieve all TypePoints for the section
+    typepoints_entries = TypePoints.objects.filter(Section_id=section.idSection)
+
+    context = {
+        'section': section,
+        'typepoints_entries': typepoints_entries,
+    }
+
+    return render(request, 'section_capacity/overview_section_capacity.html', context)
+    
+
+# Create a new TypePoints entry
+def create_typepoints(request):
+    if request.method == 'POST':
+        form = TypePointsForm(request.POST)
+        if form.is_valid():
+            form.save()  
+            messages.success(request, 'Tipus de punts correctament creat.')
+            return redirect('capacitysection_list',)
+    else:
+        form = TypePointsForm()
+
+    return render(request, 'section_capacity/section_capacity_form.html', {'form': form})
+
+
+def edit_typepoints(request, idTypePoints):
+    typepoints = get_object_or_404(TypePoints, pk=idTypePoints)
+    idSection = typepoints.Section.idSection  
+
+    if request.method == 'POST':
+        form = TypePointsForm(request.POST, instance=typepoints)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Tipus de punts correctament editat.')
+            return redirect('capacitysection_show', idSection=idSection)
+    else:
+        form = TypePointsForm(instance=typepoints)
+
+    return render(request, 'typepoints/typepoints_form.html', {'form': form, 'section': typepoints.Section, 'year': typepoints.Year})
+
+# Delete an existing TypePoints entry
+def delete_typepoints(request, idTypePoints):
+    typepoints = get_object_or_404(TypePoints, pk=idTypePoints)
+    idSection = typepoints.Section.idSection  
+    try:
+        typepoints.delete()
+        messages.success(request, 'Tipus de punts correctament eliminat.')
+    except Exception as e:
+        messages.error(request, f"Error: No s'ha pogut eliminar el tipus de punts ({e}).")
+
+    return redirect('capacitysection_show', idSection=idSection)
+

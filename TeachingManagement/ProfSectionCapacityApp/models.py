@@ -57,15 +57,17 @@ class TypePoints(models.Model):
     idTypePoints = models.AutoField(primary_key=True)
     Year = models.ForeignKey(Year, on_delete=models.CASCADE)
     Section = models.ForeignKey(Section, on_delete=models.CASCADE)
-    NamePointsA = models.CharField(max_length=100,default=0)
-    NamePointsB = models.CharField(max_length=100,default=0)
-    NamePointsC = models.CharField(max_length=100,default=0)
-    NamePointsD = models.CharField(max_length=100,default=0)
-    NamePointsE = models.CharField(max_length=100,default=0)
+    NamePointsA = models.CharField(max_length=100, default="", blank=True, null=True)
+    NamePointsB = models.CharField(max_length=100, default="", blank=True, null=True)
+    NamePointsC = models.CharField(max_length=100, default="", blank=True, null=True)
+    NamePointsD = models.CharField(max_length=100, default="", blank=True, null=True)
+    NamePointsE = models.CharField(max_length=100, default="", blank=True, null=True)
 
     class Meta:
         verbose_name='typepoints'
         verbose_name_plural='typepoints'
+        unique_together = ('Year', 'Section')  # Ensure unique combinations
+
 
     def __str__(self):
         return f"{self.Year.Year} - {self.Section.NameSection}"
