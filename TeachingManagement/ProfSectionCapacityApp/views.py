@@ -86,9 +86,10 @@ def capacityprofessor_list(request):
         
              # Calculate the section points sum
             section_points_sum = sum(points for _, points in section_points)
+            
+            # Set balance to "NA" for professors without capacity
+            balance = "NA"  
 
-            # Calculate the balance with zero capacity points (since no capacity entry exists)
-            balance = 0 - free_points - section_points_sum
             
             # Append data for professors without capacity
             professor_data.append({
