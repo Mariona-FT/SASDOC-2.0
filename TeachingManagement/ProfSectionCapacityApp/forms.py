@@ -1,5 +1,5 @@
 from django import forms
-from .models import Capacity, Free, CapacitySection
+from .models import Capacity, Free, CapacitySection,TypePoints
 from UsersApp.models import Professor
 from AcademicInfoApp.models import Year,Section
 
@@ -70,3 +70,25 @@ class CapacitySectionForm(forms.ModelForm):
         if professor:
             self.fields['Professor'].initial = professor
             self.fields['Professor'].disabled = True  # Makes the field read-only
+
+
+class TypePointsForm(forms.ModelForm):
+    class Meta:
+        model = TypePoints
+        fields = ['Year','Section','NamePointsA','NamePointsB','NamePointsC','NamePointsD','NamePointsE']
+        labels = {
+            'Year':'Any',
+            'Section':'Secció',
+            'NamePointsA':'Nom Tipus Punts A',
+            'NamePointsB':'Nom Tipus Punts B',
+            'NamePointsC':'Nom Tipus Punts C',
+            'NamePointsD':'Nom Tipus Punts D',
+            'NamePointsE':'Nom Tipus Punts E',
+        }
+        widgets = {
+            'NamePointsA': forms.TextInput(attrs={'placeholder': 'Nom Tipus Punts A'}),
+            'NamePointsB': forms.TextInput(attrs={'placeholder': 'Nom Tipus Punts B'}),
+            'NamePointsC': forms.TextInput(attrs={'placeholder': 'Nom Tipus Punts C'}),
+            'NamePointsD': forms.TextInput(attrs={'placeholder': 'Nom Tipus Punts D'}),
+            'NamePointsE': forms.TextInput(attrs={'placeholder': 'Nom Tipus Punts E'}),
+        }

@@ -6,9 +6,9 @@
             <a class="nav-link" href="{{capacityprofessor_list_url}}">Capacitat del Professorat</a>
         </li>
 
-        {% url 'usersapp:professor_list' as professor_list_url %}
-        <li class="nav-item me-4 {% if request.path == professor_list_url %} active{% endif %}">
-            <a class="nav-link" href="{{professor_list_url}}">Capacitat de les Seccions</a>
+        {% url 'capacitysection_list' as capacitysection_list_url %}
+        <li class="nav-item me-4 {% if request.path == capacitysection_list_url %} active{% endif %}">
+            <a class="nav-link" href="{{capacitysection_list_url}}">Capacitat de les Seccions</a>
         </li>
 
         {% url 'usersapp:professor_list' as professor_list_url %}
