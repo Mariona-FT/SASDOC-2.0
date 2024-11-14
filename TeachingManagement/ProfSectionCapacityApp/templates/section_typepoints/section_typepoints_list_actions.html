@@ -66,21 +66,28 @@
                 <table class="table" id="section-table">
                     <thead>
                         <tr>
-                            <th style=" width: 5%;">Lletra</th>
-                            <th class="name-email">Secció</th>
-                            <th style=" width: 5%;">Any</th>
-                            <th class="name-c">Nom per Punts A</th>
-                            <th class="name-c">Nom per Punts B</th>
-                            <th class="name-c">Nom per Punts C</th>
-                            <th class="name-c">Nom per Punts D</th>
-                            <th class="name-c">Nom per Punts E</th>
-                            <th class="actions-c">Accions</th>
+                            <th style=" width: 8%;">Lletra</th>
+                            <th class="name-c">Secció</th>
+                            <th style=" width: 8%;">Any</th>
+                            <th style="width: auto;">Nom per Punts A</th>
+                            <th style="width: auto;">Nom per Punts B</th>
+                            <th style="width: auto;">Nom per Punts C</th>
+                            <th style="width: auto;">Nom per Punts D</th>
+                            <th style="width: auto;">Nom per Punts E</th>
+                            <th class="actions-c" style="width:200px">Accions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% if section_typepoints_info %}
                             {% for section in section_typepoints_info %}
-                            <tr data-name={{section.NameSection}} data-letter={{section.LetterSection}}>
+                            <tr data-name={{section.NameSection}} data-letter={{section.LetterSection}}
+                            data-year={{section.Year}} 
+                            data-pA={{section.NamePointsA}}
+                            data-pB={{section.NamePointsB}}
+                            data-pC={{section.NamePointsC}}
+                            data-pD={{section.NamePointsD}}
+                            data-pE={{section.NamePointsE}}
+                            >
                                 <td>{{ section.LetterSection }}</td>
                                 <td>{{ section.NameSection }}</td>
                                 <td>{{ section.Year }}</td>
@@ -89,7 +96,7 @@
                                 <td>{{ section.NamePointsC|default:"-"  }}</td>
                                 <td>{{ section.NamePointsD|default:"-"  }}</td>
                                 <td>{{ section.NamePointsE|default:"-"  }}</td>
-                                <td>
+                                <td class="actions-c" style="width:200px">
                                     <!-- Edit button -->
                                     <a href="{% url 'edit_typepoints' section.Typepoint_id %}" class="button-edit btn-sm">Editar</a>
 
@@ -152,11 +159,17 @@
 
         tableRows.forEach(row => {
             const fieldName =  normalizeString(row.getAttribute('data-name').toLowerCase());
-            const fieldName =  normalizeString(row.getAttribute('data-letter').toLowerCase());
+            const fieldLetter =  normalizeString(row.getAttribute('data-letter').toLowerCase());
+            const fieldYear =  normalizeString(row.getAttribute('data-year').toLowerCase());
+            const fieldA =  normalizeString(row.getAttribute('data-pA').toLowerCase());
+            const fieldB =  normalizeString(row.getAttribute('data-pB').toLowerCase());
+            const fieldC =  normalizeString(row.getAttribute('data-pC').toLowerCase());
+            const fieldD =  normalizeString(row.getAttribute('data-pD').toLowerCase());
+            const fieldE =  normalizeString(row.getAttribute('data-pE').toLowerCase());
 
-            const matchesSearch = fieldName.includes(searchValue);
+            const matchesSearch = fieldName.includes(searchValue) || fieldLetter.includes(searchValue)|| fieldYear.includes(searchValue)|| fieldA.includes(searchValue)|| fieldB.includes(searchValue)|| fieldC.includes(searchValue)|| fieldD.includes(searchValue)|| fieldE.includes(searchValue);
 
-            if (matchesSearch &&) {
+            if (matchesSearch) {
                 row.style.display = '';
                 rowsVisible++;
             } else {

@@ -89,15 +89,15 @@
                 <table class="table" id="professors-table">
                     <thead>
                         <tr>
-                            <th class="name-c">Nom i Cognoms</th>
+                            <th class="name-c" style="width: auto;">Nom i Cognoms</th>
                             <th class="name-c">Any</th>
-                            <th class="num-c" >Capacitat</th>
-                            <th class="num-c">Lliure</th>
+                            <th class="num-c" style="width: auto;" >Capacitat</th>
+                            <th class="num-c" style="width: auto;">Lliure</th>
                             {% for section in all_sections %}
-                                <th class="num-c">{{ section.LetterSection }}</th>
+                                <th class="num-c" style="width: auto;">{{ section.LetterSection }}</th>
                             {% endfor %}   
                             <th class="num-c" style="width:9%">Balanç</th>                    
-                            <th class="actions-c";>Accions</th>
+                            <th class="actions-c" style="width:100px";>Accions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -157,7 +157,7 @@
                                     {% else %}
                                         {{ entry.balance }}
                                     {% endif %}</strong>
-                                    <td>
+                                    <td class="actions-c" style="width:100px">
                                         <!-- Edit button -->
                                         <a href="{% url 'capacityprofessor_show' entry.professor.pk %}" class="button-edit btn-sm">Editar</a>
                                     </td>

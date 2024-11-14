@@ -127,7 +127,7 @@ body {
     cursor: pointer; /* Pointer cursor on hover */
     text-decoration: none; /* Remove underline */
     box-sizing: border-box; /* Ensures padding doesn’t affect total height */
-    height: 40px; /* Sets a fixed height for consistency */
+    height: 37px; /* Sets a fixed height for consistency */
 
 }
 
@@ -247,27 +247,38 @@ body {
     text-align: left;
 }
 
-.table th.actions-c, .table td.actions-c {
-    flex-wrap: nowrap;  /* Prevent buttons from wrapping into a new line */
-    justify-content: flex-end;
-    gap:10px;
-    padding: 5px;
-    flex-shrink: 0;  /* Prevent buttons from shrinking */
-    min-width: fit-content; /* Minimum width for buttons */
+/* Allow other columns to be flexible */
+.table th:not(.actions-c),
+.table td:not(.actions-c) {
+    flex-grow: 1; /* Allow other columns to grow */
 }
 
-/* Ensure the button is properly padded and centered */
-.table td.actions-c .button-edit {
-    min-width: 120px;         /* Set a minimum width for the button */
-    padding: 8px 16px;        /* Add padding for the button to make it larger */
-    text-align: center;       /* Ensure the text inside the button is centered */
-    display: inline-block;    /* Ensure the button behaves like an inline block */
-    margin: auto auto;           /* Ensure the button is centered horizontally */
+
+/* Center-align header text */
+.table th.actions-c {
+    text-align: center;       /* Center-align the column name */
+    flex-shrink: 0; /* Prevent shrinking of the Accions column */
+
 }
 
-/* Prevent button from shrinking and ensure it maintains its size */
-.table td.actions-c .button-edit.btn-sm {
-    flex-shrink: 0;  /* Prevent shrinking */
-    width: auto;     /* Allow the button to take its natural width */
-    padding: 8px 20px; /* Add padding for better button size */
+/* Right-align cell content and set a fixed width */
+.table td.actions-c {
+    text-align: end;
+    flex-shrink: 0; /* Prevent shrinking of the Accions column */
+    width: 200px; /* Set fixed width for the Accions column */
+
+}
+
+/* Right-align cell content and set a fixed width */
+.table td.actions-c, .table th.actions-c {
+    text-align: end;
+    width: fit-content; /* Set fixed width for the Accions column */
+    flex-shrink: 0; /* Prevent shrinking of the Accions column */
+}
+
+/* Ensure buttons are inline and properly padded */
+.table td.actions-c .button-edit, 
+.table td.actions-c .button-delete {
+    text-align: end;
+    display: inline-block;
 }
