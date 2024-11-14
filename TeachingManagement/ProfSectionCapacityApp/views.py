@@ -308,7 +308,7 @@ def delete_capacity_section(request, idCapacitySection):
 
 #SECTIONS
 #Get all the capacity for each section for selected year
-def capacitysection_list(request):
+def section_typepoints_list(request):
     # Get all years for capacity selection
     available_years = Year.objects.all().order_by('-Year').distinct()
     selected_year_id = request.GET.get('year') #year id
@@ -353,10 +353,10 @@ def capacitysection_list(request):
         'section_typepoints_info': section_typepoints_info,
     }
     
-    return render(request, 'section_capacity/capacitysection_list_actions.html', context)
+    return render(request, 'section_typepoints/section_typepoints_list_actions.html', context)
 
 #INFO ONLY ONE SECTION ALL THE INFO IN ALL THE YEARS
-def capacitysection_show(request,idSection=None):
+def section_typepoints_show(request,idSection=None):
     # Retrieve the section instance using the idSection
     section = get_object_or_404(Section, pk=idSection)
 
@@ -368,7 +368,7 @@ def capacitysection_show(request,idSection=None):
         'typepoints_entries': typepoints_entries,
     }
 
-    return render(request, 'section_capacity/overview_section_capacity.html', context)
+    return render(request, 'section_typepoints/overview_section_typepoints.html', context)
     
 
 # Create a new TypePoints entry
@@ -378,27 +378,27 @@ def create_typepoints(request):
         if form.is_valid():
             form.save()  
             messages.success(request, 'Tipus de punts correctament creat.')
-            return redirect('capacitysection_list',)
+            return redirect('sectiontypepoints_list',)
     else:
         form = TypePointsForm()
 
-    return render(request, 'section_capacity/section_capacity_form.html', {'form': form})
+    return render(request, 'section_typepoints/section_typepoints_form.html', {'form': form})
 
 
 def edit_typepoints(request, idTypePoints):
-    typepoints = get_object_or_404(TypePoints, pk=idTypePoints)
-    idSection = typepoints.Section.idSection  
+    typepoints = get_object_or_404(TypePoints, idTypePoints=idTypePoints)
+    idSection = typepoints.Section_id  
 
     if request.method == 'POST':
         form = TypePointsForm(request.POST, instance=typepoints)
         if form.is_valid():
             form.save()
             messages.success(request, 'Tipus de punts correctament editat.')
-            return redirect('capacitysection_show', idSection=idSection)
+            return redirect('sectiontypepoints_show', idSection=idSection)
     else:
         form = TypePointsForm(instance=typepoints)
 
-    return render(request, 'typepoints/typepoints_form.html', {'form': form, 'section': typepoints.Section, 'year': typepoints.Year})
+    return render(request, 'section_typepoints/section_typepoints_form.html', {'form': form, 'section': typepoints.Section, 'year': typepoints.Year})
 
 # Delete an existing TypePoints entry
 def delete_typepoints(request, idTypePoints):
@@ -410,5 +410,5 @@ def delete_typepoints(request, idTypePoints):
     except Exception as e:
         messages.error(request, f"Error: No s'ha pogut eliminar el tipus de punts ({e}).")
 
-    return redirect('capacitysection_show', idSection=idSection)
+    return redirect('sectiontypepoints_show', idSection=idSection)
 

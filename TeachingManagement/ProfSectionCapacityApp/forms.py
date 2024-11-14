@@ -25,6 +25,9 @@ class CapacityForm(forms.ModelForm):
         if professor:
             self.fields['Professor'].initial = professor
             self.fields['Professor'].disabled = True  # Makes the field read-only
+        
+        self.fields['Year'].queryset = Year.objects.all().order_by('-Year')
+
     
 class FreeForm(forms.ModelForm):
     class Meta:
@@ -47,6 +50,9 @@ class FreeForm(forms.ModelForm):
         if professor:
             self.fields['Professor'].initial = professor
             self.fields['Professor'].disabled = True  # Makes the field read-only
+        
+        self.fields['Year'].queryset = Year.objects.all().order_by('-Year')
+
 
 class CapacitySectionForm(forms.ModelForm):
     class Meta:
@@ -70,7 +76,8 @@ class CapacitySectionForm(forms.ModelForm):
         if professor:
             self.fields['Professor'].initial = professor
             self.fields['Professor'].disabled = True  # Makes the field read-only
-
+    
+        self.fields['Year'].queryset = Year.objects.all().order_by('-Year')
 
 class TypePointsForm(forms.ModelForm):
     class Meta:
@@ -79,16 +86,20 @@ class TypePointsForm(forms.ModelForm):
         labels = {
             'Year':'Any',
             'Section':'Secció',
-            'NamePointsA':'Nom Tipus Punts A',
-            'NamePointsB':'Nom Tipus Punts B',
-            'NamePointsC':'Nom Tipus Punts C',
-            'NamePointsD':'Nom Tipus Punts D',
-            'NamePointsE':'Nom Tipus Punts E',
+            'NamePointsA':'Nom pel Tipus de Punts A',
+            'NamePointsB':'Nom pel Tipus de Punts B',
+            'NamePointsC':'Nom pel Tipus de Punts C',
+            'NamePointsD':'Nom pel Tipus de Punts D',
+            'NamePointsE':'Nom pel Tipus de Punts E',
         }
         widgets = {
-            'NamePointsA': forms.TextInput(attrs={'placeholder': 'Nom Tipus Punts A'}),
-            'NamePointsB': forms.TextInput(attrs={'placeholder': 'Nom Tipus Punts B'}),
-            'NamePointsC': forms.TextInput(attrs={'placeholder': 'Nom Tipus Punts C'}),
-            'NamePointsD': forms.TextInput(attrs={'placeholder': 'Nom Tipus Punts D'}),
-            'NamePointsE': forms.TextInput(attrs={'placeholder': 'Nom Tipus Punts E'}),
+            'NamePointsA': forms.TextInput(attrs={'placeholder': 'Nom Punts A'}),
+            'NamePointsB': forms.TextInput(attrs={'placeholder': 'Nom Punts B'}),
+            'NamePointsC': forms.TextInput(attrs={'placeholder': 'Nom Punts C'}),
+            'NamePointsD': forms.TextInput(attrs={'placeholder': 'Nom Punts D'}),
+            'NamePointsE': forms.TextInput(attrs={'placeholder': 'Nom Punts E'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super(TypePointsForm, self).__init__(*args, **kwargs)
+        self.fields['Year'].queryset = Year.objects.all().order_by('-Year')  # Order by -Year
