@@ -47,10 +47,7 @@ urlpatterns = [
 
 
     #For the SECTIONS
-    path('section-typepoints/', views.section_typepoints_list, name='sectiontypepoints_list'),
-    
-    path('section-typepoints/show/<int:idSection>', views.section_typepoints_show, name='sectiontypepoints_show'),
-    
+    path('section-typepoints/', views.section_typepoints_list, name='sectiontypepoints_list'),    
     path('section-typepoints/create/', views.create_typepoints, name='create_typepoints'),
     path('section-typepoints/edit/<int:idTypePoints>/', views.edit_typepoints, name='edit_typepoints'),
     path('section-typepoints/delete/<int:idTypePoints>/', views.delete_typepoints, name='delete_typepoints'),

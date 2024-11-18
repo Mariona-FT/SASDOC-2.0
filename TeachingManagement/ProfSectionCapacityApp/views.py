@@ -355,22 +355,6 @@ def section_typepoints_list(request):
     
     return render(request, 'section_typepoints/section_typepoints_list_actions.html', context)
 
-#INFO ONLY ONE SECTION ALL THE INFO IN ALL THE YEARS
-def section_typepoints_show(request,idSection=None):
-    # Retrieve the section instance using the idSection
-    section = get_object_or_404(Section, pk=idSection)
-
-    # Retrieve all TypePoints for the section
-    typepoints_entries = TypePoints.objects.filter(Section_id=section.idSection)
-
-    context = {
-        'section': section,
-        'typepoints_entries': typepoints_entries,
-    }
-
-    return render(request, 'section_typepoints/overview_section_typepoints.html', context)
-    
-
 # Create a new TypePoints entry
 def create_typepoints(request):
     if request.method == 'POST':
@@ -394,7 +378,7 @@ def edit_typepoints(request, idTypePoints):
         if form.is_valid():
             form.save()
             messages.success(request, 'Tipus de punts correctament editat.')
-            return redirect('sectiontypepoints_show', idSection=idSection)
+            return redirect('sectiontypepoints_list')
     else:
         form = TypePointsForm(instance=typepoints)
 
@@ -410,5 +394,5 @@ def delete_typepoints(request, idTypePoints):
     except Exception as e:
         messages.error(request, f"Error: No s'ha pogut eliminar el tipus de punts ({e}).")
 
-    return redirect('sectiontypepoints_show', idSection=idSection)
+    return redirect('sectiontypepoints_list')
 
