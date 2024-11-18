@@ -80,13 +80,14 @@
                     <tbody>
                         {% if section_typepoints_info %}
                             {% for section in section_typepoints_info %}
-                            <tr data-name={{section.NameSection}} data-letter={{section.LetterSection}}
-                            data-year={{section.Year}} 
-                            data-pA={{section.NamePointsA}}
-                            data-pB={{section.NamePointsB}}
-                            data-pC={{section.NamePointsC}}
-                            data-pD={{section.NamePointsD}}
-                            data-pE={{section.NamePointsE}}
+                            <tr data-name="{{section.NameSection}}"
+                            data-letter="{{section.LetterSection}}"
+                            data-year="{{section.Year}}"
+                            data-pA="{{section.NamePointsA}}"
+                            data-pB="{{section.NamePointsB}}"
+                            data-pC="{{section.NamePointsC}}"
+                            data-pD="{{section.NamePointsD}}"
+                            data-pE="{{section.NamePointsE}}"
                             >
                                 <td>{{ section.LetterSection }}</td>
                                 <td>{{ section.NameSection }}</td>
@@ -161,14 +162,14 @@
         let rowsVisible = 0;
 
         tableRows.forEach(row => {
-            const fieldName =  normalizeString(row.getAttribute('data-name').toLowerCase());
-            const fieldLetter =  normalizeString(row.getAttribute('data-letter').toLowerCase());
-            const fieldYear =  normalizeString(row.getAttribute('data-year').toLowerCase());
-            const fieldA =  normalizeString(row.getAttribute('data-pA').toLowerCase());
-            const fieldB =  normalizeString(row.getAttribute('data-pB').toLowerCase());
-            const fieldC =  normalizeString(row.getAttribute('data-pC').toLowerCase());
-            const fieldD =  normalizeString(row.getAttribute('data-pD').toLowerCase());
-            const fieldE =  normalizeString(row.getAttribute('data-pE').toLowerCase());
+            const fieldName = row.getAttribute('data-name') ? normalizeString(row.getAttribute('data-name').toLowerCase()) : '';
+            const fieldLetter = row.getAttribute('data-letter') ? normalizeString(row.getAttribute('data-letter').toLowerCase()) : '';
+            const fieldYear = row.getAttribute('data-year') ? normalizeString(row.getAttribute('data-year').toLowerCase()) : '';
+            const fieldA = row.getAttribute('data-pA') ? normalizeString(row.getAttribute('data-pA').toLowerCase()) : '';
+            const fieldB = row.getAttribute('data-pB') ? normalizeString(row.getAttribute('data-pB').toLowerCase()) : '';
+            const fieldC = row.getAttribute('data-pC') ? normalizeString(row.getAttribute('data-pC').toLowerCase()) : '';
+            const fieldD = row.getAttribute('data-pD') ? normalizeString(row.getAttribute('data-pD').toLowerCase()) : '';
+            const fieldE = row.getAttribute('data-pE') ? normalizeString(row.getAttribute('data-pE').toLowerCase()) : '';
 
             const matchesSearch = fieldName.includes(searchValue) || fieldLetter.includes(searchValue)|| fieldYear.includes(searchValue)|| fieldA.includes(searchValue)|| fieldB.includes(searchValue)|| fieldC.includes(searchValue)|| fieldD.includes(searchValue)|| fieldE.includes(searchValue);
 

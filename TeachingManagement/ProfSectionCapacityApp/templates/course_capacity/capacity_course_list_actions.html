@@ -82,12 +82,11 @@
                     <tbody>
                         {% if course_years %}
                             {% for course_year  in course_years  %}
-                            <tr 
-                            data-name={{ course_year.Course.NameCourse }}
-                            data-year={{ course_year.Year.Year }}  
-                            data-semester={{course_year.Semester}}
-                            data-language={{ course_year.Language}} 
-                            data-totalpoints={{ course_year.TotalPoints }}
+                            <tr data-name="{{ course_year.Course.NameCourse }}"
+                            data-year="{{ course_year.Year.Year }}" 
+                            data-semester="{{course_year.Semester}}"
+                            data-language="{{ course_year.Language}}"
+                            data-totalpoints="{{ course_year.TotalPoints }}"
                             >
                             <td><strong>{{ course_year.Course.NameCourse }} </strong></td>
                             <td><strong>{{ course_year.Year.Year }}</strong></td>

@@ -61,7 +61,11 @@
                     <tbody>
                         {% if degrees %}
                             {% for degree in degrees %}
-                                <tr data-code="{{ degree.CodeDegree }}" data-name="{{degree.NameDegree }}" data-school="{{ degree.School.NameSchool }}" data-active="{{ degree.isActive|yesno:'yes,no' }}">
+                                <tr data-code="{{ degree.CodeDegree }}" 
+                                data-name="{{degree.NameDegree }}" 
+                                data-school="{{ degree.School.NameSchool }}" 
+                                data-active="{{ degree.isActive|yesno:'yes,no' }}"
+                                >
                                     <td>{{ degree.CodeDegree }}</td>
                                     <td>{{ degree.NameDegree }}</td>
                                     <td>
@@ -135,10 +139,10 @@
         let rowsVisible = 0;
 
         tableRows.forEach(row => {
-            const fieldCode = normalizeString(row.getAttribute('data-code').toLowerCase());
-            const fieldName = normalizeString(row.getAttribute('data-name').toLowerCase());
-            const fieldSchool = normalizeString(row.getAttribute('data-school').toLowerCase());
-            const isActive = normalizeString(row.getAttribute('data-active'));
+            const fieldCode = row.getAttribute('data-code') ? normalizeString(row.getAttribute('data-code').toLowerCase()) : '';
+            const fieldName = row.getAttribute('data-name') ? normalizeString(row.getAttribute('data-name').toLowerCase()) : '';
+            const fieldSchool = row.getAttribute('data-school') ? normalizeString(row.getAttribute('data-school').toLowerCase()) : '';
+            const isActive = row.getAttribute('data-active') ? normalizeString(row.getAttribute('data-active')) : '';            
 
             const matchesSearch =  fieldCode.includes(searchValue) || fieldName.includes(searchValue) || fieldSchool.includes(searchValue);
             const matchesActiveFilter = (activeFilter === '' || isActive === activeFilter);

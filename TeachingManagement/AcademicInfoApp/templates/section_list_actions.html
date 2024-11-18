@@ -61,7 +61,10 @@
                     <tbody>
                         {% if sections %}
                             {% for section in sections %}
-                                <tr data-letter="{{section.LetterSection }}" data-name="{{section.NameSection }}" data-active="{{ section.isActive|yesno:'yes,no' }}">
+                                <tr data-letter="{{section.LetterSection }}" 
+                                data-name="{{section.NameSection }}" 
+                                data-active="{{ section.isActive|yesno:'yes,no' }}"
+                                >
                                     <td> {{section.LetterSection}}</td>
                                     <td>{{ section.NameSection }}</td>
                                     <td>{{ section.isActive|yesno:"Sí,No" }}</td>
@@ -128,8 +131,8 @@
         let rowsVisible = 0;
 
         tableRows.forEach(row => {
-        const fieldLetter = normalizeString(row.getAttribute('data-letter').toLowerCase());
-        const fieldName = normalizeString(row.getAttribute('data-name').toLowerCase());
+        const fieldLetter = row.getAttribute('data-letter') ? normalizeString(row.getAttribute('data-letter').toLowerCase()) : '';
+        const fieldName = row.getAttribute('data-name') ? normalizeString(row.getAttribute('data-name').toLowerCase()) : '';
 
             const isActive = row.getAttribute('data-active');
 
