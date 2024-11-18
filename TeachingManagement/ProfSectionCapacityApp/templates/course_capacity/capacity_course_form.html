@@ -12,7 +12,7 @@
 
 <div class="container-fluid d-flex" style="min-height: 100vh;">
     <div class="col-lg-10 mx-auto">
-        <h2 class="text-center">Gestió de la Capacitat de l'Assignatura : {{ course_year.Course.NameCourse }} ( {{course_year.Year}}-{{course_year.Semester }} )</h2>
+        <h2 style="text-align:center">Gestió de la Puntuació dels Cursos </h2>
         <hr>
     
         <!-- Header Form -->
@@ -21,11 +21,10 @@
                 <div class="d-flex justify-content-center align-items-center">
                     <h3>
                         {% if form.instance.pk %} 
-                            Actualitzar la Capacitat de l'Assignatura
+                            Actualitzar la Puntuació del Curs: {{ course_year.Course.NameCourse }} - {{ course_year.Year }} - {{ course_year.Semester }}
                         {% else %} 
-                            Afegir la Capacitat de l'Assignatura
+                            Afegir Nova Puntuació en un Curs
                         {% endif %} 
-                        {{ course_year.Course.NameCourse }}
                     </h3>
                 </div>
                 <br>
@@ -58,7 +57,7 @@
                                 {% else %} 
                                     Afegir 
                                 {% endif %} 
-                                la Capacitat de l'Assignatura
+                                la Puntuació del Curs
                             </button>
                         </div>
                     </form>
@@ -69,7 +68,7 @@
             <div class="col-lg-2">
                 <div class="sticky-top" style="top: 1rem">
                     <div class="buttons mb-2 d-flex flex-column align-items-center">
-                        <a href="{% url 'courseyear_list' %}" class="button-return btn-sm mb-2;">Tornar a Gestió la Capacitat de les Assignatures</a>
+                        <a href="{% url 'courseyear_list' %}" class="button-return btn-sm mb-2;">Tornar a Gestió de la Puntuació dels Cursos</a>
                     </div>
                 </div>
             </div>

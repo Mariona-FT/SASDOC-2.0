@@ -29,7 +29,7 @@
                     <div class="filters d-flex flex-wrap">
                         <div class="col-md-9">
                             <label for="filter-all">Filtrar per contingut:</label>
-                            <input type="text" id="filter-all" class="form-control" placeholder="Cerca per Codi, Nom, ECTS, Grau o Àrea">
+                            <input type="text" id="filter-all" class="form-control" placeholder="Cerca per Codi, Nom, Grau o Àrea">
                         </div>
 
                         <div class="col-md-3">
@@ -64,7 +64,6 @@
                             {% for course in courses %}
                                 <tr data-code="{{ course.CodeCourse }}" 
                                 data-name="{{  course.NameCourse }}"  
-                                data-etcs="{{  course.ECTS }}" 
                                 data-degree="{{  course.Degree }}" 
                                 data-field="{{  course.Field }}" 
                                 data-active="{{ course.isActive|yesno:'yes,no' }}"
@@ -140,13 +139,12 @@
         tableRows.forEach(row => {
             const fieldCode = row.getAttribute('data-code') ? normalizeString(row.getAttribute('data-code').toLowerCase()) : '';
             const fieldName = row.getAttribute('data-name') ? normalizeString(row.getAttribute('data-name').toLowerCase()) : '';
-            const fieldEtcs = row.getAttribute('data-etcs') ? normalizeString(row.getAttribute('data-etcs').toLowerCase()) : '';
             const fieldDegree = row.getAttribute('data-degree') ? normalizeString(row.getAttribute('data-degree').toLowerCase()) : '';
             const fieldField = row.getAttribute('data-field') ? normalizeString(row.getAttribute('data-field').toLowerCase()) : '';
             
             const isActive = row.getAttribute('data-active') ? normalizeString(row.getAttribute('data-active')) : '';
           
-            const matchesSearch =  fieldCode.includes(searchValue) || fieldName.includes(searchValue) || fieldEtcs.includes(searchValue) || fieldDegree.includes(searchValue) || fieldField.includes(searchValue);
+            const matchesSearch =  fieldCode.includes(searchValue) || fieldName.includes(searchValue) || fieldDegree.includes(searchValue) || fieldField.includes(searchValue);
             const matchesActiveFilter = (activeFilter === '' || isActive === activeFilter);
 
             if (matchesSearch && matchesActiveFilter) {

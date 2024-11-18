@@ -12,7 +12,8 @@
 
 <div class="container-fluid d-flex" style="min-height: 100vh;">
     <div class="col-lg-10 mx-auto">
-        <h2 class="text-center">Gestió la Nomenclatura de la Secció: {{ section.NameSection }} ( {{ section.LetterSection }} )</h2>
+        <h2 style="text-align:center">Gestió de la Nomenclatura de les Seccions </h2>
+
         <hr>
     
         <!-- Header Form -->
@@ -20,12 +21,11 @@
             <div class="col-lg-10">
                 <div class="d-flex justify-content-center align-items-center">
                     <h3>
-                        {% if form.instance.pk %} 
-                            Actualitzar la Nomenclatura de la Secció 
-                        {% else %} 
-                            Afegir la Nomenclatura de la Secció 
-                        {% endif %} 
-                        {{ section.NameSection }}
+                        {% if form.instance.pk %}
+                            Actualitzar la Nomenclatura de la Secció: {{ section.NameSection }} ({{ section.LetterSection }})
+                        {% else %}
+                            Afegir Nova Nomenclatura en una Secció
+                        {% endif %}
                     </h3>
                 </div>
                 <br>
@@ -58,7 +58,7 @@
                                 {% else %} 
                                     Afegir 
                                 {% endif %} 
-                                la Nomenclatura de la Secció
+                                Nomenclatura en la Secció
                             </button>
                         </div>
                     </form>
