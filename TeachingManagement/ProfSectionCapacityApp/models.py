@@ -1,5 +1,5 @@
 from django.db import models
-from AcademicInfoApp.models import Year,Section
+from AcademicInfoApp.models import Year,Section,Course,Language
 from UsersApp.models import Professor
 
 # Create your models here.
@@ -71,3 +71,23 @@ class TypePoints(models.Model):
 
     def __str__(self):
         return f"{self.Year.Year} - {self.Section.NameSection}"
+    
+class CourseYear(models.Model):
+    idCourseYear = models.AutoField(primary_key=True)
+    Course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='course_years')
+    Year = models.ForeignKey(Year, on_delete=models.CASCADE, related_name='course_years')
+    Semester = models.CharField(max_length=2, choices=[('Q1', 'Q1'), ('Q2', 'Q2')], default='Q1')
+    PointsA = models.IntegerField(null=True, blank=True)
+    PointsB = models.IntegerField(null=True, blank=True)
+    PointsC = models.IntegerField(null=True, blank=True)
+    PointsD = models.IntegerField(null=True, blank=True)
+    PointsE = models.IntegerField(null=True, blank=True)
+    Language = models.ForeignKey(Language, on_delete=models.SET_NULL, null=True, blank=True, related_name='course_years')
+
+    class Meta:
+        verbose_name='courseyear'
+        verbose_name_plural='courseyears'
+        unique_together = ('Year', 'Course','Semester')  # Ensure unique combinations
+
+    def __str__(self):
+        return f"{self.Course.NameCourse} ({self.Year.Year} - {self.get_Semester_display()})"

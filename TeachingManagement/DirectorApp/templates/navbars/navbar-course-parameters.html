@@ -11,9 +11,9 @@
             <a class="nav-link" href="{{sectiontypepoints_list_url}}">Nomenclatura de les Seccions</a>
         </li>
 
-        {% url 'usersapp:professor_list' as professor_list_url %}
-        <li class="nav-item me-4 {% if request.path == professor_list_url %} active{% endif %}">
-            <a class="nav-link" href="{{professor_list_url}}">Capacitat de les Assignatures</a>
+        {% url 'courseyear_list' as courseyear_list_url %}
+        <li class="nav-item me-4 {% if request.path == courseyear_list_url %} active{% endif %}">
+            <a class="nav-link" href="{{courseyear_list_url}}">Puntuació dels Cursos</a>
         </li>
 
         

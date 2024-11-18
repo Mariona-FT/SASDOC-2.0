@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect,get_object_or_404
-from .forms import CapacityForm, FreeForm, CapacitySectionForm,TypePointsForm
-from .models import Professor, Capacity, Free, CapacitySection,TypePoints
+from .forms import CapacityForm, FreeForm, CapacitySectionForm,TypePointsForm,CourseYearForm
+from .models import Professor, Capacity, Free, CapacitySection,TypePoints,CourseYear
 from UsersApp.models import Professor
 from AcademicInfoApp.models import Section,Year
 from django.contrib import messages
@@ -406,3 +406,94 @@ def delete_typepoints(request, idTypePoints):
 
     return redirect('sectiontypepoints_list')
 
+
+## FUNCTIONS FOR COURSES X YEAR
+def course_year_list(request):
+    # Get all years for capacity selection
+    available_years = Year.objects.all().order_by('-Year').distinct()
+   
+    selected_year_id = None #year id
+    selected_year = None # object year
+
+ # Get selected year or default to the most recent year
+    selected_year_id = request.GET.get('year')
+    try:
+        selected_year_id = int(selected_year_id) if selected_year_id else 0
+        selected_year = Year.objects.get(pk=selected_year_id)
+    except (ValueError, Year.DoesNotExist):
+        selected_year = Year.objects.order_by('-Year').first()
+        if not selected_year:
+            messages.error(request, "No hi ha anys disponibles.")
+            return render(request, 'course_capacity/capacity_course_list_actions.html', {'available_years': available_years})
+    
+    # Determine if the selected year is the most recent year
+    is_most_recent_year = selected_year == Year.objects.order_by('-Year').first()
+
+    all_courseyears=CourseYear.objects.filter(Year_id=selected_year.idYear) 
+
+    for course_year in all_courseyears:
+        course_year.TotalPoints = sum([
+                course_year.PointsA or 0,
+                course_year.PointsB or 0,
+                course_year.PointsC or 0,
+                course_year.PointsD or 0,
+                course_year.PointsE or 0
+            ])
+        
+    # Check for empty course list
+    if not all_courseyears.exists():
+        messages.warning(request, "No hi ha cursos amb puntuació disponibles per l'any seleccionat.")
+   
+    context = {
+        'available_years': available_years,
+        'selected_year': selected_year,
+        'is_most_recent_year': is_most_recent_year,
+        'course_years': all_courseyears,
+    }
+
+    return render(request, 'course_capacity/capacity_course_list_actions.html', context)
+
+#Create a new Course Year
+def create_courseyear(request):
+    if request.method == 'POST':
+        form = CourseYearForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Puntuació del Curs creada correctament.')
+            return redirect('courseyear_list')
+        else:
+            messages.error(request, "Hi ha errors al formulari. Revisa els camps.")
+
+    else:
+        form = CourseYearForm()
+
+    return render(request, 'course_capacity/capacity_course_form.html', {'form': form})
+
+def edit_courseyear(request, idCourseYear):
+    course_year = get_object_or_404(CourseYear, idCourseYear=idCourseYear)
+
+    if request.method == 'POST':
+        form = CourseYearForm(request.POST, instance=course_year)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Puntuació del Curs editat correctament.')
+            return redirect('courseyear_list')
+        else:
+            messages.error(request, "Hi ha errors al formulari. Revisa els camps.")
+
+    else:
+        form = CourseYearForm(instance=course_year)
+
+    return render(request, 'course_capacity/capacity_course_form.html', {'form': form, 'course_year': course_year})
+
+#Delete an existing Course Year entry
+def delete_courseyear(request, idCourseYear):
+    course_year = get_object_or_404(CourseYear, idCourseYear=idCourseYear)
+
+    try:
+        course_year.delete()
+        messages.success(request, 'Puntuació del Curs eliminada correctament.')
+    except Exception as e:
+        messages.error(request, f"Error: No s'ha pogut eliminar el curs. Motiu: {str(e)}")
+
+    return redirect('courseyear_list')
