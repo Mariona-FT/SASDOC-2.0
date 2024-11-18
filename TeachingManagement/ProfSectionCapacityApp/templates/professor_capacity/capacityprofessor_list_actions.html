@@ -213,7 +213,7 @@
         let rowsVisible = 0;
 
         tableRows.forEach(row => {
-            const fieldName =  normalizeString(row.getAttribute('data-name').toLowerCase());
+            const fieldName =  row.getAttribute('data-name') ? normalizeString(row.getAttribute('data-name').toLowerCase()): '';
             const isActive = row.getAttribute('data-active');
 
             const matchesSearch = fieldName.includes(searchValue);

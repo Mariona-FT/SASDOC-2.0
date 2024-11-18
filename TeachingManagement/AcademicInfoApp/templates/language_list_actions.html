@@ -112,7 +112,7 @@
         let rowsVisible = 0;
 
         tableRows.forEach(row => {
-            const fieldLanguage = normalizeString(row.getAttribute('data-language').toLowerCase());
+            const fieldLanguage = row.getAttribute('data-language') ? normalizeString(row.getAttribute('data-language').toLowerCase()) : '';
 
             const matchesSearch =  fieldLanguage.includes(searchValue);
 

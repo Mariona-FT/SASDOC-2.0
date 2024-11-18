@@ -59,7 +59,9 @@
                     <tbody>
                         {% if years %}
                             {% for year in years %}
-                                <tr data-year="{{ year.Year }}" data-editable="{{ year.isEditable|yesno:'yes,no' }}">
+                                <tr data-year="{{ year.Year }}" 
+                                data-editable="{{ year.isEditable|yesno:'yes,no' }}"
+                                >
                                     <td>{{ year.Year }}</td>
                                     <td>{{ year.isEditable|yesno:"Sí,No" }}</td>
                                     <td>
@@ -120,11 +122,14 @@
         let rowsVisible = 0;
 
         tableRows.forEach(row => {
-            const fieldYear = row.getAttribute('data-year').toLowerCase();
+            const fieldYear = row.getAttribute('data-year') ? row.getAttribute('data-year').toLowerCase() : '';
             const isEditable = row.getAttribute('data-editable');
 
             const matchesSearch =  fieldYear.includes(searchValue);
             const matchesEditFilter = (editFilter === '' || isEditable === editFilter);
+            
+            console.log("Row Data:", fieldYear)
+
 
             if (matchesSearch && matchesEditFilter) {
                 row.style.display = '';

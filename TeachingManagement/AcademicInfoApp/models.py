@@ -52,6 +52,7 @@ class Degree(models.Model):
     class Meta:
         verbose_name='degree'
         verbose_name_plural='degrees'
+        unique_together=('NameDegree','School')
 
     def __str__(self):
         return self.NameDegree
@@ -68,6 +69,8 @@ class Course(models.Model):
     class Meta:
         verbose_name='course'
         verbose_name_plural='courses'
+        unique_together=('NameCourse','Degree')
+
 
     def __str__(self):
         return f"{self.NameCourse} ({self.Degree})"

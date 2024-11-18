@@ -2,20 +2,18 @@
 <nav class="navbar-sub-nav navbar-expand-lg navbar-light d-flex justify-content-center">
     <ul class="navbar-nav">
         {% url 'capacityprofessor_list' as capacityprofessor_list_url %}
-        <li class="nav-item me-4 {% if request.path == capacityprofessor_list_url %} active{% endif %}">
+        <li class="nav-item me-4 {% if '/capacity-professors/' in request.path %} active{% endif %}">
             <a class="nav-link" href="{{capacityprofessor_list_url}}">Capacitat del Professorat</a>
         </li>
 
         {% url 'sectiontypepoints_list' as sectiontypepoints_list_url %}
-        <li class="nav-item me-4 {% if request.path == sectiontypepoints_list_url %} active{% endif %}">
-            <a class="nav-link" href="{{sectiontypepoints_list_url}}">Capacitat de les Seccions</a>
+        <li class="nav-item me-4 {% if '/section-typepoints/' in request.path %} active{% endif %}">
+            <a class="nav-link" href="{{sectiontypepoints_list_url}}">Nomenclatura de les Seccions</a>
         </li>
 
-        {% url 'usersapp:professor_list' as professor_list_url %}
-        <li class="nav-item me-4 {% if request.path == professor_list_url %} active{% endif %}">
-            <a class="nav-link" href="{{professor_list_url}}">Capacitat de les Assignatures</a>
+        {% url 'courseyear_list' as courseyear_list_url %}
+        <li class="nav-item me-4 {% if '/course-year/' in request.path %} active{% endif %}">
+            <a class="nav-link" href="{{courseyear_list_url}}">Puntuació dels Cursos</a>
         </li>
-
-        
     </ul>
 </nav>

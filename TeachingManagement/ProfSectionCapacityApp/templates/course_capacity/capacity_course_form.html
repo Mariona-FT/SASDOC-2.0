@@ -1,19 +1,31 @@
 {% extends 'base-template/base.html' %}
 
-{% block title %}{% if form.instance.pk %}Editar Cap de secció{% else %}Afegir Cap de Secció{% endif %}{% endblock %}
+{% block title %} 
+    {% if form.instance.pk %} 
+        Editar la Capacitat de l'Assignatura 
+    {% else %} 
+        Crear nova Capacitat en una Assignatura  
+    {% endif %}
+{% endblock %}
 
 {% block content %}
 
 <div class="container-fluid d-flex" style="min-height: 100vh;">
     <div class="col-lg-10 mx-auto">
-        <h2 style="text-align:center">Gestió dels Caps de Secció</h2>
+        <h2 style="text-align:center">Gestió de la Puntuació dels Cursos </h2>
         <hr>
-
-        <!--Header Form-->
+    
+        <!-- Header Form -->
         <div class="row">
             <div class="col-lg-10">
                 <div class="d-flex justify-content-center align-items-center">
-                    <h3>{% if form.instance.pk %}Actualitzar Cap de Secció:  {{form.instance.professor.name}} {{form.instance.professor.family_name}} - {{form.instance.section.NameSection}}  {% else %}Afegir Cap de Secció{% endif %}</h3>
+                    <h3>
+                        {% if form.instance.pk %} 
+                            Actualitzar la Puntuació del Curs: {{ course_year.Course.NameCourse }} - {{ course_year.Year }} - {{ course_year.Semester }}
+                        {% else %} 
+                            Afegir Nova Puntuació en un Curs
+                        {% endif %} 
+                    </h3>
                 </div>
                 <br>
 
@@ -26,25 +38,26 @@
                         {% if messages %}
                             <div class="mt-3">
                                 {% for message in messages %}
-                                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %}">
-                                    {{ message }}
-                                </div>
+                                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %}">
+                                        {{ message }}
+                                    </div>
                                 {% endfor %}
                             </div>
                         {% endif %}
-                        
-                        {% if form.instance.pk %}
-                            <input type="hidden" name="idChief" value="{{ form.instance.pk }}">
-                        {% endif %}
-                        
-                        <!--FORM-->
+
+                        <!-- FORM -->
                         <div class="mb-3">
                             {{ form.as_p }} 
                         </div>
 
                         <div class="d-flex justify-content-center">
                             <button type="submit" class="button-create btn-sm">
-                                {% if form.instance.pk %}Actualitzar{% else %}Afegir{% endif %} Cap de Secció
+                                {% if form.instance.pk %} 
+                                    Actualitzar 
+                                {% else %} 
+                                    Afegir 
+                                {% endif %} 
+                                la Puntuació del Curs
                             </button>
                         </div>
                     </form>
@@ -55,7 +68,7 @@
             <div class="col-lg-2">
                 <div class="sticky-top" style="top: 1rem">
                     <div class="buttons mb-2 d-flex flex-column align-items-center">
-                        <a href="{% url 'usersapp:sectorchief_list' %}" class="button-return btn-sm mb-2;">Tornar a Gestió dels Caps de Secció</a>
+                        <a href="{% url 'courseyear_list' %}" class="button-return btn-sm mb-2;">Tornar a Gestió de la Puntuació dels Cursos</a>
                     </div>
                 </div>
             </div>

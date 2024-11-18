@@ -146,11 +146,11 @@
         let rowsVisible = 0;
 
         tableRows.forEach(row => {
-            const fieldName = normalizeString(row.getAttribute('data-name').toLowerCase());
-            const fieldEmail = normalizeString(row.getAttribute('data-email').toLowerCase());
-            const fieldSection = normalizeString(row.getAttribute('data-section').toLowerCase());
-            const fieldYear = normalizeString(row.getAttribute('data-year').toLowerCase());
-            const fieldComment = normalizeString(row.getAttribute('data-comment').toLowerCase());
+            const fieldName = row.getAttribute('data-name') ? normalizeString(row.getAttribute('data-name').toLowerCase()) : '';
+            const fieldEmail = row.getAttribute('data-email') ? normalizeString(row.getAttribute('data-email').toLowerCase()) : '';
+            const fieldSection = row.getAttribute('data-section') ? normalizeString(row.getAttribute('data-section').toLowerCase()) : '';
+            const fieldYear = row.getAttribute('data-year') ? normalizeString(row.getAttribute('data-year').toLowerCase()) : '';
+            const fieldComment = row.getAttribute('data-comment') ? normalizeString(row.getAttribute('data-comment').toLowerCase()) : '';
 
             const isActive = row.getAttribute('data-active');
 

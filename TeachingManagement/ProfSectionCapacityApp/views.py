@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect,get_object_or_404
-from .forms import CapacityForm, FreeForm, CapacitySectionForm,TypePointsForm
-from .models import Professor, Capacity, Free, CapacitySection,TypePoints
+from .forms import CapacityForm, FreeForm, CapacitySectionForm,TypePointsForm,CourseYearForm
+from .models import Professor, Capacity, Free, CapacitySection,TypePoints,CourseYear
 from UsersApp.models import Professor
 from AcademicInfoApp.models import Section,Year
 from django.contrib import messages
@@ -311,41 +311,46 @@ def delete_capacity_section(request, idCapacitySection):
 def section_typepoints_list(request):
     # Get all years for capacity selection
     available_years = Year.objects.all().order_by('-Year').distinct()
-    selected_year_id = request.GET.get('year') #year id
+   
+    selected_year_id = None #year id
     selected_year = None # object year
 
-    #Get year selected - if not selected most recent year
-    if selected_year_id:
-        try:
-            selected_year = Year.objects.get(pk=int(selected_year_id))
-        except Year.DoesNotExist:
-            messages.error(request, "Any seleccionat no existeix.")
-    
-    if not selected_year:
+ # Get selected year or default to the most recent year
+    selected_year_id = request.GET.get('year')
+    try:
+        selected_year_id = int(selected_year_id) if selected_year_id else 0
+        selected_year = Year.objects.get(pk=selected_year_id)
+    except (ValueError, Year.DoesNotExist):
         selected_year = Year.objects.order_by('-Year').first()
+        if not selected_year:
+            messages.error(request, "No hi ha anys disponibles.")
+            return render(request, 'section_typepoints/section_typepoints_list_actions.html', {'available_years': available_years})
     
     # Determine if the selected year is the most recent year
     is_most_recent_year = selected_year == Year.objects.order_by('-Year').first()
     
     all_typepoints = TypePoints.objects.filter(Year_id=selected_year.idYear)
 
-    # Prepare data to display section information with each type point
+    if not all_typepoints.exists():
+        messages.warning(request, "No s'han trobat tipus de punts per a l'any seleccionat.")
+
+
     section_typepoints_info = []
     for typepoint in all_typepoints:
-        
-        section = typepoint.Section  # Get the related section for each TypePoints
+        section = typepoint.Section
         section_info = {
-            'NameSection': section.NameSection if section else 'N/A',  # Section Name
-            'LetterSection': section.LetterSection if section else 'N/A',  # Section Letter
-            'Typepoint_id': typepoint.idTypePoints if typepoint else None, 
-            'Year': typepoint.Year if typepoint else 'N/A',  # Section Year
-            'NamePointsA': typepoint.NamePointsA if typepoint else '-',  # Points A
-            'NamePointsB': typepoint.NamePointsB if typepoint else '-',  # Points B
-            'NamePointsC': typepoint.NamePointsC if typepoint else '-',  # Points C
-            'NamePointsD': typepoint.NamePointsD if typepoint else '-',  # Points D
-            'NamePointsE': typepoint.NamePointsE if typepoint else '-',  # Points E
+            'NameSection': getattr(section, 'NameSection', 'N/A'),  # Section Name
+            'LetterSection': getattr(section, 'LetterSection', 'N/A'),  # Section Letter
+            'Typepoint_id': typepoint.idTypePoints,
+            'Year': typepoint.Year,
+            'NamePointsA': typepoint.NamePointsA or '-',  # Points A
+            'NamePointsB': typepoint.NamePointsB or '-',  # Points B
+            'NamePointsC': typepoint.NamePointsC or '-',  # Points C
+            'NamePointsD': typepoint.NamePointsD or '-',  # Points D
+            'NamePointsE': typepoint.NamePointsE or '-',  # Points E
         }
         section_typepoints_info.append(section_info)
+
     context = {
         'available_years': available_years,
         'selected_year': selected_year,
@@ -355,22 +360,6 @@ def section_typepoints_list(request):
     
     return render(request, 'section_typepoints/section_typepoints_list_actions.html', context)
 
-#INFO ONLY ONE SECTION ALL THE INFO IN ALL THE YEARS
-def section_typepoints_show(request,idSection=None):
-    # Retrieve the section instance using the idSection
-    section = get_object_or_404(Section, pk=idSection)
-
-    # Retrieve all TypePoints for the section
-    typepoints_entries = TypePoints.objects.filter(Section_id=section.idSection)
-
-    context = {
-        'section': section,
-        'typepoints_entries': typepoints_entries,
-    }
-
-    return render(request, 'section_typepoints/overview_section_typepoints.html', context)
-    
-
 # Create a new TypePoints entry
 def create_typepoints(request):
     if request.method == 'POST':
@@ -378,7 +367,10 @@ def create_typepoints(request):
         if form.is_valid():
             form.save()  
             messages.success(request, 'Tipus de punts correctament creat.')
-            return redirect('sectiontypepoints_list',)
+            return redirect('sectiontypepoints_list')
+        else:
+            messages.error(request, "Hi ha errors al formulari. Revisa els camps.")
+
     else:
         form = TypePointsForm()
 
@@ -387,14 +379,16 @@ def create_typepoints(request):
 
 def edit_typepoints(request, idTypePoints):
     typepoints = get_object_or_404(TypePoints, idTypePoints=idTypePoints)
-    idSection = typepoints.Section_id  
 
     if request.method == 'POST':
         form = TypePointsForm(request.POST, instance=typepoints)
         if form.is_valid():
             form.save()
             messages.success(request, 'Tipus de punts correctament editat.')
-            return redirect('sectiontypepoints_show', idSection=idSection)
+            return redirect('sectiontypepoints_list')
+        else:
+            messages.error(request, "Hi ha errors al formulari. Revisa els camps.")
+
     else:
         form = TypePointsForm(instance=typepoints)
 
@@ -403,12 +397,103 @@ def edit_typepoints(request, idTypePoints):
 # Delete an existing TypePoints entry
 def delete_typepoints(request, idTypePoints):
     typepoints = get_object_or_404(TypePoints, pk=idTypePoints)
-    idSection = typepoints.Section.idSection  
+
     try:
         typepoints.delete()
         messages.success(request, 'Tipus de punts correctament eliminat.')
     except Exception as e:
         messages.error(request, f"Error: No s'ha pogut eliminar el tipus de punts ({e}).")
 
-    return redirect('sectiontypepoints_show', idSection=idSection)
+    return redirect('sectiontypepoints_list')
 
+
+## FUNCTIONS FOR COURSES X YEAR
+def course_year_list(request):
+    # Get all years for capacity selection
+    available_years = Year.objects.all().order_by('-Year').distinct()
+   
+    selected_year_id = None #year id
+    selected_year = None # object year
+
+ # Get selected year or default to the most recent year
+    selected_year_id = request.GET.get('year')
+    try:
+        selected_year_id = int(selected_year_id) if selected_year_id else 0
+        selected_year = Year.objects.get(pk=selected_year_id)
+    except (ValueError, Year.DoesNotExist):
+        selected_year = Year.objects.order_by('-Year').first()
+        if not selected_year:
+            messages.error(request, "No hi ha anys disponibles.")
+            return render(request, 'course_capacity/capacity_course_list_actions.html', {'available_years': available_years})
+    
+    # Determine if the selected year is the most recent year
+    is_most_recent_year = selected_year == Year.objects.order_by('-Year').first()
+
+    all_courseyears=CourseYear.objects.filter(Year_id=selected_year.idYear) 
+
+    for course_year in all_courseyears:
+        course_year.TotalPoints = sum([
+                course_year.PointsA or 0,
+                course_year.PointsB or 0,
+                course_year.PointsC or 0,
+                course_year.PointsD or 0,
+                course_year.PointsE or 0
+            ])
+        
+    # Check for empty course list
+    if not all_courseyears.exists():
+        messages.warning(request, "No hi ha cursos amb puntuació disponibles per l'any seleccionat.")
+   
+    context = {
+        'available_years': available_years,
+        'selected_year': selected_year,
+        'is_most_recent_year': is_most_recent_year,
+        'course_years': all_courseyears,
+    }
+
+    return render(request, 'course_capacity/capacity_course_list_actions.html', context)
+
+#Create a new Course Year
+def create_courseyear(request):
+    if request.method == 'POST':
+        form = CourseYearForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Puntuació del Curs creada correctament.')
+            return redirect('courseyear_list')
+        else:
+            messages.error(request, "Hi ha errors al formulari. Revisa els camps.")
+
+    else:
+        form = CourseYearForm()
+
+    return render(request, 'course_capacity/capacity_course_form.html', {'form': form})
+
+def edit_courseyear(request, idCourseYear):
+    course_year = get_object_or_404(CourseYear, idCourseYear=idCourseYear)
+
+    if request.method == 'POST':
+        form = CourseYearForm(request.POST, instance=course_year)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Puntuació del Curs editat correctament.')
+            return redirect('courseyear_list')
+        else:
+            messages.error(request, "Hi ha errors al formulari. Revisa els camps.")
+
+    else:
+        form = CourseYearForm(instance=course_year)
+
+    return render(request, 'course_capacity/capacity_course_form.html', {'form': form, 'course_year': course_year})
+
+#Delete an existing Course Year entry
+def delete_courseyear(request, idCourseYear):
+    course_year = get_object_or_404(CourseYear, idCourseYear=idCourseYear)
+
+    try:
+        course_year.delete()
+        messages.success(request, 'Puntuació del Curs eliminada correctament.')
+    except Exception as e:
+        messages.error(request, f"Error: No s'ha pogut eliminar el curs. Motiu: {str(e)}")
+
+    return redirect('courseyear_list')

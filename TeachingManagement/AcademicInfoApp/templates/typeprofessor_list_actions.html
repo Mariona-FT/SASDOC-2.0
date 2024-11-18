@@ -62,7 +62,12 @@
                     <tbody>
                         {% if type_professors %}
                             {% for type_professor in type_professors %}
-                                <tr data-contract="{{type_professor.NameContract }}"  data-fulltime="{{type_professor.isFullTime|yesno:'yes,no' }}"  data-permanent="{{  type_professor.isPermanent|yesno:'yes,no' }}" data-comment="{{ type_professor.Comment }}" data-active="{{ type_professor.isActive|yesno:'yes,no' }}">
+                                <tr data-contract="{{type_professor.NameContract }}"  
+                                data-fulltime="{{type_professor.isFullTime|yesno:'yes,no' }}"  
+                                data-permanent="{{  type_professor.isPermanent|yesno:'yes,no' }}" 
+                                data-comment="{{ type_professor.Comment }}"
+                                data-active="{{ type_professor.isActive|yesno:'yes,no' }}"
+                                >
                                     <td>{{ type_professor.NameContract }}</td>
                                     <td>{{ type_professor.isFullTime|yesno:"Sí,No" }}</td>
                                     <td>{{ type_professor.isPermanent|yesno:"Sí,No" }}</td>
@@ -132,12 +137,12 @@
         let rowsVisible = 0;
 
         tableRows.forEach(row => {
-            const fieldContract = normalizeString(row.getAttribute('data-contract').toLowerCase());
-            const fieldComment = normalizeString(row.getAttribute('data-comment').toLowerCase());
-            const isFulltime = normalizeString(row.getAttribute('data-active'));
-            const isPermanent = normalizeString(row.getAttribute('data-permanent'));
-            const isActive = normalizeString(row.getAttribute('data-active'));
-
+            const fieldContract = row.getAttribute('data-contract') ? normalizeString(row.getAttribute('data-contract').toLowerCase()) : '';
+            const fieldComment = row.getAttribute('data-comment') ? normalizeString(row.getAttribute('data-comment').toLowerCase()) : '';
+            const isFulltime = row.getAttribute('data-fulltime') ? normalizeString(row.getAttribute('data-fulltime').toLowerCase()) : '';
+            const isPermanent = row.getAttribute('data-permanent') ? normalizeString(row.getAttribute('data-permanent').toLowerCase()) : '';
+            const isActive = row.getAttribute('data-active') ? normalizeString(row.getAttribute('data-active').toLowerCase()) : '';
+            
             const matchesSearch =  fieldContract.includes(searchValue) || fieldComment.includes(searchValue) || isFulltime.includes(searchValue)  || isPermanent.includes(searchValue);
             const matchesActiveFilter = (activeFilter === '' || isActive === activeFilter);
 

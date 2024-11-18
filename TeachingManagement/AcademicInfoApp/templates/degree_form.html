@@ -13,7 +13,7 @@
         <div class="row">
             <div class="col-lg-10">
                 <div class="d-flex justify-content-center align-items-center">
-                    <h3>{% if form.instance.pk %}Actualitzar Titulació{% else %}Afegir Titulació{% endif %}</h3>
+                    <h3>{% if form.instance.pk %}Actualitzar Titulació: {{form.instance.NameDegree}} {% else %}Afegir Titulació{% endif %}</h3>
                 </div>
                 <br>
 

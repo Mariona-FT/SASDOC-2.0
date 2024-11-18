@@ -70,6 +70,7 @@
                                 {% else %}
                                     #FFFFFF ; 
                                 {% endif %};"
+
                                 data-name="{{ professor.name }} {{ professor.family_name }}" 
                                 data-email="{{ professor.email }}" 
                                 data-contract="{{ professor.current_contract|default:'No contracte' }}" 
@@ -191,13 +192,13 @@
         let rowsVisible = 0;
 
         tableRows.forEach(row => {
-            const fieldName = normalizeString(row.getAttribute('data-name'));
-            const fieldEmail = normalizeString(row.getAttribute('data-email'));
-            const fieldContract = normalizeString(row.getAttribute('data-contract'));
-            const fieldField = normalizeString(row.getAttribute('data-fields'));
-            const fieldLanguage = normalizeString(row.getAttribute('data-languages'));
+            const fieldName = row.getAttribute('data-name') ? normalizeString(row.getAttribute('data-name').toLowerCase()) : '';
+            const fieldEmail = row.getAttribute('data-email') ? normalizeString(row.getAttribute('data-email').toLowerCase()) : '';
+            const fieldContract = row.getAttribute('data-contract') ? normalizeString(row.getAttribute('data-contract').toLowerCase()) : '';
+            const fieldField = row.getAttribute('data-fields') ? normalizeString(row.getAttribute('data-fields').toLowerCase()) : '';
+            const fieldLanguage = row.getAttribute('data-languages') ? normalizeString(row.getAttribute('data-languages').toLowerCase()) : '';
 
-            const isActive = row.getAttribute('data-active');
+            const isActive = row.getAttribute('data-active') ? normalizeString(row.getAttribute('data-active').toLowerCase()) : '';
 
             const matchesSearch =  fieldName.includes(searchValue) || fieldEmail.includes(searchValue) || fieldContract.includes(searchValue) || fieldField.includes(searchValue) || fieldLanguage.includes(searchValue);
             const matchesActiveFilter = (activeFilter === '' || isActive === activeFilter);
