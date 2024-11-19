@@ -282,3 +282,74 @@ body {
     text-align: end;
     display: inline-block;
 }
+
+/*FORMS*/
+/* Global form styles */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    text-align: left; /* Left-align the label */
+}
+
+.form-group .form-control {
+    width: 100%; /* Make sure inputs take full width */
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 0.25rem;
+}
+
+.form-group .form-check-input {
+    width: 100%;
+    margin-top: 0.3rem;
+    vertical-align: middle; /* Align label with checkbox */
+}
+
+.form-group .form-check-label {
+    display: inline-block;
+    vertical-align: middle; /* Align label with checkbox */
+}
+
+/* Align label to the left and input to the right using flexbox */
+.form-group.row {
+    display: flex;
+    align-items: center;
+}
+
+.form-group.row label {
+    flex: 0 0 40%; /* Adjust the width for the label */
+    max-width: 30%;
+}
+
+.form-group.row .form-control {
+    flex: 1 1 70%; /* Make input fields take up remaining space */
+}
+
+/* Optional: Style for error messages */
+.form-group .invalid-feedback {
+    color: #e74a3b;
+    font-size: 0.875rem;
+}
+
+/* For multiple choice (checkboxes) */
+.form-check {
+    display: flex;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+
+
+}
+.form-check-input {
+    margin-right: 0.5rem; /* Space between checkbox and label */
+    vertical-align: middle; /* Align checkboxes with labels */
+}
+
+.form-check-label {
+    display: inline-block;
+    vertical-align: middle; /* Align label with checkbox */
+}

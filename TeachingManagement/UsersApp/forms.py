@@ -16,38 +16,38 @@ class CustomLoginForm(AuthenticationForm):
 
 #Final Form for Professor
 class ProfessorForm(forms.ModelForm):
-    username = forms.CharField(max_length=150, required=True, label="Nom d'usuari")
-    idprofessor = forms.CharField(max_length=10, required=True, label="ID/DNI del Professor")
-    name = forms.CharField(max_length=100, required=True, label="Nom")
-    family_name = forms.CharField(max_length=100, required=True, label="Cognoms")
-    description = forms.CharField(widget=forms.Textarea, required=False, label="Descripció")
-    comment = forms.CharField(widget=forms.Textarea, required=False, label="Comentari")
-    email = forms.EmailField(required=True, label="Correu electrònic")
+    username = forms.CharField(max_length=150, required=True, label="Nom d'usuari", widget=forms.TextInput(attrs={'class': 'form-control'})) 
+    idprofessor = forms.CharField(max_length=10, required=True, label="ID/DNI del Professor", widget=forms.TextInput(attrs={'class': 'form-control'}))  
+    name = forms.CharField(max_length=100, required=True, label="Nom", widget=forms.TextInput(attrs={'class': 'form-control'})) 
+    family_name = forms.CharField(max_length=100, required=True, label="Cognoms", widget=forms.TextInput(attrs={'class': 'form-control'}))  
+    description = forms.CharField(required=False, label="Descripció", widget=forms.Textarea(attrs={'rows': 3,'class': 'form-control'}))  
+    comment = forms.CharField(required=False, label="Comentari", widget=forms.Textarea(attrs={'rows': 3,'class': 'form-control'})) 
+    email = forms.EmailField(required=True, label="Correu electrònic", widget=forms.EmailInput(attrs={'class': 'form-control'})) 
 
     ACTIVE_CHOICES = [
         ('yes', 'Si'),
         ('no', 'No'),
     ]
-    isactive = forms.ChoiceField(choices=ACTIVE_CHOICES, required=True, label="Està Actiu?")
-
+    isactive = forms.ChoiceField(choices=ACTIVE_CHOICES, required=True, label="Està Actiu?",widget=forms.Select(attrs={'class': 'form-control'}))
+   
+    current_contract = forms.ModelChoiceField(
+        queryset=TypeProfessor.objects.all(),
+        required=True,
+        label="Assignar Contracte vigent",
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
     possible_fields = forms.ModelMultipleChoiceField(
-        queryset=Field.objects.filter(isActive=True),  # Assuming isActive indicates available fields
-        widget=forms.CheckboxSelectMultiple,
+        queryset=Field.objects.filter(isActive=True),
         required=False,
-        label="Assignar Camps d'estudi"
+        label="Assignar Camps d'estudi",
+        widget=forms.CheckboxSelectMultiple,
+
     )
     possible_languages = forms.ModelMultipleChoiceField(
         queryset=Language.objects.all(),
-        widget=forms.CheckboxSelectMultiple,
         required=False,
-        label="Assignar Idiomes"
-    )
-
-    # Single choice field for the current contract (TypeProfessor)
-    current_contract = forms.ModelChoiceField(
-        queryset=TypeProfessor.objects.all(),
-        required=True,  # Since it should be a single contract, it's mandatory
-        label="Assignar Contracte vigent"
+        label="Assignar Idiomes",
+        widget=forms.CheckboxSelectMultiple, 
     )
 
     class Meta:
@@ -76,6 +76,7 @@ class ProfessorForm(forms.ModelForm):
             self.fields['current_contract'].initial = professor.current_contract 
             self.fields['possible_fields'].initial = professor.professor_fields.values_list('Field', flat=True)
             self.fields['possible_languages'].initial = professor.professor_languages.values_list('Language', flat=True)
+        
 
     def clean(self):
         cleaned_data = super().clean()
