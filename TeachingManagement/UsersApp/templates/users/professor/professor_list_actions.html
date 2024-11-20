@@ -56,7 +56,7 @@
                             <th>Camps d'estudi</th>
                             <th>Idiomes</th>
                             <th class="active-c">Està Actiu</th>
-                            <th class="actions-c">Accions</th>
+                            <th class="actions-c" style="width:200px">Accions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -107,7 +107,7 @@
                                         {% endif %}
                                     </td>
                                     <td class="active-status">{% if professor.isActive == 'yes' %}Sí{% else %}No{% endif %}</td>
-                                    <td>
+                                    <td class="actions-c" style="width:200px">
                                         <!-- Edit button -->
                                         <a href="{% url 'usersapp:professor_edit' professor.pk %}" class="button-edit btn-sm">Editar</a>
 

@@ -179,9 +179,16 @@ body {
     padding: 8px 16px; /* Padding for a comfortable size */
     border-radius: 4px; /* Rounded corners */
     text-decoration: none; /* Remove underline */
-    font-size: 14px; /* Standard font size */
+    font-size: calc(14px + 0.5vw); /* Responsive font size */
     text-align: center; /* Ensures the text is centered in the link */
+    overflow: hidden; /* Hide any overflowing text */
+    text-overflow: ellipsis ; /* Add ellipsis (...) to overflowing text */
+    max-width: 100%; /* Prevent the button from exceeding container width */
+}
 
+/* Limit the minimum and maximum font sizes */
+.button-secondary {
+    font-size: clamp(12px, 2.5vw, 14px); /* Font size adjusts between 12px and 14px */
 }
 
 .button-secondary:hover {
@@ -352,4 +359,26 @@ body {
 .form-check-label {
     display: inline-block;
     vertical-align: middle; /* Align label with checkbox */
+}
+
+/* Ensure dropdown and checkbox fields are visually distinct */
+select.form-control,
+.form-check-input {
+    appearance: none; /* Removes default dropdown arrow for select */
+    outline: none;
+}
+
+select.form-control {
+    padding-right: 2.5rem; /* Space for appended icon */
+}
+
+.options-group {
+    display: flex;
+    align-items: center;
+}
+
+.options-group .input-group-text {
+    background-color: #f8f9fa;
+    border-left: 1px solid #ced4da;
+    cursor: pointer;
 }

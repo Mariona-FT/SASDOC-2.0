@@ -28,13 +28,13 @@ class ProfessorForm(forms.ModelForm):
         ('yes', 'Si'),
         ('no', 'No'),
     ]
-    isactive = forms.ChoiceField(choices=ACTIVE_CHOICES, required=True, label="Està Actiu?",widget=forms.Select(attrs={'class': 'form-control'}))
+    isactive = forms.ChoiceField(choices=ACTIVE_CHOICES, required=True, label="Està Actiu?",widget=forms.Select(attrs={'class': 'form-select'}))
    
     current_contract = forms.ModelChoiceField(
         queryset=TypeProfessor.objects.all(),
         required=True,
         label="Assignar Contracte vigent",
-        widget=forms.Select(attrs={'class': 'form-control'})
+        widget=forms.Select(attrs={'class': 'form-select'})
     )
     possible_fields = forms.ModelMultipleChoiceField(
         queryset=Field.objects.filter(isActive=True),
