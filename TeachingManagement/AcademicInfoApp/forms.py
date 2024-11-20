@@ -199,6 +199,9 @@ class LanguageForm(forms.ModelForm):
         labels = {
             'Language': 'Idioma',
         }
+        widgets = {
+            'Language': forms.TextInput(attrs={'required': 'required','class': 'form-control',}),
+        }
 
 class YearForm(forms.ModelForm):
     class Meta:
@@ -209,8 +212,8 @@ class YearForm(forms.ModelForm):
             'isEditable': 'És editable?',
         }
         widgets = {
-        'Year': forms.TextInput(attrs={'class': 'form-control',}),
-        'isEditable': forms.CheckboxInput(attrs={'class': 'form-check-input checkbox-field'}),
+            'Year': forms.TextInput(attrs={'required': 'required','class': 'form-control',}),
+            'isEditable': forms.CheckboxInput(attrs={'class': 'form-check-input checkbox-field'}),
         }
         help_texts = {
             'isEditable': 'Marqueu si aquest any pot ser modificat per un Cap de Secció.',

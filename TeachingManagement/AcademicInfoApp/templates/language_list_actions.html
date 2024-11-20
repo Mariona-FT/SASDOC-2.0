@@ -43,7 +43,7 @@
                     <thead>
                         <tr>
                             <th>Idioma</th>
-                            <th>Accions</th>
+                            <th class="actions-c" style="width:200px">Accions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -51,7 +51,7 @@
                             {% for language in languages %}
                                 <tr data-language="{{ language.Language }}" >
                                     <td>{{ language.Language }}</td>
-                                    <td>
+                                    <td class="actions-c" style="width:200px">
                                         <!-- Edit button -->
                                         <a href="{% url 'language_edit' language.pk %}" class="button-edit btn-sm">Editar</a>
 
