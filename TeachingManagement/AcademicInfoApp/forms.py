@@ -42,8 +42,11 @@ class SchoolForm(forms.ModelForm):
             'isActive': 'És Actiu?',
         }
         widgets = {
-            'NameSchool': forms.TextInput(attrs={'required': 'required'}),
-            'CodeSchool': forms.NumberInput(attrs={'required': 'required'}), 
+            'NameSchool': forms.TextInput(attrs={'required': 'required','class': 'form-control'}),
+            'CodeSchool': forms.NumberInput(attrs={'required': 'required','class': 'form-control'}), 
+            'Section':forms.Select(attrs={'class': 'form-select'}),
+            'isActive': forms.CheckboxInput(attrs={'class': 'form-check-input checkbox-field'}),
+
         }
 
 class DegreeForm(forms.ModelForm):
