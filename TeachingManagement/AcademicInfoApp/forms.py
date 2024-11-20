@@ -71,7 +71,7 @@ class DegreeForm(forms.ModelForm):
         }
         help_texts = {
             'CodeDegree':"Entra un codi únic per identificar la Titulació.",
-            'isActive': "Marqueu si la Titulació  està actualment activa.",
+            'isActive': "Marqueu si la Titulació està actualment activa.",
         }
 
     def clean(self):
@@ -97,6 +97,29 @@ class CourseForm(forms.ModelForm):
             'Field': 'Camp',
             'isActive': 'És Actiu?',
         }
+        widgets = {
+            'NameCourse': forms.TextInput(attrs={'required': 'required','class': 'form-control'}),
+            'CodeCourse': forms.NumberInput(attrs={'required': 'required','class': 'form-control'}), 
+            'ECTS': forms.TextInput(attrs={'required': 'required','class': 'form-control'}),
+            'Degree':forms.Select(attrs={'required': 'required','class': 'form-select'}),
+            'Field':forms.Select(attrs={'required': 'required','class': 'form-select'}),
+            'isActive': forms.CheckboxInput(attrs={'class': 'form-check-input checkbox-field'}),
+        }
+        help_texts = {
+            'CodeCourse':"Entra un codi únic per identificar el Curs.",
+            'isActive': "Marqueu si el Curs està actualment actiu.",
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        CodeCourse = cleaned_data.get('CodeCourse')
+        Degree = cleaned_data.get('Degree')
+
+        # Check if a Chief already exists with the same professor, year, and section
+        if Course.objects.filter(CodeCourse=CodeCourse, Degree=Degree).exists():
+            raise ValidationError('Aquest Curs ja existeix en aquesta Titulació.')
+
+        return cleaned_data
 
 class TypeProfessorForm(forms.ModelForm):
     class Meta:
