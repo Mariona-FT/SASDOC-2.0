@@ -1,5 +1,6 @@
 from django import forms
 from .models import Field,Section,School,Degree,Course,TypeProfessor,Language,Year
+from django.core.exceptions import ValidationError
 
 class FieldForm(forms.ModelForm):
     class Meta:
@@ -27,8 +28,8 @@ class SectionForm(forms.ModelForm):
         }
 
         help_texts = {
-            'LetterSection':'Una o dues lletres pel nom de la Secció. ',
-            'isActive': 'Marqueu si la Secció actualment està activa.',
+            'LetterSection':'Una o dues lletres pel referir-se a la Secció.',
+            'isActive': 'Marqueu si la Secció està actualment activa.',
         }
 
 class SchoolForm(forms.ModelForm):
@@ -46,7 +47,10 @@ class SchoolForm(forms.ModelForm):
             'CodeSchool': forms.NumberInput(attrs={'required': 'required','class': 'form-control'}), 
             'Section':forms.Select(attrs={'class': 'form-select'}),
             'isActive': forms.CheckboxInput(attrs={'class': 'form-check-input checkbox-field'}),
-
+        }
+        help_texts = {
+            'CodeSchool':"Entra un codi únic per identificar l'Escola.",
+            'isActive': "Marqueu si l'Escola està actualment activa.",
         }
 
 class DegreeForm(forms.ModelForm):
@@ -59,6 +63,27 @@ class DegreeForm(forms.ModelForm):
             'School': 'Escola',
             'isActive': 'És Actiu?',
         }
+        widgets = {
+            'NameDegree': forms.TextInput(attrs={'required': 'required','class': 'form-control'}),
+            'CodeDegree': forms.NumberInput(attrs={'required': 'required','class': 'form-control'}), 
+            'School':forms.Select(attrs={'required': 'required','class': 'form-select'}),
+            'isActive': forms.CheckboxInput(attrs={'class': 'form-check-input checkbox-field'}),
+        }
+        help_texts = {
+            'CodeDegree':"Entra un codi únic per identificar la Titulació.",
+            'isActive': "Marqueu si la Titulació  està actualment activa.",
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        NameDegree = cleaned_data.get('NameDegree')
+        School = cleaned_data.get('School')
+
+        # Check if a Chief already exists with the same professor, year, and section
+        if Degree.objects.filter(NameDegree=NameDegree, School=School).exists():
+            raise ValidationError('Aquesta Titulació ja existeix en aquesta Escola.')
+
+        return cleaned_data
 
 class CourseForm(forms.ModelForm):
     class Meta:
