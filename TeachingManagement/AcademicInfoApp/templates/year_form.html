@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<div class="container-fluid d-flex" style="min-height: 100vh;">
+<div class="container-fluid d-flex" style="min-height: 70vh;">
     <div class="col-lg-10 mx-auto">
         <h2 style="text-align:center">Gestió dels Anys</h2>
         <hr>
@@ -37,9 +37,56 @@
                             <input type="hidden" name="idYear" value="{{ form.instance.pk }}">
                         {% endif %}
                         
+                        <!-- Display form errors -->
+                         {% if form.errors %}
+                            <div class="alert alert-danger">
+                                <strong>Hi ha errors en el formulari. Per favor, revisa els camps.</strong>
+                            </div>
+                        {% endif %}
+
+
                         <!--FORM-->
                         <div class="mb-3">
-                            {{ form.as_p }} 
+                            {% for field in form %}
+                            <div class="form-group row">
+                                <label for="{{ field.id_for_label }}" class="col-sm-4 col-form-label">{{ field.label }}</label>
+                    
+                                {% if 'checkbox-field' in field.field.widget.attrs.class %}
+                                    <!-- If the field is a checkbox, place it in a smaller column -->
+                                    <div class="col-sm-2">
+                                        {{ field }}
+                                    </div>
+                                    <div class="col-sm-6 offset-sm-4" style="padding:0">
+                                        {% if field.help_text %}
+                                            <div class="help-text">
+                                                <small class="form-text text-muted">{{ field.help_text }}</small>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% else %}
+                                    <!-- For non-checkbox fields, place the field normally -->
+                                    <div class="col-sm-8">
+                                        {{ field }}
+                                        {% if field.help_text %}
+                                            <div class="help-text">
+                                                <small class="form-text text-muted">{{ field.help_text }}</small>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                                
+                                <!-- Display form errors for each field -->
+                                {% if field.errors %}
+                                    <div class="col-sm-8">
+                                        <div class="text-danger">
+                                            {% for error in field.errors %}
+                                                <p>{{ error }}</p>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}    
                         </div>
 
                         <div class="d-flex justify-content-center">

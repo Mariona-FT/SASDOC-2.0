@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<div class="container-fluid d-flex" style="min-height: 100vh;">
+<div class="container-fluid d-flex" style="min-height: 70vh;">
     <div class="col-lg-10 mx-auto">
         <h2 style="text-align:center">Gestió del Professorat</h2>
         <hr>
@@ -13,7 +13,7 @@
         <div class="row">
             <div class="col-lg-10">
                 <div class="d-flex justify-content-center align-items-center">
-                    <h3>{% if form.instance.pk %}Actualitzar Professor: {{form.instance.name}} {{form.instance.family_name}}  {% else %}Afegir Professor{% endif %}</h3>
+                    <h3>{% if form.instance.pk %}Actualitzar Professor: {{ form.instance.name }} {{ form.instance.family_name }}  {% else %}Afegir Professor{% endif %}</h3>
                 </div>
                 <br>
 
@@ -36,12 +36,49 @@
                         {% if form.instance.pk %}
                             <input type="hidden" name="idProfessor" value="{{ form.instance.pk }}">
                         {% endif %}
+
+                        <!-- Display form errors -->
+                        {% if form.errors %}
+                            <div class="alert alert-danger">
+                                <strong>Hi ha errors en el formulari. Per favor, revisa els camps.</strong>
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Display non-field errors -->
+                        {% for error in form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {{ error }}
+                            </div>
+                        {% endfor %}
                         
                         <!--FORM-->
                         <div class="mb-3">
-                            {{ form.as_p }} 
+                            {% for field in form %}
+                            <div class="form-group row">
+                                <label for="{{ field.id_for_label }}" class="col-sm-4 col-form-label">{{ field.label }}</label>
+                                <div class="col-sm-8">
+                                    {{ field }}
+                                    {% if field.help_text %}
+                                        <small class="form-text text-muted">{{ field.help_text }}</small>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Display form errors for each field wrong -->
+                                 {% if field.errors %}
+                                    <div class="col-sm-8">
+                                        <div class="text-danger">
+                                            {% for error in field.errors %}
+                                                <p>{{ error }}</p>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+
+                            </div>
+                        {% endfor %}                       
                         </div>
-                        
+
+                        <!-- Submit Button -->
                         <div class="d-flex justify-content-center">
                             <button type="submit" class="button-create btn-sm">
                                 {% if form.instance.pk %}Actualitzar{% else %}Afegir{% endif %} Professor
@@ -62,4 +99,5 @@
         </div>
     </div>
 </div>
+
 {% endblock %}

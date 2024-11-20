@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from django.core.exceptions import ValidationError
-from AcademicInfoApp.models import Field,Language,TypeProfessor
+from AcademicInfoApp.models import Field,Language,TypeProfessor,Year
 
 
 
@@ -16,38 +16,87 @@ class CustomLoginForm(AuthenticationForm):
 
 #Final Form for Professor
 class ProfessorForm(forms.ModelForm):
-    username = forms.CharField(max_length=150, required=True, label="Nom d'usuari")
-    idprofessor = forms.CharField(max_length=10, required=True, label="ID/DNI del Professor")
-    name = forms.CharField(max_length=100, required=True, label="Nom")
-    family_name = forms.CharField(max_length=100, required=True, label="Cognoms")
-    description = forms.CharField(widget=forms.Textarea, required=False, label="Descripció")
-    comment = forms.CharField(widget=forms.Textarea, required=False, label="Comentari")
-    email = forms.EmailField(required=True, label="Correu electrònic")
+    username = forms.CharField(
+        max_length=150, 
+        required=True, 
+        label="Nom d'usuari", 
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        help_text="Sisplau, entreu un nom d'usuari únic."
+    ) 
+    
+    idprofessor = forms.CharField(
+        max_length=10, 
+        required=True, 
+        label="ID/DNI del Professor", 
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+    )  
+
+    name = forms.CharField(
+        max_length=100, 
+        required=True, 
+        label="Nom", 
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+    ) 
+
+    family_name = forms.CharField(
+        max_length=100, 
+        required=True, 
+        label="Cognoms", 
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+    )  
+
+    description = forms.CharField(
+        required=False, 
+        label="Descripció", 
+        widget=forms.Textarea(attrs={'rows': 3,'class': 'form-control'}),
+        help_text="Per si es vol una breu descripció del professor des de equip Directiu."
+    ) 
+
+    comment = forms.CharField(
+        required=False, 
+        label="Comentari", 
+        widget=forms.Textarea(attrs={'rows': 3,'class': 'form-control'}),
+        help_text=" Per si es vol afegir un comentari des del Cap de Secció."
+    ) 
+
+    email = forms.EmailField(
+        required=True, 
+        label="Correu electrònic", 
+        widget=forms.EmailInput(attrs={'class': 'form-control'}),
+    )
 
     ACTIVE_CHOICES = [
         ('yes', 'Si'),
         ('no', 'No'),
     ]
-    isactive = forms.ChoiceField(choices=ACTIVE_CHOICES, required=True, label="Està Actiu?")
+
+    isactive = forms.ChoiceField(
+        choices=ACTIVE_CHOICES, 
+        required=True, 
+        label="Està Actiu?", 
+        widget=forms.Select(attrs={'class': 'form-select'}),
+        help_text="Seleccioneu si el professor està Actiu."
+    )   
+
+    current_contract = forms.ModelChoiceField(
+        queryset=TypeProfessor.objects.all(),
+        required=True,
+        label="Assignar Contracte vigent",
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
 
     possible_fields = forms.ModelMultipleChoiceField(
-        queryset=Field.objects.filter(isActive=True),  # Assuming isActive indicates available fields
-        widget=forms.CheckboxSelectMultiple,
+        queryset=Field.objects.filter(isActive=True),
         required=False,
-        label="Assignar Camps d'estudi"
+        label="Assignar Camps d'estudi",
+        widget=forms.CheckboxSelectMultiple,
+
     )
     possible_languages = forms.ModelMultipleChoiceField(
         queryset=Language.objects.all(),
-        widget=forms.CheckboxSelectMultiple,
         required=False,
-        label="Assignar Idiomes"
-    )
-
-    # Single choice field for the current contract (TypeProfessor)
-    current_contract = forms.ModelChoiceField(
-        queryset=TypeProfessor.objects.all(),
-        required=True,  # Since it should be a single contract, it's mandatory
-        label="Assignar Contracte vigent"
+        label="Assignar Idiomes",
+        widget=forms.CheckboxSelectMultiple, 
     )
 
     class Meta:
@@ -76,6 +125,7 @@ class ProfessorForm(forms.ModelForm):
             self.fields['current_contract'].initial = professor.current_contract 
             self.fields['possible_fields'].initial = professor.professor_fields.values_list('Field', flat=True)
             self.fields['possible_languages'].initial = professor.professor_languages.values_list('Language', flat=True)
+        
 
     def clean(self):
         cleaned_data = super().clean()
@@ -302,6 +352,39 @@ class ChiefRegistrationForm(forms.ModelForm):
             'section':'Secció',
         }
 
+        widgets = {
+            'professor': forms.Select(attrs={'required': 'required','class': 'form-select'}),
+            'year': forms.Select(attrs={'required': 'required','class': 'form-select'}),
+            'section': forms.Select(attrs={'required': 'required','class': 'form-select'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['professor'].queryset = Professor.objects.all().order_by('family_name')
+        self.fields['year'].queryset = Year.objects.all().order_by('-Year')
+
+    def clean(self):
+        cleaned_data = super().clean()
+        professor = cleaned_data.get('professor')
+        year = cleaned_data.get('year')
+        section = cleaned_data.get('section')
+        
+        # Check if we are editing an existing Chief (i.e., it has a pk)
+        instance = self.instance  # The current instance of Chief being edited
+
+        if instance.pk:
+            # Exclude the current instance from the query to allow for editing the same object
+            if Chief.objects.filter(professor=professor, year=year, section=section).exclude(pk=instance.pk).exists():
+                raise ValidationError('Aquest Professor, amb aquest Any i Secció ja existeix.')
+
+        else:
+            # Check if a Chief already exists with the same professor, year, and section (for new entries)
+            if Chief.objects.filter(professor=professor, year=year, section=section).exists():
+                raise ValidationError('Aquest Professor, amb aquest Any i Secció ja existeix.')
+
+        return cleaned_data
+    
     def save(self, commit=True):
         # Create or update the chief instance
         chief = super().save(commit=False)

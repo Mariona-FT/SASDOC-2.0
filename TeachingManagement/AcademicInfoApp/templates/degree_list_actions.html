@@ -51,17 +51,21 @@
                 <table class="table table-striped" id="degrees-table">
                     <thead>
                         <tr>
-                            <th>Codi de la Titulació</th>
-                            <th>Nom de la Titulació</th>
-                            <th>Escola</th>
-                            <th>Actiu</th>
-                            <th>Accions</th>
+                            <th style="width:10%">Codi de la Titulació</th>
+                            <th style="width:auto">Nom de la Titulació</th>
+                            <th style="width:auto">Escola</th>
+                            <th class="active-c">Actiu</th>
+                            <th class="actions-c" style="width:200px">Accions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% if degrees %}
                             {% for degree in degrees %}
-                                <tr data-code="{{ degree.CodeDegree }}" 
+                                <tr  style="background-color: 
+                                {% if not degree.isActive %}
+                                    #DCDCDC  ; 
+                                {% endif %}" 
+                                data-code="{{ degree.CodeDegree }}" 
                                 data-name="{{degree.NameDegree }}" 
                                 data-school="{{ degree.School.NameSchool }}" 
                                 data-active="{{ degree.isActive|yesno:'yes,no' }}"
@@ -76,7 +80,7 @@
                                         {% endif %}
                                     </td>
                                     <td>{{ degree.isActive|yesno:"Sí,No" }}</td>
-                                    <td>
+                                    <td class="actions-c" style="width:200px">
                                         <!-- Edit button -->
                                         <a href="{% url 'degree_edit' degree.pk %}" class="button-edit btn-sm">Editar</a>
 

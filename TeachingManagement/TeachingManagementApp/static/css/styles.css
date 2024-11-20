@@ -179,9 +179,16 @@ body {
     padding: 8px 16px; /* Padding for a comfortable size */
     border-radius: 4px; /* Rounded corners */
     text-decoration: none; /* Remove underline */
-    font-size: 14px; /* Standard font size */
+    font-size: calc(14px + 0.5vw); /* Responsive font size */
     text-align: center; /* Ensures the text is centered in the link */
+    overflow: hidden; /* Hide any overflowing text */
+    text-overflow: ellipsis ; /* Add ellipsis (...) to overflowing text */
+    max-width: 100%; /* Prevent the button from exceeding container width */
+}
 
+/* Limit the minimum and maximum font sizes */
+.button-secondary {
+    font-size: clamp(12px, 2.5vw, 14px); /* Font size adjusts between 12px and 14px */
 }
 
 .button-secondary:hover {
@@ -228,18 +235,19 @@ body {
 
 
 .table th.name-c, .table td.name-c {
-    width: 10%;  
+    width: 12%;  
     word-break: break-word; /* Ensure long words break */
     text-align: left;
 }
 
 .table th.email-c, .table td.email-c {
-    width: 15%;
+    width: 17%;
     word-break: break-word; /* Ensure long words break */
 }
 
 .table th.active-c, .table td.active-c {
     width: 8%;
+    text-align: left;
 }
 
 .table th.num-c, .table td.num-c {
@@ -281,4 +289,121 @@ body {
 .table td.actions-c .button-delete {
     text-align: end;
     display: inline-block;
+}
+
+/*FORMS*/
+/* Global form styles */
+.form-group {
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    width: 100%;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    text-align: left; /* Left-align the label */
+}
+
+.form-group .form-control {
+    width: 100%; /* Make sure inputs take full width */
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 0.25rem;
+}
+
+.form-group .form-check-input {
+    width: 100%;
+    margin-top: 0.3rem;
+    vertical-align: middle; /* Align label with checkbox */
+}
+
+.form-group .form-check-label {
+    display: inline-block;
+    vertical-align: middle; /* Align label with checkbox */
+}
+
+/* Align label to the left and input to the right using flexbox */
+.form-group.row {
+    display: flex;
+    align-items: center;
+}
+
+.form-group.row label {
+    flex: 0 0 40%; /* Adjust the width for the label */
+    max-width: 30%;
+}
+
+.form-group.row .form-control {
+    flex: 1 1 70%; /* Make input fields take up remaining space */
+}
+
+/* Optional: Style for error messages */
+.form-group .invalid-feedback {
+    color: #e74a3b;
+    font-size: 0.875rem;
+}
+
+/* For multiple choice (checkboxes) */
+.form-check {
+    display: flex;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+
+
+}
+.form-check-input {
+    margin-right: 0.5rem; /* Space between checkbox and label */
+    vertical-align: middle; /* Align checkboxes with labels */
+}
+
+.form-check-label {
+    display: inline-block;
+    vertical-align: middle; /* Align label with checkbox */
+}
+
+/* Ensure dropdown and checkbox fields are visually distinct */
+select.form-control,
+.form-check-input {
+    appearance: none; /* Removes default dropdown arrow for select */
+    outline: none;
+}
+
+/* Custom class to limit the width of the checkbox */
+.custom-checkbox-width {
+    width: 10px;          /* Allow the checkbox to have a natural width */
+    display: inline-block;/* Prevent checkbox from expanding to full width */
+}
+
+/* Optional: style for the label if needed */
+.custom-checkbox-width + label {
+    display: inline-block; /* Ensure the label stays inline with the checkbox */
+    margin-left: 10px;      /* Adjust space between the checkbox and label */
+}
+
+select.form-control {
+    padding-right: 2.5rem; /* Space for appended icon */
+}
+
+.options-group {
+    display: flex;
+    align-items: center;
+}
+
+.options-group .input-group-text {
+    background-color: #f8f9fa;
+    border-left: 1px solid #ced4da;
+    cursor: pointer;
+}
+
+.help-text {
+    text-align: left;
+    color: #6c757d;  /* Default muted text color */
+    font-style: italic; /* Adds a subtle emphasis */
+    padding: 0;  /* Remove any default padding */
+    margin: 0;  /* Remove any default margin */
 }

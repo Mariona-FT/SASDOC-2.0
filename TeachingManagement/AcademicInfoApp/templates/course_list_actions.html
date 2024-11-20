@@ -50,19 +50,23 @@
                 <table class="table table-striped" id="courses-table">
                     <thead>
                         <tr>
-                            <th>Codi del Curs</th>    
-                            <th>Nom del Curs</th>
-                            <th>ECTS</th>
-                            <th>Grau</th>
-                            <th>Àrea</th>
-                            <th>Actiu</th>
-                            <th>Accions</th>
+                            <th  style="width:11%">Codi del Curs</th>    
+                            <th style="width:auto">Nom del Curs</th>
+                            <th style="width:10%">ECTS</th>
+                            <th style="width:auto">Grau</th>
+                            <th style="width:auto">Àrea</th>
+                            <th  class="active-c">Actiu</th>
+                            <th class="actions-c" style="width:200px">Accions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% if courses %}
                             {% for course in courses %}
-                                <tr data-code="{{ course.CodeCourse }}" 
+                                <tr  style="background-color: 
+                                {% if not course.isActive %}
+                                    #DCDCDC  ; 
+                                {% endif %}" 
+                                data-code="{{ course.CodeCourse }}" 
                                 data-name="{{  course.NameCourse }}"  
                                 data-degree="{{  course.Degree }}" 
                                 data-field="{{  course.Field }}" 
@@ -74,7 +78,7 @@
                                     <td>{{ course.Degree }}</td>
                                     <td>{{ course.Field }}</td>
                                     <td>{{ course.isActive|yesno:"Sí,No" }}</td>
-                                    <td>
+                                    <td class="actions-c" style="width:200px">
                                         <!-- Edit button -->
                                         <a href="{% url 'course_edit' course.pk %}" class="button-edit btn-sm">Editar</a>
 

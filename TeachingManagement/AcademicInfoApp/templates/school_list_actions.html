@@ -51,18 +51,22 @@
                     
                     <thead>
                         <tr>
-                            <th>Codi de l'Escola</th>
-                            <th>Nom de l'Escola</th>
-                            <th>Secció</th>
-                            <th>Actiu</th>
-                            <th>Accions</th>
+                            <th class="active-c">Codi de l'Escola</th>
+                            <th style="width:auto" >Nom de l'Escola</th>
+                            <th style="width:auto">Secció</th>
+                            <th class="active-c">Actiu</th>
+                            <th class="actions-c" style="width:200px">Accions</th>
                         </tr>
                     </thead>
 
                     <tbody>
                         {% if schools %}
                             {% for school in schools %}
-                            <tr data-code="{{ school.CodeSchool }}" 
+                            <tr  style="background-color: 
+                            {% if not school.isActive %}
+                                #DCDCDC  ; 
+                            {% endif %}"
+                            data-code="{{ school.CodeSchool }}" 
                             data-name="{{ school.NameSchool }}" 
                             data-section="{{ school.Section.NameSection }}" 
                             data-active="{{ school.isActive|yesno:'yes,no' }}"
@@ -77,7 +81,7 @@
                                         {% endif %}
                                     </td>                    
                                     <td>{{ school.isActive|yesno:"Sí,No" }}</td>
-                                    <td>
+                                    <td class="actions-c" style="width:200px">
                                         <!-- Edit button -->
                                         <a href="{% url 'school_edit' school.pk %}" class="button-edit btn-sm">Editar</a>
 
