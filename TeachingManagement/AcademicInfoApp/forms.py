@@ -21,8 +21,14 @@ class SectionForm(forms.ModelForm):
             'isActive': 'És Actiu?',
         }
         widgets = {
-            'NameSection': forms.TextInput(attrs={'required': 'required'}),
-            'LetterSection': forms.TextInput(attrs={'required': 'required'}),
+            'NameSection': forms.TextInput(attrs={'required': 'required','class': 'form-control'}),
+            'LetterSection': forms.TextInput(attrs={'required': 'required','class': 'form-control'}),
+            'isActive': forms.CheckboxInput(attrs={'class': 'form-check-input checkbox-field'}),
+        }
+
+        help_texts = {
+            'LetterSection':'Una o dues lletres pel nom de la Secció. ',
+            'isActive': 'Marqueu si la Secció actualment està activa.',
         }
 
 class SchoolForm(forms.ModelForm):

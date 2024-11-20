@@ -54,7 +54,7 @@
                             <th>Lletra de la Secció</th>
                             <th>Nom de la Secció</th>
                             <th>Actiu</th>
-                            <th>Accions</th>
+                            <th class="actions-c" style="width:200px">Accions</th>
                         </tr>
                     </thead>
 
@@ -68,7 +68,7 @@
                                     <td> {{section.LetterSection}}</td>
                                     <td>{{ section.NameSection }}</td>
                                     <td>{{ section.isActive|yesno:"Sí,No" }}</td>
-                                    <td>
+                                    <td class="actions-c" style="width:200px">
                                         <!-- Edit button -->
                                         <a href="{% url 'section_edit' section.pk %}" class="button-edit btn-sm">Editar</a>
 

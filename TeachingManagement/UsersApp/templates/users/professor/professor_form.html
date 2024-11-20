@@ -44,6 +44,13 @@
                             </div>
                         {% endif %}
                         
+                        <!-- Display non-field errors -->
+                        {% for error in form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {{ error }}
+                            </div>
+                        {% endfor %}
+                        
                         <!--FORM-->
                         <div class="mb-3">
                             {% for field in form %}
