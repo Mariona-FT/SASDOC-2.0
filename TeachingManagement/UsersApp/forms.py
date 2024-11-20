@@ -16,26 +16,75 @@ class CustomLoginForm(AuthenticationForm):
 
 #Final Form for Professor
 class ProfessorForm(forms.ModelForm):
-    username = forms.CharField(max_length=150, required=True, label="Nom d'usuari", widget=forms.TextInput(attrs={'class': 'form-control'})) 
-    idprofessor = forms.CharField(max_length=10, required=True, label="ID/DNI del Professor", widget=forms.TextInput(attrs={'class': 'form-control'}))  
-    name = forms.CharField(max_length=100, required=True, label="Nom", widget=forms.TextInput(attrs={'class': 'form-control'})) 
-    family_name = forms.CharField(max_length=100, required=True, label="Cognoms", widget=forms.TextInput(attrs={'class': 'form-control'}))  
-    description = forms.CharField(required=False, label="Descripció", widget=forms.Textarea(attrs={'rows': 3,'class': 'form-control'}))  
-    comment = forms.CharField(required=False, label="Comentari", widget=forms.Textarea(attrs={'rows': 3,'class': 'form-control'})) 
-    email = forms.EmailField(required=True, label="Correu electrònic", widget=forms.EmailInput(attrs={'class': 'form-control'})) 
+    username = forms.CharField(
+        max_length=150, 
+        required=True, 
+        label="Nom d'usuari", 
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        help_text="Sisplau, entreu un nom d'usuari únic."
+    ) 
+    
+    idprofessor = forms.CharField(
+        max_length=10, 
+        required=True, 
+        label="ID/DNI del Professor", 
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+    )  
+
+    name = forms.CharField(
+        max_length=100, 
+        required=True, 
+        label="Nom", 
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+    ) 
+
+    family_name = forms.CharField(
+        max_length=100, 
+        required=True, 
+        label="Cognoms", 
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+    )  
+
+    description = forms.CharField(
+        required=False, 
+        label="Descripció", 
+        widget=forms.Textarea(attrs={'rows': 3,'class': 'form-control'}),
+        help_text="Per si es vol una breu descripció del professor des de equip Directiu."
+    ) 
+
+    comment = forms.CharField(
+        required=False, 
+        label="Comentari", 
+        widget=forms.Textarea(attrs={'rows': 3,'class': 'form-control'}),
+        help_text=" Per si es vol afegir un comentari des del Cap de Secció."
+    ) 
+
+    email = forms.EmailField(
+        required=True, 
+        label="Correu electrònic", 
+        widget=forms.EmailInput(attrs={'class': 'form-control'}),
+    )
 
     ACTIVE_CHOICES = [
         ('yes', 'Si'),
         ('no', 'No'),
     ]
-    isactive = forms.ChoiceField(choices=ACTIVE_CHOICES, required=True, label="Està Actiu?",widget=forms.Select(attrs={'class': 'form-select'}))
-   
+
+    isactive = forms.ChoiceField(
+        choices=ACTIVE_CHOICES, 
+        required=True, 
+        label="Està Actiu?", 
+        widget=forms.Select(attrs={'class': 'form-select'}),
+        help_text="Seleccioneu si el professor està Actiu."
+    )   
+
     current_contract = forms.ModelChoiceField(
         queryset=TypeProfessor.objects.all(),
         required=True,
         label="Assignar Contracte vigent",
         widget=forms.Select(attrs={'class': 'form-select'})
     )
+
     possible_fields = forms.ModelMultipleChoiceField(
         queryset=Field.objects.filter(isActive=True),
         required=False,

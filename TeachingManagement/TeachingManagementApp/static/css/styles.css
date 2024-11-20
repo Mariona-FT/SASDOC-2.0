@@ -294,6 +294,10 @@ body {
 /* Global form styles */
 .form-group {
     margin-bottom: 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    width: 100%;
 }
 
 .form-group label {
@@ -393,4 +397,12 @@ select.form-control {
     background-color: #f8f9fa;
     border-left: 1px solid #ced4da;
     cursor: pointer;
+}
+
+.help-text {
+    text-align: left;
+    color: #6c757d;  /* Default muted text color */
+    font-style: italic; /* Adds a subtle emphasis */
+    padding: 0;  /* Remove any default padding */
+    margin: 0;  /* Remove any default margin */
 }
