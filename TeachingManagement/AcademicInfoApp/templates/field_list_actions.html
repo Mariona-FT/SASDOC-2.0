@@ -53,22 +53,26 @@
                         <tr>
                             <th>Nom del Camp</th>
                             <th>Descripció</th>
-                            <th>Actiu</th>
-                            <th>Accions</th>
+                            <th  class="active-c">Actiu</th>
+                            <th class="actions-c" style="width:200px">Accions</th>
                         </tr>
                     </thead>
 
                     <tbody>
                         {% if fields %}
                             {% for field in fields %}
-                                <tr data-name="{{ field.NameField }}" 
+                                <tr  style="background-color: 
+                                {% if not field.isActive %}
+                                    #DCDCDC  ; 
+                                {% endif %}" 
+                                data-name="{{ field.NameField }}" 
                                 data-description="{{ field.Description }}" 
                                 data-active="{{ field.isActive|yesno:'yes,no' }}"
                                 >
                                     <td>{{ field.NameField }}</td>
                                     <td>{{ field.Description }}</td>
                                     <td>{{ field.isActive|yesno:"Sí,No" }}</td>
-                                    <td>
+                                    <td  class="actions-c" style="width:200px">
                                         <!-- Edit button -->
                                         <a href="{% url 'field_edit' field.pk %}" class="button-edit btn-sm">Editar</a>
 

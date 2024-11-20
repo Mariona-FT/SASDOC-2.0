@@ -59,7 +59,11 @@
                     <tbody>
                         {% if years %}
                             {% for year in years %}
-                                <tr data-year="{{ year.Year }}" 
+                                <tr  style="background-color: 
+                                {% if not year.isEditable %}
+                                    #DCDCDC  ; 
+                                {% endif %}" 
+                                data-year="{{ year.Year }}" 
                                 data-editable="{{ year.isEditable|yesno:'yes,no' }}"
                                 >
                                     <td>{{ year.Year }}</td>

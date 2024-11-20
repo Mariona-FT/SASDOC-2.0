@@ -64,7 +64,11 @@
                             {% for professor in professors %}
                                 {% if professor.user.role == 'sector_chief' %}
                                     {% for chief in professor.chief_set.all %}
-                                        <tr data-name="{{ professor.name }} {{ professor.family_name }}" 
+                                        <tr  style="background-color: 
+                                        {% if professor.isActive == 'no' %}
+                                            #DCDCDC  ; 
+                                        {% endif %}" 
+                                            data-name="{{ professor.name }} {{ professor.family_name }}" 
                                             data-email="{{ professor.email }}"
                                             data-section="{{ chief.section }}"
                                             data-year="{{chief.year}}"

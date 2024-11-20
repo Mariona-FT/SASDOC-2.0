@@ -11,6 +11,16 @@ class FieldForm(forms.ModelForm):
             'Description': 'Descripció',
             'isActive': 'És Actiu?',
         }
+        widgets = {
+            'NameField': forms.TextInput(attrs={'required': 'required','class': 'form-control'}),
+            'Description': forms.TextInput(attrs={'class': 'form-control'}),
+            'isActive': forms.CheckboxInput(attrs={'class': 'form-check-input checkbox-field'}),
+        }
+
+        help_texts = {
+            'Description': 'Descripció del Camp és opcional.',
+            'isActive': 'Marqueu si el Camp està actualment actiu.',
+        }
 
 class SectionForm(forms.ModelForm):
     class Meta:

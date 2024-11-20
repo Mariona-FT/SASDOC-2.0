@@ -62,7 +62,11 @@
                     <tbody>
                         {% if courses %}
                             {% for course in courses %}
-                                <tr data-code="{{ course.CodeCourse }}" 
+                                <tr  style="background-color: 
+                                {% if not course.isActive %}
+                                    #DCDCDC  ; 
+                                {% endif %}" 
+                                data-code="{{ course.CodeCourse }}" 
                                 data-name="{{  course.NameCourse }}"  
                                 data-degree="{{  course.Degree }}" 
                                 data-field="{{  course.Field }}" 
