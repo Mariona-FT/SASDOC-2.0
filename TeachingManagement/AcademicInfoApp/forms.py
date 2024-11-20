@@ -13,7 +13,7 @@ class FieldForm(forms.ModelForm):
         }
         widgets = {
             'NameField': forms.TextInput(attrs={'required': 'required','class': 'form-control'}),
-            'Description': forms.TextInput(attrs={'class': 'form-control'}),
+            'Description': forms.Textarea(attrs={'rows': 3,'class': 'form-control'}),
             'isActive': forms.CheckboxInput(attrs={'class': 'form-check-input checkbox-field'}),
         }
 
@@ -86,12 +86,21 @@ class DegreeForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        NameDegree = cleaned_data.get('NameDegree')
-        School = cleaned_data.get('School')
+        name_degree = cleaned_data.get('NameDegree')
+        school = cleaned_data.get('School')
 
-        # Check if a Chief already exists with the same professor, year, and section
-        if Degree.objects.filter(NameDegree=NameDegree, School=School).exists():
-            raise ValidationError('Aquesta Titulació ja existeix en aquesta Escola.')
+        instance = self.instance  # The current instance of Degree being edited
+
+        if instance.pk:
+            # Exclude the current instance from the query to allow for editing the same object
+            if Degree.objects.filter(NameDegree=name_degree, School=school).exclude(pk=instance.pk).exists():
+                raise ValidationError('Aquesta Titulació ja existeix en aquesta Escola.')
+
+        else:
+            # Check if a Degree already exists with the same NameDegree and School (for new entries)
+            if Degree.objects.filter(NameDegree=name_degree, School=school).exists():
+                raise ValidationError('Aquesta Titulació ja existeix en aquesta Escola.')
+
 
         return cleaned_data
 
@@ -122,12 +131,20 @@ class CourseForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        CodeCourse = cleaned_data.get('CodeCourse')
-        Degree = cleaned_data.get('Degree')
+        code_course = cleaned_data.get('CodeCourse')
+        degree = cleaned_data.get('Degree')
 
-        # Check if a Chief already exists with the same professor, year, and section
-        if Course.objects.filter(CodeCourse=CodeCourse, Degree=Degree).exists():
-            raise ValidationError('Aquest Curs ja existeix en aquesta Titulació.')
+        instance = self.instance  # The current instance of Course being edited
+
+        if instance.pk:
+            # Exclude the current instance from the query to allow for editing the same object
+            if Course.objects.filter(CodeCourse=code_course, Degree=degree).exclude(pk=instance.pk).exists():
+                raise ValidationError('Aquest Curs ja existeix en aquesta Titulació.')
+
+        else:
+            # Check if a Course already exists with the same CodeCourse and Degree (for new entries)
+            if Course.objects.filter(CodeCourse=code_course, Degree=degree).exists():
+                raise ValidationError('Aquest Curs ja existeix en aquesta Titulació.')
 
         return cleaned_data
 
@@ -142,6 +159,38 @@ class TypeProfessorForm(forms.ModelForm):
             'Comment': 'Comentari',
             'isActive': 'És Actiu?',
         }
+        widgets = {
+            'NameContract': forms.TextInput(attrs={'required': 'required','class': 'form-control'}),
+            'isFullTime': forms.CheckboxInput(attrs={'class': 'form-check-input checkbox-field'}),
+            'isPermanent': forms.CheckboxInput(attrs={'class': 'form-check-input checkbox-field'}),
+            'Comment': forms.Textarea(attrs={'rows': 3,'class': 'form-control'}),
+            'isActive': forms.CheckboxInput(attrs={'class': 'form-check-input checkbox-field'}),
+        }
+        help_texts = {
+            'isFullTime':"Marqueu si el Tipus de professor és a Temps Complet.",
+            'isPermanent':"Marqueu si el Tipus de professor és Permanent.",
+            'Comment':"Comentari Opcional.",
+            'isActive': "Marqueu si el Curs està actualment actiu.",
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        name_contract = cleaned_data.get('NameContract')
+        is_full_time = cleaned_data.get('isFullTime')
+        is_permanent = cleaned_data.get('isPermanent')
+
+        instance = self.instance  # The current instance of TypeProfessor being edited
+
+        if instance.pk:
+            # Exclude the current instance from the query to allow for editing the same object
+            if TypeProfessor.objects.filter(NameContract=name_contract, isFullTime=is_full_time, isPermanent=is_permanent).exclude(pk=instance.pk).exists():
+                raise ValidationError('Ja existeix un tipus de professorat amb aquest nom, a temps complet i permanent.')
+
+        else:
+            # Check if a TypeProfessor already exists with the same NameContract, isFullTime, and isPermanent (for new entries)
+            if TypeProfessor.objects.filter(NameContract=name_contract, isFullTime=is_full_time, isPermanent=is_permanent).exists():
+                raise ValidationError('Ja existeix un tipus de professorat amb aquest nom, a temps complet i permanent.')
+        return cleaned_data
 
 class LanguageForm(forms.ModelForm):
     class Meta:
