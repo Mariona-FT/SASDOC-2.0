@@ -235,18 +235,19 @@ body {
 
 
 .table th.name-c, .table td.name-c {
-    width: 10%;  
+    width: 12%;  
     word-break: break-word; /* Ensure long words break */
     text-align: left;
 }
 
 .table th.email-c, .table td.email-c {
-    width: 15%;
+    width: 17%;
     word-break: break-word; /* Ensure long words break */
 }
 
 .table th.active-c, .table td.active-c {
     width: 8%;
+    text-align: left;
 }
 
 .table th.num-c, .table td.num-c {

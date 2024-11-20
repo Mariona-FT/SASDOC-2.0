@@ -151,7 +151,7 @@ def upload_professors(request):
 #SECTOR CHIEF 
 #Sector chief list to manage - listing and actions of edit, delete and add sector chiefs
 def sectorchief_list(request):
-    professors = Professor.objects.all()
+    professors = Professor.objects.all().order_by('family_name')
     deleting = None
    
     if request.method == "POST" and 'confirm_delete' in request.POST:

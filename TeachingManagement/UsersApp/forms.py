@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from django.core.exceptions import ValidationError
-from AcademicInfoApp.models import Field,Language,TypeProfessor
+from AcademicInfoApp.models import Field,Language,TypeProfessor,Year
 
 
 
@@ -352,6 +352,30 @@ class ChiefRegistrationForm(forms.ModelForm):
             'section':'Secció',
         }
 
+        widgets = {
+            'professor': forms.Select(attrs={'required': 'required','class': 'form-select'}),
+            'year': forms.Select(attrs={'required': 'required','class': 'form-select'}),
+            'section': forms.Select(attrs={'required': 'required','class': 'form-select'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['professor'].queryset = Professor.objects.all().order_by('family_name')
+        self.fields['year'].queryset = Year.objects.all().order_by('-Year')
+
+    def clean(self):
+        cleaned_data = super().clean()
+        professor = cleaned_data.get('professor')
+        year = cleaned_data.get('year')
+        section = cleaned_data.get('section')
+
+        # Check if a Chief already exists with the same professor, year, and section
+        if Chief.objects.filter(professor=professor, year=year, section=section).exists():
+            raise ValidationError('Aquest Professor, amb aquest Any i Secció ja existeix.')
+
+        return cleaned_data
+    
     def save(self, commit=True):
         # Create or update the chief instance
         chief = super().save(commit=False)

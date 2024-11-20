@@ -50,13 +50,13 @@
                 <table class="table table-striped" id="chiefs-table">
                     <thead>
                         <tr>
-                            <th>Nom i Cognoms</th>
-                            <th>Correu electrònic</th>
-                            <th>Secció</th>
-                            <th>Any</th>
-                            <th>Comentaris</th>
-                            <th>Està Actiu</th>
-                            <th>Accions</th>
+                            <th class="name-c" style=" width: 12%;">Nom i Cognoms</th>
+                            <th class="email-c">Correu electrònic</th>
+                            <th style=" width: 10%;">Secció</th>
+                            <th style=" width: 8%;">Any</th>
+                            <th style=" width: auto;">Comentaris</th>
+                            <th style=" width: 8%;">Està Actiu</th>
+                            <th class="actions-c" style="width:200px">Accions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -81,7 +81,7 @@
                                             </td>
                                             <td class="no-data">{{ professor.comment }}</td>
                                             <td>{% if professor.isActive == 'yes' %}Sí{% else %}No{% endif %}</td>
-                                            <td>
+                                            <td class="actions-c" style="width:200px">
                                                 <!-- Edit button -->
                                                 <a href="{% url 'usersapp:sectorchief_edit' chief.id %}" class="button-edit btn-sm">Editar</a>
                                                 
