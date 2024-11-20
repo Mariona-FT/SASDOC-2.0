@@ -92,3 +92,7 @@ class YearForm(forms.ModelForm):
             'Year': 'Any',
             'isEditable': 'És editable?',
         }
+        widgets = {
+        'Year': forms.TextInput(attrs={'class': 'form-control',}),
+        'isEditable': forms.CheckboxInput(attrs={'class': 'form-check-input checkbox-field'}),
+        }

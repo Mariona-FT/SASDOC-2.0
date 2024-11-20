@@ -368,6 +368,18 @@ select.form-control,
     outline: none;
 }
 
+/* Custom class to limit the width of the checkbox */
+.custom-checkbox-width {
+    width: 10px;          /* Allow the checkbox to have a natural width */
+    display: inline-block;/* Prevent checkbox from expanding to full width */
+}
+
+/* Optional: style for the label if needed */
+.custom-checkbox-width + label {
+    display: inline-block; /* Ensure the label stays inline with the checkbox */
+    margin-left: 10px;      /* Adjust space between the checkbox and label */
+}
+
 select.form-control {
     padding-right: 2.5rem; /* Space for appended icon */
 }

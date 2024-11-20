@@ -396,7 +396,7 @@ def language_create_edit(request,idLanguage=None):
 
 ## year list to manage - listing and actions of edit, delete and add year
 def year_list(request):
-    years = Year.objects.all().order_by('Year')
+    years = Year.objects.all().order_by('-Year')
     deleting = None
    
     if request.method == "POST" and 'confirm_delete' in request.POST:

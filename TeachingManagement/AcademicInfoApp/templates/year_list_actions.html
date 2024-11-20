@@ -53,7 +53,7 @@
                         <tr>
                             <th>Any</th>
                             <th>Es Editable</th>
-                            <th>Accions</th>
+                            <th class="actions-c" style="width:200px">Accions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -64,7 +64,7 @@
                                 >
                                     <td>{{ year.Year }}</td>
                                     <td>{{ year.isEditable|yesno:"Sí,No" }}</td>
-                                    <td>
+                                    <td class="actions-c" style="width:200px">
                                         <!-- Edit button -->
                                         <a href="{% url 'year_edit' year.pk %}" class="button-edit btn-sm">Editar</a>
 
