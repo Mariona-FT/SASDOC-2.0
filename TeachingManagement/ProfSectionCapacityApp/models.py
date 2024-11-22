@@ -62,6 +62,7 @@ class TypePoints(models.Model):
     NamePointsC = models.CharField(max_length=100, default="", blank=True, null=True)
     NamePointsD = models.CharField(max_length=100, default="", blank=True, null=True)
     NamePointsE = models.CharField(max_length=100, default="", blank=True, null=True)
+    NamePointsF = models.CharField(max_length=100, default="", blank=True, null=True)
 
     class Meta:
         verbose_name='typepoints'
@@ -82,6 +83,7 @@ class CourseYear(models.Model):
     PointsC = models.IntegerField(null=True, blank=True)
     PointsD = models.IntegerField(null=True, blank=True)
     PointsE = models.IntegerField(null=True, blank=True)
+    PointsF = models.IntegerField(null=True, blank=True)
     Language = models.ForeignKey(Language, on_delete=models.SET_NULL, null=True, blank=True, related_name='course_years')
 
     class Meta:

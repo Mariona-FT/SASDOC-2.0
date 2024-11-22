@@ -1,7 +1,7 @@
 from django import forms
 from .models import Capacity, Free, CapacitySection,TypePoints,CourseYear
 from UsersApp.models import Professor
-from AcademicInfoApp.models import Year,Section
+from AcademicInfoApp.models import Year,Section,Course
 from django.core.exceptions import ValidationError
 
 
@@ -119,7 +119,7 @@ class CapacitySectionForm(forms.ModelForm):
 class TypePointsForm(forms.ModelForm):
     class Meta:
         model = TypePoints
-        fields = ['Year','Section','NamePointsA','NamePointsB','NamePointsC','NamePointsD','NamePointsE']
+        fields = ['Year','Section','NamePointsA','NamePointsB','NamePointsC','NamePointsD','NamePointsE','NamePointsF']
         labels = {
             'Year':'Any',
             'Section':'Secció',
@@ -128,6 +128,7 @@ class TypePointsForm(forms.ModelForm):
             'NamePointsC':'Nom pel Tipus de Punts C',
             'NamePointsD':'Nom pel Tipus de Punts D',
             'NamePointsE':'Nom pel Tipus de Punts E',
+            'NamePointsF':'Nom pel Tipus de Punts F',
         }
         widgets = {
             'Year': forms.Select(attrs={'required': 'required','class': 'form-select'}),
@@ -137,6 +138,7 @@ class TypePointsForm(forms.ModelForm):
             'NamePointsC': forms.TextInput(attrs={'class': 'form-control','placeholder': ' Punts C'}),
             'NamePointsD': forms.TextInput(attrs={'class': 'form-control','placeholder': ' Punts D'}),
             'NamePointsE': forms.TextInput(attrs={'class': 'form-control','placeholder': ' Punts E'}),
+            'NamePointsF': forms.TextInput(attrs={'class': 'form-control','placeholder': ' Punts F'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -146,7 +148,7 @@ class TypePointsForm(forms.ModelForm):
 class CourseYearForm(forms.ModelForm):
     class Meta:
         model = CourseYear
-        fields = [ 'Course', 'Year', 'Semester', 'PointsA', 'PointsB', 'PointsC', 'PointsD', 'PointsE', 'Language']
+        fields = [ 'Course', 'Year', 'Semester', 'PointsA', 'PointsB', 'PointsC', 'PointsD', 'PointsE','PointsF', 'Language']
         labels = {
             'Course': 'Curs',
             'Year': 'Any',
@@ -156,6 +158,7 @@ class CourseYearForm(forms.ModelForm):
             'PointsC': 'Punts C',
             'PointsD': 'Punts D',
             'PointsE': 'Punts E',
+            'PointsF': 'Punts F',
             'Language': 'Idioma',
         }
         widgets = {
@@ -167,6 +170,7 @@ class CourseYearForm(forms.ModelForm):
             'PointsC': forms.NumberInput(attrs={'class': 'form-control','placeholder': ' Punts C'}),
             'PointsD': forms.NumberInput(attrs={'class': 'form-control','placeholder': ' Punts D'}),
             'PointsE': forms.NumberInput(attrs={'class': 'form-control','placeholder': ' Punts E'}),
+            'PointsF': forms.NumberInput(attrs={'class': 'form-control','placeholder': ' Punts F'}),
             'Language': forms.Select(attrs={'required': 'required','class': 'form-select'}),
         }
 
@@ -197,6 +201,8 @@ class CourseYearForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         
         self.fields['Year'].queryset = Year.objects.all().order_by('-Year')
+        self.fields['Course'].queryset = Course.objects.all().order_by('NameCourse')
+
     
         if course:
             # If a course is passed, set it as initial and make it read-only
