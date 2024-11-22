@@ -47,7 +47,7 @@
 
                 <!-- List of all sections -->
                 <h3>Llista de Seccions</h3>
-                <table class="table table-striped" id="sections-table">
+                <table class="table table-hover" id="sections-table">
 
                     <thead>
                         <tr>
@@ -61,7 +61,11 @@
                     <tbody>
                         {% if sections %}
                             {% for section in sections %}
-                                <tr data-letter="{{section.LetterSection }}" 
+                                <tr  style="background-color: 
+                                {% if not section.isActive %}
+                                    #e0e0e0  ; 
+                                {% endif %}" 
+                                data-letter="{{section.LetterSection }}" 
                                 data-name="{{section.NameSection }}" 
                                 data-active="{{ section.isActive|yesno:'yes,no' }}"
                                 >

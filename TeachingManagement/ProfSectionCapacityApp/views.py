@@ -348,6 +348,7 @@ def section_typepoints_list(request):
             'NamePointsC': typepoint.NamePointsC or '-',  # Points C
             'NamePointsD': typepoint.NamePointsD or '-',  # Points D
             'NamePointsE': typepoint.NamePointsE or '-',  # Points E
+            'NamePointsF': typepoint.NamePointsF or '-',  # Points F
         }
         section_typepoints_info.append(section_info)
 
@@ -429,7 +430,7 @@ def course_year_list(request):
     # Determine if the selected year is the most recent year
     is_most_recent_year = selected_year == Year.objects.order_by('-Year').first()
 
-    all_courseyears=CourseYear.objects.filter(Year_id=selected_year.idYear) 
+    all_courseyears=CourseYear.objects.filter(Year_id=selected_year.idYear).order_by('Course')
 
     for course_year in all_courseyears:
         course_year.TotalPoints = sum([
@@ -437,7 +438,8 @@ def course_year_list(request):
                 course_year.PointsB or 0,
                 course_year.PointsC or 0,
                 course_year.PointsD or 0,
-                course_year.PointsE or 0
+                course_year.PointsE or 0,
+                course_year.PointsF or 0
             ])
         
     # Check for empty course list

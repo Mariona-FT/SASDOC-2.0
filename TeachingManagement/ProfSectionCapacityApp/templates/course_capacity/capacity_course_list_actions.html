@@ -68,15 +68,16 @@
                         <tr>
                             <th style=" width: 8%;">Curs</th>
                             <th style=" width: 8%;">Any</th>
-                            <th style=" width: 8%;">Semestre</th>
-                            <th style="width: 10%;">Idioma</th>
+                            <th style=" width: 7%;">Semestre</th>
+                            <th style="width: 9%;">Idioma</th>
                             <th style="width: auto;">Punts A</th>
                             <th style="width: auto;">Punts B</th>
                             <th style="width: auto;">Punts C</th>
                             <th style="width: auto;">Punts D</th>
                             <th style="width: auto;">Punts E</th>
-                            <th style="width: auto;">Punts Totals</th>
-                            <th class="actions-c" style="width:200px">Accions</th>
+                            <th style="width: auto;">Punts F</th>
+                            <th class="actions-c" style="width:7%">Punts Totals</th>
+                            <th class="actions-c" style="width:180px">Accions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -97,8 +98,9 @@
                             <td>{{ course_year.PointsC|default:"-" }}</td>
                             <td>{{ course_year.PointsD|default:"-" }}</td>
                             <td>{{ course_year.PointsE|default:"-" }}</td>
+                            <td>{{ course_year.PointsF|default:"-" }}</td>
                             <td><strong>{{ course_year.TotalPoints }}</strong></td>
-                            <td class="actions-c" style="width:200px">
+                            <td class="actions-c" style="width:180px">
                                 <!-- Edit button -->
                                 <a href="{% url 'edit_courseyear' course_year.idCourseYear %}" class="button-edit btn-sm">Editar</a>
 

@@ -12,7 +12,17 @@ from AcademicInfoApp.models import Field,Language,TypeProfessor,Year
 User = get_user_model()
 
 class CustomLoginForm(AuthenticationForm):
-    pass
+   
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        #username field
+        self.fields['username'].widget = forms.TextInput( attrs={'class': 'form-control', 'placeholder': 'Nom d\'usuari (username)','autofocus': True,})
+        self.fields['username'].label = 'Usuari'
+
+        # password field
+        self.fields['password'].widget = forms.PasswordInput( attrs={'class': 'form-control',  'placeholder': 'Contrasenya', })
+        self.fields['password'].label = 'Contrasenya'
 
 #Final Form for Professor
 class ProfessorForm(forms.ModelForm):

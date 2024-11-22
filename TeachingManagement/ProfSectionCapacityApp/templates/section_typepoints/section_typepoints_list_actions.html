@@ -74,6 +74,7 @@
                             <th style="width: auto;">Nom per Punts C</th>
                             <th style="width: auto;">Nom per Punts D</th>
                             <th style="width: auto;">Nom per Punts E</th>
+                            <th style="width: auto;">Nom per Punts F</th>
                             <th class="actions-c" style="width:200px">Accions</th>
                         </tr>
                     </thead>
@@ -88,6 +89,7 @@
                             data-pC="{{section.NamePointsC}}"
                             data-pD="{{section.NamePointsD}}"
                             data-pE="{{section.NamePointsE}}"
+                            data-pF="{{section.NamePointsF}}"
                             >
                                 <td>{{ section.LetterSection }}</td>
                                 <td>{{ section.NameSection }}</td>
@@ -97,6 +99,7 @@
                                 <td>{{ section.NamePointsC|default:"-"  }}</td>
                                 <td>{{ section.NamePointsD|default:"-"  }}</td>
                                 <td>{{ section.NamePointsE|default:"-"  }}</td>
+                                <td>{{ section.NamePointsF|default:"-"  }}</td>
                                 <td class="actions-c" style="width:200px">
                                     <!-- Edit button -->
                                     <a href="{% url 'edit_typepoints' section.Typepoint_id %}" class="button-edit btn-sm">Editar</a>
@@ -170,8 +173,9 @@
             const fieldC = row.getAttribute('data-pC') ? normalizeString(row.getAttribute('data-pC').toLowerCase()) : '';
             const fieldD = row.getAttribute('data-pD') ? normalizeString(row.getAttribute('data-pD').toLowerCase()) : '';
             const fieldE = row.getAttribute('data-pE') ? normalizeString(row.getAttribute('data-pE').toLowerCase()) : '';
+            const fieldF = row.getAttribute('data-pF') ? normalizeString(row.getAttribute('data-pF').toLowerCase()) : '';
 
-            const matchesSearch = fieldName.includes(searchValue) || fieldLetter.includes(searchValue)|| fieldYear.includes(searchValue)|| fieldA.includes(searchValue)|| fieldB.includes(searchValue)|| fieldC.includes(searchValue)|| fieldD.includes(searchValue)|| fieldE.includes(searchValue);
+            const matchesSearch = fieldName.includes(searchValue) || fieldLetter.includes(searchValue)|| fieldYear.includes(searchValue)|| fieldA.includes(searchValue)|| fieldB.includes(searchValue)|| fieldC.includes(searchValue)|| fieldD.includes(searchValue)|| fieldE.includes(searchValue) || fieldF.includes(searchValue);
 
             if (matchesSearch) {
                 row.style.display = '';
