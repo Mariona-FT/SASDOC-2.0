@@ -95,13 +95,11 @@ def professor_create_edit(request, idProfessor=None):
         user = professor.user  # Get the related CustomUser instance
 
         if request.method == 'POST':
-            form = ProfessorForm(request.POST, instance=user)
+            form = ProfessorForm(request.POST, instance=user, professor=professor)
            
             if form.is_valid():
                 print("Form is valid. Edititng...")
                 form.save(commit=True)  # Save without changing role
-
-                professor.idProfessor=idProfessor
                 messages.success(request, f"El Professor {professor.name} {professor.family_name} s\'ha actualitzat correctament.")
                 return redirect('usersapp:professor_list')
             else:
@@ -109,7 +107,7 @@ def professor_create_edit(request, idProfessor=None):
                 print(form.errors)  # Print form errors for debugging
         else:
             print("Loading form with existing data.")
-            form = ProfessorForm(instance=professor)
+            form = ProfessorForm(instance=user, professor=professor)
     else:
         # No idProfessor, we are creating a new course
         if request.method == 'POST':
