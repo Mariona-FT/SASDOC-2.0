@@ -188,32 +188,41 @@
         const searchValue = normalizeString(document.getElementById('filter-all').value);
         const activeFilter = document.getElementById('filter-active').value;
         const tableRows = document.querySelectorAll('#professors-table tbody tr');
-
+    
         let rowsVisible = 0;
-
+    
         tableRows.forEach(row => {
-            const fieldName = row.getAttribute('data-name') ? normalizeString(row.getAttribute('data-name').toLowerCase()) : '';
-            const fieldEmail = row.getAttribute('data-email') ? normalizeString(row.getAttribute('data-email').toLowerCase()) : '';
-            const fieldContract = row.getAttribute('data-contract') ? normalizeString(row.getAttribute('data-contract').toLowerCase()) : '';
-            const fieldField = row.getAttribute('data-fields') ? normalizeString(row.getAttribute('data-fields').toLowerCase()) : '';
-            const fieldLanguage = row.getAttribute('data-languages') ? normalizeString(row.getAttribute('data-languages').toLowerCase()) : '';
-
-            const isActive = row.getAttribute('data-active') ? normalizeString(row.getAttribute('data-active').toLowerCase()) : '';
-
-            const matchesSearch =  fieldName.includes(searchValue) || fieldEmail.includes(searchValue) || fieldContract.includes(searchValue) || fieldField.includes(searchValue) || fieldLanguage.includes(searchValue);
+            const isDetailsRow = row.classList.contains('professor-details-row');
+            const mainRow = isDetailsRow ? row.previousElementSibling : row;
+    
+            const fieldName = mainRow.getAttribute('data-name') ? normalizeString(mainRow.getAttribute('data-name').toLowerCase()) : '';
+            const fieldEmail = mainRow.getAttribute('data-email') ? normalizeString(mainRow.getAttribute('data-email').toLowerCase()) : '';
+            const fieldContract = mainRow.getAttribute('data-contract') ? normalizeString(mainRow.getAttribute('data-contract').toLowerCase()) : '';
+            const fieldField = mainRow.getAttribute('data-fields') ? normalizeString(mainRow.getAttribute('data-fields').toLowerCase()) : '';
+            const fieldLanguage = mainRow.getAttribute('data-languages') ? normalizeString(mainRow.getAttribute('data-languages').toLowerCase()) : '';
+    
+            const isActive = mainRow.getAttribute('data-active') ? normalizeString(mainRow.getAttribute('data-active').toLowerCase()) : '';
+    
+            const matchesSearch = fieldName.includes(searchValue) || fieldEmail.includes(searchValue) || fieldContract.includes(searchValue) || fieldField.includes(searchValue) || fieldLanguage.includes(searchValue);
             const matchesActiveFilter = (activeFilter === '' || isActive === activeFilter);
-
-            if (matchesSearch && matchesActiveFilter) {
-                row.style.display = '';
-                rowsVisible++;
+    
+            if (!isDetailsRow) {
+                // Main row visibility
+                if (matchesSearch && matchesActiveFilter) {
+                    mainRow.style.display = '';
+                    rowsVisible++;
+                } else {
+                    mainRow.style.display = 'none';
+                }
             } else {
+                // Hide all detail rows by default unless manually toggled
                 row.style.display = 'none';
             }
         });
-
+    
         const noResultsMessage = document.getElementById('no-results-message');
         const noResultsText = document.getElementById('no-results-text');
-
+    
         // No results message logic
         if (rowsVisible === 0) {
             let message = "Cap Professor amb els criteris de cerca";
