@@ -103,7 +103,7 @@ class Language(models.Model):
 
 class Year(models.Model):
     idYear = models.AutoField(primary_key=True) 
-    Year = models.IntegerField(unique=True)
+    Year = models.CharField(max_length=9, unique=True)  
     isEditable = models.BooleanField(default=False)
 
     class Meta:
