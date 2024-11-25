@@ -34,12 +34,12 @@ class ProfessorForm(forms.ModelForm):
         help_text="Sisplau, entreu un nom d'usuari únic."
     ) 
     
-    idprofessor = forms.CharField(
-        max_length=10, 
-        required=True, 
-        label="ID/DNI del Professor", 
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
-    )  
+    # idprofessor = forms.CharField(
+    #     max_length=10, 
+    #     required=True, 
+    #     label="ID/DNI del Professor", 
+    #     widget=forms.TextInput(attrs={'class': 'form-control'}),
+    # )  
 
     name = forms.CharField(
         max_length=100, 
@@ -117,14 +117,12 @@ class ProfessorForm(forms.ModelForm):
             'email': 'Correu electrònic',
         }
     
-    def __init__(self, *args, **kwargs):
-        professor = kwargs.get('instance',None)
+    def __init__(self, *args,professor=None, **kwargs):
         super().__init__(*args, **kwargs)
 
         # Set initial values for professor fields and languages
-        if professor and isinstance(professor, Professor):
+        if professor:
             self.fields['username'].initial = professor.user.username 
-            self.fields['idprofessor'].initial = professor.idProfessor
             self.fields['name'].initial = professor.name
             self.fields['family_name'].initial = professor.family_name
             self.fields['description'].initial = professor.description
@@ -139,7 +137,6 @@ class ProfessorForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        idprofessor = cleaned_data.get('idprofessor')
         username = cleaned_data.get('username')
         email = cleaned_data.get('email')
 
@@ -155,24 +152,24 @@ class ProfessorForm(forms.ModelForm):
         if CustomUser.objects.filter(email=email).exclude(pk=user_instance.pk).exists():
             raise ValidationError(f'El correu electrònic "{email}" ja està en ús.')
 
-        # Check if a professor with the same ID already exists, excluding the current professor
-        if Professor.objects.filter(idProfessor=idprofessor).exclude(user_id=user_instance.pk).exists():
-            raise ValidationError(f'El ID del professor "{idprofessor}" ja està en ús.')
-
         print("Cleaned data after validation:", cleaned_data)  # Print cleaned data after checks
         return cleaned_data
     
     def save(self, commit=True):
        
         user = self.instance or CustomUser()
-        
+        professor = getattr(user, 'professor', None)
+
         current_contract = self.cleaned_data['current_contract']
         
-        # Update user details
-        user.username = self.cleaned_data.get('username')
-        user.first_name = self.cleaned_data.get('name')
-        user.last_name = self.cleaned_data.get('family_name')
-        user.email = self.cleaned_data.get('email')
+        # Update user fields
+        user.username = self.cleaned_data['username']
+        user.email = self.cleaned_data['email']
+        user.first_name = self.cleaned_data['name']
+        user.last_name = self.cleaned_data['family_name']
+       
+        if commit:
+            user.save()
         
         if not user.pk:  # Only set password for new user
             generated_password = f"{user.first_name.lower()}_{user.last_name.lower()}"
@@ -187,7 +184,6 @@ class ProfessorForm(forms.ModelForm):
         professor, created = Professor.objects.update_or_create(
             user=user,
             defaults={
-                'idProfessor': self.cleaned_data['idprofessor'],
                 'name': self.cleaned_data['name'],
                 'family_name': self.cleaned_data['family_name'],
                 'email': self.cleaned_data['email'],
@@ -201,6 +197,7 @@ class ProfessorForm(forms.ModelForm):
 
         if commit:
             professor.save()
+
             possible_fields = self.cleaned_data['possible_fields']
             possible_languages = self.cleaned_data['possible_languages']
                 

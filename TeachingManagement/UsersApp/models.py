@@ -33,10 +33,10 @@ class CustomUser(AbstractUser):
 #PROFESSOR MODEL
 class Professor(models.Model):
     #Custom PK
-    idProfessor = models.CharField(max_length=10, primary_key=True, unique=True)  
+    idProfessor = models.AutoField(primary_key=True)  
 
     # ForeignKey to CustomUser
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='professor')
     
     # Additional professor-specific fields
     name = models.CharField(max_length=100)

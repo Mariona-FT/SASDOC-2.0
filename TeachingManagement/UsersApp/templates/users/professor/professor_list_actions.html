@@ -109,7 +109,7 @@
                                     <td class="active-status">{% if professor.isActive == 'yes' %}Sí{% else %}No{% endif %}</td>
                                     <td class="actions-c" style="width:200px">
                                         <!-- Edit button -->
-                                        <a href="{% url 'usersapp:professor_edit' professor.pk %}" class="button-edit btn-sm">Editar</a>
+                                        <a href="{% url 'usersapp:professor_edit' professor.idProfessor %}" class="button-edit btn-sm">Editar</a>
 
                                         <!-- Delete form with JavaScript confirmation -->
                                         <form method="post" action="{% url 'usersapp:professor_list' %}" style="display:inline;" onsubmit="return confirmDelete('{{ professor.name }} {{ professor.family_name }}');">
