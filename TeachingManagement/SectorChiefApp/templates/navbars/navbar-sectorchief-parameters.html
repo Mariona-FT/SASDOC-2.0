@@ -1,9 +1,9 @@
 <!-- Academic Info Navbar -->
 <nav class="navbar-sub-nav navbar-expand-lg navbar-light d-flex justify-content-center">
     <ul class="navbar-nav">
-        {% url 'capacityprofessor_list' as capacityprofessor_list_url %}
-        <li class="nav-item me-4 {% if '/capacity-professors/' in request.path %} active{% endif %}">
-            <a class="nav-link" href="{{capacityprofessor_list_url}}">Assignatures</a>
+        {% url 'field_list' as field_list_url %}
+        <li class="nav-item me-4 {% if '/academicinfo/fields/' in request.path %} active{% endif %}">
+            <a class="nav-link" href="{{ field_list_url }}">Camps</a>
         </li>
 
         {% url 'sectiontypepoints_list' as sectiontypepoints_list_url %}

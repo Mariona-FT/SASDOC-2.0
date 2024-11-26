@@ -3,13 +3,21 @@ from django.contrib import messages
 from django.shortcuts import render, redirect,get_object_or_404
 from .models import Field,Section,School,Degree,Course,TypeProfessor,Language,Year
 from .forms import FieldForm,SectionForm,SchoolForm,DegreeForm,CourseForm,TypeProfessorForm,LanguageForm,YearForm
+from TeachingManagementApp.utils import role_required
+from django.contrib.auth.decorators import login_required
+from django.urls import reverse
 
 # Create your views here.
 
 ### FIELD ###
 
 ## Field list to manage - listing and actions of edit, delete and add field
+@login_required
+@role_required(allowed_roles=['director'], redirect_url='/baseapp/access-denied/')
 def field_list(request):
+    if not request.user.has_role('director'):
+        return redirect(reverse('access_denied'))
+    
     fields = Field.objects.all()
     deleting = None
 

@@ -22,4 +22,5 @@ from . import views
 urlpatterns = [
     # use names for easy calls + functions reverse() and {% url %}  
     path('', views.home_page, name="Home"),
+    path('access-denied/', views.access_denied, name='access_denied'),
 ]

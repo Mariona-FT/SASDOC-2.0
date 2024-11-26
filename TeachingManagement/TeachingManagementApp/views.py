@@ -16,3 +16,6 @@ def home_page(request):
     
         # For unauthenticated users, show the home page
     return render(request, 'home.html')
+
+def access_denied(request):
+    return render(request, 'access_denied.html')
