@@ -37,8 +37,6 @@ urlpatterns = [
     path('sectorchief/create/', views.sectorchief_create_edit, name='sectorchief_create'),
     path('sectorchief/edit/<int:idChief>', views.sectorchief_create_edit, name='sectorchief_edit'),
  
-    #Dashboards
-    path('dashdirector/', views.redirect_director_dashboard, name='redirect_director_dashboard'),
-    path('dashsector-chief/', views.sector_chief_dashboard, name='sector_chief_dashboard'),
+    #provisional Dashboards
     path('dashprofessor/', views.professor_dashboard, name='professor_dashboard'),
     ]

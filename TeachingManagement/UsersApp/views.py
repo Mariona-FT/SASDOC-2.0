@@ -16,20 +16,9 @@ from django.db import IntegrityError
 def is_director(user):
     return user.role == 'director'
 
-@login_required
-@user_passes_test(is_director)
-def redirect_director_dashboard(request):
-    return render(request, 'directorapp/director_dashboard.html')
-
 #SECTOR CHIEF views
 def is_sector_chief(user):
     return user.role == 'sector_chief'
-
-@login_required
-@user_passes_test(is_sector_chief)
-def sector_chief_dashboard(request):
-    #Delete this dashboard in the future
-    return render(request, 'users/sectorchief_dashboard.html')
 
 #PROFESSOR views
 def is_professor(user):
@@ -227,7 +216,7 @@ def login_session(request):
                     if user.role == 'director':
                         return redirect('directorapp:director_dashboard')  # URL for Director
                     elif user.role == 'sector_chief':
-                        return redirect('usersapp:sector_chief_dashboard')  # URL for Sector Chief
+                        return redirect('sectorchiefapp:sectorchief_dashboard')  # URL for Sector Chief
                     elif user.role ==  'professor':
                         return redirect('usersapp:professor_dashboard')  # URL for Professor
                 else:

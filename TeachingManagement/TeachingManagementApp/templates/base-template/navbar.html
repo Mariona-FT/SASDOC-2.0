@@ -24,13 +24,16 @@
                                 Paràmetres del Curs Actual
                             </a>
                         </li>
-                    <!-- Sector Chief Role -->
+                   
+                        <!-- Sector Chief Role Navbar -->
                     {% elif user.role == 'sector_chief' %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'usersapp:sector_chief_dashboard' %}">Tauler Cap de Sector</a>
+                            <a class="nav-link" href="{% url 'sectorchiefapp:sectorchief_dashboard' %}">Inici</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Funció Cap de Sector</a>
+                            <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#sectorchiefNavbar" aria-expanded="false" aria-controls="sectorchiefNavbar">
+                                Paràmetres Generals
+                            </a>
                         </li>
 
                     <!-- Professor Role -->
@@ -76,6 +79,16 @@
 
     {% endif %}
 </div>
+
+<!-- Subnavbar for SECTORCHIEF-->
+<div class="container-fluid mt-1">
+    {% if user.is_authenticated and user.role == 'sector_chief' %}
+        <div class="collapse" id="sectorchiefNavbar">
+            {% include 'navbars/navbar-sectorchief-parameters.html' %}
+        </div>
+    {% endif %}
+</div>
+
 
 <!-- JavaScript for Toggle Functionality -->
 <script>
