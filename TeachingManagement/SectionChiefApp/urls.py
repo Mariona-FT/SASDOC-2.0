@@ -1,5 +1,5 @@
 """
-URL configuration for WebProject project - APP
+URL configuration for TeachingManagement project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.1/topics/http/urls/
@@ -13,14 +13,15 @@ Class-based views
 Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-
-  **  URL ONLY FOR THIS APP **
 """
-from django.urls import path
-from . import views
+from django.contrib import admin
+from django.urls import path,include
+from django.shortcuts import redirect
+from .import views
+
+app_name='sectionchiefapp'
 
 urlpatterns = [
-    # use names for easy calls + functions reverse() and {% url %}  
-    path('', views.home_page, name="Home"),
-    path('access-denied/', views.access_denied, name='access_denied'),
+    path('dashboard/', views.section_chief_dashboard, name='sectionchief_dashboard'),
+
 ]

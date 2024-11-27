@@ -407,7 +407,7 @@ class ChiefRegistrationForm(forms.ModelForm):
                     old_professor.user.save()
         
         # Set the new role for the new professor
-        chief.professor.user.role = 'sector_chief'
+        chief.professor.user.role = 'section_chief'
 
         if commit:
             # Save the professor's role and the chief instance

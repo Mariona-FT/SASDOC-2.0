@@ -16,9 +16,9 @@
             <a class="nav-link" href="{{ section_list_url }}">Seccions</a>
         </li>
         
-        {% url 'usersapp:sectorchief_list' as sectorchief_list_url %}
-        <li class="nav-item me-4 {% if '/users/sectorchief/' in request.path %} active{% endif %}">
-            <a class="nav-link" href="{{ sectorchief_list_url }}">Caps de Secció</a>
+        {% url 'usersapp:sectionchief_list' as sectionchief_list_url %}
+        <li class="nav-item me-4 {% if '/users/sectionchief/' in request.path %} active{% endif %}">
+            <a class="nav-link" href="{{sectionchief_list_url }}">Caps de Secció</a>
         </li>
 
         {% url 'school_list' as school_list_url %}

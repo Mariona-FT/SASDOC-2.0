@@ -1,0 +1,26 @@
+<!-- Academic Info Navbar -->
+<nav class="navbar-sub-nav navbar-expand-lg navbar-light d-flex justify-content-center">
+    <ul class="navbar-nav">
+
+        {% url 'test_sectionchief' as test_sectionchief_url %}
+        <li class="nav-item me-4 {% if '/section-courses/' in request.path %} active{% endif %}">
+            <a class="nav-link" href="{{test_sectionchief_url}}">Test</a>
+        </li>
+
+        {% url 'section_courses_list' as section_courses_list_url %}
+        <li class="nav-item me-4 {% if '/section-courses/' in request.path %} active{% endif %}">
+            <a class="nav-link" href="{{section_courses_list_url}}">Assignatures</a>
+        </li>
+
+        {% url 'sectiontypepoints_list' as sectiontypepoints_list_url %}
+        <li class="nav-item me-4 {% if '/section-typepoints/' in request.path %} active{% endif %}">
+            <a class="nav-link" href="{{sectiontypepoints_list_url}}">Professorat</a>
+        </li>
+
+        <form method="GET" action="{% url 'test_sectionchief' %}">
+            <label for="year">Seleccionar Any Year:</label>
+            <input type="number" name="year" id="year" value="{{ year }}" />
+            <button type="submit">Submit</button>
+        </form>
+    </ul>
+</nav>

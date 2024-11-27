@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Capacity,Free,CapacitySection,TypePoints
+from .models import Capacity,Free,CapacitySection,TypePoints,CourseYear
 # Register your models here.
 
 class CapacityAdmin(admin.ModelAdmin):
@@ -18,6 +18,11 @@ class CapacitySectionAdmin(admin.ModelAdmin):
 admin.site.register(CapacitySection,CapacitySectionAdmin)
 
 class TypePointsAdmin(admin.ModelAdmin):
-    list_display=["idTypePoints","Year","Section","NamePointsA","NamePointsB","NamePointsC","NamePointsD","NamePointsE"]
+    list_display=["idTypePoints","Year","Section","NamePointsA","NamePointsB","NamePointsC","NamePointsD","NamePointsE","NamePointsF"]
 
 admin.site.register(TypePoints,TypePointsAdmin)
+
+class CourseYearAdmin(admin.ModelAdmin):
+    list_display=["idCourseYear","Course","Year","Semester","PointsA","PointsB","PointsC","PointsD","PointsE","PointsF","Language"]
+
+admin.site.register(CourseYear,CourseYearAdmin)

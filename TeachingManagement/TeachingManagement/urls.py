@@ -23,13 +23,17 @@ urlpatterns = [
 
     path('baseapp/',include('TeachingManagementApp.urls')),  # URL for every APP - TeachingManagementApp
    
+    #functionalities for users in app + their functionalities
     path('users/',include('UsersApp.urls')),  # URL for every APP - UsersApp
-    path('academicinfo/',include('AcademicInfoApp.urls')),  # URL for every APP - AcademicInfoApp
-    
+   
+    #for Directors + their functions
     path('director/',include('DirectorApp.urls')),  # URL for every APP - DirectorApp
-
+    path('academicinfo/',include('AcademicInfoApp.urls')),  # URL for every APP - AcademicInfoApp
     path('professorsection/',include('ProfSectionCapacityApp.urls')),  # URL for every APP - ProfSectionCapacity
 
+    #For section chiefs + their functions
+    path('sectionchief/',include('SectionChiefApp.urls')),  # URL for every APP - SectionChiefApp
+    path('infosection/',include('AssigmentYearApp.urls')),  # URL for every APP - AssigmentYearApp
 
     path('admin/', admin.site.urls),
 ]
