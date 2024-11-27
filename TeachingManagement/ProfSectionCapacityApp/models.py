@@ -13,7 +13,7 @@ class Capacity(models.Model):
 
     class Meta:
         verbose_name='capacity'
-        verbose_name_plural='capacitys'
+        verbose_name_plural='capacities'
         unique_together = ('Professor', 'Year')  # Ensure unique combinations
 
 
@@ -45,8 +45,8 @@ class CapacitySection(models.Model):
     Comment = models.TextField(blank=True, null=True)
 
     class Meta:
-        verbose_name='capacitysection'
-        verbose_name_plural='capacitysections'
+        verbose_name='capacity section'
+        verbose_name_plural='capacity sections'
         unique_together = ('Professor', 'Year','Section')  # Ensure unique combinations
 
     def __str__(self):
@@ -65,8 +65,8 @@ class TypePoints(models.Model):
     NamePointsF = models.CharField(max_length=100, default="", blank=True, null=True)
 
     class Meta:
-        verbose_name='typepoints'
-        verbose_name_plural='typepoints'
+        verbose_name='type points'
+        verbose_name_plural='type points'
         unique_together = ('Year', 'Section')  # Ensure unique combinations
 
 
@@ -87,8 +87,8 @@ class CourseYear(models.Model):
     Language = models.ForeignKey(Language, on_delete=models.SET_NULL, null=True, blank=True, related_name='course_years')
 
     class Meta:
-        verbose_name='courseyear'
-        verbose_name_plural='courseyears'
+        verbose_name='course year'
+        verbose_name_plural='course years'
         unique_together = ('Year', 'Course','Semester')  # Ensure unique combinations
 
     def __str__(self):

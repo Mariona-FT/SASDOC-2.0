@@ -1,7 +1,7 @@
 {% extends 'base-template/base.html' %}
 {% load tz %}
 
-{% block title %}Director - SASDOC 2.0{% endblock %}
+{% block title %}Cap de Secció - SASDOC 2.0{% endblock %}
 
 {% block content %}
 <div class="dashboard container mt-4">
@@ -16,27 +16,21 @@
     <div class="list-group mt-4">
 
         <div class="list-group-item">
-            <h4>Gestió de Professorat</h4>
+            <h4>Gestió de les assignatures</h4>
             <p>Aquí podràs gestionar els professors, incloent-hi crear, editar i eliminar professors.</p>
-            <a href="{% url 'usersapp:professor_list' %}" class="btn btn-primary">Accedir</a>
+            <a href="{% url 'section_courses_list' %}" class="btn btn-primary">Accedir</a>
         </div>
 
         <div class="list-group-item">
-            <h4>Gestió de Caps de Secció</h4>
+            <h4>Gestió del Professorat</h4>
             <p>Aquí podràs gestionar els caps de secció, incloent-hi la seva creació, edició i eliminació.</p>
             <a href="{% url 'usersapp:sectorchief_list' %}" class="btn btn-primary">Accedir</a>
         </div>
 
         <div class="list-group-item">
-            <h4>Gestió Acadèmica</h4>
+            <h4>Gestió del Curs a Visualitzar</h4>
             <p>Aquesta secció et permet gestionar els camps, seccions, escoles, graus, cursos i tipus de professors per mantenir un registre actualitzat de la informació acadèmica.</p>
             <a href="{% url 'field_list' %}" class="btn btn-primary">Accedir</a>
-        </div>
-
-        <div class="list-group-item">
-            <h4>Gestió d'Anys i Idiomes</h4>
-            <p>Controla els anys acadèmics i els idiomes d'ensenyament disponibles per cada curs i professor.</p>
-            <a href="{% url 'language_list' %}" class="btn btn-primary">Accedir</a>
         </div>
 
     </div>
