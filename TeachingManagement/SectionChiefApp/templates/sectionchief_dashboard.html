@@ -1,4 +1,7 @@
 {% extends 'base-template/base.html' %}
+
+{% include 'navbars/navbar-sectionchief-parameters.html' %}
+
 {% load tz %}
 
 {% block title %}Cap de Secció - SASDOC 2.0{% endblock %}
@@ -12,6 +15,8 @@
     {% now "l, F j, Y" as current_date %} 
 
     <p class="text-center">Data: {{ current_date }}</p>
+
+    <p>Selected Year: {{ global_selected_year }}</p>
 
     <div class="list-group mt-4">
 

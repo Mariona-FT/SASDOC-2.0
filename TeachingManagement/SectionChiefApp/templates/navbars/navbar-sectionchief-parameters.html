@@ -1,6 +1,6 @@
-<!-- Academic Info Navbar -->
+<!-- Section chief Navbar -->
 <nav class="navbar-sub-nav navbar-expand-lg navbar-light d-flex justify-content-center">
-    <ul class="navbar-nav">
+    <ul class="navbar-nav d-flex align-items-center  mb-0">
 
         {% url 'test_sectionchief' as test_sectionchief_url %}
         <li class="nav-item me-4 {% if '/section-courses/' in request.path %} active{% endif %}">
@@ -17,10 +17,20 @@
             <a class="nav-link" href="{{sectiontypepoints_list_url}}">Professorat</a>
         </li>
 
-        <form method="GET" action="{% url 'test_sectionchief' %}">
-            <label for="year">Seleccionar Any Year:</label>
-            <input type="number" name="year" id="year" value="{{ year }}" />
-            <button type="submit">Submit</button>
-        </form>
+        <!-- Year Selector in the Navbar -->
+        <li class="nav-item me-6  d-flex align-items-center">
+            <form method="GET" action="{% url 'sectionchiefapp:sectionchief_dashboard' %}" class="d-flex align-items-center mb-0" style="width: auto;">
+                <label for="year" class="mb-0 me-2">Seleccionar Any:</label> 
+                <select name="year" id="year" class="form-select form-select-sm" onchange="this.form.submit()" style="width: 160px;">
+                    <option value="" disabled {% if not global_selected_year %}selected{% endif %}> ---- </option>
+                    {% for year in global_available_years %}
+                        <option value="{{ year.Year }}" {% if year.Year == global_selected_year %}selected{% endif %}>
+                            {{ year.Year }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </form>
+        </li>
+
     </ul>
 </nav>

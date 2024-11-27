@@ -83,8 +83,8 @@
 <!-- Subnavbar for SECTIONCHIEF-->
 <div class="container-fluid mt-1">
     {% if user.is_authenticated and user.role == 'section_chief' %}
-        <div class="collapse {% if '/infosection/' in request.path %}show{% endif %}"  id="sectionchiefNavbar">
-            {% include 'navbars/navbar-sectionchief-parameters.html' %}
+        <div class="collapse {% if '/infosection/' in request.path or '/sectionchief/' in request.path  %}show{% endif %}"  id="sectionchiefNavbar">
+            {% include 'navbars/navbar-sectionchief-parameters.html' with selected_year=selected_year %}
         </div>
     {% endif %}
 </div>
