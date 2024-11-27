@@ -1,5 +1,6 @@
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect
+from functools import wraps
 
 def role_required(allowed_roles=None, redirect_url=None):
     """
@@ -8,12 +9,11 @@ def role_required(allowed_roles=None, redirect_url=None):
     :param redirect_url: URL to redirect unauthorized users (if None, raise PermissionDenied).
     """
     def decorator(view_func):
+        @wraps(view_func)
         def _wrapped_view(request, *args, **kwargs):
-            if allowed_roles and request.user.role not in allowed_roles:
-                if redirect_url:
-                    return redirect(redirect_url)
-                else:
-                    raise PermissionDenied
-            return view_func(request, *args, **kwargs)
+            if request.user.role in allowed_roles:
+                return view_func(request, *args, **kwargs)
+            else:
+                return redirect(redirect_url)
         return _wrapped_view
     return decorator

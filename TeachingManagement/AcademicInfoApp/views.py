@@ -15,7 +15,7 @@ from django.urls import reverse
 @login_required
 @role_required(allowed_roles=['director'], redirect_url='/baseapp/access-denied/')
 def field_list(request):
-    if not request.user.has_role('director'):
+    if not request.user.role == 'director':
         return redirect(reverse('access_denied'))
     
     fields = Field.objects.all()
@@ -44,7 +44,12 @@ def field_list(request):
     })
 
 #Function to create or edit a field - depends if is passed a idField 
+@login_required
+@role_required(allowed_roles=['director'], redirect_url='/baseapp/access-denied/')
 def field_create_edit(request, idField=None):
+    if not request.user.role == 'director':
+        return redirect(reverse('access_denied'))
+
     if idField:
         # If idField is passed, we are editing an existing field
         field = get_object_or_404(Field, pk=idField)
@@ -73,7 +78,12 @@ def field_create_edit(request, idField=None):
 ### SECTION ###
 
 ## Section list to manage - listing and actions of edit, delete and add section
+@login_required
+@role_required(allowed_roles=['director'], redirect_url='/baseapp/access-denied/')
 def section_list(request):
+    if not request.user.role == 'director':
+        return redirect(reverse('access_denied'))
+    
     sections = Section.objects.all().order_by('LetterSection')
     deleting = None
 
@@ -100,7 +110,12 @@ def section_list(request):
     })
 
 #Function to create or edit a section - depends if is passed a idSection 
+@login_required
+@role_required(allowed_roles=['director'], redirect_url='/baseapp/access-denied/')
 def sections_create_edit(request,idSection=None):
+    if not request.user.role == 'director':
+        return redirect(reverse('access_denied'))
+    
     if idSection:
         # If idSection is passed, we are editing an existing section
         section = get_object_or_404(Section, pk=idSection)
