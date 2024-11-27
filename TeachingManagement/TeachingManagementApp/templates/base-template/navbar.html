@@ -25,13 +25,13 @@
                             </a>
                         </li>
                    
-                        <!-- Sector Chief Role Navbar -->
+                        <!-- Section Chief Role Navbar -->
                     {% elif user.role == 'sector_chief' %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'sectorchiefapp:sectorchief_dashboard' %}">Inici</a>
+                            <a class="nav-link" href="{% url 'sectionchiefapp:sectionchief_dashboard' %}">Inici</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#sectorchiefNavbar" aria-expanded="false" aria-controls="sectorchiefNavbar">
+                            <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#sectionchiefNavbar" aria-expanded="false" aria-controls="sectionchiefNavbar">
                                 Paràmetres Generals
                             </a>
                         </li>
@@ -69,7 +69,7 @@
 <div class="container-fluid mt-1">
     {% if user.is_authenticated and user.role == 'director' %}
         <!-- Include General Parameters Navbar -->
-        <div class="collapse {% if '/users/professor-management/' in request.path or '/users/professor/' in request.path or '/users/professor-create/' in request.path or '/users/professor-information/' in request.path or '/users/professor-edit/' in request.path or '/users/professor-upload/' in request.path or '/users/sectorchief/' in request.path or '/academicinfo/fields/' in request.path or '/academicinfo/sections/' in request.path or '/academicinfo/schools/' in request.path or '/academicinfo/degrees/' in request.path or '/academicinfo/courses/' in request.path or '/academicinfo/typeprofessor/' in request.path or '/academicinfo/year' in request.path or '/academicinfo/languages' in request.path %}show{% endif %}" id="generalParametersNavbar">
+        <div class="collapse {% if '/users/professor-management/' in request.path or '/users/professor/' in request.path or '/users/professor-create/' in request.path or '/users/professor-information/' in request.path or '/users/professor-edit/' in request.path or '/users/professor-upload/' in request.path or '/users/sectionchief/' in request.path or '/academicinfo/fields/' in request.path or '/academicinfo/sections/' in request.path or '/academicinfo/schools/' in request.path or '/academicinfo/degrees/' in request.path or '/academicinfo/courses/' in request.path or '/academicinfo/typeprofessor/' in request.path or '/academicinfo/year' in request.path or '/academicinfo/languages' in request.path %}show{% endif %}" id="generalParametersNavbar">
             {% include 'navbars/navbar-general-parameters.html' %}
         </div> 
           <!-- Include Course Parameters Subnavbar -->
@@ -80,11 +80,11 @@
     {% endif %}
 </div>
 
-<!-- Subnavbar for SECTORCHIEF-->
+<!-- Subnavbar for SECTIONCHIEF-->
 <div class="container-fluid mt-1">
     {% if user.is_authenticated and user.role == 'sector_chief' %}
-        <div class="collapse {% if '/infosection/' in request.path %}show{% endif %}"  id="sectorchiefNavbar">
-            {% include 'navbars/navbar-sectorchief-parameters.html' %}
+        <div class="collapse {% if '/infosection/' in request.path %}show{% endif %}"  id="sectionchiefNavbar">
+            {% include 'navbars/navbar-sectionchief-parameters.html' %}
         </div>
     {% endif %}
 </div>

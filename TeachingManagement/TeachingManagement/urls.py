@@ -32,7 +32,7 @@ urlpatterns = [
     path('professorsection/',include('ProfSectionCapacityApp.urls')),  # URL for every APP - ProfSectionCapacity
 
     #For section chiefs + their functions
-    path('sectorchief/',include('SectorChiefApp.urls')),  # URL for every APP - SectorChiefApp
+    path('sectionchief/',include('SectionChiefApp.urls')),  # URL for every APP - SectionChiefApp
     path('infosection/',include('AssigmentYearApp.urls')),  # URL for every APP - AssigmentYearApp
 
     path('admin/', admin.site.urls),

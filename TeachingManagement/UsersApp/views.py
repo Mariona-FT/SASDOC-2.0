@@ -16,8 +16,8 @@ from django.db import IntegrityError
 def is_director(user):
     return user.role == 'director'
 
-#SECTOR CHIEF views
-def is_sector_chief(user):
+#SECTION CHIEF views
+def is_section_chief(user):
     return user.role == 'sector_chief'
 
 #PROFESSOR views
@@ -135,9 +135,9 @@ def upload_professors(request):
 
     return render(request, 'actions/upload_professors.html', {'form': form})
 
-#SECTOR CHIEF 
-#Sector chief list to manage - listing and actions of edit, delete and add sector chiefs
-def sectorchief_list(request):
+#SECTION CHIEF 
+#section chief list to manage - listing and actions of edit, delete and add section chiefs
+def sectionchief_list(request):
     professors = Professor.objects.all().order_by('family_name')
     deleting = None
    
@@ -157,7 +157,7 @@ def sectorchief_list(request):
                 professor.user.save()
 
             messages.success(request, f"El Cap de secció {professor_name} s'ha eliminat correctament.")
-            return redirect('usersapp:sectorchief_list')
+            return redirect('usersapp:sectionchief_list')
 
         except Chief.DoesNotExist:
             messages.error(request, "Error: El Cap de Secció no existeix.")
@@ -169,13 +169,13 @@ def sectorchief_list(request):
         chief_id = request.GET.get('confirm_delete')
         deleting = chief_id  # Only pass the ID
 
-    return render(request, 'users/sectorchief/sectorchief_list_actions.html', {
+    return render(request, 'users/sectionchief/sectionchief_list_actions.html', {
         'professors': professors,
         'deleting': deleting,
     })
 
 #Function to create or edit a Section Chief - depends if is passed a idChief 
-def sectorchief_create_edit(request, idChief=None):
+def sectionchief_create_edit(request, idChief=None):
     if idChief:
         # If idChief is passed, we are editing an existing chief
         chief = get_object_or_404(Chief, pk=idChief)
@@ -185,7 +185,7 @@ def sectorchief_create_edit(request, idChief=None):
             if form.is_valid():
                 new_chief = form.save()  
                 messages.success(request, f"El Cap de secció {chief.professor.name} {chief.professor.family_name} s'ha actualitzat correctament.")
-                return redirect('usersapp:sectorchief_list')
+                return redirect('usersapp:sectionchief_list')
         else:
             form = ChiefRegistrationForm(instance=chief)
     else:
@@ -194,9 +194,9 @@ def sectorchief_create_edit(request, idChief=None):
         if request.method == 'POST' and form.is_valid():
             new_chief = form.save()
             messages.success(request, f"El Cap de secció {new_chief.professor.name} {new_chief.professor.family_name} s'ha afegit correctament.")
-            return redirect('usersapp:sectorchief_list')
+            return redirect('usersapp:sectionchief_list')
         
-    return render(request, 'users/sectorchief/sectorchief_form.html', {'form': form})
+    return render(request, 'users/sectionchief/sectionchief_form.html', {'form': form})
 
 #LOGIN
 def login_session(request):
@@ -216,7 +216,7 @@ def login_session(request):
                     if user.role == 'director':
                         return redirect('directorapp:director_dashboard')  # URL for Director
                     elif user.role == 'sector_chief':
-                        return redirect('sectorchiefapp:sectorchief_dashboard')  # URL for Sector Chief
+                        return redirect('sectionchiefapp:sectionchief_dashboard')  # URL for Section Chief
                     elif user.role ==  'professor':
                         return redirect('usersapp:professor_dashboard')  # URL for Professor
                 else:

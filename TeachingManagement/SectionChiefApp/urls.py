@@ -19,9 +19,9 @@ from django.urls import path,include
 from django.shortcuts import redirect
 from .import views
 
-app_name='sectorchiefapp'
+app_name='sectionchiefapp'
 
 urlpatterns = [
-    path('dashboard/', views.sector_chief_dashboard, name='sectorchief_dashboard'),
+    path('dashboard/', views.section_chief_dashboard, name='sectionchief_dashboard'),
 
 ]

@@ -1,7 +1,7 @@
 from UsersApp.models import Professor,Chief
 
-def get_sectorchief_section(user):
-    """Returns the last section assigned to the sector chief."""
+def get_sectionchief_section(user):
+    """Returns the last section assigned to the section chief."""
     professor = user.professor  # Assuming one-to-one relation between user and professor
 
     if not professor:

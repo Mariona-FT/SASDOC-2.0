@@ -1,23 +1,23 @@
 {% extends 'base-template/base.html' %}
 
-{% block title %}Check Sector Chief Section{% endblock %}
+{% block title %}Check Section Chief Section{% endblock %}
 
 {% block content %}
 <div class="container-fluid d-flex" style="min-height: 100vh;">
     <div class="col-lg-10 mx-auto">
-        <h1>Check Sector Chief Section</h1>
+        <h1>Check Section Chief Section</h1>
 
         {% if section %}
             <p><strong>Assigned Section:</strong> {{ section.NameSection }} ({{ section.LetterSection }})</p>
             <p><strong>Assigned Year:</strong> {{ year.Year }}</p>       
          {% else %}
-            <p>No section found for the current sector chief.</p>
+            <p>No section found for the current section chief.</p>
         {% endif %}
 
         {% if yearselected %}
         <p><strong>Assigned Section:</strong> {{ yearselected.Year }}</p>
         {% else %}
-            <p>No year selected found for the current sector chief.</p>
+            <p>No year selected found for the current section chief.</p>
         {% endif %}
     </div>
 </div>

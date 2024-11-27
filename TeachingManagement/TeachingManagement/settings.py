@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'AcademicInfoApp',
     'DirectorApp',
     'ProfSectionCapacityApp',
-    'SectorChiefApp',
+    'SectionChiefApp',
     'AssigmentYearApp',
 ]
 

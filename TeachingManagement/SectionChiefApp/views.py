@@ -4,10 +4,10 @@ from django.shortcuts import render
 
 # Create your views here.
 
-def is_sector_chief(user):
+def is_section_chief(user):
     return user.role == 'sector_chief'
 
 @login_required
-@user_passes_test(is_sector_chief)
-def sector_chief_dashboard(request):
-    return render(request, 'sectorchief_dashboard.html')
+@user_passes_test(is_section_chief)
+def section_chief_dashboard(request):
+    return render(request, 'sectionchief_dashboard.html')

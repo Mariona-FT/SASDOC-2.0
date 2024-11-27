@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class SectorchiefappConfig(AppConfig):
+class SectionchiefappConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'SectorChiefApp'
+    name = 'SectionChiefApp'

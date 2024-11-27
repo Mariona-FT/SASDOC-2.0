@@ -87,10 +87,10 @@
                                             <td>{% if professor.isActive == 'yes' %}Sí{% else %}No{% endif %}</td>
                                             <td class="actions-c" style="width:200px">
                                                 <!-- Edit button -->
-                                                <a href="{% url 'usersapp:sectorchief_edit' chief.id %}" class="button-edit btn-sm">Editar</a>
+                                                <a href="{% url 'usersapp:sectionchief_edit' chief.id %}" class="button-edit btn-sm">Editar</a>
                                                 
                                                 <!-- Delete form with JavaScript confirmation -->
-                                                <form method="post" action="{% url 'usersapp:sectorchief_list' %}" style="display:inline;" onsubmit="return confirmDelete('{{ professor.name }} {{professor.family_name}}');">
+                                                <form method="post" action="{% url 'usersapp:sectionchief_list' %}" style="display:inline;" onsubmit="return confirmDelete('{{ professor.name }} {{professor.family_name}}');">
                                                     {% csrf_token %}
                                                     <input type="hidden" name="confirm_delete" value="{{ chief.pk }}">
                                                     <button type="submit" class="button-delete btn-sm">Eliminar</button>
@@ -118,7 +118,7 @@
             <div class="col-lg-2">
                 <div class="sticky-top" style="top: 1rem;">
                     <div class="buttons mb-2 d-flex flex-column align-items-center">
-                        <a href="{% url 'usersapp:sectorchief_create' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Afegir Cap de Secció</a>
+                        <a href="{% url 'usersapp:sectionchief_create' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Afegir Cap de Secció</a>
                     </div>
                 </div>
             </div>

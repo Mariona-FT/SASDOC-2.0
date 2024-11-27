@@ -32,10 +32,10 @@ urlpatterns = [
     path('professor/edit/<int:idProfessor>', views.professor_create_edit, name='professor_edit'),
     path('professor/upload/', views.upload_professors, name='upload_professors'), #for file
 
-    #Sector chiefs
-    path('sectorchief/', views.sectorchief_list, name='sectorchief_list'),
-    path('sectorchief/create/', views.sectorchief_create_edit, name='sectorchief_create'),
-    path('sectorchief/edit/<int:idChief>', views.sectorchief_create_edit, name='sectorchief_edit'),
+    #Section chiefs
+    path('sectionchief/', views.sectionchief_list, name='sectionchief_list'),
+    path('sectionchief/create/', views.sectionchief_create_edit, name='sectionchief_create'),
+    path('sectionchief/edit/<int:idChief>', views.sectionchief_create_edit, name='sectionchief_edit'),
  
     #provisional Dashboards
     path('dashprofessor/', views.professor_dashboard, name='professor_dashboard'),
