@@ -83,7 +83,7 @@
 <!-- Subnavbar for SECTORCHIEF-->
 <div class="container-fluid mt-1">
     {% if user.is_authenticated and user.role == 'sector_chief' %}
-        <div class="collapse" id="sectorchiefNavbar">
+        <div class="collapse {% if '/infosection/' in request.path %}show{% endif %}"  id="sectorchiefNavbar">
             {% include 'navbars/navbar-sectorchief-parameters.html' %}
         </div>
     {% endif %}
