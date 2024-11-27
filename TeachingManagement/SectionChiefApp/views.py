@@ -5,7 +5,7 @@ from django.shortcuts import render
 # Create your views here.
 
 def is_section_chief(user):
-    return user.role == 'sector_chief'
+    return user.role == 'section_chief'
 
 @login_required
 @user_passes_test(is_section_chief)

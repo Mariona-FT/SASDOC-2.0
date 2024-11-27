@@ -8,7 +8,7 @@ from AcademicInfoApp.models import Year,Section,TypeProfessor,Field,Language
 class CustomUser(AbstractUser):
     ROLE_CHOICES = [
         ('director', 'Director'),
-        ('sector_chief', 'Sector Chief'),
+        ('section_chief', 'Section Chief'),
         ('professor', 'Professor'),
     ]
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)

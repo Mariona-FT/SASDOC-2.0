@@ -62,7 +62,7 @@
                     <tbody>
                         {% if professors %}
                             {% for professor in professors %}
-                                {% if professor.user.role == 'sector_chief' %}
+                                {% if professor.user.role == 'section_chief' %}
                                     {% for chief in professor.chief_set.all %}
                                         <tr  style="background-color: 
                                         {% if professor.isActive == 'no' %}

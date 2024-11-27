@@ -18,7 +18,7 @@ def is_director(user):
 
 #SECTION CHIEF views
 def is_section_chief(user):
-    return user.role == 'sector_chief'
+    return user.role == 'section_chief'
 
 #PROFESSOR views
 def is_professor(user):
@@ -215,7 +215,7 @@ def login_session(request):
                 # Check user role and redirect accordingly
                     if user.role == 'director':
                         return redirect('directorapp:director_dashboard')  # URL for Director
-                    elif user.role == 'sector_chief':
+                    elif user.role == 'section_chief':
                         return redirect('sectionchiefapp:sectionchief_dashboard')  # URL for Section Chief
                     elif user.role ==  'professor':
                         return redirect('usersapp:professor_dashboard')  # URL for Professor
