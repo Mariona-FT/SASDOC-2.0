@@ -47,7 +47,7 @@
                     </h5>
                 {% endif %}
 
-                <h3>Llistat dels Cursos:</h3>
+                <h3>Llistat dels Cursos: {{year}}</h3>
 
                 <table class="table table-striped" id="coursesassign-table">
                     <thead>
@@ -55,11 +55,10 @@
                             <th style="">Titulació</th>
                             <th style="">Nom Curs</th>
                             <th style="width:7%">Semestre</th>
-                            {% for typepoint_name in typepoint_names %}
-                                <th style="width:8%">{{ typepoint_name }}</th>         
-                            {% endfor %}
-                            <th style="">Punts Assignats</th>
-                            <th class="actions-c" style="width:180px">Accions</th>
+                            <th>Any</th>
+                            <th>Punts Totals</th> 
+                            <th>Punts Assignats</th> 
+                            <th class="actions-c" style="width:200px">Accions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -74,17 +73,11 @@
                                     <td>{{ selected_course.degree }}</td>
                                     <td>{{ selected_course.course }}</td>
                                     <td>{{ selected_course.semester }}</td>
-                                    {% for point_name, point_value in selected_course.points %}
-                                        <td>
-                                            {% if point_value is none %}
-                                                -
-                                            {% else %}
-                                                {{ point_value }}
-                                            {% endif %}
-                                        </td>                                    
-                                    {% endfor %}     
+                                    <td>{{ selected_course.year }}</td>
+                                    <td>{{ selected_course.total_course_points }}</td>
+                                    <td>{{ selected_course.total_assigned_points }}</td>
                                     
-                                    <td class="actions-c" style="width:180px">
+                                    <td class="actions-c" style="width:200px">
                                         <!-- Edit button -->
                                         <a href="#" class="button-edit btn-sm">Assignar</a>
 
@@ -99,6 +92,11 @@
                             </tr>        
                         {% endif %} 
                     </tbody>
+                    <!-- Modal to display points string -->
+                    <div id="points-modal" style="display:none;">
+                        <p id="points-list"></p>
+                        <button onclick="closeModal()">Close</button>
+                    </div>
                 </table>
                 
                 <!-- No results message -->
@@ -114,10 +112,21 @@
 <!-- JavaScript function for confirmation -->
 <script>
 
-    function confirmDelete(CourseNameYear) {
-        return confirm("Estàs segur que vols eliminar aquesta puntuació del Curs: " + CourseNameYear + "?");
+    // When a row is clicked, show the points string
+    document.querySelectorAll('.course-row').forEach(function(row) {
+        row.addEventListener('click', function() {
+            var pointsString = row.getAttribute('data-points');
+            document.getElementById('points-list').textContent = pointsString;
+            document.getElementById('points-modal').style.display = 'block';
+        });
+    });
+
+    // Close the modal
+    function closeModal() {
+        document.getElementById('points-modal').style.display = 'none';
     }
 
+        
     //Not using  accents in the filter and in the data
     function normalizeString(str) {
         return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
