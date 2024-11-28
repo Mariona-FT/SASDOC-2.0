@@ -1,19 +1,15 @@
 from UsersApp.models import Professor,Chief
 
+#Returns the most recent section and year assigned to the section chief."""
 def get_sectionchief_section(user):
-    """Returns the last section assigned to the section chief."""
-    professor = user.professor  # Assuming one-to-one relation between user and professor
+    professor = user.professor  #get professor
 
     if not professor:
         return None
 
-    chief_assignment = (
-        Chief.objects.filter(professor=professor)
-        .order_by('-year__idYear')  # Order by the latest year
-        .first()
-    )
+    chief_assigned = (Chief.objects.filter(professor=professor).order_by('year').first())
 
-    if chief_assignment:
-        return chief_assignment.section, chief_assignment.year
+    if chief_assigned:
+        return chief_assigned.section, chief_assigned.year #return section,year
     else:
         return None, None

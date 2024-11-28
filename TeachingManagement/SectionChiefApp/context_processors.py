@@ -2,14 +2,10 @@
 from AcademicInfoApp.models import Year
 
 def global_years(request):
-    selected_year = request.session.get('selected_year', None)
-    
-    if not selected_year:
-        selected_year = Year.objects.first().Year if Year.objects.exists() else None
-
-    years = Year.objects.all().order_by('-Year').distinct()
+    global_available_years = Year.objects.all().order_by('-Year')
+    global_selected_year = request.session.get('selected_year', global_available_years.first().Year if global_available_years else None)
     
     return {
-        'global_available_years': years,  # List of all years
-        'global_selected_year': selected_year  # The currently selected year (from session or default)
+        'global_available_years': global_available_years,  # List of all years
+        'global_selected_year': global_selected_year  # The currently selected year (from session or default)
     }
