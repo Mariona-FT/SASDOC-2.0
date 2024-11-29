@@ -24,79 +24,82 @@
             <div class="col-lg-11 mx-auto" >
               
                 <!-- Filter Fields -->
-                <h3>Filtres per Cursos</h3>
+                <h3>Filtres pels Cursos</h3>
                 <div class="d-flex justify-content-between row mb-2">
                     <!-- Filters section -->
                     <div class="filters d-flex flex-wrap">
-                        <div class="col-md-12">
+                        <div class="col-md-10 p-0">
                             <label for="filter-all">Filtrar per contingut:</label>
                             <input type="text" id="filter-all" class="form-control" placeholder="Cerca per Titulació, Nom Curs o Semestre">
                         </div>
+                        <!-- Button for Duplicated Year Selection -->
+                        <div class="col-md-2 col align-self-end d-flex justify-content-end ">
+                            <a href="#" class="button-secondary btn-sm">Seleccionar Any a Duplicar</a>
+                        </div>
                     </div>
-                </div>
 
+                </div>
+                
                 <!-- List of all courses -->
                 {% if global_selected_year %}
-                    <h5 style="text-align:center; color:blue">
+                    <h6 style="text-align:center; color:blue">
                         Assignació dels Cursos en el curs 
                         {{ global_selected_year }} 
 
-                        {% if global_selected_year != global_available_years.first %}
+                        {% if global_selected_year|stringformat:"s" != global_available_years|first|stringformat:"s" %}
                             (Historial)
                         {% endif %}
-                    </h5>
+                    </h6>
                 {% endif %}
 
-                <h3>Llistat dels Cursos: {{year}}</h3>
+                <h3>Llistat dels Cursos:</h3>
 
                 <table class="table table-striped" id="coursesassign-table">
                     <thead>
                         <tr>
-                            <th style="">Titulació</th>
-                            <th style="">Nom Curs</th>
-                            <th style="width:7%">Semestre</th>
-                            <th>Any</th>
-                            <th>Punts Totals</th> 
-                            <th>Punts Assignats</th> 
+                            <th style="text-align: left;">Titulació</th>
+                            <th style="text-align: left;">Nom Curs</th>
+                            <th style="width:9%; text-align: left;">Semestre</th>
+                            <th style="text-align: left; width:8%;">Any</th>
+                            <th style="text-align: left; width: 13%;">Punts Assignats</th>  
+                            <th style="text-align: left; width: 12%;">Punts Totals</th> 
                             <th class="actions-c" style="width:200px">Accions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% if course_data %}
                             {% for selected_course in course_data %}
-                                <tr data-name="{{ course_year.Course.NameCourse }}"
-                                    data-year="{{ course_year.Year.Year }}" 
-                                    data-semester="{{course_year.Semester}}"
-                                    data-language="{{ course_year.Language}}"
-                                    data-totalpoints="{{ course_year.TotalPoints }}"
+                                <tr data-degree="{{ selected_course.degree }}"
+                                    data-course="{{ selected_course.course }}" 
+                                    data-semester="{{ selected_course.semester }}"
+                                    data-year="{{ selected_course.year }}"
                                     onclick="toggleDetails(this)"
                                     >
                                     <td>{{ selected_course.degree }}</td>
                                     <td>{{ selected_course.course }}</td>
                                     <td>{{ selected_course.semester }}</td>
                                     <td>{{ selected_course.year }}</td>
-                                    <td>{{ selected_course.total_course_points }}</td>
                                     <td>{{ selected_course.total_assigned_points }}</td>
-                                    
+                                    <td>{{ selected_course.total_course_points }}</td>
+
                                     <td class="actions-c" style="width:200px">
                                         <!-- Edit button -->
-                                        <a href="#" class="button-edit btn-sm">Assignar</a>
+                                        <a href="#" class="button-create btn-sm">Assignar</a>
 
                                         <!--Duplicate Button-->
-                                        <a href="#" class="button-secondary btn-sm">Duplicar</a>
+                                        <a href="#" class="button-edit btn-sm">Duplicar</a>
                                     </td>
                                 </tr>
 
                                 <!-- Expanded Row for Details -->
                                 <tr class="professor-details-row" style="display: none;">
                                     <td colspan="7" class="professor-details">
-                                         <strong>Punts totals per assignar:</strong> 
-                                        <span class="text-content"> Sum {{ selected_course.total_course_points }} : {{ selected_course.info_total_course_points|default:"No hi ha punts per assignar" }}</span>
-                                    
-                                        <strong>Punts  ja assignats:</strong>
-                                        <span class="text-content">  Sum {{ selected_course.total_assigned_points }} :{{ selected_course.info_assigned_points|default:"No hi ha punts assignats" }}</span>
-                    
-                                       </td>
+                                        <strong>Informació dels punts:</strong>  <span style="font-style: italic;"> (Punts ja Assignats/Punts Totals) </span>
+                                        <p><strong>Sumatori:</strong> {{ selected_course.total_assigned_points }}/{{ selected_course.total_course_points }} <strong>   
+                                            Per Grups:</strong>
+                                            {{ selected_course.points_summary|default:"No hi ha punts per assignar"|safe }}
+                                        </p>
+                                    </td>
                                 </tr>
 
                             {% endfor %}
@@ -128,7 +131,6 @@
             detailsRow.style.display = detailsRow.style.display === 'none' ? 'table-row' : 'none';
         }
     }
-
         
     //Not using  accents in the filter and in the data
     function normalizeString(str) {
@@ -140,25 +142,35 @@
 
     function filterTable() {
         const searchValue = normalizeString(document.getElementById('filter-all').value);
-        const tableRows = document.querySelectorAll('#coursesyear-table tbody tr');
+        const tableRows = document.querySelectorAll('#coursesassign-table tbody tr');
 
         let rowsVisible = 0;
 
         tableRows.forEach(row => {
-            const fieldName = row.getAttribute('data-name') ? normalizeString(row.getAttribute('data-name')) : '';
-            const fieldYear = row.getAttribute('data-year') ? normalizeString(row.getAttribute('data-year')) : '';
-            const fieldSemester = row.getAttribute('data-semester') ? normalizeString(row.getAttribute('data-semester')) : '';
-            const fieldLanguage = row.getAttribute('data-language') ? normalizeString(row.getAttribute('data-language')) : '';
-            const fieldTpoints = row.getAttribute('data-totalpoints') ? normalizeString(row.getAttribute('data-totalpoints')) : '';
+            const isDetailsRow = row.classList.contains('professor-details-row');
+            const mainRow = isDetailsRow ? row.previousElementSibling : row;
 
-            const matchesSearch = fieldName.includes(searchValue) || fieldYear.includes(searchValue) || fieldSemester.includes(searchValue) || fieldLanguage.includes(searchValue) || fieldTpoints.includes(searchValue) 
-            if (matchesSearch) {
-                row.style.display = '';
-                rowsVisible++;
+            const fieldDegree = row.getAttribute('data-degree') ? normalizeString(row.getAttribute('data-degree')) : '';
+            const fieldCourse = row.getAttribute('data-course') ? normalizeString(row.getAttribute('data-course')) : '';
+            const fieldSemester = row.getAttribute('data-semester') ? normalizeString(row.getAttribute('data-semester')) : '';
+            const fieldYear = row.getAttribute('data-year') ? normalizeString(row.getAttribute('data-year')) : '';
+
+            const matchesSearch = fieldDegree.includes(searchValue) || fieldCourse.includes(searchValue) || 
+                                  fieldSemester.includes(searchValue) || fieldYear.includes(searchValue);            
+            if (!isDetailsRow) {
+                // Main row visibility
+                if (matchesSearch) {
+                    mainRow.style.display = '';
+                    rowsVisible++;
+                } else {
+                    mainRow.style.display = 'none';
+                }
             } else {
+                // Hide all detail rows by default unless manually toggled
                 row.style.display = 'none';
             }
         });
+
 
         const noResultsMessage = document.getElementById('no-results-message');
         const noResultsText = document.getElementById('no-results-text');
@@ -176,5 +188,22 @@
         }
     }
 </script>
+
+<style>
+    /* Default white background for all rows */
+    #coursesassign-table tbody tr {
+        background-color: white;
+    }
+
+    /* Apply grey background to every 4th row group */
+    #coursesassign-table tbody tr:nth-child(4n+3),
+    #coursesassign-table tbody tr:nth-child(4n+4) {
+        background-color: #f0f0f0; /* Light grey */
+    }
+    #coursesassign-table tbody tr:hover {
+        background-color: #e0e0e0; /* Darker grey on hover */
+    }
+</style>
+
 
 {% endblock %}

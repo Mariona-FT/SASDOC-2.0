@@ -39,11 +39,11 @@ def section_courses_list(request):
     year = request.GET.get('year', None)
     
     if year:
-        request.session['selected_year'] = year  #global variable selected year in the session
+        request.session['selected_year'] = year  #global variable selected year saved in the session
     else:
         year = request.session.get('selected_year', None)
         if not year and years:
-            year = years.first().Year  #recent one
+            year = years.first().Year  #most recent one
 
 
     year_obj = Year.objects.get(Year=year)
@@ -75,23 +75,18 @@ def section_courses_list(request):
         points = {}
         total_course_points = 0         #total points TO assign in the course - initial points
         total_assigned_points = 0       #total ALREADY assigned points - where professors wil be assigned
-        
-        info_total_course_points= ""  
-        info_assigned_points= ""  
 
         #Return info of TOTAL POINTS - that will need to be assigned that Course year
         for i, point_name in enumerate(typepoint_names):
             point_field = f'Points{chr(65 + i)}'  # PointsA, PointsB..
             point_value = getattr(course_year, point_field, None)
             points[point_name] = point_value if point_value is not None else 0  
-            total_course_points += points[point_name]  
             
-            info_total_course_points += f"{point_name}: {points[point_name]}, " #better for listing
-
-        info_total_course_points = info_total_course_points.strip(', ')
-
+            total_course_points += points[point_name]  
+        
         #Return info of INFO POINTS ALREADY ASSIGNED x professor that Course year
         assigned_points = {point_name: 0 for point_name in typepoint_names}
+       
         assignments = Assigment.objects.filter(CourseYear=course_year)  
         for assignment in assignments:
             for i, point_name in enumerate(typepoint_names):
@@ -101,10 +96,15 @@ def section_courses_list(request):
                     assigned_points[point_name] += assigned_point_value
                     total_assigned_points += assigned_point_value 
         
-        for point_name, assigned_value in assigned_points.items():
-            info_assigned_points += f"{point_name}: {assigned_value}, " #listing
+        # Create formatted string for each point type in "Group: assigned/total" format
+        points_summary = ""
+        for point_name in typepoint_names:
+            assigned_value = assigned_points.get(point_name, 0)
+            total_value = points.get(point_name, 0)
+            points_summary += f"{point_name}: {assigned_value}/{total_value} , "
 
-        info_assigned_points = info_assigned_points.strip(', ')
+        # Remove the trailing comma and space
+        points_summary = points_summary.strip(', ')
 
         #INFO X COURSE
         course_data.append({
@@ -116,13 +116,11 @@ def section_courses_list(request):
             'total_course_points': total_course_points,
             'total_assigned_points': total_assigned_points,
                         
-            'info_total_course_points': info_total_course_points, 
-            'info_assigned_points': info_assigned_points, 
+            'points_summary':points_summary,
         })
 
     context = {
         'course_data': course_data, 
         'section': section,
-        'year': year,
     }   
     return render(request, 'section_courses_assign/courses_assign_list_actions.html', context)
