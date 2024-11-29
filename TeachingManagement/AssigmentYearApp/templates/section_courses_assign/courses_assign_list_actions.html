@@ -64,11 +64,12 @@
                     <tbody>
                         {% if course_data %}
                             {% for selected_course in course_data %}
-                            <tr data-name="{{ course_year.Course.NameCourse }}"
+                                <tr data-name="{{ course_year.Course.NameCourse }}"
                                     data-year="{{ course_year.Year.Year }}" 
                                     data-semester="{{course_year.Semester}}"
                                     data-language="{{ course_year.Language}}"
                                     data-totalpoints="{{ course_year.TotalPoints }}"
+                                    onclick="toggleDetails(this)"
                                     >
                                     <td>{{ selected_course.degree }}</td>
                                     <td>{{ selected_course.course }}</td>
@@ -85,6 +86,19 @@
                                         <a href="#" class="button-secondary btn-sm">Duplicar</a>
                                     </td>
                                 </tr>
+
+                                <!-- Expanded Row for Details -->
+                                <tr class="professor-details-row" style="display: none;">
+                                    <td colspan="7" class="professor-details">
+                                         <strong>Punts totals per assignar:</strong> 
+                                        <span class="text-content"> Sum {{ selected_course.total_course_points }} : {{ selected_course.info_total_course_points|default:"No hi ha punts per assignar" }}</span>
+                                    
+                                        <strong>Punts  ja assignats:</strong>
+                                        <span class="text-content">  Sum {{ selected_course.total_assigned_points }} :{{ selected_course.info_assigned_points|default:"No hi ha punts assignats" }}</span>
+                    
+                                       </td>
+                                </tr>
+
                             {% endfor %}
                         {% else %}
                             <tr>
@@ -92,11 +106,6 @@
                             </tr>        
                         {% endif %} 
                     </tbody>
-                    <!-- Modal to display points string -->
-                    <div id="points-modal" style="display:none;">
-                        <p id="points-list"></p>
-                        <button onclick="closeModal()">Close</button>
-                    </div>
                 </table>
                 
                 <!-- No results message -->
@@ -112,18 +121,12 @@
 <!-- JavaScript function for confirmation -->
 <script>
 
-    // When a row is clicked, show the points string
-    document.querySelectorAll('.course-row').forEach(function(row) {
-        row.addEventListener('click', function() {
-            var pointsString = row.getAttribute('data-points');
-            document.getElementById('points-list').textContent = pointsString;
-            document.getElementById('points-modal').style.display = 'block';
-        });
-    });
-
-    // Close the modal
-    function closeModal() {
-        document.getElementById('points-modal').style.display = 'none';
+    function toggleDetails(row) {
+        // Find the next row, which is the details row
+        let detailsRow = row.nextElementSibling;
+        if (detailsRow && detailsRow.classList.contains('professor-details-row')) {
+            detailsRow.style.display = detailsRow.style.display === 'none' ? 'table-row' : 'none';
+        }
     }
 
         
