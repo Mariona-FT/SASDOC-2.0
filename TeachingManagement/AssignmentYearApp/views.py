@@ -3,7 +3,7 @@ from django.shortcuts import render,redirect,get_object_or_404
 from .utils import get_sectionchief_section
 from AcademicInfoApp.models import Course,Degree,Year
 from ProfSectionCapacityApp.models import CourseYear,TypePoints
-from .models import Assigment
+from .models import Assignment
 from django.urls import reverse
 from django.http import JsonResponse
 import json
@@ -90,7 +90,7 @@ def section_courses_list(request):
         #Return info of INFO POINTS ALREADY ASSIGNED x professor that Course year
         assigned_points = {point_name: 0 for point_name in typepoint_names}
        
-        assignments = Assigment.objects.filter(CourseYear=course_year)  
+        assignments = Assignment.objects.filter(CourseYear=course_year)  
         for assignment in assignments:
             for i, point_name in enumerate(typepoint_names):
                 point_field = f'Points{chr(65 + i)}'  # PointsA, PointsB..
@@ -131,6 +131,45 @@ def section_courses_list(request):
 
 def courseyear_show(request,idCourseYear=None):
     course_year = get_object_or_404(CourseYear, pk=idCourseYear)
+
+     # Return NAMES of the TYPE of POINTS for the course's section and year
+    typepoints_section = TypePoints.objects.filter(
+        Section=course_year.Course.Section,
+        Year=course_year.Year
+    ).first()
+
+    #extract the NAMES OF TYPE POINTS of that section - only save the not empty names 
+    typepoint_names = []
+    if typepoints_section:
+        typepoint_fields = ['NamePointsA', 'NamePointsB', 'NamePointsC', 'NamePointsD', 'NamePointsE', 'NamePointsF']
+        for field in typepoint_fields:
+            point_name = getattr(typepoints_section, field)
+            if point_name:  
+                typepoint_names.append(point_name)
+
+    # Retrieve total points from CourseYear and assigned points from Assignment
+    total_points = {}
+    assigned_points = {name: 0 for name in typepoint_names}
+
+    for i, point_name in enumerate(typepoint_names):
+        point_field = f'Points{chr(65 + i)}'  # PointsA, PointsB, etc.
+        total_points[point_name] = getattr(course_year, point_field, 0) or 0
+
+    # Retrieve assignments and calculate assigned points
+    assignments = Assignment.objects.filter(CourseYear=course_year)
+    for assignment in assignments:
+        for i, point_name in enumerate(typepoint_names):
+            point_field = f'Points{chr(65 + i)}'  # PointsA, PointsB, etc.
+            assigned_value = getattr(assignment, point_field, 0)
+            if assigned_value is not None:
+                assigned_points[point_name] += assigned_value
+
+    context = {
+        'course_year': course_year,
+        'typepoint_names': typepoint_names,
+        'total_points': total_points,
+        'assigned_points': assigned_points,
+    }
 
     # Pass the course_year data to the template
     return render(request, 'section_courses_assign/overview_course_assign.html', {'course_year': course_year})

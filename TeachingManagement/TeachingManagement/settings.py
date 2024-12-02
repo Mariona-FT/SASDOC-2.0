@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'DirectorApp',
     'ProfSectionCapacityApp',
     'SectionChiefApp',
-    'AssigmentYearApp',
+    'AssignmentYearApp',
 ]
 
 MIDDLEWARE = [
