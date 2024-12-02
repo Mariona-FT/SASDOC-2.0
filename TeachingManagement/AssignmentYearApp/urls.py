@@ -29,7 +29,7 @@ urlpatterns = [
         #For updating only the comment in a CourseYear
     path('update-course-year-comment/<int:idCourseYear>/', views.update_course_year_comment, name='update_course_year_comment'),
         #modifyning the points of a professor Assigned in a Course Year
-    path('update-assignment/', views.update_assignment, name='update_assignment'),
+    path('update-assignment/<int:idAssignment>/', views.update_assignment, name='update_assignment'),
     path('get-assignment/<int:assignment_id>/', views.get_assignment, name='get-assignment'),
 
 

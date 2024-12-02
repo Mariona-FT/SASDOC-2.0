@@ -117,7 +117,7 @@
                                 <!-- Eliminar Button -->
                                 <form method="post" action="{% url 'delete_courseyear_professor' professor.idProfessor course_year.idCourseYear %}" style="display:inline;" onsubmit="return confirmDelete('{{ professor.name }}', '{{ professor.family_name }}', '{{ course_year.Course.NameCourse }}');">
                                     {% csrf_token %}
-                                    <input type="hidden" name="confirm_delete" value="{{ professor.idProfessor }} {{ course_year.idCourseYear }}">
+                                    <input type="hidden" name="confirm_delete" value="{{ professor.idProfessor }} {{ course_year.Course.NameCourse }}">
                                     <button type="submit" class="button-delete btn-sm">Eliminar</button>
                                 </form>
                             </td>
@@ -141,7 +141,7 @@
                         <tr>
                             <th style="width:150px">Professor</th>
                             {% for point_name in typepoint_names_assigned.values %}
-                                <th>{{ point_name }}</th>
+                                <th  style="width:70px">{{ point_name }}</th>
                             {% endfor %}
                             <th style="width:100px">Es Coordinador</th>
                             <th class="actions-c" style="width:180px">Actions</th>
@@ -149,31 +149,45 @@
                     </thead>
                     <tbody>
                         {% for data in assignment_data %}
-                        <tr  data-assignment-id="{{ data.id }}">
-                            <form class="assignment-form" action="/update-assignment/" method="POST" data-assignment-id="{{ data.id }}">
+                        <tr  data-assignment-id="{{ data.id }}" >
+                            <form id="form-assignment-{{ data.id }}" class="assignment-form" action="{% url 'update_assignment' idAssignment=data.id %}" method="POST" data-assignment-id="{{ data.id }}">
                                 {% csrf_token %}
+                                <input type="hidden" name="idAssignment" value="{{ data.id }}">
+
                                 <td>{{ data.professor_name }}</td>
-            
                                 {% for point_name in typepoint_names_assigned.values %}
                                     <td>
-                                        <input type="number" name="{{ point_name }}" value="{{ data|get_item:point_name }}" class="form-control" step="any" min="0">
+                                        <input type="number" name="{{ point_name }}" class="form-control" step="any" min="0"
+                                        value="{{ data|get_item:point_name }}" disabled>
                                     </td>
                                 {% endfor %}
             
-                                <!-- Is Coordinator -->
                                 <td>
-                                    <input type="checkbox" name="is_coordinator" class="is-coordinator" 
-                                        {% if data.IsCoordinator %}checked{% endif %} />
-                                </td>
-            
-                                <!-- Save and Cancel buttons -->
-                                <td class="actions-c" style="width:180px">
-                                    <button class="button-edit" onclick="editRow(this)">Editar</button>
-                                    <button class="button-delete" onclick="deleteRow(this)">Eliminar</button>
-                                    <button class="button-save" onclick="saveRow(this)" style="display:none;">Guardar</button>
-                                    <button class="button-cancel" onclick="cancelEdit(this)" style="display:none;">Cancelar</button>
+                                    <select name="is_coordinator" class="form-select" disabled>
+                                        <option value="Si" {% if data.IsCoordinator == 'yes' %}selected{% endif %}>Yes</option>
+                                        <option value="No" {% if data.IsCoordinator == 'no' %}selected{% endif %}>No</option>
+                                    </select>
                                 </td>
                             </form>
+
+                            <td class="actions-c" style="width:180px">
+                                <!-- For editing or deleting the assigned professor points -->
+                                <button type="button" class="button-edit" onclick="editRow(this)">Editar</button>
+                                <button type="button" class="button-save" style="display:none;" onclick="submitAssignmentForm({{ data.id }})" >Guardar</button>
+                                <button type="button" class="button-cancel" onclick="cancelEdit(this)" style="display:none;">Cancelar</button>
+                
+                                <!-- Separate delete form with CSRF token -->
+                                <form method="post" action="{% url 'delete_courseyear_professor' data.professor_id course_year.idCourseYear %}" style="display:inline;" onsubmit="return confirmDelete('{{ data.professor_name }}', '{{ data.professor_family_name }}', '{{ course_year.Course.NameCourse}}');">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="confirm_delete" value="{{ data.professor_id }} {{ course_year.idCourseYear }}">
+                                    <button type="submit" class="button-delete btn-sm">Eliminar</button>
+                                </form>
+                            </td>
+
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="{{ typepoint_names|length|add:"3" }}" class="text-center">Cap Professor assignat en aquest Curs.</td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -244,39 +258,67 @@
       }
     });
 
-   // Handle form cancellation
-   document.querySelectorAll('.cancel-btn').forEach(button => {
-    button.addEventListener('click', function () {
-        const row = this.closest('tr'); // Get the row where the cancel button was clicked
-        const form = row.querySelector('form'); // Get the form inside the row
+    function editRow(button) {
+        const row = button.closest('tr'); 
+        const form = row.querySelector('form'); 
+       
+        const inputs = row.querySelectorAll('input, select'); 
+        const saveButton = row.querySelector('button.button-save'); 
+        const cancelButton = row.querySelector('button.button-cancel');  
+        const editButton = row.querySelector('button.button-edit');  
+        const deleteButton= row.querySelector('button.button-delete');
+    
+        // make ABLE the inputs of the form
+        inputs.forEach(input => input.disabled = false);
+    
+        if (saveButton) {
+            saveButton.style.display = 'inline-block';  // Show
+        } 
+        if (cancelButton) {
+            cancelButton.style.display = 'inline-block';  // Show 
+        } 
+        if (editButton) {
+            editButton.style.display = 'none';  // Hide
+        }
+        if (deleteButton) {
+            deleteButton.style.display = 'none';  // Hide
+        }
+    }
+    
+    function cancelEdit(button) {
+        const row = button.closest('tr');  
+        const form = row.querySelector('form');  
+        
+        const inputs = row.querySelectorAll('input, select');
+        const saveButton = row.querySelector('.button-save');
+        const cancelButton = row.querySelector('.button-cancel');  
+        const editButton = row.querySelector('.button-edit');  
+        const deleteButton= row.querySelector('button.button-delete');
 
-        // Revert the form to the original values (fetch data if necessary)
-        const assignmentId = form.dataset.assignmentId;
+        // make DISABLE the inputs of the form
+        inputs.forEach(input => input.disabled = true);
+           
+        if (saveButton) {
+            saveButton.style.display = 'none';  // Hide 
+        } 
+        if (cancelButton) {
+            cancelButton.style.display = 'none';  // Hide
+        } 
+        if (editButton) {
+            editButton.style.display = 'inline-block';  // Show
+        }
+        if (deleteButton) {
+            deleteButton.style.display =  'inline-block';  // Show
+        }
+    }
 
-        fetch(`/get-assignment/${assignmentId}/`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Revert the form fields
-                    row.querySelectorAll('input').forEach(input => {
-                        const name = input.name;
-                        if (name in data.assignment) {
-                            input.value = data.assignment[name] || '';  // Reset value
-                            if (input.type === 'checkbox') {
-                                input.checked = data.assignment[name];  // Reset checkbox
-                            }
-                        }
-                    });
-                } else {
-                    alert('Failed to fetch original data.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while fetching the data.');
-            });
-    });
-});
+    // Function to submit the assignment form
+    function submitAssignmentForm(id) {
+        const form = document.getElementById('form-assignment-' + id);
+        console.log(form); 
+        // You can optionally check if all fields are valid before submitting
+        form.submit(); // Submit the form
+    }
 
 </script>
 
