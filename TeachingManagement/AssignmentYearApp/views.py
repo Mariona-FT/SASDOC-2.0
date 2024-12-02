@@ -132,11 +132,14 @@ def section_courses_list(request):
 def courseyear_show(request,idCourseYear=None):
     course_year = get_object_or_404(CourseYear, pk=idCourseYear)
 
+    section = course_year.Course.Degree.School.Section
      # Return NAMES of the TYPE of POINTS for the course's section and year
     typepoints_section = TypePoints.objects.filter(
-        Section=course_year.Course.Section,
+        Section=section,
         Year=course_year.Year
     ).first()
+
+    print(f"section: {section}")
 
     #extract the NAMES OF TYPE POINTS of that section - only save the not empty names 
     typepoint_names = []
@@ -147,15 +150,21 @@ def courseyear_show(request,idCourseYear=None):
             if point_name:  
                 typepoint_names.append(point_name)
 
+    
+    print(f"typepoint_names: {typepoint_names}")
+
     # Retrieve total points from CourseYear and assigned points from Assignment
     total_points = {}
-    assigned_points = {name: 0 for name in typepoint_names}
-
     for i, point_name in enumerate(typepoint_names):
         point_field = f'Points{chr(65 + i)}'  # PointsA, PointsB, etc.
-        total_points[point_name] = getattr(course_year, point_field, 0) or 0
+        point_value = getattr(course_year, point_field, 0)
+        total_points[point_name] = point_value
+    
+    print(f"total_points: {total_points}")
 
     # Retrieve assignments and calculate assigned points
+    assigned_points = {name: 0 for name in typepoint_names}
+
     assignments = Assignment.objects.filter(CourseYear=course_year)
     for assignment in assignments:
         for i, point_name in enumerate(typepoint_names):
@@ -163,6 +172,8 @@ def courseyear_show(request,idCourseYear=None):
             assigned_value = getattr(assignment, point_field, 0)
             if assigned_value is not None:
                 assigned_points[point_name] += assigned_value
+
+    print(f"assigned_points (after assignments): {assigned_points}")
 
     context = {
         'course_year': course_year,
@@ -172,7 +183,7 @@ def courseyear_show(request,idCourseYear=None):
     }
 
     # Pass the course_year data to the template
-    return render(request, 'section_courses_assign/overview_course_assign.html', {'course_year': course_year})
+    return render(request, 'section_courses_assign/overview_course_assign.html', context)
 
 def update_course_year_comment(request,idCourseYear):
     course_year = get_object_or_404(CourseYear, pk=idCourseYear)
