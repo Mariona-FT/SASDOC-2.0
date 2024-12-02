@@ -24,7 +24,7 @@
         {% endif %}
 
         <div class="row">
-            <div class="col-lg-10">
+            <div class="col-lg-11">
 
                 
                 <!-- Info of that course -->
@@ -59,7 +59,6 @@
                                 <th>{{ typepoint }}</th>
                             {% endfor %}
                             <th>Sumatori</th>
-                            <th style="width: 20%;" class="text-right">Accions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -79,7 +78,7 @@
                         </tr>
                         {% if total_points|length == 0 %}
                         <tr>
-                            <td colspan="3" class="text-center">Cap punts assignats ni per assignar trobats.</td>
+                            <td colspan={{ typepoint_names|length|add:"1" }} class="text-center">Cap punts assignats ni per assignar trobats.</td>
                         </tr>
                         {% endif %}
                     </tbody>
@@ -97,26 +96,35 @@
                 <table class="table table-striped table-bordered" id="professorAssignedTable">
                     <thead class="thead-dark">
                         <tr>
-                            <th style="width: 15%;">Any</th>
-                            <th style="width: 20%;">Punts</th>
-                            <th style="width: 45%;">Comentari</th>
+                            <th><strong>Professor</strong></th>
+                            {% for typepoint in typepoint_names %}
+                                <th><strong>{{ typepoint }}</strong></th>
+                            {% endfor %}
                             <th style="width: 20%;" class="text-right">Accions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for capacity in capacities %}
+                        {% for professor, assigned_points in professor_assigned_points.items %}
                         <tr>
-                            <td>{{ capacity.Year.Year }}</td>
-                            <td>{{ capacity.Points }}</td>
-                            <td>{{ capacity.Comment }}</td>
-                            <td>
-                                <a href="{% url 'edit_capacity' capacity.idCapacity %}" class="button-edit btn-sm">Editar</a>
-                                <a href="{% url 'delete_capacity' capacity.idCapacity %}"  class="button-delete btn-sm " onclick="return confirm('Segur que vols eliminar aquesta capacitat?');">Eliminar</a>
+                            <td>{{ professor.name }} {{ professor.family_name }}</td> 
+                            {% for typepoint in typepoint_names %}
+                                <td>{{ assigned_points|get_item:typepoint }}</td> 
+                            {% endfor %}
+                            <td  class="actions-c" style="width:200px">
+                                <!-- Edit Button -->
+                                <a href="#" class="btn btn-primary">Editar</a>
+            
+                                <!-- Eliminar Button -->
+                                <form method="post" action="{% url 'delete_courseyear_professor' professor.idProfessor course_year.idCourseYear %}" style="display:inline;" onsubmit="return confirmDelete('{{ professor.name }}', '{{ professor.family_name }}', '{{ course_year.Course.NameCourse }}');">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="confirm_delete" value="{{ professor.idProfessor }} {{ course_year.idCourseYear }}">
+                                    <button type="submit" class="button-delete btn-sm">Eliminar</button>
+                                </form>
                             </td>
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="4" class="text-center">Cap capacitat trobada.</td>
+                            <td colspan="{{ typepoint_names|length|add:"2" }}" class="text-center">Cap Professor assignat en aquest Curs.</td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -167,7 +175,7 @@
             </div>
 
             <!-- Right Column for Return Button -->
-            <div class="col-lg-2">
+            <div class="col-lg-1">
                 <div class="sticky-top" style="top: 1rem">
                     <div class="buttons mb-2 d-flex flex-column align-items-center">
                         <a href="{% url 'section_courses_list' %}" class="button-return mb-2"> Tornar Assignatures de la Secció</a>
@@ -179,12 +187,19 @@
     </div>
 </div>
 
-{% endblock %}
-
 <script>
+    function confirmDelete(professorName, professorFamilyname,NameCourse) {
+        return confirm("Estàs segur que vols eliminar l'assignació aquest professor: " + professorName + " " + professorFamilyname + " en aquest curs: "+ NameCourse +" ?");
+    }
+
+
     document.getElementById('comment').addEventListener('blur', function(event) {
       if (this.value.trim() !== '') {
         this.form.submit();
       }
     });
-  </script>
+
+</script>
+
+{% endblock %}
+

@@ -29,4 +29,6 @@ urlpatterns = [
         #For updating only the comment in a CourseYear
     path('update-course-year-comment/<int:idCourseYear>/', views.update_course_year_comment, name='update_course_year_comment'),
 
+    path('delete_professor/<int:professor_id>/<int:course_year_id>/', views.delete_courseyear_professor, name='delete_courseyear_professor'),
+
 ]

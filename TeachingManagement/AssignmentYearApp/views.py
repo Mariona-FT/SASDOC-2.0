@@ -3,6 +3,7 @@ from django.shortcuts import render,redirect,get_object_or_404
 from .utils import get_sectionchief_section
 from AcademicInfoApp.models import Course,Degree,Year
 from ProfSectionCapacityApp.models import CourseYear,TypePoints
+from UsersApp.models import Professor
 from .models import Assignment
 from django.urls import reverse
 from django.http import JsonResponse
@@ -133,7 +134,7 @@ def courseyear_show(request,idCourseYear=None):
     course_year = get_object_or_404(CourseYear, pk=idCourseYear)
 
     section = course_year.Course.Degree.School.Section
-     # Return NAMES of the TYPE of POINTS for the course's section and year
+    # Return NAMES of the TYPE of POINTS for the course's section and year
     typepoints_section = TypePoints.objects.filter(
         Section=section,
         Year=course_year.Year
@@ -153,31 +154,55 @@ def courseyear_show(request,idCourseYear=None):
     
     print(f"typepoint_names: {typepoint_names}")
 
-    # Retrieve total points from CourseYear and assigned points from Assignment
+    #return TOTALPOINTS from CourseYear
     total_points = {}
     for i, point_name in enumerate(typepoint_names):
         point_field = f'Points{chr(65 + i)}'  # PointsA, PointsB, etc.
-        point_value = getattr(course_year, point_field, 0)
+        point_value = getattr(course_year, point_field, 0) or 0
         total_points[point_name] = point_value
     
-    total_points_sum = sum(total_points.values())
+        total_points_sum = sum(value if value is not None else 0 for value in total_points.values())
 
     print(f"total_points: {total_points}")
 
-    # Retrieve assignments and calculate assigned points
+    #return ASSIGNEDPOINTSS from assignment
     assigned_points = {name: 0 for name in typepoint_names}
 
     assignments = Assignment.objects.filter(CourseYear=course_year)
     for assignment in assignments:
         for i, point_name in enumerate(typepoint_names):
             point_field = f'Points{chr(65 + i)}'  # PointsA, PointsB, etc.
-            assigned_value = getattr(assignment, point_field, 0)
+            assigned_value = getattr(assignment, point_field, 0) or 0
             if assigned_value is not None:
                 assigned_points[point_name] += assigned_value
 
-    assigned_points_sum = sum(assigned_points.values())
+    assigned_points_sum = sum(value if value is not None else 0 for value in assigned_points.values())
 
     print(f"assigned_points (after assignments): {assigned_points}")
+
+    #return PROFESSORS already ASSIGNED in that COURSEYEAR
+    professors = Professor.objects.filter(assignment__CourseYear=course_year).distinct()
+
+    # Calculate the assigned points for each professor
+    professor_assigned_points = {}
+    for professor in professors:
+        professor_points = {}
+        for i, point_name in enumerate(typepoint_names):
+            # Get the assigned points for this professor in this typepoint
+            total_assigned_points = 0
+            assignments = Assignment.objects.filter(
+                Professor=professor,
+                CourseYear=course_year
+            )
+            for assignment in assignments:
+                point_field = f'Points{chr(65 + i)}'
+                total_assigned_points += getattr(assignment, point_field, 0) or 0
+            professor_points[point_name] = total_assigned_points
+        
+        #list of al professors with their points for each typepoint in that section
+        professor_assigned_points[professor] = professor_points 
+
+    print(f"PROFESSORS: {professor_assigned_points}")
 
     context = {
         'course_year': course_year,
@@ -188,10 +213,27 @@ def courseyear_show(request,idCourseYear=None):
 
         'total_points_sum':total_points_sum,
         'assigned_points_sum': assigned_points_sum,
+
+        'professors': professors,
+        'professor_assigned_points': professor_assigned_points,
     }
 
     # Pass the course_year data to the template
     return render(request, 'section_courses_assign/overview_course_assign.html', context)
+
+def delete_courseyear_professor(request, professor_id, course_year_id):
+    # Retrieve the professor and course year
+    professor = get_object_or_404(Professor, idProfessor=professor_id)
+    course_year = get_object_or_404(CourseYear, pk=course_year_id)
+
+    try:
+        assignment = Assignment.objects.get(Professor=professor, CourseYear=course_year)
+        assignment.delete()
+        messages.success(request, 'Assignació del Professor correctament eliminada.')
+    except Exception as e:
+        messages.error(request, f"Error: No s'ha pogut eliminar l'assignació triada ({e}).")
+
+    return redirect('courseyear_show', idCourseYear=course_year_id)
 
 def update_course_year_comment(request,idCourseYear):
     course_year = get_object_or_404(CourseYear, pk=idCourseYear)
