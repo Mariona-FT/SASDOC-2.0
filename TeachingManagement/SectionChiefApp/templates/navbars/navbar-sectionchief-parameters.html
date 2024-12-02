@@ -19,7 +19,7 @@
 
         <!-- Year Selector in the Navbar -->
         <li class="nav-item me-6  d-flex align-items-center">
-            <form method="GET" action="{% url 'sectionchiefapp:sectionchief_dashboard' %}" class="d-flex align-items-center mb-0" style="width: auto;">
+            <form method="GET" action="{% url 'sectionchiefapp:select_year' %}" class="d-flex align-items-center mb-0" style="width: auto;">
                 <label for="year" class="mb-0 me-2">Seleccionar Any:</label> 
                 <select name="year" id="year" class="form-select form-select-sm" onchange="this.form.submit()" style="width: 160px;">
                     <option value="" disabled {% if not global_selected_year %}selected{% endif %}> ---- </option>

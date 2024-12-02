@@ -22,8 +22,13 @@ from .import views
 urlpatterns = [
     path('check-section/', views.check_section_chief_section, name='test_sectionchief'),
 
-    
     #For the COURSES
     path('section-courses/', views.section_courses_list, name='section_courses_list'),
+    path('section-courses/show/<int:idCourseYear>/', views.courseyear_show, name='courseyear_show'),
+
+        #For updating only the comment in a CourseYear
+    path('update-course-year-comment/<int:idCourseYear>/', views.update_course_year_comment, name='update_course_year_comment'),
+
+    path('delete_professor/<int:professor_id>/<int:course_year_id>/', views.delete_courseyear_professor, name='delete_courseyear_professor'),
 
 ]

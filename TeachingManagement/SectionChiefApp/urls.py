@@ -23,5 +23,6 @@ app_name='sectionchiefapp'
 
 urlpatterns = [
     path('dashboard/', views.section_chief_dashboard, name='sectionchief_dashboard'),
+    path('select-year/', views.select_year, name='select_year'),
 
 ]

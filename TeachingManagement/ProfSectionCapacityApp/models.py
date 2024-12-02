@@ -85,6 +85,7 @@ class CourseYear(models.Model):
     PointsE = models.IntegerField(null=True, blank=True)
     PointsF = models.IntegerField(null=True, blank=True)
     Language = models.ForeignKey(Language, on_delete=models.SET_NULL, null=True, blank=True, related_name='course_years')
+    Comment = models.TextField(blank=True, null=True)
 
     class Meta:
         verbose_name='course year'

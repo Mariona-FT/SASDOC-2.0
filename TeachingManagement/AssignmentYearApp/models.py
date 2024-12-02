@@ -4,8 +4,8 @@ from ProfSectionCapacityApp.models import CourseYear
 
 # Create your models here.
 
-class Assigment(models.Model):
-    idAssigment = models.AutoField(primary_key=True)
+class Assignment(models.Model):
+    idAssignment = models.AutoField(primary_key=True)
     CourseYear = models.ForeignKey(CourseYear, on_delete=models.CASCADE)
     Professor = models.ForeignKey(Professor, on_delete=models.CASCADE)
     PointsA = models.IntegerField(null=True, blank=True)
@@ -17,8 +17,8 @@ class Assigment(models.Model):
     IsCoordinator = models.BooleanField(default=False)
 
     class Meta:
-        verbose_name='assigment'
-        verbose_name_plural='assigments'
+        verbose_name='assignment'
+        verbose_name_plural='assignments'
         unique_together = ('Professor', 'CourseYear')  # Ensure unique combinations
 
 
