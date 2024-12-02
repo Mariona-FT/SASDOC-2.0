@@ -9,6 +9,7 @@ from django.urls import reverse
 from django.http import JsonResponse
 import json
 from django.contrib import messages
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 
@@ -203,6 +204,45 @@ def courseyear_show(request,idCourseYear=None):
         professor_assigned_points[professor] = professor_points 
 
     print(f"PROFESSORS: {professor_assigned_points}")
+    
+    typepoint_names_assigned={}
+
+    #Dicc to have the names linked for the possible points
+    typepoints_fields = {
+        'PointsA': typepoints_section.NamePointsA,
+        'PointsB': typepoints_section.NamePointsB,
+        'PointsC': typepoints_section.NamePointsC,
+        'PointsD': typepoints_section.NamePointsD,
+        'PointsE': typepoints_section.NamePointsE,
+        'PointsF': typepoints_section.NamePointsF
+    }
+
+    #Only save the names of the groups that are not None
+    for field, point_name in typepoints_fields.items():
+        if point_name is not None:
+            typepoint_names_assigned[field] = point_name
+
+    print(f"Names Assigned: {typepoint_names_assigned}")
+
+    #return ONLY the ASSIGNED PROFESSORS - it will be in the Assignment table in that CourseYear
+    assignments = Assignment.objects.filter(CourseYear=course_year)
+    print(f"Assignments: {assignments}")
+
+    #Save the info of the PROFESSORS already assgned
+    assignment_data = []
+    for assignment in assignments:
+        data = {}
+        professor=assignment.Professor
+        data['professor_name'] = professor.name +" "+professor.family_name
+
+        for field, point_name in typepoint_names_assigned.items():
+            value = getattr(assignment, field, None) or 0
+            data[point_name] = value
+            print(f"Field: {field}, Value: {data[point_name]}")  
+
+        assignment_data.append(data)
+
+    print(f"Assigned Data: {assignment_data}")
 
     context = {
         'course_year': course_year,
@@ -216,15 +256,93 @@ def courseyear_show(request,idCourseYear=None):
 
         'professors': professors,
         'professor_assigned_points': professor_assigned_points,
+        
+        'typepoint_names_assigned': typepoint_names_assigned,
+
+        'assignment_data': assignment_data,
+
     }
 
     # Pass the course_year data to the template
     return render(request, 'section_courses_assign/overview_course_assign.html', context)
 
-def delete_courseyear_professor(request, professor_id, course_year_id):
+@csrf_exempt
+def update_assignment(request):
+    if request.method == 'POST':
+        try:
+            # Extract assignment ID from the form submission
+            assignment_id = request.POST.get('assignment_id')
+            assignment = get_object_or_404(Assignment, id=assignment_id)
+            course_year=get_object_or_404(CourseYear,id=assignment.idCourseYear)
+            section = course_year.Course.Degree.School.Section
+            
+            typepoints_section = TypePoints.objects.filter(
+                Section=section,
+                Year=course_year.Year
+             ).first()
+
+            #extract the NAMES OF TYPE POINTS of that section - only save the not empty names 
+            typepoint_names = []
+            if typepoints_section:
+                typepoint_fields = ['NamePointsA', 'NamePointsB', 'NamePointsC', 'NamePointsD', 'NamePointsE', 'NamePointsF']
+                for field in typepoint_fields:
+                    point_name = getattr(typepoints_section, field)
+                    if point_name:  
+                        typepoint_names.append(point_name)
+
+                        typepoint_names_assigned={}
+
+                    #Dicc to have the names linked for the possible points
+                    typepoints_fields = {
+                        'PointsA': typepoints_section.NamePointsA,
+                        'PointsB': typepoints_section.NamePointsB,
+                        'PointsC': typepoints_section.NamePointsC,
+                        'PointsD': typepoints_section.NamePointsD,
+                        'PointsE': typepoints_section.NamePointsE,
+                        'PointsF': typepoints_section.NamePointsF
+                    }
+
+                    #Only save the names of the groups that are not None
+                    for field, point_name in typepoints_fields.items():
+                        if point_name is not None:
+                            typepoint_names_assigned[field] = point_name
+
+
+                # Update the points fields dynamically
+                for point_name in typepoint_names_assigned:  # Use the actual fields as point names
+                    value = request.POST.get(point_name)
+                    if value is not None:
+                        setattr(assignment, point_name, value)
+
+                # Update Is Coordinator
+                is_coordinator = request.POST.get('is_coordinator') == 'on'
+                assignment.IsCoordinator = is_coordinator
+
+                # Save the changes
+                assignment.save()
+
+                return JsonResponse({'success': True})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+
+def get_assignment(request, assignment_id):
+    assignment = get_object_or_404(Assignment, id=assignment_id)
+    assignment_data = {
+        'professor_name': f"{assignment.Professor.name} {assignment.Professor.family_name}",
+        'IsCoordinator': assignment.IsCoordinator,
+       # **{point_name: getattr(assignment, point_name, None) for point_name in typepoints_fields}
+    }
+
+    return JsonResponse({'success': True, 'assignment': assignment_data})
+
+
+def delete_courseyear_professor(request, idProfessor, idCourseYear):
     # Retrieve the professor and course year
-    professor = get_object_or_404(Professor, idProfessor=professor_id)
-    course_year = get_object_or_404(CourseYear, pk=course_year_id)
+    professor = get_object_or_404(Professor, idProfessor=idProfessor)
+    course_year = get_object_or_404(CourseYear, pk=idCourseYear)
 
     try:
         assignment = Assignment.objects.get(Professor=professor, CourseYear=course_year)
@@ -233,7 +351,7 @@ def delete_courseyear_professor(request, professor_id, course_year_id):
     except Exception as e:
         messages.error(request, f"Error: No s'ha pogut eliminar l'assignació triada ({e}).")
 
-    return redirect('courseyear_show', idCourseYear=course_year_id)
+    return redirect('courseyear_show', idCourseYear=idCourseYear)
 
 def update_course_year_comment(request,idCourseYear):
     course_year = get_object_or_404(CourseYear, pk=idCourseYear)
