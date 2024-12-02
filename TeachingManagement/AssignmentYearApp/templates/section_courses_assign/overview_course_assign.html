@@ -58,6 +58,7 @@
                             {% for typepoint in typepoint_names %}
                                 <th>{{ typepoint }}</th>
                             {% endfor %}
+                            <th>Sumatori</th>
                             <th style="width: 20%;" class="text-right">Accions</th>
                         </tr>
                     </thead>
@@ -67,12 +68,14 @@
                             {% for typepoint in typepoint_names %}
                                 <td>{{ total_points|get_item:typepoint }}</td>
                             {% endfor %}
+                            <td><strong>{{ total_points_sum }}</strong></td>
                         </tr>
                         <tr>
                         <td><strong>Punts Assignats</strong></td>
                             {% for typepoint in typepoint_names %}
                                 <td>{{ assigned_points|get_item:typepoint }}</td>
                             {% endfor %}
+                            <td><strong>{{ assigned_points_sum }}</strong></td>
                         </tr>
                         {% if total_points|length == 0 %}
                         <tr>

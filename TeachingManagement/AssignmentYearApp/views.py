@@ -160,6 +160,8 @@ def courseyear_show(request,idCourseYear=None):
         point_value = getattr(course_year, point_field, 0)
         total_points[point_name] = point_value
     
+    total_points_sum = sum(total_points.values())
+
     print(f"total_points: {total_points}")
 
     # Retrieve assignments and calculate assigned points
@@ -173,13 +175,19 @@ def courseyear_show(request,idCourseYear=None):
             if assigned_value is not None:
                 assigned_points[point_name] += assigned_value
 
+    assigned_points_sum = sum(assigned_points.values())
+
     print(f"assigned_points (after assignments): {assigned_points}")
 
     context = {
         'course_year': course_year,
         'typepoint_names': typepoint_names,
+
         'total_points': total_points,
         'assigned_points': assigned_points,
+
+        'total_points_sum':total_points_sum,
+        'assigned_points_sum': assigned_points_sum,
     }
 
     # Pass the course_year data to the template
