@@ -148,7 +148,7 @@ class TypePointsForm(forms.ModelForm):
 class CourseYearForm(forms.ModelForm):
     class Meta:
         model = CourseYear
-        fields = [ 'Course', 'Year', 'Semester', 'PointsA', 'PointsB', 'PointsC', 'PointsD', 'PointsE','PointsF', 'Language']
+        fields = [ 'Course', 'Year', 'Semester', 'PointsA', 'PointsB', 'PointsC', 'PointsD', 'PointsE','PointsF', 'Language','Comment']
         labels = {
             'Course': 'Curs',
             'Year': 'Any',
@@ -160,6 +160,7 @@ class CourseYearForm(forms.ModelForm):
             'PointsE': 'Punts E',
             'PointsF': 'Punts F',
             'Language': 'Idioma',
+            'Comment':'Comentari',
         }
         widgets = {
             'Course': forms.Select(attrs={'required': 'required','class': 'form-select'}),
@@ -172,6 +173,7 @@ class CourseYearForm(forms.ModelForm):
             'PointsE': forms.NumberInput(attrs={'class': 'form-control','placeholder': ' Punts E'}),
             'PointsF': forms.NumberInput(attrs={'class': 'form-control','placeholder': ' Punts F'}),
             'Language': forms.Select(attrs={'required': 'required','class': 'form-select'}),
+            'Comment': forms.Textarea(attrs={'rows': 3,'class': 'form-control', 'placeholder': 'Comentari opcional'}),
         }
 
     

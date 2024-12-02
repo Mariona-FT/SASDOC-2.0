@@ -1,10 +1,13 @@
 
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from .utils import get_sectionchief_section
 from AcademicInfoApp.models import Course,Degree,Year
 from ProfSectionCapacityApp.models import CourseYear,TypePoints
 from .models import Assigment
 from django.urls import reverse
+from django.http import JsonResponse
+import json
+from django.contrib import messages
 
 # Create your views here.
 
@@ -108,6 +111,7 @@ def section_courses_list(request):
 
         #INFO X COURSE
         course_data.append({
+            'id':course_year.idCourseYear,
             'degree': course_year.Course.Degree.NameDegree,
             'course': course_year.Course.NameCourse,
             'semester': course_year.Semester,
@@ -124,3 +128,28 @@ def section_courses_list(request):
         'section': section,
     }   
     return render(request, 'section_courses_assign/courses_assign_list_actions.html', context)
+
+def courseyear_show(request,idCourseYear=None):
+    course_year = get_object_or_404(CourseYear, pk=idCourseYear)
+
+    # Pass the course_year data to the template
+    return render(request, 'section_courses_assign/overview_course_assign.html', {'course_year': course_year})
+
+def update_course_year_comment(request,idCourseYear):
+    course_year = get_object_or_404(CourseYear, pk=idCourseYear)
+
+    if request.method == 'POST':
+        comment = request.POST.get('comment', '').strip()
+        
+        if comment:
+            course_year.Comment = comment
+            course_year.save()
+            messages.success(request, f"El comentari s'ha actualitzat correctament.")
+        else:
+            messages.error(request, 'El comentari no és vàlid. Si us plau, escriu un comentari.')
+        return render(request, 'section_courses_assign/overview_course_assign.html', {'course_year': course_year})
+
+
+    messages.error(request, f"El comentari no sha creat correctament.")
+    return render(request, 'section_courses_assign/overview_course_assign.html', {'course_year': course_year})
+
