@@ -3,13 +3,15 @@ from django.shortcuts import render,redirect,get_object_or_404
 from .utils import get_sectionchief_section
 from AcademicInfoApp.models import Course,Degree,Year
 from ProfSectionCapacityApp.models import CourseYear,TypePoints
-from UsersApp.models import Professor
+from UsersApp.models import Professor,ProfessorField,ProfessorLanguage
+from ProfSectionCapacityApp.models import Capacity,Free,CapacitySection
 from .models import Assignment
 from django.urls import reverse
 from django.http import JsonResponse
 import json
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Sum
 
 # Create your views here.
 
@@ -222,6 +224,77 @@ def courseyear_show(request,idCourseYear=None):
 
         assignment_data.append(data)
 
+    #return PROFESSORS that are NOT ASSIGNED in that courseYear
+    professors = Professor.objects.filter(isActive='yes').exclude(
+        idProfessor__in=Assignment.objects.filter(CourseYear=course_year).values('Professor_id')
+    ).order_by('family_name')
+
+    professor_data = []
+    for professor in professors:
+        # Get total points assigned to this professor in this section
+        prof_total_points=0
+        prof_assigned_points = 0
+
+        prof_remaining_points=0
+
+        #Get total points that are entered in CAPACITY - FREE points for that professor x year
+        capacity_entry = Capacity.objects.filter(Professor=professor, Year=course_year.Year).first()
+        if capacity_entry:
+            total_capacity_points = capacity_entry.Points or 0
+        else:
+            total_capacity_points = 0
+
+        free_entries = Free.objects.filter(Professor=professor, Year=course_year.Year)
+        total_free_points = free_entries.aggregate(total_free_points=Sum('PointsFree'))['total_free_points'] or 0
+
+        #total points is the capacity - points liberated for that year
+        prof_total_points =  total_capacity_points - total_free_points
+
+        #Get the total points assignated for that professor in that section that year
+        section_capacity_entry = CapacitySection.objects.filter(Professor=professor, Section=section, Year=course_year.Year).first()
+        if section_capacity_entry:
+            prof_assigned_points = section_capacity_entry.Points or 0
+        else:
+            prof_assigned_points = 0
+
+        #Get all the points already assigned for that professor that year in that section
+        assigned_points_in_courseyear = Assignment.objects.filter(
+            Professor=professor,  CourseYear__Course__Degree__School__Section=section, 
+        )
+
+        total_assigned_points =0
+       # Aggregate the sum of each point field
+        for field, point_field_name in typepoint_names_assigned.items():
+            total_points_for_field = assigned_points_in_courseyear.aggregate(
+                total_points=Sum(field)
+            )['total_points'] or 0  # Sum points for this specific field
+            total_assigned_points += total_points_for_field
+
+        prof_remaining_points=total_assigned_points - prof_assigned_points
+
+        # Get professor's languages and fields
+        languages = ProfessorLanguage.objects.filter(Professor=professor)
+        fields = ProfessorField.objects.filter(Professor=professor)
+
+        # If no languages or fields are found, set them to an empty string
+        languages_list = ', '.join([language.Language.Language for language in languages]) if languages else "-"
+        fields_list = ', '.join([field.Field.NameField for field in fields]) if fields else "-"
+
+
+        professor_data.append({
+            'professor_id': professor.idProfessor,
+            'name': professor.name,
+            'family_name': professor.family_name,
+            
+            'prof_remaining_points': prof_remaining_points,
+            'prof_total_points':prof_total_points,
+            'prof_assigned_points': prof_assigned_points,
+
+            'languages_list': languages_list,
+            'fields_list': fields_list,
+        })
+
+
     context = {
         'course_year': course_year,
         #list of the type of points-the name given
@@ -236,10 +309,34 @@ def courseyear_show(request,idCourseYear=None):
         #Table professors assigned
         'assignment_data': assignment_data,
 
+        #Table of professors candidates  to be assigned
+        'professor_data': professor_data,
     }
 
     # Pass the course_year data to the template
     return render(request, 'section_courses_assign/overview_course_assign.html', context)
+
+def assign_professor(request, professor_id, course_year_id):
+    course_year = get_object_or_404(CourseYear, pk=course_year_id)
+    professor = get_object_or_404(Professor, pk=professor_id)
+
+    # Create a new assignment for the professor in the given course year
+    assignment = Assignment(
+        Professor=professor,
+        CourseYear=course_year,
+        IsCoordinator=False,  # Set IsCoordinator to False as per requirement
+        # Set all points to null (or default to 0)
+        PointsA=None,
+        PointsB=None,
+        PointsC=None,
+        PointsD=None,
+        PointsE=None,
+        PointsF=None,
+    )
+    assignment.save()
+
+    # Redirect back to the assign_candidates page
+    return redirect('courseyear_show', idCourseYear=course_year_id)
 
 @csrf_exempt
 def update_assignment(request,idAssignment):
