@@ -285,7 +285,7 @@ def courseyear_show(request,idCourseYear=None):
             'professor_id': professor.idProfessor,
             'name': professor.name,
             'family_name': professor.family_name,
-            
+
             'prof_remaining_points': prof_remaining_points,
             'prof_total_points':prof_total_points,
             'prof_assigned_points': prof_assigned_points,
@@ -425,9 +425,9 @@ def update_course_year_comment(request,idCourseYear):
             messages.success(request, f"El comentari s'ha actualitzat correctament.")
         else:
             messages.error(request, 'El comentari no és vàlid. Si us plau, escriu un comentari.')
-        return render(request, 'section_courses_assign/overview_course_assign.html', {'course_year': course_year})
+            return redirect('courseyear_show', idCourseYear=idCourseYear)
 
 
     messages.error(request, f"El comentari no sha creat correctament.")
-    return render(request, 'section_courses_assign/overview_course_assign.html', {'course_year': course_year})
+    return redirect('courseyear_show', idCourseYear=idCourseYear)
 

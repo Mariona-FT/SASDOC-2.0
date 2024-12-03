@@ -155,13 +155,35 @@
                 <h5 class="mt-4 d-flex justify-content-between align-items-center">
                     Professorat Candidat a ser Assignat:
                 </h5>
+
                 <div class="explanation-list">
                     <ul>
                         <li><strong>Punts Restants en la Secció</strong>: Els punts restants en aquesta secció es calculen restant els punts ja assignats en les Assignatures de la secció entre la capacitat total assignada per aquesta secció.</li>
                         <li><strong>Punts Totals en el Departament</strong>: Els punts totals que un professor pot tenir en el departament, calculats restant els punts alliberats (free points) de la capacitat total disponible per aquest professor durant aquell any.</li>
                         <li><strong>Punts Assignats en la Secció</strong>: Els punts que han estat assignats a aquest professor per la seva participació en la secció d'aquest curs any.</li>
+                        <li><strong>Explicació de Colors:</strong>
+                            <ul>
+                                <li><strong style="color:green">Verd</strong>: Si el valor és negatiu, indica que encara es poden assignar més punts al professor.</li>
+                                <li><strong style="color:blue">Blau</strong>: Si el valor és zero, vol dir que el professor té els punts perfectament assignats per la secció. No s'ha d'assignar més.</li>
+                                <li><strong style="color:red">Vermell</strong>: Si el valor és positiu, vol dir que el professor ha estat assignat a més punts dels que la seva capacitat permet. Això indica que el professor està sobreassignat.</li>
+                            </ul>
+                        </li>
                     </ul>
-                <table class="table table-striped table-bordered" id="capacitiesTable">
+                </div>
+
+                <!-- Filter Fields -->
+                <div class="filters-section mb-4">
+                    <h6>Filtres pel Llistat del Professorat</h6>
+                    <div class="d-flex justify-content-start mb-2">
+                        <!-- Filter Input -->
+                        <div class="col-md-12">
+                            <label for="filter-all">Filtrar per contingut:</label>
+                            <input type="text" id="filter-all" class="form-control" placeholder="Cerca per Nom, Cognom, Idiomes o Camps">
+                        </div>
+                    </div>
+                </div>
+
+                <table class="table table-striped table-bordered" id="candidatesprofessorsTable">
                     <thead class="thead-dark">
                         <tr>
                             <th>Nom i Cognom</th>
@@ -175,9 +197,14 @@
                     </thead>
                     <tbody>
                         {% for professor in professor_data %}
-                            <tr>
+                            <tr  data-name="{{ professor.name }} {{ professor.family_name }}" 
+                            data-languages="{{ professor.languages_list }}"
+                            data-fields="{{ professor.fields_list }}"
+                            >
                                 <td>{{ professor.name }} {{ professor.family_name }}</td>
-                                <td>{{ professor.prof_remaining_points }}</td>
+                                <td  style="color:{% if professor.prof_remaining_points < 0 %}green{% elif professor.prof_remaining_points == 0 %}blue{% else %}red{% endif %};">
+                                    <strong>{{ professor.prof_remaining_points }}</strong>
+                                </td>
                                 <td>{{ professor.prof_total_points }}</td>
                                 <td>{{ professor.prof_assigned_points }}</td>
                                 <td>
@@ -200,8 +227,8 @@
                 </table>
                 
                 <!-- No results message -->
-                <div id="capacitiesTable-no-results-message" style="display: none;">
-                    <p id="capacitiesTable-no-results-text"></p>
+                <div id="candidatesprofessorsTable-no-results-message" style="display: none;">
+                    <p id="candidatesprofessorsTable-no-results-text"></p>
                 </div>
 
             </div>
@@ -294,6 +321,54 @@
     function submitAssignmentForm(id) {
         const form = document.getElementById('form-assignment-' + id);
         form.submit(); 
+    }
+    
+    //Not using  accents in the filter and in the data
+    function normalizeString(str) {
+        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    }
+
+    // JavaScript for dynamic filtering
+    document.getElementById('filter-all').addEventListener('input', filterTable);
+
+    function filterTable() {
+        const searchValue = document.getElementById('filter-all').value.toLowerCase();
+        const tableRows = document.querySelectorAll('#candidatesprofessorsTable tbody tr');
+
+        let rowsVisible = 0;
+
+        tableRows.forEach(row => {
+            const fieldName =  row.getAttribute('data-name') ? normalizeString(row.getAttribute('data-name').toLowerCase()): '';
+            const fieldLanguages = row.getAttribute('data-languages') ? normalizeString(row.getAttribute('data-languages')) : '';
+            const fieldFields = row.getAttribute('data-fields') ? normalizeString(row.getAttribute('data-fields')) : '';
+
+            const matchesSearch = fieldName.includes(searchValue) ||fieldLanguages.includes(searchValue) ||fieldFields.includes(searchValue) ;
+
+            if (matchesSearch) {
+                row.style.display = '';
+                rowsVisible++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        const noResultsMessage = document.getElementById('candidatesprofessorsTable-no-results-message');
+        const noResultsText = document.getElementById('candidatesprofessorsTable-no-results-text');
+
+        // No results message logic
+        if (rowsVisible === 0) {
+            let message = "Cap Professor amb els criteris de cerca";
+            if (searchValue) {
+                message += ` amb el terme "${searchValue}"`;
+            }
+            if (activeFilter) {
+                message += ` actiu "${activeFilter === 'yes' ? 'Sí' : 'No'}"`;
+            }
+            noResultsText.textContent = message + ".";
+            noResultsMessage.style.display = 'block';
+        } else {
+            noResultsMessage.style.display = 'none';
+        }
     }
 
 
