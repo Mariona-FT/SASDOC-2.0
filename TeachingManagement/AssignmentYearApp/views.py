@@ -96,7 +96,7 @@ def section_courses_list(request):
         for assignment in assignments:
             for i, point_name in enumerate(typepoint_names):
                 point_field = f'Points{chr(65 + i)}'  # PointsA, PointsB..
-                assigned_point_value = getattr(assignment, point_field, None)
+                assigned_point_value = getattr(assignment, point_field, None) or 0
                 if assigned_point_value is not None:
                     assigned_points[point_name] += assigned_point_value
                     total_assigned_points += assigned_point_value 
@@ -232,13 +232,10 @@ def courseyear_show(request,idCourseYear=None):
     assignment_data = []
     for assignment in assignments:
         data = {}
-        assignment_professor=assignment.Professor
-        assignment_course_year=assignment.CourseYear
-
         data['id']=assignment.idAssignment
         data['professor_name'] = professor.name +" "+professor.family_name
         data['professor_id'] = professor.idProfessor  # Store the professor's ID
-
+        data['is_coordinator']=assignment.IsCoordinator
         for field, point_name in typepoint_names_assigned.items():
             value = getattr(assignment, field, None) or 0
             data[point_name] = value
@@ -273,74 +270,60 @@ def courseyear_show(request,idCourseYear=None):
 @csrf_exempt
 def update_assignment(request,idAssignment):
     assignment = get_object_or_404(Assignment, pk=idAssignment)
-    print("assigned to update",assignment)
     
     if request.method == 'POST':
         try:
-            print(f"Form data: {request.POST}")
-
-            # Retrieve the associated course year and section
             course_year = assignment.CourseYear
             section = course_year.Course.Degree.School.Section
 
-            # Retrieve the associated TypePoints for the section and year
+            # have  the associated TypePoints for the section and year
             typepoints_section = TypePoints.objects.filter(
                 Section=section,
                 Year=course_year.Year
             ).first()
 
-            # Extract the NAMES OF TYPE POINTS for that section
+            #extract the names of typepoints for that section
             typepoint_names_assigned = {}
             if typepoints_section:
-                typepoint_fields = ['NamePointsA', 'NamePointsB', 'NamePointsC', 'NamePointsD', 'NamePointsE', 'NamePointsF']
-                for field in typepoint_fields:
-                    point_name = getattr(typepoints_section, field)
-                    if point_name:
-                        typepoint_names_assigned[field] = point_name
+                typepoint_fields = {
+                    'PointsA': typepoints_section.NamePointsA,
+                    'PointsB': typepoints_section.NamePointsB,
+                    'PointsC': typepoints_section.NamePointsC,
+                    'PointsD': typepoints_section.NamePointsD,
+                    'PointsE': typepoints_section.NamePointsE,
+                    'PointsF': typepoints_section.NamePointsF,
+                }
 
+            # for the diferent points PointA-F used as the typepoints of that section NamePointsA-F 
+            # SAVE the info of the FORM in the table ASSIGNMENT for PointsA-F  
+            for point_field, point_name in typepoint_fields.items():
+                if point_name:  # If a point name is defined
+                    form_value = request.POST.get(point_name)
+                    if form_value is not None:
+                        setattr(assignment, point_field, int(form_value) if form_value else None)
+                    else:
+                        setattr(assignment, point_field, None)  
            
-            for point_name, point_value in typepoint_names_assigned.items():
-                form_value = request.POST.get(point_value)  
-                print(f"Checking {point_value}: Form data: {form_value}, TypePoint: {point_name}")
-            
-            # Update the points fields dynamically
-            for point_name in typepoint_names_assigned:
-                value = request.POST.get(point_name)
-                if value is not None:
-                    setattr(assignment, point_name, float(value) if value else None)
-            
-            print(f"Checking if saved {assignment}")
-
             # Update Is Coordinator field
             is_coordinator = request.POST.get('is_coordinator')
-            assignment.IsCoordinator = (is_coordinator == 'yes')
+            if is_coordinator == 'yes':
+                assignment.IsCoordinator = True
+            elif is_coordinator == 'no':
+                assignment.IsCoordinator = False
 
             # Save the updated assignment object
             assignment.save()
-            print(f"Updated assignment: {assignment}")
-
-
-            # Show success message
-            messages.success(request, 'Assignment updated successfully.')
+        
+            messages.success(request, 'Assignació modificada correctament.')
             return redirect('courseyear_show', idCourseYear=course_year.idCourseYear)
 
         except Exception as e:
-            # Handle errors and show an error message
-            messages.error(request, f'Error updating assignment: {str(e)}')
+            messages.error(request, f"Error al modificar l'Assignació: {str(e)}")
             return redirect('courseyear_show', idCourseYear=course_year.idCourseYear)
     else:
-        messages.error(request, 'Invalid request method.')
+        messages.error(request, 'Mètode del Form invàlid.')
         return redirect('courseyear_show', idCourseYear=assignment.CourseYear.idCourseYear)
 
-def get_assignment(request, assignment_id):
-    assignment = get_object_or_404(Assignment, id=assignment_id)
-    assignment_data = {
-        'professor_name': f"{assignment.Professor.name} {assignment.Professor.family_name}",
-        'IsCoordinator': assignment.IsCoordinator,
-       # **{point_name: getattr(assignment, point_name, None) for point_name in typepoints_fields}
-    }
-
-    return JsonResponse({'success': True, 'assignment': assignment_data})
 
 @csrf_exempt
 def delete_courseyear_professor(request, idProfessor, idCourseYear):
