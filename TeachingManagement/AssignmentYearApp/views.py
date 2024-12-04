@@ -224,13 +224,23 @@ def courseyear_show(request,idCourseYear=None):
 
         assignment_data.append(data)
 
-    #return PROFESSORS that are NOT ASSIGNED in that courseYear
-    professors = Professor.objects.filter(isActive='yes').exclude(
+    # Query for all professors that are either assigned or not assigned to the courseYear
+    assigned_professors = Professor.objects.filter(
         idProfessor__in=Assignment.objects.filter(CourseYear=course_year).values('Professor_id')
-    ).order_by('family_name')
+    )
+
+    unassigned_professors = Professor.objects.filter(isActive='yes').exclude(
+        idProfessor__in=Assignment.objects.filter(CourseYear=course_year).values('Professor_id')
+    )
+
+    # Combine both assigned and unassigned professors into a single queryset
+    all_professors = assigned_professors.union(unassigned_professors).order_by('family_name')
 
     professor_data = []
-    for professor in professors:
+    for professor in all_professors:
+        #get if its assigned already or not
+        is_assigned = assigned_professors.filter(idProfessor=professor.idProfessor).exists()  # True if assigned, False otherwise
+
         # Get total points assigned to this professor in this section
         prof_total_points=0
         prof_assigned_points = 0
@@ -240,15 +250,9 @@ def courseyear_show(request,idCourseYear=None):
         #Get total points that are entered in CAPACITY - FREE points for that professor x year
         capacity_entry = Capacity.objects.filter(Professor=professor, Year=course_year.Year).first()
         if capacity_entry:
-            total_capacity_points = capacity_entry.Points or 0
+            prof_total_points = capacity_entry.Points or 0
         else:
-            total_capacity_points = 0
-
-        free_entries = Free.objects.filter(Professor=professor, Year=course_year.Year)
-        total_free_points = free_entries.aggregate(total_free_points=Sum('PointsFree'))['total_free_points'] or 0
-
-        #total points is the capacity - points liberated for that year
-        prof_total_points =  total_capacity_points - total_free_points
+            prof_total_points = 0
 
         #Get the total points assignated for that professor in that section that year
         section_capacity_entry = CapacitySection.objects.filter(Professor=professor, Section=section, Year=course_year.Year).first()
@@ -285,6 +289,7 @@ def courseyear_show(request,idCourseYear=None):
             'professor_id': professor.idProfessor,
             'name': professor.name,
             'family_name': professor.family_name,
+            'is_assigned': is_assigned, 
 
             'prof_remaining_points': prof_remaining_points,
             'prof_total_points':prof_total_points,
@@ -293,6 +298,8 @@ def courseyear_show(request,idCourseYear=None):
             'languages_list': languages_list,
             'fields_list': fields_list,
         })
+    
+    professor_data = sorted(professor_data, key=lambda x: x['is_assigned'], reverse=True)
 
 
     context = {
@@ -406,7 +413,7 @@ def delete_courseyear_professor(request, idProfessor, idCourseYear):
         assignment = Assignment.objects.get(Professor=professor, CourseYear=course_year)
         print("assigned to delete",assignment)
 
-        #assignment.delete()
+        assignment.delete()
         messages.success(request, 'Assignació del Professor correctament eliminada.')
     except Exception as e:
         messages.error(request, f"Error: No s'ha pogut eliminar l'assignació triada ({e}).")

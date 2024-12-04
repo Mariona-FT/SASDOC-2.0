@@ -74,6 +74,9 @@
                                     data-semester="{{ selected_course.semester }}"
                                     data-year="{{ selected_course.year }}"
                                     onclick="toggleDetails(this)"
+                                    {% if  selected_course.total_course_points != selected_course.total_assigned_points %}
+                                        style="background-color: rgba(255, 99, 71, 0.2);"
+                                    {% endif %}
                                     >
                                     <td>{{ selected_course.degree }}</td>
                                     <td>{{ selected_course.course }}</td>
@@ -189,21 +192,6 @@
     }
 </script>
 
-<style>
-    /* Default white background for all rows */
-    #coursesassign-table tbody tr {
-        background-color: white;
-    }
-
-    /* Apply grey background to every 4th row group */
-    #coursesassign-table tbody tr:nth-child(4n+3),
-    #coursesassign-table tbody tr:nth-child(4n+4) {
-        background-color: #f0f0f0; /* Light grey */
-    }
-    #coursesassign-table tbody tr:hover {
-        background-color: #e0e0e0; /* Darker grey on hover */
-    }
-</style>
 
 
 {% endblock %}

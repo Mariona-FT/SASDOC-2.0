@@ -25,8 +25,21 @@
 
         <div class="row">
             <div class="col-lg-11">
+                <!-- Display the message if the assignation is done correctly -->
+                <div class="message-assignment">
+                    {% if course_year and typepoint_names_assigned %}
+                        {% if total_points_sum != assigned_points_sum %}
+                            <div class="mt-2" style="background-color: #d9534f; padding: 10px; border-radius: 5px; color: #fff; text-align:center" class="text-center">
+                                <strong>Els Punts Totals i Assignats no coincideixen</strong>, revisa l'assignació d'aquest curs.
+                            </div>
+                        {% else %}
+                            <div class="mt-2" style="background-color: #6cbe6d; padding: 10px; border-radius: 5px; color: #fff; text-align:center" class="text-center">
+                                <strong>El balanç de punts s'ha fet correctament:</strong>, no ffa falta modificar l'assignació.
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                </div>
 
-                
                 <!-- Info of that course -->
                 <h5 class="mt-4 d-flex justify-content-between align-items-center">
                     Detalls del Curs:
@@ -51,8 +64,8 @@
                  <h5 class="mt-4 d-flex justify-content-between align-items-center">
                    Resum punts Assignats i per Assignar:
                 </h5>
-                <table class="table table-bordered" id="AssignedTable">
-                    <thead class="thead-dark">
+                <table class="table table-bordered" id="AssignedTable" style="background-color: white;  border: 1px solid #ced4da;">
+                    <thead style="background-color: #DFE0E1;">
                         <tr>
                             <th style="width: 15%;">Tipus</th>
                             {% for point_name in typepoint_names_assigned.values %}
@@ -63,14 +76,14 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td><strong>Punts Totals</strong></td> 
+                            <td style="background-color: #DFE0E1;"><strong>Punts Totals</strong></td> 
                             {% for point_name in typepoint_names_assigned.values %}
                                 <td>{{ total_points|get_item:point_name|floatformat:"-2"  }}</td>
                             {% endfor %}
                                 <td><strong>{{ total_points_sum }}</strong></td>
                         </tr>
                         <tr>
-                            <td><strong>Punts Assignats</strong></td>
+                            <td style="background-color: #DFE0E1;"><strong>Punts Assignats</strong></td>
                             {% for point_name in typepoint_names_assigned.values %}
                                 <td>{{ assigned_points|get_item:point_name|floatformat:"-2"  }}</td>
                             {% endfor %}
@@ -159,7 +172,7 @@
                 <div class="explanation-list">
                     <ul>
                         <li><strong>Punts Restants en la Secció</strong>: Els punts restants en aquesta secció es calculen restant els punts ja assignats en les Assignatures de la secció entre la capacitat total assignada per aquesta secció.</li>
-                        <li><strong>Punts Totals en el Departament</strong>: Els punts totals que un professor pot tenir en el departament, calculats restant els punts alliberats (free points) de la capacitat total disponible per aquest professor durant aquell any.</li>
+                        <li><strong>Punts Totals en el Departament</strong>: Els punts totals que un professor pot tenir en el departament, la capacitat total disponible per aquest professor durant aquell any sense restar els seus punts alliberats.</li>
                         <li><strong>Punts Assignats en la Secció</strong>: Els punts que han estat assignats a aquest professor per la seva participació en la secció d'aquest curs any.</li>
                         <li><strong>Explicació de Colors:</strong>
                             <ul>
@@ -196,41 +209,51 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for professor in professor_data %}
-                            <tr  data-name="{{ professor.name }} {{ professor.family_name }}" 
-                            data-languages="{{ professor.languages_list }}"
-                            data-fields="{{ professor.fields_list }}"
-                            >
-                                <td>{{ professor.name }} {{ professor.family_name }}</td>
-                                <td  style="color:{% if professor.prof_remaining_points < 0 %}green{% elif professor.prof_remaining_points == 0 %}blue{% else %}red{% endif %};">
-                                    <strong>{{ professor.prof_remaining_points }}</strong>
-                                </td>
-                                <td>{{ professor.prof_total_points }}</td>
-                                <td>{{ professor.prof_assigned_points }}</td>
-                                <td>
-                                    {{ professor.languages_list }}
-                                </td>
-                                <td>
-                                        {{ professor.fields_list }}
-                                </td>
-                                <td>
-                                    <form action="{% url 'assign_professor'  professor.professor_id course_year.idCourseYear %}" method="post">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="professor_id" value="{{ professor.professor_id }}">
-                                        <input type="hidden" name="course_year_id" value="{{ course_year.id }}">
-                                        <button type="submit" class="button-create btn-sm">Assignar</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        {% endfor %}
+                        {% if professor_data%}
+                            {% for professor in professor_data %}
+                                <tr data-name="{{ professor.name }} {{ professor.family_name }}" 
+                                data-languages="{{ professor.languages_list }}"
+                                data-fields="{{ professor.fields_list }}"
+                                {% if professor.is_assigned %}style="background-color: #DCDCDC ;"{% endif %}
+                                >
+                                    <td>{{ professor.name }} {{ professor.family_name }}</td>
+                                    <td  style="color:{% if professor.prof_remaining_points < 0 %}green{% elif professor.prof_remaining_points == 0 %}blue{% else %}red{% endif %};">
+                                        <strong>{{ professor.prof_remaining_points|floatformat:"-2" }}</strong>
+                                    </td>
+                                    <td>{{ professor.prof_total_points|floatformat:"-2" }}</td>
+                                    <td>{{ professor.prof_assigned_points |floatformat:"-2"}}</td>
+                                    <td>
+                                        {{ professor.languages_list }}
+                                    </td>
+                                    <td>
+                                            {{ professor.fields_list }}
+                                    </td>
+                                    <td>
+                                        {% if professor.is_assigned %}
+                                        ✔ Ja Assignat
+                                        {% else %}
+                                            <form action="{% url 'assign_professor'  professor.professor_id course_year.idCourseYear %}" method="post">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="professor_id" value="{{ professor.professor_id }}">
+                                                <input type="hidden" name="course_year_id" value="{{ course_year.id }}">
+                                                <button type="submit" class="button-create btn-sm">Assignar</button>
+                                            </form>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="7" class="text-center">Cap Professorat entrat.</td>
+                            </tr>        
+                        {% endif %}
                     </tbody>
                 </table>
                 
                 <!-- No results message -->
-                <div id="candidatesprofessorsTable-no-results-message" style="display: none;">
-                    <p id="candidatesprofessorsTable-no-results-text"></p>
+                <div id="no-results-message"  class="text-center text-danger" style="display: none;">
+                    <span id="no-results-text"></span>
                 </div>
-
             </div>
 
             <!-- Right Column for Return Button -->
@@ -332,7 +355,7 @@
     document.getElementById('filter-all').addEventListener('input', filterTable);
 
     function filterTable() {
-        const searchValue = document.getElementById('filter-all').value.toLowerCase();
+        const searchValue =normalizeString(document.getElementById('filter-all').value.toLowerCase());
         const tableRows = document.querySelectorAll('#candidatesprofessorsTable tbody tr');
 
         let rowsVisible = 0;
@@ -352,17 +375,14 @@
             }
         });
 
-        const noResultsMessage = document.getElementById('candidatesprofessorsTable-no-results-message');
-        const noResultsText = document.getElementById('candidatesprofessorsTable-no-results-text');
+        const noResultsMessage = document.getElementById('no-results-message');
+        const noResultsText = document.getElementById('no-results-text');
 
         // No results message logic
         if (rowsVisible === 0) {
             let message = "Cap Professor amb els criteris de cerca";
             if (searchValue) {
                 message += ` amb el terme "${searchValue}"`;
-            }
-            if (activeFilter) {
-                message += ` actiu "${activeFilter === 'yes' ? 'Sí' : 'No'}"`;
             }
             noResultsText.textContent = message + ".";
             noResultsMessage.style.display = 'block';
