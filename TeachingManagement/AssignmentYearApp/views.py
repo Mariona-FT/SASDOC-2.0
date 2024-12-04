@@ -79,12 +79,12 @@ def section_courses_list(request):
     typepoint_names_assigned={}
     #Dicc to have the names linked for the possible points
     typepoints_fields = {
-        'PointsA': typepoints_section.NamePointsA,
-        'PointsB': typepoints_section.NamePointsB,
-        'PointsC': typepoints_section.NamePointsC,
-        'PointsD': typepoints_section.NamePointsD,
-        'PointsE': typepoints_section.NamePointsE,
-        'PointsF': typepoints_section.NamePointsF
+        'PointsA': typepoints_section.NamePointsA if typepoints_section else None,
+        'PointsB': typepoints_section.NamePointsB if typepoints_section else None,
+        'PointsC': typepoints_section.NamePointsC if typepoints_section else None,
+        'PointsD': typepoints_section.NamePointsD if typepoints_section else None,
+        'PointsE': typepoints_section.NamePointsE if typepoints_section else None,
+        'PointsF': typepoints_section.NamePointsF if typepoints_section else None,
     }
     #Only save the names of the groups that are not None
     for field, point_name in typepoints_fields.items():
