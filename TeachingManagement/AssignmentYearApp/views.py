@@ -371,7 +371,7 @@ def update_assignment(request,idAssignment):
                 if point_name:  # If a point name is defined
                     form_value = request.POST.get(point_name)
                     if form_value is not None:
-                        setattr(assignment, point_field, int(form_value) if form_value else None)
+                        setattr(assignment, point_field, float(form_value) if form_value else None)
                     else:
                         setattr(assignment, point_field, None)  
            

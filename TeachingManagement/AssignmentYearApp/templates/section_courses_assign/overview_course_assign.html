@@ -65,14 +65,14 @@
                         <tr>
                             <td><strong>Punts Totals</strong></td> 
                             {% for point_name in typepoint_names_assigned.values %}
-                                <td>{{ total_points|get_item:point_name }}</td>
+                                <td>{{ total_points|get_item:point_name|floatformat:"-2"  }}</td>
                             {% endfor %}
                                 <td><strong>{{ total_points_sum }}</strong></td>
                         </tr>
                         <tr>
                             <td><strong>Punts Assignats</strong></td>
                             {% for point_name in typepoint_names_assigned.values %}
-                                <td>{{ assigned_points|get_item:point_name }}</td>
+                                <td>{{ assigned_points|get_item:point_name|floatformat:"-2"  }}</td>
                             {% endfor %}
                                 <td><strong>{{ assigned_points_sum }}</strong></td>
                         </tr>
@@ -115,7 +115,7 @@
                                 {% for point_name in typepoint_names_assigned.values %}
                                     <td>
                                         <input type="number" name="{{ point_name }}" class="form-control" step="any" min="0"
-                                        value="{{ data|get_item:point_name }}" disabled>
+                                        value="{{ data|get_item:point_name|floatformat:"-2" }}" disabled>
                                     </td>
                                 {% endfor %}
             
@@ -373,6 +373,20 @@
 
 
 </script>
+
+<style>
+    /* Hide spinner arrows in input Number*/
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+    </style>
+
 
 {% endblock %}
 
