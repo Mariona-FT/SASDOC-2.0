@@ -12,9 +12,9 @@
             <a class="nav-link" href="{{section_courses_list_url}}">Assignatures</a>
         </li>
 
-        {% url 'sectiontypepoints_list' as sectiontypepoints_list_url %}
-        <li class="nav-item me-4 {% if '/section-typepoints/' in request.path %} active{% endif %}">
-            <a class="nav-link" href="{{sectiontypepoints_list_url}}">Professorat</a>
+        {% url 'section_professors_list' as section_professors_list_url %}
+        <li class="nav-item me-4 {% if '/section-professors/' in request.path %} active{% endif %}">
+            <a class="nav-link" href="{{section_professors_list_url}}">Professorat</a>
         </li>
 
         <!-- Year Selector in the Navbar -->

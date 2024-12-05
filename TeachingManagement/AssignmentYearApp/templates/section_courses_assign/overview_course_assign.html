@@ -80,14 +80,14 @@
                             {% for point_name in typepoint_names_assigned.values %}
                                 <td>{{ total_points|get_item:point_name|floatformat:"-2"  }}</td>
                             {% endfor %}
-                                <td><strong>{{ total_points_sum }}</strong></td>
+                                <td><strong>{{ total_points_sum|floatformat:"-2"  }}</strong></td>
                         </tr>
                         <tr>
                             <td style="background-color: #DFE0E1;"><strong>Punts Assignats</strong></td>
                             {% for point_name in typepoint_names_assigned.values %}
                                 <td>{{ assigned_points|get_item:point_name|floatformat:"-2"  }}</td>
                             {% endfor %}
-                                <td><strong>{{ assigned_points_sum }}</strong></td>
+                                <td><strong>{{ assigned_points_sum|floatformat:"-2" }}</strong></td>
                         </tr>
                         {% if total_points|length == 0 %}
                         <tr>

@@ -1,7 +1,7 @@
 
 from django.shortcuts import render,redirect,get_object_or_404
 from .utils import get_sectionchief_section
-from AcademicInfoApp.models import Course,Degree,Year
+from AcademicInfoApp.models import Course,Degree,Year,School
 from ProfSectionCapacityApp.models import CourseYear,TypePoints
 from UsersApp.models import Professor,ProfessorField,ProfessorLanguage
 from ProfSectionCapacityApp.models import Capacity,Free,CapacitySection
@@ -438,3 +438,124 @@ def update_course_year_comment(request,idCourseYear):
     messages.error(request, f"El comentari no sha creat correctament.")
     return redirect('courseyear_show', idCourseYear=idCourseYear)
 
+
+def section_professors_list(request):
+    user=request.user
+    section,year= get_sectionchief_section(user) # return the section of the chief
+
+    # get SELECTED YEAR - if not selected have the most recent one
+    years = Year.objects.all().order_by('-Year').distinct()
+    year = request.GET.get('year', None)
+    
+    if year:
+        request.session['selected_year'] = year  #global variable selected year saved in the session
+    else:
+        year = request.session.get('selected_year', None)
+        if not year and years:
+            year = years.first().Year  #most recent one
+
+
+    year_obj = Year.objects.get(Year=year)
+
+        # Return NAMES of the TYPE of POINTS for the course's section and year
+    typepoints_section = TypePoints.objects.filter(
+        Section=section,
+        Year=year_obj
+    ).first()
+
+    #extract the NAMES OF TYPE POINTS of that section - only save the not empty names 
+    typepoint_names = []
+    if typepoints_section:
+        typepoint_fields = ['NamePointsA', 'NamePointsB', 'NamePointsC', 'NamePointsD', 'NamePointsE', 'NamePointsF']
+        for field in typepoint_fields:
+            point_name = getattr(typepoints_section, field)
+            if point_name:  
+                typepoint_names.append(point_name)
+
+    typepoint_names_assigned={}
+    #Dicc to have the names linked for the possible points
+    typepoints_fields = {
+        'PointsA': typepoints_section.NamePointsA,
+        'PointsB': typepoints_section.NamePointsB,
+        'PointsC': typepoints_section.NamePointsC,
+        'PointsD': typepoints_section.NamePointsD,
+        'PointsE': typepoints_section.NamePointsE,
+        'PointsF': typepoints_section.NamePointsF
+    }
+    #Only save the names of the groups that are not None
+    for field, point_name in typepoints_fields.items():
+        if point_name is not None:
+            typepoint_names_assigned[field] = point_name
+
+    #get all the scools in that section
+    all_schools=School.objects.filter(Section=section)
+    print(f"escoles",all_schools)
+    all_professors = Professor.objects.filter(isActive='yes').order_by('family_name')
+
+    # Combine both assigned and unassigned professors into a single queryset
+
+    professor_data = []
+    for professor in all_professors:
+        #get if its assigned already or not
+
+        # Get total points assigned to this professor in this section
+        prof_total_points=0
+        prof_assigned_points = 0
+
+        prof_remaining_points=0
+
+        #Get total points that are entered in CAPACITY - FREE points for that professor x year
+        capacity_entry = Capacity.objects.filter(Professor=professor, Year=year_obj).first()
+        if capacity_entry:
+            prof_total_points = capacity_entry.Points or 0
+        else:
+            prof_total_points = 0
+
+        #Get the total points assignated for that professor in that section that year
+        section_capacity_entry = CapacitySection.objects.filter(Professor=professor, Section=section, Year=year_obj).first()
+        if section_capacity_entry:
+            prof_assigned_points = section_capacity_entry.Points or 0
+        else:
+            prof_assigned_points = 0
+
+        #Get all the points already assigned for that professor that year in that section
+        assigned_points_in_courseyear = Assignment.objects.filter(
+            Professor=professor,  CourseYear__Course__Degree__School__Section=section, 
+        )
+
+        total_assigned_points =0
+       # Aggregate the sum of each point field
+        for field, point_field_name in typepoint_names_assigned.items():
+            total_points_for_field = assigned_points_in_courseyear.aggregate(
+                total_points=Sum(field)
+            )['total_points'] or 0  # Sum points for this specific field
+            total_assigned_points += total_points_for_field
+
+        prof_remaining_points=total_assigned_points - prof_assigned_points
+
+        professor_data.append({
+            'professor_id': professor.idProfessor,
+            'name': professor.name,
+            'family_name': professor.family_name,
+
+            'pointsQ1': prof_remaining_points,
+            'pointsQ2':prof_total_points,
+            
+            'points_not_assigned': prof_assigned_points,
+
+            # 'points_in_schools': a,
+        })
+    
+    context = {
+        'section':section,
+        #list of the type of points-the name given
+        'typepoint_names_assigned': typepoint_names_assigned,
+
+        #list of all the schools in the section
+        'schools_section':all_schools,
+        #Table of professors candidates  to be assigned
+        'professor_data': professor_data,
+    }
+
+    # Pass the course_year data to the template
+    return render(request, 'professor_info_assign/professor_assign_info_list_actions.html', context)
