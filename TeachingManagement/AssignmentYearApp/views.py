@@ -489,72 +489,103 @@ def section_professors_list(request):
 
     #get all the scools in that section
     all_schools=School.objects.filter(Section=section)
-    print(f"escoles",all_schools)
+   
     all_professors = Professor.objects.filter(isActive='yes').order_by('family_name')
-
-    # Combine both assigned and unassigned professors into a single queryset
-
+    
     professor_data = []
     for professor in all_professors:
-        #get if its assigned already or not
-
-        # Get total points assigned to this professor in this section
+        # Get total points assigned to this professor in this section       
         prof_total_points=0
-        prof_assigned_points = 0
-
         prof_remaining_points=0
 
-        #Get total points that are entered in CAPACITY - FREE points for that professor x year
-        capacity_entry = Capacity.objects.filter(Professor=professor, Year=year_obj).first()
-        if capacity_entry:
-            prof_total_points = capacity_entry.Points or 0
+        # Get total points assigned to this professor in this section for Q1 and Q2
+        assigned_points_in_courseyear = Assignment.objects.filter(
+            Professor=professor,
+            CourseYear__Course__Degree__School__Section=section,
+            CourseYear__Year=year_obj
+        )
+
+        q1_points = assigned_points_in_courseyear.filter(CourseYear__Semester='Q1').aggregate(
+            total=(
+                Sum('PointsA', default=0) +
+                Sum('PointsB', default=0) +
+                Sum('PointsC', default=0) +
+                Sum('PointsD', default=0) +
+                Sum('PointsE', default=0) +
+                Sum('PointsF', default=0)
+            )
+        )['total'] or 0        
+
+        q2_points = assigned_points_in_courseyear.filter(CourseYear__Semester='Q2').aggregate(
+            total=(
+                Sum('PointsA', default=0) +
+                Sum('PointsB', default=0) +
+                Sum('PointsC', default=0) +
+                Sum('PointsD', default=0) +
+                Sum('PointsE', default=0) +
+                Sum('PointsF', default=0)
+            )
+        )['total'] or 0
+
+        #Get the total points assignated for that professor in that section that year
+        prof_capacity_entry = Capacity.objects.filter(Professor=professor, Year=year_obj).first()
+        if prof_capacity_entry:
+            prof_total_points = prof_capacity_entry.Points or 0
         else:
             prof_total_points = 0
 
-        #Get the total points assignated for that professor in that section that year
-        section_capacity_entry = CapacitySection.objects.filter(Professor=professor, Section=section, Year=year_obj).first()
-        if section_capacity_entry:
-            prof_assigned_points = section_capacity_entry.Points or 0
+        prof_remaining_points = prof_total_points - (q1_points + q2_points)
+
+
+        if prof_total_points > 0:
+            point_percentage = (prof_remaining_points / prof_total_points) * 100
         else:
-            prof_assigned_points = 0
+            point_percentage = 0
 
-        #Get all the points already assigned for that professor that year in that section
-        assigned_points_in_courseyear = Assignment.objects.filter(
-            Professor=professor,  CourseYear__Course__Degree__School__Section=section, 
-        )
+        #Get all the points assigned for that Professor for every the CourseYear for each School in this section
+        points_for_schools=[]
+        for school in all_schools:
+            school_points = assigned_points_in_courseyear.filter(
+                CourseYear__Course__Degree__School=school,
+                Professor=professor
+            ).aggregate(
+                total=(
+                    Sum('PointsA', default=0) +
+                    Sum('PointsB', default=0) +
+                    Sum('PointsC', default=0) +
+                    Sum('PointsD', default=0) +
+                    Sum('PointsE', default=0) +
+                    Sum('PointsF', default=0)
+                )
+            )['total'] or 0
 
-        total_assigned_points =0
-       # Aggregate the sum of each point field
-        for field, point_field_name in typepoint_names_assigned.items():
-            total_points_for_field = assigned_points_in_courseyear.aggregate(
-                total_points=Sum(field)
-            )['total_points'] or 0  # Sum points for this specific field
-            total_assigned_points += total_points_for_field
-
-        prof_remaining_points=total_assigned_points - prof_assigned_points
+            points_for_schools.append({
+                'school_name': school.NameSchool,  
+                'points': round(school_points, 2)
+            })
+        
 
         professor_data.append({
             'professor_id': professor.idProfessor,
             'name': professor.name,
+
             'family_name': professor.family_name,
+            'point_percentage':point_percentage,
+            'pointsQ1': q1_points,
+            'pointsQ2':q2_points,
 
-            'pointsQ1': prof_remaining_points,
-            'pointsQ2':prof_total_points,
-            
-            'points_not_assigned': prof_assigned_points,
+            'total_capacity':prof_total_points,
+            'points_not_assigned': prof_remaining_points,
 
-            # 'points_in_schools': a,
+            'points_for_schools': points_for_schools,
         })
     
     context = {
         'section':section,
-        #list of the type of points-the name given
-        'typepoint_names_assigned': typepoint_names_assigned,
-
         #list of all the schools in the section
         'schools_section':all_schools,
         #Table of professors candidates  to be assigned
-        'professor_data': professor_data,
+        'professor_section_data': professor_data,
     }
 
     # Pass the course_year data to the template

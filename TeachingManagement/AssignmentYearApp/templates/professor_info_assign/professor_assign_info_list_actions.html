@@ -1,5 +1,7 @@
 {% extends 'base-template/base.html' %}
 
+{% load custom_filters %}
+
 {% block title %} Professorat - {{ section.NameSection }}{% endblock %}
 
 {% block content %}
@@ -28,7 +30,7 @@
                 <div class="d-flex justify-content-between row mb-2">
                     <!-- Filters section -->
                     <div class="filters d-flex flex-wrap">
-                        <div class="col-md-10 p-0">
+                        <div class="col-md-12 p-0">
                             <label for="filter-all">Filtrar per contingut:</label>
                             <input type="text" id="filter-all" class="form-control" placeholder="Cerca per Nom i Cognom">
                         </div>
@@ -36,39 +38,61 @@
 
                 </div>
                 
-
                 <h3>Llistat del Professorat:</h3>
 
-                <table class="table table-striped" id="coursesassign-table">
+                <table class="table table-striped" id="professorssection-table"  style="table-layout: fixed;">
                     <thead>
                         <tr>
-                            <th style="text-align: left;">Nom i Cognom</th>
+                            <th class="name-c" style="text-align: left; width: 15%;" >Nom i Cognom</th>
                             <th style="text-align: left; width:8%;">% Total</th>
                             <th style="text-align: left; width:8%;">Punts Q1</th>
                             <th style="text-align: left; width:8%;">Punts Q2</th>
+                            <th style="text-align: left; width:8%;">Capacitat</th>
                             <th style="text-align: left; width: 8%;">Punts no assignats</th> 
                             {% for schools in schools_section %}
-                                <th style="text-align: left; width:12%;" >{{ schools.NameSchool }}</th>
+                                <th style="text-align: left;">{{ schools.NameSchool }}</th>
                             {% endfor %}
-                            <th class="actions-c" style="width:200px">Accions</th>
+                            <th class="actions-c" style="width:100px">Accions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% if professor_section_data %}
                             {% for professor in professor_section_data %}
-                                <tr data-degree="{{ selected_course.degree }}"
-                                    data-course="{{ selected_course.course }}" 
-                                    data-semester="{{ selected_course.semester }}"
-                                    data-year="{{ selected_course.year }}"
+                                <tr data-name="{{ professor.name }} {{professor.family_name}}"
                                     >
-                                    <td>{{ professor.degree }}</td>
-                                    <td>{{ professor.course }}</td>
-                                    <td>{{ professor.semester }}</td>
-                                    <td>{{ professor.year }}</td>
-                                    <td>{{ professor.total_course_points }}</td>
-                                    <td>{{ professor.total_assigned_points }}</td>
+                                    <td>{{ professor.name }} {{professor.family_name}}</td>
+                                    <td> <strong>{{ professor.point_percentage|floatformat:"-2"  }} % </strong> </td>
+                                    <td>{{ professor.pointsQ1|floatformat:"-2" }}</td>
+                                    <td>{{ professor.pointsQ2|floatformat:"-2" }}</td>
+                                    <td>  
+                                        {% if professor.total_capacity == 0 %}
+                                        -
+                                        {% else %}
+                                            {{ professor.total_capacity|floatformat:"-2" }}
+                                        {% endif %}
+                                    </td>
 
-                                    <td class="actions-c" style="width:200px">
+                                    <td>
+                                        {% if professor.points_not_assigned == 0 %}
+                                        -
+                                        {% else %}
+                                            {{ professor.points_not_assigned|floatformat:"-2" }}
+                                        {% endif %}
+                                    </td>
+                                    {% for school in schools_section %}
+                                        <td>
+                                            {% for point_data in professor.points_for_schools %}
+                                                {% if point_data.school_name == school.NameSchool %}
+                                                    {% if point_data.points == 0 %}
+                                                        -
+                                                    {% else %}
+                                                        {{ point_data.points|floatformat:"-2" }}
+                                                    {% endif %}
+                                                {% endif %}
+                                            {%endfor %}
+                                        </td>
+                                    {% endfor %}                    
+                                    <td class="actions-c" style="width:100px">
                                         <!-- Edit button -->
                                         <a href="#" class="button-create btn-sm">Detalls</a>
                                     </td>
@@ -114,42 +138,29 @@
 
     function filterTable() {
         const searchValue = normalizeString(document.getElementById('filter-all').value);
-        const tableRows = document.querySelectorAll('#coursesassign-table tbody tr');
+        const tableRows = document.querySelectorAll('#professorssection-table tbody tr');
 
         let rowsVisible = 0;
 
         tableRows.forEach(row => {
-            const isDetailsRow = row.classList.contains('professor-details-row');
-            const mainRow = isDetailsRow ? row.previousElementSibling : row;
+            const fieldName = row.getAttribute('data-name') ? normalizeString(row.getAttribute('data-name')) : '';
 
-            const fieldDegree = row.getAttribute('data-degree') ? normalizeString(row.getAttribute('data-degree')) : '';
-            const fieldCourse = row.getAttribute('data-course') ? normalizeString(row.getAttribute('data-course')) : '';
-            const fieldSemester = row.getAttribute('data-semester') ? normalizeString(row.getAttribute('data-semester')) : '';
-            const fieldYear = row.getAttribute('data-year') ? normalizeString(row.getAttribute('data-year')) : '';
-
-            const matchesSearch = fieldDegree.includes(searchValue) || fieldCourse.includes(searchValue) || 
-                                  fieldSemester.includes(searchValue) || fieldYear.includes(searchValue);            
-            if (!isDetailsRow) {
-                // Main row visibility
-                if (matchesSearch) {
-                    mainRow.style.display = '';
-                    rowsVisible++;
-                } else {
-                    mainRow.style.display = 'none';
-                }
+            const matchesSearch = fieldName.includes(searchValue);         
+            if (matchesSearch) {
+                row.style.display = '';
+                rowsVisible++;
             } else {
-                // Hide all detail rows by default unless manually toggled
                 row.style.display = 'none';
             }
+          
         });
-
 
         const noResultsMessage = document.getElementById('no-results-message');
         const noResultsText = document.getElementById('no-results-text');
 
         // No results message logic
         if (rowsVisible === 0) {
-            let message = "Cap Curs amb Puntuació amb els criteris de cerca";
+            let message = "Cap Professor amb els criteris de cerca";
             if (searchValue) {
                 message += ` amb el terme "${searchValue}"`;
             }
