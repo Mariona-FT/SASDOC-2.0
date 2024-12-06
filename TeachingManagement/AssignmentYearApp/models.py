@@ -8,12 +8,12 @@ class Assignment(models.Model):
     idAssignment = models.AutoField(primary_key=True)
     CourseYear = models.ForeignKey(CourseYear, on_delete=models.CASCADE)
     Professor = models.ForeignKey(Professor, on_delete=models.CASCADE)
-    PointsA = models.IntegerField(null=True, blank=True)
-    PointsB = models.IntegerField(null=True, blank=True)
-    PointsC = models.IntegerField(null=True, blank=True)
-    PointsD = models.IntegerField(null=True, blank=True)
-    PointsE = models.IntegerField(null=True, blank=True)
-    PointsF = models.IntegerField(null=True, blank=True)
+    PointsA = models.DecimalField(max_digits=5, decimal_places=2,null=True, blank=True)
+    PointsB = models.DecimalField(max_digits=5, decimal_places=2,null=True, blank=True)
+    PointsC = models.DecimalField(max_digits=5, decimal_places=2,null=True, blank=True)
+    PointsD = models.DecimalField(max_digits=5, decimal_places=2,null=True, blank=True)
+    PointsE = models.DecimalField(max_digits=5, decimal_places=2,null=True, blank=True)
+    PointsF = models.DecimalField(max_digits=5, decimal_places=2,null=True, blank=True)
     IsCoordinator = models.BooleanField(default=False)
 
     class Meta:

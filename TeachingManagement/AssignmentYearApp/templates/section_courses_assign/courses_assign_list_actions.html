@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="container-fluid d-flex" style="min-height: 100vh;">
-    <div class="col-lg-12 mx-auto">
+    <div class="col-lg-10 mx-auto">
         <h2 style="text-align:center"> Assignatures de: {{ section.NameSection }} - Curs: {{global_selected_year}} </h2>
 
         <!-- Display success, warning, or error messages -->
@@ -21,25 +21,23 @@
         <hr>
 
         <div class="row">
-            <div class="col-lg-11 mx-auto" >
+            <div class="col-lg-10" >
               
                 <!-- Filter Fields -->
                 <h3>Filtres pels Cursos</h3>
                 <div class="d-flex justify-content-between row mb-2">
                     <!-- Filters section -->
                     <div class="filters d-flex flex-wrap">
-                        <div class="col-md-10 p-0">
+                        <div class="col-md-12">
                             <label for="filter-all">Filtrar per contingut:</label>
                             <input type="text" id="filter-all" class="form-control" placeholder="Cerca per Titulació, Nom Curs o Semestre">
-                        </div>
-                        <!-- Button for Duplicated Year Selection -->
-                        <div class="col-md-2 col align-self-end d-flex justify-content-end ">
-                            <a href="#" class="button-secondary btn-sm">Seleccionar Any a Duplicar</a>
                         </div>
                     </div>
 
                 </div>
                 
+                <hr>
+
                 <!-- List of all courses -->
                 {% if global_selected_year %}
                     <h6 style="text-align:center; color:blue">
@@ -61,8 +59,8 @@
                             <th style="text-align: left;">Nom Curs</th>
                             <th style="width:9%; text-align: left;">Semestre</th>
                             <th style="text-align: left; width:8%;">Any</th>
-                            <th style="text-align: left; width: 13%;">Punts Assignats</th>  
                             <th style="text-align: left; width: 12%;">Punts Totals</th> 
+                            <th style="text-align: left; width: 13%;">Punts Assignats</th>  
                             <th class="actions-c" style="width:200px">Accions</th>
                         </tr>
                     </thead>
@@ -74,13 +72,16 @@
                                     data-semester="{{ selected_course.semester }}"
                                     data-year="{{ selected_course.year }}"
                                     onclick="toggleDetails(this)"
+                                    {% if  selected_course.total_course_points != selected_course.total_assigned_points %}
+                                        style="background-color: rgba(255, 99, 71, 0.2);"
+                                    {% endif %}
                                     >
                                     <td>{{ selected_course.degree }}</td>
                                     <td>{{ selected_course.course }}</td>
                                     <td>{{ selected_course.semester }}</td>
                                     <td>{{ selected_course.year }}</td>
-                                    <td>{{ selected_course.total_assigned_points }}</td>
                                     <td>{{ selected_course.total_course_points }}</td>
+                                    <td>{{ selected_course.total_assigned_points }}</td>
 
                                     <td class="actions-c" style="width:200px">
                                         <!-- Edit button -->
@@ -94,8 +95,8 @@
                                 <!-- Expanded Row for Details -->
                                 <tr class="professor-details-row" style="display: none;">
                                     <td colspan="7" class="professor-details">
-                                        <strong>Informació dels punts:</strong>  <span style="font-style: italic;"> (Punts ja Assignats/Punts Totals) </span>
-                                        <p><strong>Sumatori:</strong> {{ selected_course.total_assigned_points }}/{{ selected_course.total_course_points }} <strong>   
+                                        <strong>Informació dels punts:</strong>  <span style="font-style: italic;"> ( Punts Totals / Punts Assignats ) </span>
+                                        <p><strong>Sumatori:</strong> {{ selected_course.total_course_points }}/{{ selected_course.total_assigned_points }} <strong>   
                                             Per Grups:</strong>
                                             {{ selected_course.points_summary|default:"No hi ha punts per assignar"|safe }}
                                         </p>
@@ -114,6 +115,15 @@
                 <!-- No results message -->
                 <div id="no-results-message" class="text-center text-danger" style="display:none;">
                     <span id="no-results-text"></span>
+                </div>
+            </div>
+
+              <!-- Right Column for Button for Duplicated Year Selection -->
+            <div class="col-lg-2">
+                <div class="sticky-top" style="top: 1rem">
+                    <div class="buttons mb-2 d-flex flex-column align-items-center">
+                        <a href="#" class="button-secondary btn-sm">Seleccionar Any a Duplicar</a>
+                    </div>
                 </div>
             </div>
             
@@ -189,21 +199,6 @@
     }
 </script>
 
-<style>
-    /* Default white background for all rows */
-    #coursesassign-table tbody tr {
-        background-color: white;
-    }
-
-    /* Apply grey background to every 4th row group */
-    #coursesassign-table tbody tr:nth-child(4n+3),
-    #coursesassign-table tbody tr:nth-child(4n+4) {
-        background-color: #f0f0f0; /* Light grey */
-    }
-    #coursesassign-table tbody tr:hover {
-        background-color: #e0e0e0; /* Darker grey on hover */
-    }
-</style>
 
 
 {% endblock %}

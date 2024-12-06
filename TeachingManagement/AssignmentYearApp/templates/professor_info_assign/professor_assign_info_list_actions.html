@@ -1,0 +1,199 @@
+{% extends 'base-template/base.html' %}
+
+{% load custom_filters %}
+
+{% block title %} Professorat - {{ section.NameSection }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid d-flex" style="min-height: 100vh;">
+    <div class="col-lg-10 mx-auto">
+        <h2 style="text-align:center"> Professorat de: {{ section.NameSection }} - Curs: {{global_selected_year}} </h2>
+
+        <!-- Display success, warning, or error messages -->
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="{% if message.tags %}alert alert-{{ message.tags }}{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <hr>
+
+        <div class="row">
+            <div class="col-lg-12 mx-auto" >
+              
+                <!-- Filter Fields -->
+                <h3>Filtres pel Professorat</h3>
+                <div class="d-flex justify-content-between row mb-2">
+                    <!-- Filters section -->
+                    <div class="filters d-flex flex-wrap">
+                        <div class="col-md-12 p-0">
+                            <label for="filter-all">Filtrar per contingut:</label>
+                            <input type="text" id="filter-all" class="form-control" placeholder="Cerca per Nom i Cognom i % Total">
+                        </div>
+                    </div>
+
+                </div>
+                
+                <hr>
+
+                <h3>Llistat del Professorat:</h3>
+
+                <table class="table" id="professorssection-table"  style="table-layout: fixed;">
+                    <thead>
+                        <tr>   
+                            <th class="name-c" style="text-align: left; width: 15%;" >Nom i Cognom</th>
+                            <th style="text-align: left; width:95px;">% Total</th>
+                            <th style="text-align: left; width:8%;">Punts Q1</th>
+                            <th style="text-align: left; width:8%;">Punts Q2</th>
+                            <th style="text-align: center; width:10%;">Capacitat total i en la Secció</th>
+                            <th style="text-align: left; width: 8%;">Punts no assignats</th> 
+                            {% for schools in schools_section %}
+                                <th style="text-align: left; font-style: italic">{{ schools.NameSchool }}</th>
+                            {% endfor %}
+                            <th class="actions-c" style="width:100px">Accions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if professor_section_data %}
+                            {% for professor in professor_section_data %}
+                                <tr data-name="{{ professor.name }} {{professor.family_name}}"
+                                    data-percentatge="{{professor.point_percentage}}"
+                                    {% if professor.point_percentage < 70 %}
+                                        style="background-color: rgba(255, 99, 71, 0.2);"
+                                    {% elif professor.point_percentage >= 70 and professor.point_percentage < 90 %}
+                                        style="background-color: rgba(255, 215, 0, 0.2);"
+                                    {% endif %}
+                                    >
+                                    <td>{{ professor.name }} {{professor.family_name}}</td>
+                                    <td  {% if professor.point_percentage < 70 %}
+                                            style="color:red;"
+                                        {% elif professor.point_percentage >= 70 and professor.point_percentage < 90 %}
+                                            style="color: #fba92b;"
+                                        {% elif professor.point_percentage >= 90 %}
+                                            style="color:green;"
+                                        {% endif %}
+                                        > 
+                                        <strong>{{ professor.point_percentage|floatformat:"-2"  }} % </strong> 
+                                    </td>
+                                    <td>{{ professor.pointsQ1|floatformat:"-2" }}</td>
+                                    <td>{{ professor.pointsQ2|floatformat:"-2" }}</td>
+                                    <td style="text-align: center;">  
+                                        {% if professor.total_capacity == 0 %}
+                                            --
+                                        {% else %}
+                                            {{ professor.total_capacity|floatformat:"-2" }}
+                                        {% endif %}
+                                         || 
+                                        {% if professor.capacity_section == 0 %}
+                                            --
+                                        {% else %}
+                                            {{ professor.capacity_section|floatformat:"-2" }}
+                                        {% endif %}
+                                    </td>
+
+                                    <td>
+                                        {{ professor.points_not_assigned|floatformat:"-2" }}
+                                    </td>
+                                    {% for school in schools_section %}
+                                        <td style="text-align: left; font-style: italic; color:blue">
+                                            {% for point_data in professor.points_for_schools %}
+                                                {% if point_data.school_name == school.NameSchool %}
+                                                    {% if point_data.points == 0 %}
+                                                        -
+                                                    {% else %}
+                                                        <strong>{{ point_data.points|floatformat:"-2" }}</strong>
+                                                    {% endif %}
+                                                {% endif %}
+                                            {%endfor %}
+                                        </td>
+                                    {% endfor %}                    
+                                    <td class="actions-c" style="width:100px">
+                                        <!-- Edit button -->
+                                        <a href="#" class="button-create btn-sm">Detalls</a>
+                                    </td>
+                                </tr>
+
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="11" class="text-center">Cap Curs en cap Professor a la Secció d'aquest Cap de Secció.</td>
+                            </tr>        
+                        {% endif %} 
+                    </tbody>
+                </table>
+                
+                <!-- No results message -->
+                <div id="no-results-message" class="text-center text-danger" style="display:none;">
+                    <span id="no-results-text"></span>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript function for confirmation -->
+<script>
+
+    function toggleDetails(row) {
+        // Find the next row, which is the details row
+        let detailsRow = row.nextElementSibling;
+        if (detailsRow && detailsRow.classList.contains('professor-details-row')) {
+            detailsRow.style.display = detailsRow.style.display === 'none' ? 'table-row' : 'none';
+        }
+    }
+        
+    //Not using  accents in the filter and in the data
+    function normalizeString(str) {
+        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    }
+
+    // JavaScript for dynamic filtering
+    document.getElementById('filter-all').addEventListener('input', filterTable);
+
+    function filterTable() {
+        const searchValue = normalizeString(document.getElementById('filter-all').value);
+        const tableRows = document.querySelectorAll('#professorssection-table tbody tr');
+
+        let rowsVisible = 0;
+
+        tableRows.forEach(row => {
+            const fieldName = row.getAttribute('data-name') ? normalizeString(row.getAttribute('data-name')) : '';
+            const fieldP = row.getAttribute('data-percentatge')|| '';
+            
+            const matchesSearch = fieldName.includes(searchValue) || fieldP.includes(searchValue) ||
+            (searchValue === "0" && (fieldP === "0.00" || fieldP === "0.0" || fieldP === "0"));
+            
+            if (matchesSearch) {
+                row.style.display = '';
+                rowsVisible++;
+            } else {
+                row.style.display = 'none';
+            }
+          
+        });
+
+        const noResultsMessage = document.getElementById('no-results-message');
+        const noResultsText = document.getElementById('no-results-text');
+
+        // No results message logic
+        if (rowsVisible === 0) {
+            let message = "Cap Professor amb els criteris de cerca";
+            if (searchValue) {
+                message += ` amb el terme "${searchValue}"`;
+            }
+            noResultsText.textContent = message + ".";
+            noResultsMessage.style.display = 'block';
+        } else {
+            noResultsMessage.style.display = 'none';
+        }
+    }
+</script>
+
+
+
+{% endblock %}

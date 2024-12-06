@@ -131,9 +131,6 @@
 
             const matchesSearch =  fieldYear.includes(searchValue);
             const matchesEditFilter = (editFilter === '' || isEditable === editFilter);
-            
-            console.log("Row Data:", fieldYear)
-
 
             if (matchesSearch && matchesEditFilter) {
                 row.style.display = '';
