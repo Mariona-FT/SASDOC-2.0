@@ -40,17 +40,17 @@
                 
                 <h3>Llistat del Professorat:</h3>
 
-                <table class="table table-striped" id="professorssection-table"  style="table-layout: fixed;">
+                <table class="table" id="professorssection-table"  style="table-layout: fixed;">
                     <thead>
-                        <tr>
+                        <tr>   
                             <th class="name-c" style="text-align: left; width: 15%;" >Nom i Cognom</th>
-                            <th style="text-align: left; width:8%;">% Total</th>
+                            <th style="text-align: left; width:95px;">% Total</th>
                             <th style="text-align: left; width:8%;">Punts Q1</th>
                             <th style="text-align: left; width:8%;">Punts Q2</th>
-                            <th style="text-align: left; width:8%;">Capacitat</th>
+                            <th style="text-align: center; width:10%;">Capacitat total i en la Secció</th>
                             <th style="text-align: left; width: 8%;">Punts no assignats</th> 
                             {% for schools in schools_section %}
-                                <th style="text-align: left;">{{ schools.NameSchool }}</th>
+                                <th style="text-align: left; font-style: italic">{{ schools.NameSchool }}</th>
                             {% endfor %}
                             <th class="actions-c" style="width:100px">Accions</th>
                         </tr>
@@ -59,34 +59,52 @@
                         {% if professor_section_data %}
                             {% for professor in professor_section_data %}
                                 <tr data-name="{{ professor.name }} {{professor.family_name}}"
+                                    {% if professor.point_percentage < 70 %}
+                                    console.log("menys setanta")
+                                        style="background-color: rgba(255, 99, 71, 0.2);"
+                                    {% elif professor.point_percentage >= 70 and professor.point_percentage < 90 %}
+                                        console.log("migmig")
+                                        style="background-color: rgba(255, 215, 0, 0.2);"
+                                    {% endif %}
                                     >
                                     <td>{{ professor.name }} {{professor.family_name}}</td>
-                                    <td> <strong>{{ professor.point_percentage|floatformat:"-2"  }} % </strong> </td>
+                                    <td  {% if professor.point_percentage < 70 %}
+                                            style="color:red;"
+                                        {% elif professor.point_percentage >= 70 and professor.point_percentage < 90 %}
+                                            style="color: #fba92b;"
+                                        {% elif professor.point_percentage >= 90 %}
+                                            style="color:green;"
+                                        {% endif %}
+                                        > 
+                                        <strong>{{ professor.point_percentage|floatformat:"-2"  }} % </strong> 
+                                    </td>
                                     <td>{{ professor.pointsQ1|floatformat:"-2" }}</td>
                                     <td>{{ professor.pointsQ2|floatformat:"-2" }}</td>
-                                    <td>  
+                                    <td style="text-align: center;">  
                                         {% if professor.total_capacity == 0 %}
-                                        -
+                                            --
                                         {% else %}
                                             {{ professor.total_capacity|floatformat:"-2" }}
+                                        {% endif %}
+                                         || 
+                                        {% if professor.capacity_section == 0 %}
+                                            --
+                                        {% else %}
+                                            {{ professor.capacity_section|floatformat:"-2" }}
                                         {% endif %}
                                     </td>
 
                                     <td>
-                                        {% if professor.points_not_assigned == 0 %}
-                                        -
-                                        {% else %}
-                                            {{ professor.points_not_assigned|floatformat:"-2" }}
-                                        {% endif %}
+                                        {{ professor.points_not_assigned|floatformat:"-2" }}
                                     </td>
                                     {% for school in schools_section %}
-                                        <td>
+                                        <td style="text-align: left; font-style: italic; color:blue">
                                             {% for point_data in professor.points_for_schools %}
                                                 {% if point_data.school_name == school.NameSchool %}
                                                     {% if point_data.points == 0 %}
                                                         -
                                                     {% else %}
-                                                        {{ point_data.points|floatformat:"-2" }}
+                                                        <strong>{{ point_data.points|floatformat:"-2" }}</strong>
                                                     {% endif %}
                                                 {% endif %}
                                             {%endfor %}

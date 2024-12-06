@@ -527,18 +527,29 @@ def section_professors_list(request):
             )
         )['total'] or 0
 
-        #Get the total points assignated for that professor in that section that year
+        #Get the total points assignated for that professor in  that year
         prof_capacity_entry = Capacity.objects.filter(Professor=professor, Year=year_obj).first()
         if prof_capacity_entry:
             prof_total_points = prof_capacity_entry.Points or 0
         else:
             prof_total_points = 0
 
-        prof_remaining_points = prof_total_points - (q1_points + q2_points)
+        #Get the total points assignated for that professor in that section that year
+        prof_capacitysection_entry = CapacitySection.objects.filter(Professor=professor,Section=section, Year=year_obj).first()
+        if prof_capacitysection_entry:
+            prof_capacitysection_points = prof_capacitysection_entry.Points or 0
+        else:
+            prof_capacitysection_points = 0
 
+        # Calculate the points assigned (Q1 + Q2)
+        total_assigned_points = q1_points + q2_points
 
+        # Calculate remaining points (capacity - assigned)
+        prof_remaining_points = prof_total_points - total_assigned_points
+
+        # Calculate the percentage of points assigned versus total capacity
         if prof_total_points > 0:
-            point_percentage = (prof_remaining_points / prof_total_points) * 100
+            point_percentage = (total_assigned_points / prof_total_points) * 100
         else:
             point_percentage = 0
 
@@ -575,6 +586,7 @@ def section_professors_list(request):
             'pointsQ2':q2_points,
 
             'total_capacity':prof_total_points,
+            'capacity_section':prof_capacitysection_points,
             'points_not_assigned': prof_remaining_points,
 
             'points_for_schools': points_for_schools,
