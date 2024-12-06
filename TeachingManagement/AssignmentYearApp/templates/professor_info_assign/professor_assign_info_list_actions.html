@@ -6,7 +6,7 @@
 
 {% block content %}
 <div class="container-fluid d-flex" style="min-height: 100vh;">
-    <div class="col-lg-12 mx-auto">
+    <div class="col-lg-10 mx-auto">
         <h2 style="text-align:center"> Professorat de: {{ section.NameSection }} - Curs: {{global_selected_year}} </h2>
 
         <!-- Display success, warning, or error messages -->
@@ -23,7 +23,7 @@
         <hr>
 
         <div class="row">
-            <div class="col-lg-11 mx-auto" >
+            <div class="col-lg-12 mx-auto" >
               
                 <!-- Filter Fields -->
                 <h3>Filtres pel Professorat</h3>
@@ -32,12 +32,14 @@
                     <div class="filters d-flex flex-wrap">
                         <div class="col-md-12 p-0">
                             <label for="filter-all">Filtrar per contingut:</label>
-                            <input type="text" id="filter-all" class="form-control" placeholder="Cerca per Nom i Cognom">
+                            <input type="text" id="filter-all" class="form-control" placeholder="Cerca per Nom i Cognom i % Total">
                         </div>
                     </div>
 
                 </div>
                 
+                <hr>
+
                 <h3>Llistat del Professorat:</h3>
 
                 <table class="table" id="professorssection-table"  style="table-layout: fixed;">
@@ -59,11 +61,10 @@
                         {% if professor_section_data %}
                             {% for professor in professor_section_data %}
                                 <tr data-name="{{ professor.name }} {{professor.family_name}}"
+                                    data-percentatge="{{professor.point_percentage}}"
                                     {% if professor.point_percentage < 70 %}
-                                    console.log("menys setanta")
                                         style="background-color: rgba(255, 99, 71, 0.2);"
                                     {% elif professor.point_percentage >= 70 and professor.point_percentage < 90 %}
-                                        console.log("migmig")
                                         style="background-color: rgba(255, 215, 0, 0.2);"
                                     {% endif %}
                                     >
@@ -162,8 +163,11 @@
 
         tableRows.forEach(row => {
             const fieldName = row.getAttribute('data-name') ? normalizeString(row.getAttribute('data-name')) : '';
-
-            const matchesSearch = fieldName.includes(searchValue);         
+            const fieldP = row.getAttribute('data-percentatge')|| '';
+            
+            const matchesSearch = fieldName.includes(searchValue) || fieldP.includes(searchValue) ||
+            (searchValue === "0" && (fieldP === "0.00" || fieldP === "0.0" || fieldP === "0"));
+            
             if (matchesSearch) {
                 row.style.display = '';
                 rowsVisible++;
