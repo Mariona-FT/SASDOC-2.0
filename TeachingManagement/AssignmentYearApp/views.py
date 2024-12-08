@@ -31,15 +31,16 @@ def select_year(request):
 #Testing
 def check_section_chief_section(request):
     user = request.user
-    section,year = get_sectionchief_section(user)  # Call the utility function to fetch the section
+    section = get_sectionchief_section(user)  # Call the utility function to fetch the section
 
-    context = {'section': section,'year':year}
+    context = {'section': section }
     return render(request, 'test_sectionchief_info.html', context)
 
 # COURSES found in that SECTION - IN ALL SCHOOLS - IN ALL DEGREES
 def section_courses_list(request):
     user=request.user
-    section,year= get_sectionchief_section(user) # return the section of the chief
+
+    section= get_sectionchief_section(user) # return the section of the chief
 
     # get SELECTED YEAR - if not selected have the most recent one
     years = Year.objects.all().order_by('-Year').distinct()
@@ -441,7 +442,7 @@ def update_course_year_comment(request,idCourseYear):
 
 def section_professors_list(request):
     user=request.user
-    section,year= get_sectionchief_section(user) # return the section of the chief
+    section= get_sectionchief_section(user) # return the section of the chief
 
     # get SELECTED YEAR - if not selected have the most recent one
     years = Year.objects.all().order_by('-Year').distinct()

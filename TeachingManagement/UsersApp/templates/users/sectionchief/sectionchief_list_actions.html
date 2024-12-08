@@ -53,7 +53,6 @@
                             <th class="name-c" style=" width: 12%;">Nom i Cognoms</th>
                             <th class="email-c">Correu electrònic</th>
                             <th style=" width: 10%;">Secció</th>
-                            <th style=" width: 8%;">Any</th>
                             <th style=" width: auto;">Comentaris</th>
                             <th style=" width: 8%;">Està Actiu</th>
                             <th class="actions-c" style="width:200px">Accions</th>
@@ -71,7 +70,6 @@
                                             data-name="{{ professor.name }} {{ professor.family_name }}" 
                                             data-email="{{ professor.email }}"
                                             data-section="{{ chief.section }}"
-                                            data-year="{{chief.year}}"
                                             data-comment="{{professor.comment}}"
                                             data-active="{{ professor.isActive }}" 
                                         >
@@ -79,9 +77,6 @@
                                             <td>{{ professor.email }}</td>
                                             <td>
                                                 <span class="professor-info">{{ chief.section }}</span>
-                                            </td>
-                                            <td>
-                                                <span class="professor-info">{{ chief.year }}</span>
                                             </td>
                                             <td class="no-data">{{ professor.comment }}</td>
                                             <td>{% if professor.isActive == 'yes' %}Sí{% else %}No{% endif %}</td>
@@ -102,7 +97,7 @@
                             {% endfor %}
                         {% else %}
                             <tr>
-                                <td colspan="7" class="text-center">Cap cap de secció entrat.</td>
+                                <td colspan="6" class="text-center">Cap cap de secció entrat.</td>
                             </tr>
                         {% endif %}
                     </tbody>
@@ -153,12 +148,11 @@
             const fieldName = row.getAttribute('data-name') ? normalizeString(row.getAttribute('data-name').toLowerCase()) : '';
             const fieldEmail = row.getAttribute('data-email') ? normalizeString(row.getAttribute('data-email').toLowerCase()) : '';
             const fieldSection = row.getAttribute('data-section') ? normalizeString(row.getAttribute('data-section').toLowerCase()) : '';
-            const fieldYear = row.getAttribute('data-year') ? normalizeString(row.getAttribute('data-year').toLowerCase()) : '';
             const fieldComment = row.getAttribute('data-comment') ? normalizeString(row.getAttribute('data-comment').toLowerCase()) : '';
 
             const isActive = row.getAttribute('data-active');
 
-            const matchesSearch =  fieldName.includes(searchValue) || fieldEmail.includes(searchValue) || fieldSection.includes(searchValue) || fieldYear.includes(searchValue) || fieldComment.includes(searchValue);
+            const matchesSearch =  fieldName.includes(searchValue) || fieldEmail.includes(searchValue) || fieldSection.includes(searchValue) || fieldComment.includes(searchValue);
             const matchesActiveFilter = (activeFilter === '' || isActive === activeFilter);
 
             if (matchesSearch && matchesActiveFilter) {
