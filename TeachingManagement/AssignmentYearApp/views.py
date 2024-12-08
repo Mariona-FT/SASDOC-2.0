@@ -213,7 +213,7 @@ def courseyear_show(request,idCourseYear=None):
     for assignment in assignments:
         data = {}
         data['id']=assignment.idAssignment
-        data['is_coordinator']=assignment.IsCoordinator
+        data['is_coordinator']=assignment.isCoordinator
 
         data['professor_name'] = assignment.Professor.name +" "+assignment.Professor.family_name
         data['professor_id'] = assignment.Professor.idProfessor
@@ -331,7 +331,7 @@ def assign_professor(request, professor_id, course_year_id):
     assignment = Assignment(
         Professor=professor,
         CourseYear=course_year,
-        IsCoordinator=False,  # Set IsCoordinator to False as per requirement
+        isCoordinator=False,  # Set IsCoordinator to False as per requirement
         # Set all points to null (or default to 0)
         PointsA=None,
         PointsB=None,
@@ -385,9 +385,9 @@ def update_assignment(request,idAssignment):
             # Update Is Coordinator field
             is_coordinator = request.POST.get('is_coordinator')
             if is_coordinator == 'yes':
-                assignment.IsCoordinator = True
+                assignment.isCoordinator = True
             elif is_coordinator == 'no':
-                assignment.IsCoordinator = False
+                assignment.isCoordinator = False
 
             # Save the updated assignment object
             assignment.save()

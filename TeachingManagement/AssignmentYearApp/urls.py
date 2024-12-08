@@ -36,6 +36,6 @@ urlpatterns = [
     path('delete_professor/<int:idProfessor>/<int:idCourseYear>/', views.delete_courseyear_professor, name='delete_courseyear_professor'),
 
     #For the PROFESSORS
-    path('section-professors', views.section_professors_list, name='section_professors_list'),
+    path('section-professors/', views.section_professors_list, name='section_professors_list'),
 
 ]
