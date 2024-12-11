@@ -608,20 +608,22 @@ def section_professors_list(request):
 def select_years_for_duplication(request):
 
     if request.method == 'POST':
-        source_year_id = request.POST.get('source_year')
-        target_year_id = request.POST.get('target_year')
-        
-        if source_year_id and target_year_id:
+        source_year = request.POST.get('source_year')
+        target_year = request.POST.get('target_year')
+
+        if source_year and target_year:
             # Save selected years in the session
-            request.session['source_year'] = source_year_id
-            request.session['target_year'] = target_year_id
+            request.session['source_year'] = source_year
+            request.session['target_year'] = target_year
 
             # Redirect to any page after selecting years
             return redirect('section_courses_list')
 
 
     years = Year.objects.all().order_by('-Year').distinct()
+
     context = {
         'years': years,
     }
+
     return render(request, 'section_courses_assign/select_duplicate_years.html', context)

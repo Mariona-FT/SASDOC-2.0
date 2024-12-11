@@ -1,51 +1,111 @@
 {% extends 'base-template/base.html' %}
 
-{% block title %}Duplicar  Assignació{% endblock %}
+{% block title %}Duplicar Assignació{% endblock %}
 
 {% block content %}
 <div class="container-fluid d-flex" style="min-height: 100vh;">
     <div class="col-lg-10 mx-auto">
 
-        <h2 class="text-center">Selecciona un Professor per Gestionar la Capacitat</h2>
+        <h2 class="text-center">Selecciona els Anys per la Duplicació de l'assignació</h2>
         <hr>
         <div class="row">
             <div class="col-lg-10">
 
-                <form method="post">
+                <form method="post" id="duplicateForm">
                     {% csrf_token %}
-                    <label for="source_year">Year to Duplicate From:</label>
-                    <select name="source_year" id="source_year" required>
-                        <option value="" disabled selected>Select a year</option>
+                    <label for="source_year">Any Original per duplicar:</label>
+                    <select name="source_year" id="source_year" class="form-select" required onchange="validateYears()">
+                        <option value="" disabled {% if not source_year %}selected{% endif %}> ---- </option>
                         {% for year in years %}
-                            <option value="{{ year.idYear }}">{{ year.Year }}</option>
+                            <option value="{{ year.Year }}"{% if year.Year == source_year %} selected{% endif %}>
+                                {{ year.Year }}
+                            </option>
                         {% endfor %}
                     </select>
                     <br><br>
-                    <label for="target_year">Year to Duplicate To:</label>
-                    <select name="target_year" id="target_year" required>
-                        <option value="" disabled selected>Select a year</option>
+                
+                    <label for="target_year">Any on es vol duplicar:</label>
+                    <select name="target_year" id="target_year" class="form-select" required onchange="validateYears()">
+                        <option value="" disabled {% if not target_year %}selected{% endif %}> ---- </option>
                         {% for year in years %}
-                            <option value="{{ year.idYear }}">{{ year.Year }}</option>
+                            <option value="{{ year.Year }}"{% if year.Year == target_year %} selected{% endif %}>
+                                {{ year.Year }}
+                            </option>
                         {% endfor %}
                     </select>
+
                     <br><br>
-                    <button type="submit">Duplicate</button>
+
+                    <div class="d-flex justify-content-center flex-column align-items-center" >
+                        
+                        <button type="submit" id="duplicateButton" class="button-create">Duplicar</button>
+                        <br>                        
+                        <!-- Message when years are the same -->
+                        <p id="errorMessage" style="color: red; display: none;">Els dos anys seleccionats són els mateixos. Tria un altre any.</p>
+                    </div>
+                
                 </form>
 
             </div> 
-                <!-- Buttons section fixed on the right -->
-                <div class="col-lg-2">
-                    <div class="sticky-top" style="top: 1rem">
-                        <div class="buttons mb-2 d-flex flex-column align-items-center">
-                            <a href="{% url 'section_courses_list' %}" class="button-return mb-2">Tornar a Gestió Capacitat del Professorat</a>
-                        </div>
+            <!-- Buttons section fixed on the right -->
+            <div class="col-lg-2">
+                <div class="sticky-top" style="top: 1rem">
+                    <div class="buttons mb-2 d-flex flex-column align-items-center">
+                        <a href="{% url 'section_courses_list' %}" class="button-return mb-2">Tornar Assignatures de la Secció</a>
                     </div>
                 </div>
+            </div>
 
         </div>
     </div>
 </div>
 
+<script>
+    function validateYears() {
+        var sourceYear = document.getElementById("source_year").value;
+        var targetYear = document.getElementById("target_year").value;
+        var duplicateButton = document.getElementById("duplicateButton");
+        var errorMessage = document.getElementById("errorMessage");
+
+        // Disable the button and show error message if the years are the same
+        if (sourceYear && targetYear) {
+            if (sourceYear === targetYear) {
+                duplicateButton.disabled = true; 
+                errorMessage.style.display = "block"; // Show the error message
+            } else {
+                duplicateButton.disabled = false; 
+                errorMessage.style.display = "none"; // Hide the error message
+            }
+        } else {
+            duplicateButton.disabled = true; 
+            errorMessage.style.display = "none"; // Hide the error message 
+        }
+    }
+</script>
+
+<style>
+    /* Default button style */
+    .button-create {
+        background-color: #b7e3c1; /* Light green background */
+        font-size: 14px; /* Adjust the size */
+        color: #176d2b; /* Darker green text color */
+        border: 1px solid #28a745; /* Border with a darker shade */
+        padding: 8px 12px; /* Adjust padding */
+        border-radius: 4px; /* Optional: rounded corners */
+        cursor: pointer; /* Pointer cursor on hover */
+        text-decoration: none; /* Remove underline */
+        box-sizing: border-box; /* Ensures padding doesn’t affect total height */
+        height: 40px; /* Sets a fixed height for consistency */
+    
+    }
+
+    /* Style when button is disabled */
+    .button-create:disabled {
+        background-color: #d6d6d6; /* Light grey background */
+        color: #9e9e9e;  /* Grey text */
+        border: 1px solid #b0b0b0; /* Light grey border */
+    }
+</style>
 
 
 {% endblock %}
