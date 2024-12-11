@@ -9,3 +9,13 @@ def global_years(request):
         'global_available_years': global_available_years,  # List of all years
         'global_selected_year': global_selected_year  # The currently selected year (from session or default)
     }
+
+
+def selected_years(request):
+    source_year = request.session.get('source_year', None)
+    target_year = request.session.get('target_year', None)
+
+    return {
+        'source_year': source_year,
+        'target_year': target_year,
+    }

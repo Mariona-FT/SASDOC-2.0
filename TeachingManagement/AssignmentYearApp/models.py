@@ -14,7 +14,7 @@ class Assignment(models.Model):
     PointsD = models.DecimalField(max_digits=5, decimal_places=2,null=True, blank=True)
     PointsE = models.DecimalField(max_digits=5, decimal_places=2,null=True, blank=True)
     PointsF = models.DecimalField(max_digits=5, decimal_places=2,null=True, blank=True)
-    IsCoordinator = models.BooleanField(default=False)
+    isCoordinator = models.BooleanField(default=False)
 
     class Meta:
         verbose_name='assignment'

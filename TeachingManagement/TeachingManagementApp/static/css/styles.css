@@ -116,6 +116,13 @@ body {
     color: #176d2b; /* Darker green text color */
 }
 
+.button-create:disabled {
+    background-color: #e0e0e0; /* Light gray background when disabled */
+    color: #b0b0b0; /* Gray text color */
+    border: 1px solid #d3d3d3; /* Lighter border */
+    cursor: not-allowed; /* Shows a "not-allowed" cursor */
+}
+
 /*EDIT*/
 .button-edit {
     background-color: #f6c261; /* Light background color */

@@ -49,16 +49,17 @@
                 </p>
                 
                 <p> <strong>Any:</strong> {{ course_year.Year.Year }} &nbsp;&nbsp;&nbsp;&nbsp; 
-                    <strong>Semestre:</strong> {{ course_year.Semester }} {{ course_year.idCourseYear }} 
+                    <strong>Semestre:</strong> {{ course_year.Semester }}
                 </p>
 
                     
                 <form method="POST" action="{% url 'update_course_year_comment' course_year.idCourseYear %}">
                     {% csrf_token %}
-                    <label for="comment"><strong>Comentari:</strong></label>
-                    <textarea id="comment" name="comment" class="form-control" rows="3"
-                              onblur="this.form.submit();">{{ course_year.Comment }}</textarea>
-                </form>
+                    <label for="comment"><strong>Comentaris:</strong></label>
+                    <textarea id="comment" name="comment" class="form-control" rows="3" 
+                        placeholder="Sense comentari" 
+                        onblur="this.form.submit();">{% if course_year.Comment and course_year.Comment != 'None' %}{{ course_year.Comment }}{% endif %}</textarea>
+                    </form>
 
                  <!-- Display existing capacities -->
                  <h5 class="mt-4 d-flex justify-content-between align-items-center">
@@ -91,7 +92,7 @@
                         </tr>
                         {% if total_points|length == 0 %}
                         <tr>
-                            <td colspan={{ typepoint_names_assigned|length|add:"1" }} class="text-center">Cap punts assignats ni per assignar trobats.</td>
+                            <td colspan={{ typepoint_names_assigned|length|add:"2" }} class="text-center">Cap punts assignats ni per assignar trobats.</td>
                         </tr>
                         {% endif %}
                     </tbody>

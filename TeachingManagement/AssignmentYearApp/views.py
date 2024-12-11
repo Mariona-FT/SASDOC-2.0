@@ -31,15 +31,16 @@ def select_year(request):
 #Testing
 def check_section_chief_section(request):
     user = request.user
-    section,year = get_sectionchief_section(user)  # Call the utility function to fetch the section
+    section = get_sectionchief_section(user)  # Call the utility function to fetch the section
 
-    context = {'section': section,'year':year}
+    context = {'section': section }
     return render(request, 'test_sectionchief_info.html', context)
 
 # COURSES found in that SECTION - IN ALL SCHOOLS - IN ALL DEGREES
 def section_courses_list(request):
     user=request.user
-    section,year= get_sectionchief_section(user) # return the section of the chief
+
+    section= get_sectionchief_section(user) # return the section of the chief
 
     # get SELECTED YEAR - if not selected have the most recent one
     years = Year.objects.all().order_by('-Year').distinct()
@@ -172,12 +173,12 @@ def courseyear_show(request,idCourseYear=None):
     typepoint_names_assigned={}
     #Dicc to have the names linked for the possible points
     typepoints_fields = {
-        'PointsA': typepoints_section.NamePointsA,
-        'PointsB': typepoints_section.NamePointsB,
-        'PointsC': typepoints_section.NamePointsC,
-        'PointsD': typepoints_section.NamePointsD,
-        'PointsE': typepoints_section.NamePointsE,
-        'PointsF': typepoints_section.NamePointsF
+        'PointsA': typepoints_section.NamePointsA if typepoints_section else None,
+        'PointsB': typepoints_section.NamePointsB if typepoints_section else None,
+        'PointsC': typepoints_section.NamePointsC if typepoints_section else None,
+        'PointsD': typepoints_section.NamePointsD if typepoints_section else None,
+        'PointsE': typepoints_section.NamePointsE if typepoints_section else None,
+        'PointsF': typepoints_section.NamePointsF if typepoints_section else None,
     }
     #Only save the names of the groups that are not None
     for field, point_name in typepoints_fields.items():
@@ -185,6 +186,7 @@ def courseyear_show(request,idCourseYear=None):
             typepoint_names_assigned[field] = point_name
     
     #return TOTALPOINTS from CourseYear
+    total_points_sum=0
     total_points = {}
     for field, point_name in typepoint_names_assigned.items():
         point_value = getattr(course_year,field, 0) or 0
@@ -193,6 +195,7 @@ def courseyear_show(request,idCourseYear=None):
         total_points_sum = sum(value if value is not None else 0 for value in total_points.values())
 
     #return ASSIGNEDPOINTSS from assignment
+    assigned_points_sum=0
     assigned_points = {name: 0 for name in typepoint_names}
     assignments = Assignment.objects.filter(CourseYear=course_year)
 
@@ -213,7 +216,7 @@ def courseyear_show(request,idCourseYear=None):
     for assignment in assignments:
         data = {}
         data['id']=assignment.idAssignment
-        data['is_coordinator']=assignment.IsCoordinator
+        data['is_coordinator']=assignment.isCoordinator
 
         data['professor_name'] = assignment.Professor.name +" "+assignment.Professor.family_name
         data['professor_id'] = assignment.Professor.idProfessor
@@ -263,7 +266,7 @@ def courseyear_show(request,idCourseYear=None):
 
         #Get all the points already assigned for that professor that year in that section
         assigned_points_in_courseyear = Assignment.objects.filter(
-            Professor=professor,  CourseYear__Course__Degree__School__Section=section, 
+            Professor=professor,  CourseYear__Course__Degree__School__Section=section, CourseYear__Year=course_year.Year,  
         )
 
         total_assigned_points =0
@@ -331,7 +334,7 @@ def assign_professor(request, professor_id, course_year_id):
     assignment = Assignment(
         Professor=professor,
         CourseYear=course_year,
-        IsCoordinator=False,  # Set IsCoordinator to False as per requirement
+        isCoordinator=False,  # Set IsCoordinator to False as per requirement
         # Set all points to null (or default to 0)
         PointsA=None,
         PointsB=None,
@@ -385,9 +388,9 @@ def update_assignment(request,idAssignment):
             # Update Is Coordinator field
             is_coordinator = request.POST.get('is_coordinator')
             if is_coordinator == 'yes':
-                assignment.IsCoordinator = True
+                assignment.isCoordinator = True
             elif is_coordinator == 'no':
-                assignment.IsCoordinator = False
+                assignment.isCoordinator = False
 
             # Save the updated assignment object
             assignment.save()
@@ -428,20 +431,18 @@ def update_course_year_comment(request,idCourseYear):
         
         if comment:
             course_year.Comment = comment
-            course_year.save()
             messages.success(request, f"El comentari s'ha actualitzat correctament.")
-        else:
-            messages.error(request, 'El comentari no és vàlid. Si us plau, escriu un comentari.')
-            return redirect('courseyear_show', idCourseYear=idCourseYear)
-
-
-    messages.error(request, f"El comentari no sha creat correctament.")
+        else:  # If  comment empty
+            course_year.Comment = None
+            messages.warning(request, "El comentari s'ha eliminat correctament.")
+            
+        course_year.save()
     return redirect('courseyear_show', idCourseYear=idCourseYear)
 
 
 def section_professors_list(request):
     user=request.user
-    section,year= get_sectionchief_section(user) # return the section of the chief
+    section= get_sectionchief_section(user) # return the section of the chief
 
     # get SELECTED YEAR - if not selected have the most recent one
     years = Year.objects.all().order_by('-Year').distinct()
@@ -602,3 +603,122 @@ def section_professors_list(request):
 
     # Pass the course_year data to the template
     return render(request, 'professor_info_assign/professor_assign_info_list_actions.html', context)
+
+#selecting the years
+def select_years_for_duplication(request):
+
+    if request.method == 'POST':
+        source_year = request.POST.get('source_year')
+        target_year = request.POST.get('target_year')
+
+        if source_year and target_year:
+            # Save selected years in the session
+            request.session['source_year'] = source_year
+            request.session['target_year'] = target_year
+
+            # Redirect to any page after selecting years
+            return redirect('section_courses_list')
+
+
+    years = Year.objects.all().order_by('-Year').distinct()
+
+    context = {
+        'years': years,
+    }
+
+    return render(request, 'section_courses_assign/select_duplicate_years.html', context)
+
+#duplicating the years
+def duplicate_course_assignment(request, idCourseYear):
+    # Get the course and years
+    course_year = get_object_or_404(CourseYear, idCourseYear=idCourseYear)
+
+    course=course_year.Course
+    source_year = request.session.get('source_year') 
+    target_year = request.session.get('target_year') 
+    
+    if not source_year or not target_year:
+        messages.error(request, "Els anys seleccionats no són vàlids. Selecciona els anys correctes.")
+        return redirect('section_courses_list')
+
+    source_year_obj = get_object_or_404(Year, Year=source_year)
+    target_year_obj = get_object_or_404(Year, Year=target_year)
+
+    # Get the CourseYear for the source year, course and semester
+    course_years = CourseYear.objects.filter(Course=course, Year=source_year_obj, Semester=course_year.Semester)
+
+    if not course_years.exists():
+        messages.error(request, "No s'han trobat assignatures per duplicar en el curs i any seleccionats.")
+        return redirect('section_courses_list')
+    
+    #Duplicate the typepoints for that section x year if does not exist
+    section = course_year.Course.Degree.School.Section
+    typepoints_section = get_object_or_404(TypePoints, Section=section, Year=source_year_obj)
+
+    # Query the TypePoints for the source year and section
+    existing_typepoints = TypePoints.objects.filter(Section=section, Year=source_year_obj)
+
+    # Loop through each of the existing TypePoints and create a new one for the target year
+    for typepoint in existing_typepoints:
+        # Create a new TypePoints entry for the target year
+        existing_typepoint = TypePoints.objects.filter(Section=typepoint.Section, Year=target_year_obj).first()
+        
+         # Create a new TypePoints entry
+        if not existing_typepoint:
+            TypePoints.objects.create(
+                Section=typepoint.Section,  # The same section
+                Year=target_year_obj,  # The target year
+                NamePointsA=typepoints_section.NamePointsA,
+                NamePointsB=typepoints_section.NamePointsB,
+                NamePointsC=typepoints_section.NamePointsC,
+                NamePointsD=typepoints_section.NamePointsD,
+                NamePointsE=typepoints_section.NamePointsE,
+                NamePointsF=typepoints_section.NamePointsF,
+            )
+
+    # Duplicate the course assignment
+    for course_year in course_years:
+        existing_course_year = CourseYear.objects.filter(
+            Course=course_year.Course,
+            Year=target_year_obj,
+            Semester=course_year.Semester
+        ).first()
+
+        if not existing_course_year:
+            # Create a new CourseYear entry
+            new_course_year = CourseYear(
+                Course=course_year.Course,
+                Year=target_year_obj,
+                Semester=course_year.Semester,
+                PointsA=course_year.PointsA,
+                PointsB=course_year.PointsB,
+                PointsC=course_year.PointsC,
+                PointsD=course_year.PointsD,
+                PointsE=course_year.PointsE,
+                PointsF=course_year.PointsF,
+                Language=course_year.Language,
+                Comment=course_year.Comment,
+            )
+            new_course_year.save()
+        else:
+            new_course_year = existing_course_year  
+
+    #Duplicate the assigned professors for that course year 
+    assignments = Assignment.objects.filter(CourseYear=course_year)
+    for assignment in assignments:
+        # Create a new assignment for the target year and target CourseYear
+        Assignment.objects.update_or_create(
+            CourseYear=new_course_year,
+            Professor=assignment.Professor,  
+            isCoordinator=assignment.isCoordinator, 
+            PointsA=assignment.PointsA,
+            PointsB=assignment.PointsB,
+            PointsC=assignment.PointsC,
+            PointsD=assignment.PointsD,
+            PointsE=assignment.PointsE,
+            PointsF=assignment.PointsF,
+        )
+
+
+    messages.success(request, f'Assignatures duplicades amb èxit de {source_year} a {target_year}.')
+    return redirect('section_courses_list')
