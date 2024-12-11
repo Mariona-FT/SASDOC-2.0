@@ -41,7 +41,7 @@
                 <!-- List of all courses -->
                 {% if global_selected_year %}
                     <h6 style="text-align:center; color:blue">
-                        Assignació dels Cursos en el curs 
+                        Assignació Any
                         {{ global_selected_year }} 
 
                         {% if global_selected_year|stringformat:"s" != global_available_years|first|stringformat:"s" %}
@@ -52,13 +52,13 @@
 
                 <h3>Llistat dels Cursos:</h3>
 
-                <table class="table table-striped" id="coursesassign-table">
+                <table class="table table-striped" id="coursesassign-table" style="table-layout: fixed; width: 100%;">
                     <thead>
                         <tr>
-                            <th style="text-align: left;">Titulació</th>
-                            <th style="text-align: left;">Nom Curs</th>
-                            <th style="width:9%; text-align: left;">Semestre</th>
-                            <th style="text-align: left; width:8%;">Any</th>
+                            <th style="text-align: left; width:22%;">Titulació</th>
+                            <th style="text-align: left; width:20%;">Nom Curs</th>
+                            <th style="text-align: left; width:12%;">Semestre</th>
+                            <th style="text-align: left; width:12%;">Any</th>
                             <th style="text-align: left; width: 12%;">Punts Totals</th> 
                             <th style="text-align: left; width: 13%;">Punts Assignats</th>  
                             <th class="actions-c" style="width:200px">Accions</th>
@@ -127,15 +127,15 @@
                             <!-- Display selected years or message if not selected -->
                             <div id="selectedYears" class="mt-3">
                                 {% if source_year  %}
-                                    <p style="text-align:center; color:blue">Any Original: {{ source_year }}</p>
+                                    <p style="text-align:center; color:blue; font-style:italic; ">Any Original: {{ source_year }}</p>
                                 {% else %}
-                                    <p>Anys original encara per seleccionar</p>
+                                    <p style="text-align:center; color:blue; font-style:italic; "> Anys original encara per seleccionar</p>
                                 {% endif %}
 
                                 {% if target_year  %}
-                                    <p style="text-align:center; color:blue">Any a Duplicar: {{ target_year }}</p>
+                                    <p style="text-align:center; color:blue; font-style:italic; ">Any a Duplicar: {{ target_year }}</p>
                                 {% else %}
-                                    <p>Anys a duplicar encara per seleccionar</p>
+                                    <p style="text-align:center; color:blue; font-style:italic; ">Anys a duplicar encara per seleccionar</p>
                                 {% endif %}
                             </div>
                     </div>

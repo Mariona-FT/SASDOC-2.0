@@ -55,10 +55,11 @@
                     
                 <form method="POST" action="{% url 'update_course_year_comment' course_year.idCourseYear %}">
                     {% csrf_token %}
-                    <label for="comment"><strong>Comentari:</strong></label>
-                    <textarea id="comment" name="comment" class="form-control" rows="3"
-                              onblur="this.form.submit();">{{ course_year.Comment }}</textarea>
-                </form>
+                    <label for="comment"><strong>Comentaris:</strong></label>
+                    <textarea id="comment" name="comment" class="form-control" rows="3" 
+                        placeholder="Sense comentari" 
+                        onblur="this.form.submit();">{% if course_year.Comment and course_year.Comment != 'None' %}{{ course_year.Comment }}{% endif %}</textarea>
+                    </form>
 
                  <!-- Display existing capacities -->
                  <h5 class="mt-4 d-flex justify-content-between align-items-center">

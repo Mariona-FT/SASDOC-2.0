@@ -266,7 +266,7 @@ def courseyear_show(request,idCourseYear=None):
 
         #Get all the points already assigned for that professor that year in that section
         assigned_points_in_courseyear = Assignment.objects.filter(
-            Professor=professor,  CourseYear__Course__Degree__School__Section=section, 
+            Professor=professor,  CourseYear__Course__Degree__School__Section=section, CourseYear__Year=course_year.Year,  
         )
 
         total_assigned_points =0
@@ -431,14 +431,12 @@ def update_course_year_comment(request,idCourseYear):
         
         if comment:
             course_year.Comment = comment
-            course_year.save()
             messages.success(request, f"El comentari s'ha actualitzat correctament.")
-        else:
-            messages.error(request, 'El comentari no és vàlid. Si us plau, escriu un comentari.')
-            return redirect('courseyear_show', idCourseYear=idCourseYear)
-
-
-    messages.error(request, f"El comentari no sha creat correctament.")
+        else:  # If  comment empty
+            course_year.Comment = None
+            messages.warning(request, "El comentari s'ha eliminat correctament.")
+            
+        course_year.save()
     return redirect('courseyear_show', idCourseYear=idCourseYear)
 
 
