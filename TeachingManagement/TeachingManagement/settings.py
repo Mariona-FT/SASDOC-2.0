@@ -71,6 +71,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'UsersApp.context_processor.user_role',
                 'SectionChiefApp.context_processors.global_years',
+                'SectionChiefApp.context_processors.selected_years',
             ],
         },
     },

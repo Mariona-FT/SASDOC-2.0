@@ -603,3 +603,25 @@ def section_professors_list(request):
 
     # Pass the course_year data to the template
     return render(request, 'professor_info_assign/professor_assign_info_list_actions.html', context)
+
+
+def select_years_for_duplication(request):
+
+    if request.method == 'POST':
+        source_year_id = request.POST.get('source_year')
+        target_year_id = request.POST.get('target_year')
+        
+        if source_year_id and target_year_id:
+            # Save selected years in the session
+            request.session['source_year'] = source_year_id
+            request.session['target_year'] = target_year_id
+
+            # Redirect to any page after selecting years
+            return redirect('section_courses_list')
+
+
+    years = Year.objects.all().order_by('-Year').distinct()
+    context = {
+        'years': years,
+    }
+    return render(request, 'section_courses_assign/select_duplicate_years.html', context)

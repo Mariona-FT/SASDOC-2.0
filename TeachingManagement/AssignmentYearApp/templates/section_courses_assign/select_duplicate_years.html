@@ -1,0 +1,51 @@
+{% extends 'base-template/base.html' %}
+
+{% block title %}Duplicar  Assignació{% endblock %}
+
+{% block content %}
+<div class="container-fluid d-flex" style="min-height: 100vh;">
+    <div class="col-lg-10 mx-auto">
+
+        <h2 class="text-center">Selecciona un Professor per Gestionar la Capacitat</h2>
+        <hr>
+        <div class="row">
+            <div class="col-lg-10">
+
+                <form method="post">
+                    {% csrf_token %}
+                    <label for="source_year">Year to Duplicate From:</label>
+                    <select name="source_year" id="source_year" required>
+                        <option value="" disabled selected>Select a year</option>
+                        {% for year in years %}
+                            <option value="{{ year.idYear }}">{{ year.Year }}</option>
+                        {% endfor %}
+                    </select>
+                    <br><br>
+                    <label for="target_year">Year to Duplicate To:</label>
+                    <select name="target_year" id="target_year" required>
+                        <option value="" disabled selected>Select a year</option>
+                        {% for year in years %}
+                            <option value="{{ year.idYear }}">{{ year.Year }}</option>
+                        {% endfor %}
+                    </select>
+                    <br><br>
+                    <button type="submit">Duplicate</button>
+                </form>
+
+            </div> 
+                <!-- Buttons section fixed on the right -->
+                <div class="col-lg-2">
+                    <div class="sticky-top" style="top: 1rem">
+                        <div class="buttons mb-2 d-flex flex-column align-items-center">
+                            <a href="{% url 'section_courses_list' %}" class="button-return mb-2">Tornar a Gestió Capacitat del Professorat</a>
+                        </div>
+                    </div>
+                </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}
