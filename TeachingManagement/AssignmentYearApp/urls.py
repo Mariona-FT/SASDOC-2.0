@@ -34,8 +34,12 @@ urlpatterns = [
     path('assign_professor/<int:professor_id>/<int:course_year_id>/', views.assign_professor, name='assign_professor'),
         #deleting the assign points of one professor in one Course
     path('delete_professor/<int:idProfessor>/<int:idCourseYear>/', views.delete_courseyear_professor, name='delete_courseyear_professor'),
-        #for duplicating assigments original year - selected year
+
+    #For DUPLICATING   
+        #for selecting original year - selected year
     path('select-years/', views.select_years_for_duplication, name='select_years'),
+        #for making the duplication
+    path('course/duplicate/<int:idCourseYear>/', views.duplicate_course_assignment, name='duplicate_course_assignment'),
 
     #For the PROFESSORS
     path('section-professors/', views.section_professors_list, name='section_professors_list'),

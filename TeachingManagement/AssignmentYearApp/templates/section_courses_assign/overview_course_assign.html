@@ -49,7 +49,7 @@
                 </p>
                 
                 <p> <strong>Any:</strong> {{ course_year.Year.Year }} &nbsp;&nbsp;&nbsp;&nbsp; 
-                    <strong>Semestre:</strong> {{ course_year.Semester }} {{ course_year.idCourseYear }} 
+                    <strong>Semestre:</strong> {{ course_year.Semester }}
                 </p>
 
                     
@@ -91,7 +91,7 @@
                         </tr>
                         {% if total_points|length == 0 %}
                         <tr>
-                            <td colspan={{ typepoint_names_assigned|length|add:"1" }} class="text-center">Cap punts assignats ni per assignar trobats.</td>
+                            <td colspan={{ typepoint_names_assigned|length|add:"2" }} class="text-center">Cap punts assignats ni per assignar trobats.</td>
                         </tr>
                         {% endif %}
                     </tbody>

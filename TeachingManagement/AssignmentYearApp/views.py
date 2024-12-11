@@ -173,12 +173,12 @@ def courseyear_show(request,idCourseYear=None):
     typepoint_names_assigned={}
     #Dicc to have the names linked for the possible points
     typepoints_fields = {
-        'PointsA': typepoints_section.NamePointsA,
-        'PointsB': typepoints_section.NamePointsB,
-        'PointsC': typepoints_section.NamePointsC,
-        'PointsD': typepoints_section.NamePointsD,
-        'PointsE': typepoints_section.NamePointsE,
-        'PointsF': typepoints_section.NamePointsF
+        'PointsA': typepoints_section.NamePointsA if typepoints_section else None,
+        'PointsB': typepoints_section.NamePointsB if typepoints_section else None,
+        'PointsC': typepoints_section.NamePointsC if typepoints_section else None,
+        'PointsD': typepoints_section.NamePointsD if typepoints_section else None,
+        'PointsE': typepoints_section.NamePointsE if typepoints_section else None,
+        'PointsF': typepoints_section.NamePointsF if typepoints_section else None,
     }
     #Only save the names of the groups that are not None
     for field, point_name in typepoints_fields.items():
@@ -186,6 +186,7 @@ def courseyear_show(request,idCourseYear=None):
             typepoint_names_assigned[field] = point_name
     
     #return TOTALPOINTS from CourseYear
+    total_points_sum=0
     total_points = {}
     for field, point_name in typepoint_names_assigned.items():
         point_value = getattr(course_year,field, 0) or 0
@@ -194,6 +195,7 @@ def courseyear_show(request,idCourseYear=None):
         total_points_sum = sum(value if value is not None else 0 for value in total_points.values())
 
     #return ASSIGNEDPOINTSS from assignment
+    assigned_points_sum=0
     assigned_points = {name: 0 for name in typepoint_names}
     assignments = Assignment.objects.filter(CourseYear=course_year)
 
@@ -604,7 +606,7 @@ def section_professors_list(request):
     # Pass the course_year data to the template
     return render(request, 'professor_info_assign/professor_assign_info_list_actions.html', context)
 
-
+#selecting the years
 def select_years_for_duplication(request):
 
     if request.method == 'POST':
@@ -627,3 +629,48 @@ def select_years_for_duplication(request):
     }
 
     return render(request, 'section_courses_assign/select_duplicate_years.html', context)
+
+#duplicating the years
+def duplicate_course_assignment(request, idCourseYear):
+    # Get the course and years
+    course_year = get_object_or_404(CourseYear, idCourseYear=idCourseYear)
+
+    course=course_year.Course
+    source_year = request.session.get('source_year')  # Or get it from context processor
+    target_year = request.session.get('target_year')  # Or get it from context processor
+    
+    if not source_year or not target_year:
+        messages.error(request, "Els anys seleccionats no són vàlids. Selecciona els anys correctes.")
+        return redirect('section_courses_list')
+
+    source_year_obj = get_object_or_404(Year, Year=source_year)
+    target_year_obj = get_object_or_404(Year, Year=target_year)
+
+    # Get all the CourseYear entries for the source year and course
+    course_years = CourseYear.objects.filter(Course=course, Year=source_year_obj)
+
+    if not course_years.exists():
+        messages.error(request, "No s'han trobat assignatures per duplicar en el curs i any seleccionats.")
+        return redirect('section_courses_list')
+    
+    # Loop through each course year and create a duplicate for the target year
+    for course_year in course_years:
+        # Duplicate the course assignment
+        new_course_year = CourseYear(
+            Course=course_year.Course,
+            Year=target_year_obj,
+            Semester=course_year.Semester,
+            PointsA=course_year.PointsA,
+            PointsB=course_year.PointsB,
+            PointsC=course_year.PointsC,
+            PointsD=course_year.PointsD,
+            PointsE=course_year.PointsE,
+            PointsF=course_year.PointsF,
+            Language=course_year.Language,
+            Comment=course_year.Comment,
+        )
+        new_course_year.save()
+
+    # Redirect back to the page with a success message
+    messages.success(request, f'Assignatures duplicades amb èxit de {source_year} a {target_year}.')
+    return redirect('section_courses_list')
