@@ -653,21 +653,33 @@ def duplicate_course_assignment(request, idCourseYear):
         messages.error(request, "No s'han trobat assignatures per duplicar en el curs i any seleccionats.")
         return redirect('section_courses_list')
     
+    #Duplicate the typepoints for that section x year if does not exist
+    section = course_year.Course.Degree.School.Section
+    typepoints_section = get_object_or_404(TypePoints, Section=section, Year=source_year_obj)
+
+    # Query the TypePoints for the source year and section
+    existing_typepoints = TypePoints.objects.filter(Section=section, Year=source_year_obj)
+
+    # Loop through each of the existing TypePoints and create a new one for the target year
+    for typepoint in existing_typepoints:
+        # Create a new TypePoints entry for the target year
+        existing_typepoint = TypePoints.objects.filter(Section=typepoint.Section, Year=target_year_obj).first()
+        
+         # Create a new TypePoints entry
+        if not existing_typepoint:
+            TypePoints.objects.create(
+                Section=typepoint.Section,  # The same section
+                Year=target_year_obj,  # The target year
+                NamePointsA=typepoints_section.NamePointsA,
+                NamePointsB=typepoints_section.NamePointsB,
+                NamePointsC=typepoints_section.NamePointsC,
+                NamePointsD=typepoints_section.NamePointsD,
+                NamePointsE=typepoints_section.NamePointsE,
+                NamePointsF=typepoints_section.NamePointsF,
+            )
+
+    # Duplicate the course assignment
     for course_year in course_years:
-        # Duplicate the course assignment
-        # new_course_year = CourseYear.objects.update_or_create(
-        #     Course=course_year.Course,
-        #     Year=target_year_obj,
-        #     Semester=course_year.Semester,
-        #     PointsA=course_year.PointsA,
-        #     PointsB=course_year.PointsB,
-        #     PointsC=course_year.PointsC,
-        #     PointsD=course_year.PointsD,
-        #     PointsE=course_year.PointsE,
-        #     PointsF=course_year.PointsF,
-        #     Language=course_year.Language,
-        #     Comment=course_year.Comment,
-        # )
         existing_course_year = CourseYear.objects.filter(
             Course=course_year.Course,
             Year=target_year_obj,
