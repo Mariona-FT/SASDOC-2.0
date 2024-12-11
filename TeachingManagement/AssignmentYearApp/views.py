@@ -636,8 +636,8 @@ def duplicate_course_assignment(request, idCourseYear):
     course_year = get_object_or_404(CourseYear, idCourseYear=idCourseYear)
 
     course=course_year.Course
-    source_year = request.session.get('source_year')  # Or get it from context processor
-    target_year = request.session.get('target_year')  # Or get it from context processor
+    source_year = request.session.get('source_year') 
+    target_year = request.session.get('target_year') 
     
     if not source_year or not target_year:
         messages.error(request, "Els anys seleccionats no són vàlids. Selecciona els anys correctes.")
@@ -646,31 +646,69 @@ def duplicate_course_assignment(request, idCourseYear):
     source_year_obj = get_object_or_404(Year, Year=source_year)
     target_year_obj = get_object_or_404(Year, Year=target_year)
 
-    # Get all the CourseYear entries for the source year and course
-    course_years = CourseYear.objects.filter(Course=course, Year=source_year_obj)
+    # Get the CourseYear for the source year, course and semester
+    course_years = CourseYear.objects.filter(Course=course, Year=source_year_obj, Semester=course_year.Semester)
 
     if not course_years.exists():
         messages.error(request, "No s'han trobat assignatures per duplicar en el curs i any seleccionats.")
         return redirect('section_courses_list')
     
-    # Loop through each course year and create a duplicate for the target year
     for course_year in course_years:
         # Duplicate the course assignment
-        new_course_year = CourseYear(
+        # new_course_year = CourseYear.objects.update_or_create(
+        #     Course=course_year.Course,
+        #     Year=target_year_obj,
+        #     Semester=course_year.Semester,
+        #     PointsA=course_year.PointsA,
+        #     PointsB=course_year.PointsB,
+        #     PointsC=course_year.PointsC,
+        #     PointsD=course_year.PointsD,
+        #     PointsE=course_year.PointsE,
+        #     PointsF=course_year.PointsF,
+        #     Language=course_year.Language,
+        #     Comment=course_year.Comment,
+        # )
+        existing_course_year = CourseYear.objects.filter(
             Course=course_year.Course,
             Year=target_year_obj,
-            Semester=course_year.Semester,
-            PointsA=course_year.PointsA,
-            PointsB=course_year.PointsB,
-            PointsC=course_year.PointsC,
-            PointsD=course_year.PointsD,
-            PointsE=course_year.PointsE,
-            PointsF=course_year.PointsF,
-            Language=course_year.Language,
-            Comment=course_year.Comment,
-        )
-        new_course_year.save()
+            Semester=course_year.Semester
+        ).first()
 
-    # Redirect back to the page with a success message
+        if not existing_course_year:
+            # Create a new CourseYear entry
+            new_course_year = CourseYear(
+                Course=course_year.Course,
+                Year=target_year_obj,
+                Semester=course_year.Semester,
+                PointsA=course_year.PointsA,
+                PointsB=course_year.PointsB,
+                PointsC=course_year.PointsC,
+                PointsD=course_year.PointsD,
+                PointsE=course_year.PointsE,
+                PointsF=course_year.PointsF,
+                Language=course_year.Language,
+                Comment=course_year.Comment,
+            )
+            new_course_year.save()
+        else:
+            new_course_year = existing_course_year  
+
+    #Duplicate the assigned professors for that course year 
+    assignments = Assignment.objects.filter(CourseYear=course_year)
+    for assignment in assignments:
+        # Create a new assignment for the target year and target CourseYear
+        Assignment.objects.update_or_create(
+            CourseYear=new_course_year,
+            Professor=assignment.Professor,  
+            isCoordinator=assignment.isCoordinator, 
+            PointsA=assignment.PointsA,
+            PointsB=assignment.PointsB,
+            PointsC=assignment.PointsC,
+            PointsD=assignment.PointsD,
+            PointsE=assignment.PointsE,
+            PointsF=assignment.PointsF,
+        )
+
+
     messages.success(request, f'Assignatures duplicades amb èxit de {source_year} a {target_year}.')
     return redirect('section_courses_list')
