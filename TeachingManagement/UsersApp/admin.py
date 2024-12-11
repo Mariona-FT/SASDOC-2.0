@@ -24,7 +24,7 @@ class ProfessorAdmin(admin.ModelAdmin):
 admin.site.register(Professor, ProfessorAdmin)
 
 class CheifAdmin(admin.ModelAdmin):
-    list_display=["professor","year","section"]
+    list_display=["professor","section"]
 
 admin.site.register(Chief, CheifAdmin)
 

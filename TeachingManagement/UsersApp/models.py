@@ -86,15 +86,13 @@ class Chief(models.Model):
     professor = models.ForeignKey(Professor, on_delete=models.CASCADE)
 
     #year = models.CharField(max_length=4, default=str(timezone.now().year)) 
-    year = models.ForeignKey(Year, on_delete=models.SET_NULL, null=True)
-
     #section = models.CharField(max_length=100)
     section = models.ForeignKey(Section, on_delete=models.SET_NULL, null=True)
     
     class Meta:
         verbose_name='section chief'
         verbose_name_plural='section chiefs'
-        unique_together = ('professor', 'year', 'section')  # Ensure unique combinations
+        unique_together = ('professor', 'section')  # Ensure unique combinations
 
     def __str__(self):
-        return f"{self.professor.name} {self.professor.family_name} - {self.section} ({self.year})"
+        return f"{self.professor.name} {self.professor.family_name} - {self.section}"

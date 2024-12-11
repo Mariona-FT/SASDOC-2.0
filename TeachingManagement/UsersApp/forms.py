@@ -352,16 +352,14 @@ class ChiefRegistrationForm(forms.ModelForm):
    
     class Meta:
         model = Chief
-        fields = ['professor', 'year', 'section'] 
+        fields = ['professor', 'section'] 
         labels = {
             'professor': 'Nom del Professor',
-            'year': 'Any',
             'section':'Secció',
         }
 
         widgets = {
             'professor': forms.Select(attrs={'required': 'required','class': 'form-select'}),
-            'year': forms.Select(attrs={'required': 'required','class': 'form-select'}),
             'section': forms.Select(attrs={'required': 'required','class': 'form-select'}),
         }
 
@@ -369,12 +367,10 @@ class ChiefRegistrationForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         self.fields['professor'].queryset = Professor.objects.all().order_by('family_name')
-        self.fields['year'].queryset = Year.objects.all().order_by('-Year')
 
     def clean(self):
         cleaned_data = super().clean()
         professor = cleaned_data.get('professor')
-        year = cleaned_data.get('year')
         section = cleaned_data.get('section')
         
         # Check if we are editing an existing Chief (i.e., it has a pk)
@@ -382,12 +378,12 @@ class ChiefRegistrationForm(forms.ModelForm):
 
         if instance.pk:
             # Exclude the current instance from the query to allow for editing the same object
-            if Chief.objects.filter(professor=professor, year=year, section=section).exclude(pk=instance.pk).exists():
+            if Chief.objects.filter(professor=professor, section=section).exclude(pk=instance.pk).exists():
                 raise ValidationError('Aquest Professor, amb aquest Any i Secció ja existeix.')
 
         else:
             # Check if a Chief already exists with the same professor, year, and section (for new entries)
-            if Chief.objects.filter(professor=professor, year=year, section=section).exists():
+            if Chief.objects.filter(professor=professor, section=section).exists():
                 raise ValidationError('Aquest Professor, amb aquest Any i Secció ja existeix.')
 
         return cleaned_data
