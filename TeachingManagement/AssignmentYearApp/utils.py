@@ -7,7 +7,7 @@ def get_sectionchief_section(user):
     if not professor:
         return None
 
-    chief_assigned = (Chief.objects.filter(professor=professor).order_by('year').first())
+    chief_assigned = (Chief.objects.filter(professor=professor).order_by('professor__family_name').first())
 
     if chief_assigned:
         return chief_assigned.section
