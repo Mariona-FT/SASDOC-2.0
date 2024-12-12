@@ -126,7 +126,7 @@ def section_courses_list(request):
         for field, point_name in typepoint_names_assigned.items():
             assigned_value = assigned_points.get(point_name, 0)
             total_value = total_points.get(point_name, 0)
-            points_summary += f"{point_name}: {total_value}/{assigned_value} , "
+            points_summary += f"{point_name}: {assigned_value}/{total_value}, "
 
         # Remove the trailing comma and space
         points_summary = points_summary.strip(', ')

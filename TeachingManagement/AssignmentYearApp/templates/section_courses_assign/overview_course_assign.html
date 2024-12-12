@@ -59,7 +59,9 @@
                     <textarea id="comment" name="comment" class="form-control" rows="3" 
                         placeholder="Sense comentari" 
                         onblur="this.form.submit();">{% if course_year.Comment and course_year.Comment != 'None' %}{{ course_year.Comment }}{% endif %}</textarea>
-                    </form>
+                </form>
+
+                <hr>
 
                  <!-- Display existing capacities -->
                  <h5 class="mt-4 d-flex justify-content-between align-items-center">
@@ -170,24 +172,15 @@
                     Professorat Candidat a ser Assignat:
                 </h5>
 
-                <div class="explanation-list">
-                    <ul>
-                        <li><strong>Punts Restants en la Secció</strong>: Els punts restants en aquesta secció es calculen restant els punts ja assignats en les Assignatures de la secció entre la capacitat total assignada per aquesta secció.</li>
-                        <li><strong>Punts Totals en el Departament</strong>: Els punts totals que un professor pot tenir en el departament, la capacitat total disponible per aquest professor durant aquell any sense restar els seus punts alliberats.</li>
-                        <li><strong>Punts Assignats en la Secció</strong>: Els punts que han estat assignats a aquest professor per la seva participació en la secció d'aquest curs any.</li>
-                        <li><strong>Explicació de Colors:</strong>
-                            <ul>
-                                <li><strong style="color:green">Verd</strong>: Si el valor és negatiu, indica que encara es poden assignar més punts al professor.</li>
-                                <li><strong style="color:blue">Blau</strong>: Si el valor és zero, vol dir que el professor té els punts perfectament assignats per la secció. No s'ha d'assignar més.</li>
-                                <li><strong style="color:red">Vermell</strong>: Si el valor és positiu, vol dir que el professor ha estat assignat a més punts dels que la seva capacitat permet. Això indica que el professor està sobreassignat.</li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
+                <p>
+                    Veure per veure l'explicació de la taula i els colors,  <a href="#explanation-section" class="text-decoration-underline">clicar aqui,</a> o anar al final de la taula.
+                </p>
+
+                <br>
 
                 <!-- Filter Fields -->
                 <div class="filters-section mb-4">
-                    <h6>Filtres pel Llistat del Professorat</h6>
+                    <h6>Filtres pel Llistat: </h6>
                     <div class="d-flex justify-content-start mb-2">
                         <!-- Filter Input -->
                         <div class="col-md-12">
@@ -250,6 +243,25 @@
                         {% endif %}
                     </tbody>
                 </table>
+
+                <hr>
+
+                <!-- Information of possible professors to assign -->
+                <div class="explanation-list" id="explanation-section" class="mt-4">
+                    <h5>Explicació i Llegenda dels Colors de la Taula:</h5>
+                    <ul>
+                        <li><strong>Punts Restants en la Secció</strong>: Els punts restants en aquesta secció es calculen restant els punts ja assignats en les Assignatures de la secció entre la capacitat total assignada per aquesta secció.</li>
+                        <li><strong>Punts Totals en el Departament</strong>: Els punts totals que un professor pot tenir en el departament, la capacitat total disponible per aquest professor durant aquell any sense restar els seus punts alliberats.</li>
+                        <li><strong>Punts Assignats en la Secció</strong>: Els punts que han estat assignats a aquest professor per la seva participació en la secció d'aquest curs any.</li>
+                        <li><strong>Explicació de Colors:</strong>
+                            <ul>
+                                <li><strong style="color:green">Verd</strong>: Si el valor és negatiu, indica que encara es poden assignar més punts al professor.</li>
+                                <li><strong style="color:blue">Blau</strong>: Si el valor és zero, vol dir que el professor té els punts perfectament assignats per la secció. No s'ha d'assignar més.</li>
+                                <li><strong style="color:red">Vermell</strong>: Si el valor és positiu, vol dir que el professor ha estat assignat a més punts dels que la seva capacitat permet. Això indica que el professor està sobreassignat.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
                 
                 <!-- No results message -->
                 <div id="no-results-message"  class="text-center text-danger" style="display: none;">

@@ -49,7 +49,8 @@
                             <th style="text-align: left; width:95px;">% Total</th>
                             <th style="text-align: left; width:8%;">Punts Q1</th>
                             <th style="text-align: left; width:8%;">Punts Q2</th>
-                            <th style="text-align: center; width:10%;">Capacitat total i en la Secció</th>
+                            <th style="text-align: center; width:8%;">Capacitat total</th>
+                            <th style="text-align: center; width:9%;">Capacitat en la Secció</th>
                             <th style="text-align: left; width: 8%;">Punts no assignats</th> 
                             {% for schools in schools_section %}
                                 <th style="text-align: left; font-style: italic">{{ schools.NameSchool }}</th>
@@ -87,7 +88,8 @@
                                         {% else %}
                                             {{ professor.total_capacity|floatformat:"-2" }}
                                         {% endif %}
-                                         || 
+                                    </td>
+                                    <td>
                                         {% if professor.capacity_section == 0 %}
                                             --
                                         {% else %}
@@ -120,7 +122,7 @@
                             {% endfor %}
                         {% else %}
                             <tr>
-                                <td colspan="11" class="text-center">Cap Curs en cap Professor a la Secció d'aquest Cap de Secció.</td>
+                                <td colspan="12" class="text-center">Cap Curs en cap Professor a la Secció d'aquest Cap de Secció.</td>
                             </tr>        
                         {% endif %} 
                     </tbody>
