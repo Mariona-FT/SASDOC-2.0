@@ -28,10 +28,10 @@ def field_list(request):
             field = Field.objects.get(pk=field_id)
             field_name = field.NameField  # Store the name for the message
             field.delete()
-            messages.success(request, f"El camp {field_name} s'ha eliminat correctament.")
+            messages.success(request, f"El camp de coneixament {field_name} s'ha eliminat correctament.")
             return redirect('field_list') 
         except Field.DoesNotExist:
-            messages.error(request, "Error: El camp no existeix.")
+            messages.error(request, "Error: El camp de coneixament no existeix.")
 
     # ACTION OF INITIAL DELETE
     if 'confirm_delete' in request.GET:
@@ -57,7 +57,7 @@ def field_create_edit(request, idField=None):
             form = FieldForm(request.POST, instance=field)
             if form.is_valid():
                 form.save()
-                messages.success(request, f'El camp "{field.NameField}" s\'ha actualitzat correctament.')
+                messages.success(request, f'El camp de coneixament "{field.NameField}" s\'ha actualitzat correctament.')
                 return redirect('field_list')
         else:
             form = FieldForm(instance=field)
@@ -67,7 +67,7 @@ def field_create_edit(request, idField=None):
             form = FieldForm(request.POST)
             if form.is_valid():
                 new_field = form.save()
-                messages.success(request, f'El camp "{new_field.NameField}" s\'ha afegit correctament.')
+                messages.success(request, f'El camp de coneixament "{new_field.NameField}" s\'ha afegit correctament.')
                 return redirect('field_list')
         else:
             form = FieldForm()
@@ -264,10 +264,10 @@ def course_list(request):
             course = Course.objects.get(pk=course_id)
             course_name = course.NameCourse  # Store the name for the message
             course.delete()
-            messages.success(request, f"El Curs {course_name} s'ha eliminat correctament.")
+            messages.success(request, f"L'assignatura {course_name} s'ha eliminat correctament.")
             return redirect('course_list') 
         except Course.DoesNotExist:
-            messages.error(request, "Error: El Curs no existeix.")
+            messages.error(request, "Error: L'assignatura no existeix.")
     
     # ACTION OF INITIAL DELETE
     if 'confirm_delete' in request.GET:
@@ -289,7 +289,7 @@ def course_create_edit(request,idCourse=None):
             form = CourseForm(request.POST, instance=course)
             if form.is_valid():
                 form.save()
-                messages.success(request, f"El curs {course.NameCourse} s\'ha actualitzat correctament.")
+                messages.success(request, f"L'assignatura {course.NameCourse} s\'ha actualitzat correctament.")
                 return redirect('course_list')
         else:
             form = CourseForm(instance=course)
@@ -299,7 +299,7 @@ def course_create_edit(request,idCourse=None):
             form = CourseForm(request.POST)
             if form.is_valid():
                 new_course = form.save()
-                messages.success(request, f"El curs {new_course.NameCourse} s\'ha afegit correctament.")
+                messages.success(request, f"L'assignatura {new_course.NameCourse} s\'ha afegit correctament.")
                 return redirect('course_list')
         else:
             form = CourseForm()
@@ -319,10 +319,10 @@ def typeprofessor_list(request):
             typeprofessor = TypeProfessor.objects.get(pk=typeprofessor_id)
             typeprofessor_name = typeprofessor.NameContract  # Store the name for the message
             typeprofessor.delete()
-            messages.success(request, f"El tipus de Professor {typeprofessor_name} s'ha eliminat correctament.")
+            messages.success(request, f"El contracte {typeprofessor_name} s'ha eliminat correctament.")
             return redirect('typeprofessor_list') 
         except TypeProfessor.DoesNotExist:
-            messages.error(request, "Error: El tipus de professor no existeix.")
+            messages.error(request, "Error: El contracte no existeix.")
     
     # ACTION OF INITIAL DELETE
     if 'confirm_delete' in request.GET:
@@ -344,7 +344,7 @@ def typeprofessor_create_edit(request,idTypeProfessor=None):
             form = TypeProfessorForm(request.POST, instance=typeprofessor)
             if form.is_valid():
                 form.save()
-                messages.success(request, f"El tipus de professor {typeprofessor.NameContract} s\'ha actualitzat correctament.")
+                messages.success(request, f"El contracte {typeprofessor.NameContract} s\'ha actualitzat correctament.")
                 return redirect('typeprofessor_list')
         else:
             form = TypeProfessorForm(instance=typeprofessor)
@@ -354,7 +354,7 @@ def typeprofessor_create_edit(request,idTypeProfessor=None):
             form = TypeProfessorForm(request.POST)
             if form.is_valid():
                 new_typeprofessor = form.save()
-                messages.success(request, f"El tipus de professor {new_typeprofessor.NameContract} s\'ha afegit correctament.")
+                messages.success(request, f"El contracte {new_typeprofessor.NameContract} s\'ha afegit correctament.")
                 return redirect('typeprofessor_list')
         else:
             form = TypeProfessorForm()
@@ -429,10 +429,10 @@ def year_list(request):
             year = Year.objects.get(pk=year_id)
             year_name = year.Year  # Store the name for the message
             year.delete()
-            messages.success(request, f"L'Any {year_name} s'ha eliminat correctament.")
+            messages.success(request, f"El curs acadèmic {year_name} s'ha eliminat correctament.")
             return redirect('year_list') 
         except Year.DoesNotExist:
-            messages.error(request, "Error: L'any no existeix.")
+            messages.error(request, "Error: El curs acadèmic no existeix.")
     
     # ACTION OF INITIAL DELETE
     if 'confirm_delete' in request.GET:
@@ -453,7 +453,7 @@ def year_create_edit(request,idYear=None):
             form = YearForm(request.POST, instance=year)
             if form.is_valid():
                 form.save()
-                messages.success(request, f"L'any {year.Year} s\'ha actualitzat correctament.")
+                messages.success(request, f"El curs acadèmic {year.Year} s\'ha actualitzat correctament.")
                 return redirect('year_list')
         else:
             form = YearForm(instance=year)
@@ -463,7 +463,7 @@ def year_create_edit(request,idYear=None):
             form = YearForm(request.POST)
             if form.is_valid():
                 new_year = form.save()
-                messages.success(request, f"L'any {new_year.Year} s\'ha afegit correctament.")
+                messages.success(request, f"El curs acadèmic {new_year.Year} s\'ha afegit correctament.")
                 return redirect('year_list')
         else:
             form = YearForm()
