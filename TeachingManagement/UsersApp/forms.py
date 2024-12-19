@@ -139,8 +139,6 @@ class ProfessorForm(forms.ModelForm):
         username = cleaned_data.get('username')
         email = cleaned_data.get('email')
 
-        print("Cleaned data before validation:", cleaned_data)  # Print cleaned data before checks
-
         # Get the current instance to exclude it from the uniqueness check
         user_instance = self.instance
 
@@ -151,7 +149,6 @@ class ProfessorForm(forms.ModelForm):
         if CustomUser.objects.filter(email=email).exclude(pk=user_instance.pk).exists():
             raise ValidationError(f'El correu electrònic "{email}" ja està en ús.')
 
-        print("Cleaned data after validation:", cleaned_data)  # Print cleaned data after checks
         return cleaned_data
     
     def save(self, commit=True):
@@ -174,8 +171,6 @@ class ProfessorForm(forms.ModelForm):
             generated_password = f"{user.first_name.lower()}_{user.last_name.lower()}"
             user.password = make_password(generated_password)
         
-        print("User data before saving:", user)  # Print user instance before saving
-
         if commit:
             user.save()
         
@@ -192,7 +187,6 @@ class ProfessorForm(forms.ModelForm):
                 'current_contract':self.cleaned_data['current_contract'],
             }
         )
-        print("Professor data saved:", professor)  # Print professor instance after saving
 
         if commit:
             professor.save()

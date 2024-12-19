@@ -43,7 +43,6 @@ def professor_list(request):
         # FINAL DELETE
         
         professor_id = request.POST.get('confirm_delete')
-        print(f"Attempting to delete professor with ID: {professor_id}")  # Print the ID being passed
 
         try:
             professor = Professor.objects.get(idProfessor=professor_id)
@@ -51,21 +50,18 @@ def professor_list(request):
 
             user = professor.user
             if user:
-                print(f"Deleting associated CustomUser with ID: {user}")  # Print the user ID being deleted
                 user.delete()  # Delete the user
 
             professor.delete()
-            messages.success(request, f"El professor {professor_name} s'ha eliminat correctament.")
+            messages.success(request, f"El professorat amb el nom {professor_name} s'ha eliminat correctament.")
             return redirect('usersapp:professor_list')
         except Professor.DoesNotExist:
-            messages.error(request,"Error: El professor no existeix i no s'ha pogut borrar.")
-            print(f"Professor with ID {professor_id} does not exist.")  # Print error information
+            messages.error(request,"Error: El professorat no existeix i no s'ha pogut borrar.")
 
     # Handle initial delete confirmation
     if 'confirm_delete' in request.GET:
         professor_id = request.GET.get('confirm_delete')
         deleting = professor_id
-        print("Delete confirmation for professor ID:", deleting)  # Print the ID being confirmed for deletion
 
     return render(request, 'users/professor/professor_list_actions.html', {
         'professors': professors,
@@ -76,7 +72,6 @@ def professor_list(request):
 @login_required
 @user_passes_test(is_director)
 def professor_create_edit(request, idProfessor=None):
-    print(f"Received request to {'edit' if idProfessor else 'create'} a professor.")
 
     if idProfessor:
         # If idProfessor is passed, we are editing an existing courses
@@ -87,34 +82,28 @@ def professor_create_edit(request, idProfessor=None):
             form = ProfessorForm(request.POST, instance=user, professor=professor)
            
             if form.is_valid():
-                print("Form is valid. Edititng...")
                 form.save(commit=True)  # Save without changing role
-                messages.success(request, f"El Professor {professor.name} {professor.family_name} s\'ha actualitzat correctament.")
+                messages.success(request, f"El professorat {professor.name} {professor.family_name} s\'ha actualitzat correctament.")
                 return redirect('usersapp:professor_list')
             else:
-                print("Form is invalid.")
-                print(form.errors)  # Print form errors for debugging
+                messages.error(request, f"El professorat no s\'ha actualitzat correctament.")
+
         else:
-            print("Loading form with existing data.")
             form = ProfessorForm(instance=user, professor=professor)
     else:
         # No idProfessor, we are creating a new course
         if request.method == 'POST':
-            print("POST request received for creating a new professor.")
             form = ProfessorForm(request.POST)
             if form.is_valid():
-                print("Form is valid. Saving new professor...")
                 user = form.save(commit=True)  # Save the user but don't commit yet
                 user.role = 'professor'  # Set the role to 'professor'
                 user.save()  # Now save the user to the database
                 new_professor = form.save()
-                messages.success(request, f"El Professor {new_professor.first_name} {new_professor.last_name} s\'ha afegit correctament.")
+                messages.success(request, f"El professorat {new_professor.first_name} {new_professor.last_name} s\'ha afegit correctament.")
                 return redirect('usersapp:professor_list')
             else:
-                print("Form is invalid.")
-                print(form.errors)  # Print form errors for debugging
+                messages.error(request, f"El professorat no s\'ha creat correctament.")
         else:
-            print("Loading empty form for new professor.")
             form = ProfessorForm()
     return render(request, 'users/professor/professor_form.html', {'form': form})
 
@@ -156,11 +145,11 @@ def sectionchief_list(request):
                 professor.user.role = 'professor'
                 professor.user.save()
 
-            messages.success(request, f"El Cap de secció {professor_name} s'ha eliminat correctament.")
+            messages.success(request, f"El cap de secció {professor_name} s'ha eliminat correctament.")
             return redirect('usersapp:sectionchief_list')
 
         except Chief.DoesNotExist:
-            messages.error(request, "Error: El Cap de Secció no existeix.")
+            messages.error(request, "Error: El cap de secció no existeix.")
         except Exception as e:  # Catch any other exceptions
             messages.error(request, f"Error inesperat: {str(e)}")
     
@@ -184,7 +173,7 @@ def sectionchief_create_edit(request, idChief=None):
             form = ChiefRegistrationForm(request.POST, instance=chief)
             if form.is_valid():
                 new_chief = form.save()  
-                messages.success(request, f"El Cap de secció {chief.professor.name} {chief.professor.family_name} s'ha actualitzat correctament.")
+                messages.success(request, f"El cap de secció {chief.professor.name} {chief.professor.family_name} s'ha actualitzat correctament.")
                 return redirect('usersapp:sectionchief_list')
         else:
             form = ChiefRegistrationForm(instance=chief)
@@ -193,7 +182,7 @@ def sectionchief_create_edit(request, idChief=None):
         form = ChiefRegistrationForm(request.POST or None)
         if request.method == 'POST' and form.is_valid():
             new_chief = form.save()
-            messages.success(request, f"El Cap de secció {new_chief.professor.name} {new_chief.professor.family_name} s'ha afegit correctament.")
+            messages.success(request, f"El cap de secció {new_chief.professor.name} {new_chief.professor.family_name} s'ha afegit correctament.")
             return redirect('usersapp:sectionchief_list')
         
     return render(request, 'users/sectionchief/sectionchief_form.html', {'form': form})

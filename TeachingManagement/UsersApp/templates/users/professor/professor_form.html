@@ -66,13 +66,11 @@
                                 {% if 'checkbox-select-multiple' in field.field.widget.attrs.class %}
                                 <!-- If the field is a ModelMultipleChoiceField with CheckboxSelectMultiple widget -->
                                     <div class="col-sm-8">
-                                        <fieldset>
                                             {% for checkbox in field %}
-                                            <div style="display: inline; align-items: center; margin-right: 15px;">
-                                                <span style="margin-left: 5px;">{{checkbox}}</span>
+                                            <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                                                {{ checkbox.tag }} &nbsp; {{ checkbox.choice_label }}
                                             </div>
                                             {% endfor %}
-                                        </fieldset>
                                         {% if field.help_text %}
                                             <div class="help-text">
                                                 <small class="form-text text-muted">{{ field.help_text }}</small>
