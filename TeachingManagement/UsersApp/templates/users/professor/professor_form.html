@@ -1,19 +1,19 @@
 {% extends 'base-template/base.html' %}
 
-{% block title %}{% if form.instance.pk %}Editar Professor{% else %}Afegir Professor{% endif %}{% endblock %}
+{% block title %}{% if form.instance.pk %}Editar professorat{% else %}Afegir professorat{% endif %}{% endblock %}
 
 {% block content %}
 
 <div class="container-fluid d-flex" style="min-height: 70vh;">
     <div class="col-lg-10 mx-auto">
-        <h2 style="text-align:center">Gestió del Professorat</h2>
+        <h2 style="text-align:center">Gestió del professorat</h2>
         <hr>
 
         <!--Header Form-->
         <div class="row">
             <div class="col-lg-10">
                 <div class="d-flex justify-content-center align-items-center">
-                    <h3>{% if form.instance.pk %}Actualitzar Professor: {{ form.instance.name }} {{ form.instance.family_name }}  {% else %}Afegir Professor{% endif %}</h3>
+                    <h3>{% if form.instance.pk %}Actualitzar professorat{% else %}Afegir nou professorat{% endif %}</h3>
                 </div>
                 <br>
 
@@ -38,12 +38,18 @@
                         {% endif %}
 
                         <!-- Display form errors -->
-                        {% if form.errors %}
-                            <div class="alert alert-danger">
-                                <strong>Hi ha errors en el formulari. Per favor, revisa els camps.</strong>
-                            </div>
-                        {% endif %}
-                        
+                        <div class="mb-3">
+                            {% if form.errors %}
+                            <div class="form-group row">
+                                <div class="col-sm-8 offset-sm-4">
+                                    <div class="alert alert-danger">
+                                        <strong>Hi ha errors en el formulari. Per favor, revisa els camps.</strong>
+                                    </div>
+                                </div>
+                            </div>                       
+                            {% endif %}
+                        </div>
+                                        
                         <!-- Display non-field errors -->
                         {% for error in form.non_field_errors %}
                             <div class="alert alert-danger">
@@ -56,16 +62,38 @@
                             {% for field in form %}
                             <div class="form-group row">
                                 <label for="{{ field.id_for_label }}" class="col-sm-4 col-form-label">{{ field.label }}</label>
-                                <div class="col-sm-8">
-                                    {{ field }}
-                                    {% if field.help_text %}
-                                        <small class="form-text text-muted">{{ field.help_text }}</small>
-                                    {% endif %}
-                                </div>
-
-                                <!-- Display form errors for each field wrong -->
-                                 {% if field.errors %}
+                    
+                                {% if 'checkbox-select-multiple' in field.field.widget.attrs.class %}
+                                <!-- If the field is a ModelMultipleChoiceField with CheckboxSelectMultiple widget -->
                                     <div class="col-sm-8">
+                                        <fieldset>
+                                            {% for checkbox in field %}
+                                            <div style="display: inline; align-items: center; margin-right: 15px;">
+                                                <span style="margin-left: 5px;">{{checkbox}}</span>
+                                            </div>
+                                            {% endfor %}
+                                        </fieldset>
+                                        {% if field.help_text %}
+                                            <div class="help-text">
+                                                <small class="form-text text-muted">{{ field.help_text }}</small>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% else %}
+                                 <!-- For non-checkbox fields, place the field normally -->
+                                    <div class="col-sm-8">
+                                        {{ field }}
+                                        {% if field.help_text %}
+                                            <div class="help-text">
+                                                <small class="form-text text-muted">{{ field.help_text }}</small>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                                
+                                <!-- Display form errors for each field -->
+                                {% if field.errors %}
+                                    <div class="col-sm-8 offset-sm-4" >
                                         <div class="text-danger">
                                             {% for error in field.errors %}
                                                 <p>{{ error }}</p>
@@ -73,15 +101,14 @@
                                         </div>
                                     </div>
                                 {% endif %}
-
                             </div>
-                        {% endfor %}                       
+                        {% endfor %}    
                         </div>
 
                         <!-- Submit Button -->
                         <div class="d-flex justify-content-center">
                             <button type="submit" class="button-create btn-sm">
-                                {% if form.instance.pk %}Actualitzar{% else %}Afegir{% endif %} Professor
+                                {% if form.instance.pk %}Actualitzar{% else %}Afegir{% endif %}
                             </button>
                         </div>
                     </form>
@@ -92,7 +119,7 @@
             <div class="col-lg-2">
                 <div class="sticky-top" style="top: 1rem">
                     <div class="buttons mb-2 d-flex flex-column align-items-center">
-                        <a href="{% url 'usersapp:professor_list' %}" class="button-return btn-sm mb-2;">Tornar a Gestió del Professorat</a>
+                        <a href="{% url 'usersapp:professor_list' %}" class="button-return btn-sm mb-2;">Tornar a professorat</a>
                     </div>
                 </div>
             </div>

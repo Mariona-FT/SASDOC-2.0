@@ -31,7 +31,6 @@ class ProfessorForm(forms.ModelForm):
         required=True, 
         label="Nom d'usuari", 
         widget=forms.TextInput(attrs={'class': 'form-control'}),
-        help_text="Sisplau, entreu un nom d'usuari únic."
     ) 
     
     # idprofessor = forms.CharField(
@@ -59,14 +58,14 @@ class ProfessorForm(forms.ModelForm):
         required=False, 
         label="Descripció", 
         widget=forms.Textarea(attrs={'rows': 3,'class': 'form-control'}),
-        help_text="Per si es vol una breu descripció del professor des de equip Directiu."
+        help_text="Informació per l'equip directiu."
     ) 
 
     comment = forms.CharField(
         required=False, 
         label="Comentari", 
         widget=forms.Textarea(attrs={'rows': 3,'class': 'form-control'}),
-        help_text=" Per si es vol afegir un comentari des del Cap de Secció."
+        help_text="Informació pel cap de secció."
     ) 
 
     email = forms.EmailField(
@@ -91,29 +90,29 @@ class ProfessorForm(forms.ModelForm):
     current_contract = forms.ModelChoiceField(
         queryset=TypeProfessor.objects.all(),
         required=True,
-        label="Assignar Contracte vigent",
+        label="Contracte vigent",
         widget=forms.Select(attrs={'class': 'form-select'})
     )
 
     possible_fields = forms.ModelMultipleChoiceField(
         queryset=Field.objects.filter(isActive=True),
         required=False,
-        label="Assignar Camps d'estudi",
-        widget=forms.CheckboxSelectMultiple,
+        label="Camps de coneixament",
+        widget=forms.CheckboxSelectMultiple(attrs={'class': 'checkbox-select-multiple'}),
 
     )
     possible_languages = forms.ModelMultipleChoiceField(
         queryset=Language.objects.all(),
         required=False,
-        label="Assignar Idiomes",
-        widget=forms.CheckboxSelectMultiple, 
+        label="Idiomes",
+        widget=forms.CheckboxSelectMultiple(attrs={'class': 'checkbox-select-multiple'}), 
     )
 
     class Meta:
         model = CustomUser
         fields = ['username', 'email']
         labels = {
-            'username': 'Nom del usuari',
+            'username': "Nom d'usuari",
             'email': 'Correu electrònic',
         }
     
