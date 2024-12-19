@@ -1,11 +1,11 @@
 {% extends 'base-template/base.html' %}
 
-{% block title %}Informació de la Secció{% endblock %}
+{% block title %}Seccions{% endblock %}
 
 {% block content %}
 <div class="container-fluid d-flex" style="min-height: 100vh;">
     <div class="col-lg-10 mx-auto">
-        <h2 style="text-align:center">Gestió de les Seccions</h2>
+        <h2 style="text-align:center">Gestió de seccions</h2>
 
         <!-- Display success, warning, or error messages -->
         {% if messages %}
@@ -23,21 +23,21 @@
         <div class="row">
             <div class="col-lg-10">
                 <!-- Filter Fields -->
-                <h3>Filtres per les Seccions</h3>
+                <h3>Filtres per les seccions</h3>
                 <div class="d-flex justify-content-between row mb-2">
                     <!-- Filters section -->
                     <div class="filters d-flex flex-wrap">
                         <div class="col-md-9">
-                            <label for="filter-all">Filtrar per contingut:</label>
-                            <input type="text" id="filter-all" class="form-control" placeholder="Cerca per Lletra o Nom de la Secció">
+                            <label for="filter-all">Filtrar per contingut</label>
+                            <input type="text" id="filter-all" class="form-control" placeholder="Cerca per acrònim o nom">
                         </div>
 
                         <div class="col-md-3">
-                            <label for="filter-active">Filtrar per si és Secció activa:</label>
+                            <label for="filter-active">Filtrar per actiu</label>
                             <select id="filter-active" class="form-select">
                                 <option value="">Tots</option>
-                                <option value="yes">Activa</option>
-                                <option value="no">No Activa</option>
+                                <option value="yes">Actiu</option>
+                                <option value="no">No actiu</option>
                             </select>
                         </div>
                     </div>
@@ -46,13 +46,13 @@
                 <hr>
 
                 <!-- List of all sections -->
-                <h3>Llista de Seccions</h3>
+                <h3>Llistat de seccions</h3>
                 <table class="table table-hover" id="sections-table">
 
                     <thead>
                         <tr>
-                            <th>Lletra de la Secció</th>
-                            <th>Nom de la Secció</th>
+                            <th>Acrònim</th>
+                            <th>Nom</th>
                             <th>Actiu</th>
                             <th class="actions-c" style="width:200px">Accions</th>
                         </tr>
@@ -103,7 +103,7 @@
             <div class="col-lg-2">
                 <div class="sticky-top" style="top: 1rem;">
                     <div class="buttons mb-2 d-flex flex-column align-items-center">
-                        <a href="{% url 'section_create' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Afegir Secció</a>
+                        <a href="{% url 'section_create' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Afegir secció</a>
                     </div>
                 </div>
             </div>

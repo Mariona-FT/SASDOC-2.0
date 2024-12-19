@@ -1,19 +1,19 @@
 {% extends 'base-template/base.html' %}
 
-{% block title %}{% if form.instance.pk %}Editar Titulació{% else %}Afegir Titulació{% endif %}{% endblock %}
+{% block title %}{% if form.instance.pk %}Editar titulació{% else %}Afegir titulació{% endif %}{% endblock %}
 
 {% block content %}
 
 <div class="container-fluid d-flex" style="min-height: 70vh;">
     <div class="col-lg-10 mx-auto">
-        <h2 style="text-align:center">Gestió de les Titulacions</h2>
+        <h2 style="text-align:center">Gestió de titulacions</h2>
         <hr>
 
         <!--Header Form-->
         <div class="row">
             <div class="col-lg-10">
                 <div class="d-flex justify-content-center align-items-center">
-                    <h3>{% if form.instance.pk %}Actualitzar Titulació: {{form.instance.NameDegree}} {% else %}Afegir Titulació{% endif %}</h3>
+                    <h3>{% if form.instance.pk %}Actualitzar titulació{% else %}Afegir nova titulació{% endif %}</h3>
                 </div>
                 <br>
 
@@ -104,7 +104,7 @@
 
                         <div class="d-flex justify-content-center">
                             <button type="submit" class="button-create btn-sm">
-                                {% if form.instance.pk %}Actualitzar{% else %}Afegir{% endif %} Titulació
+                                {% if form.instance.pk %}Actualitzar{% else %}Afegir{% endif %} 
                             </button>
                         </div>
                     </form>
@@ -115,7 +115,7 @@
             <div class="col-lg-2">
                 <div class="sticky-top" style="top: 1rem">
                     <div class="buttons mb-2 d-flex flex-column align-items-center">
-                        <a href="{% url 'degree_list' %}" class="button-return btn-sm mb-2;">Tornar a Gestió de les Titulacions</a>
+                        <a href="{% url 'degree_list' %}" class="button-return btn-sm mb-2;">Tornar a titulacions</a>
                     </div>
                 </div>
             </div>

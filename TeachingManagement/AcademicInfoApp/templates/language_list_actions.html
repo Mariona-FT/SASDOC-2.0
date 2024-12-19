@@ -5,7 +5,7 @@
 {% block content %}
 <div class="container-fluid d-flex" style="min-height: 100vh;">
     <div class="col-lg-10 mx-auto">
-        <h2 style="text-align:center">Gestió dels Idiomes</h2>
+        <h2 style="text-align:center">Gestió d'idiomes</h2>
 
         <!-- Display success, warning, or error messages -->
         {% if messages %}
@@ -23,13 +23,13 @@
         <div class="row">
             <div class="col-lg-10">
                 <!-- Filter Fields -->
-                <h3>Filtres dels Idiomes</h3>
+                <h3>Filtres pels idiomes</h3>
                 <div class="d-flex justify-content-between row mb-2">
                     <!-- Filters section -->
                     <div class="filters d-flex flex-wrap">
                         <div class="col-md-12">
-                            <label for="filter-all">Filtrar per contingut:</label>
-                            <input type="text" id="filter-all" class="form-control" placeholder="Cerca per Nom ">
+                            <label for="filter-all">Filtrar per contingut</label>
+                            <input type="text" id="filter-all" class="form-control" placeholder="Cerca per nom ">
                         </div>
                     </div>
                 </div>
@@ -38,7 +38,7 @@
 
 
                 <!-- List of all languages -->
-                <h3>Llista de Idiomes</h3>
+                <h3>Llistat dels idiomes</h3>
                 <table class="table table-striped" id="languages-table">
                     <thead>
                         <tr>
@@ -82,7 +82,7 @@
             <div class="col-lg-2">
                 <div class="sticky-top" style="top: 1rem;">
                     <div class="buttons mb-2 d-flex flex-column align-items-center">
-                        <a href="{% url 'language_create' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Afegir Idioma</a>
+                        <a href="{% url 'language_create' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Afegir idioma</a>
                     </div>
                 </div>
             </div>

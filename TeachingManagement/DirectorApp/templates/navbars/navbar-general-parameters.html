@@ -3,7 +3,7 @@
     <ul class="navbar-nav">
         {% url 'year_list' as year_list_url %}
         <li class="nav-item me-4 {% if '/academicinfo/years/' in request.path %} active{% endif %}">
-            <a class="nav-link" href="{{ year_list_url }}">Anys</a>
+            <a class="nav-link" href="{{ year_list_url }}">Cursos acadèmics</a>
         </li>
 
         {% url 'usersapp:professor_list' as professor_list_url %}
@@ -18,7 +18,7 @@
         
         {% url 'usersapp:sectionchief_list' as sectionchief_list_url %}
         <li class="nav-item me-4 {% if '/users/sectionchief/' in request.path %} active{% endif %}">
-            <a class="nav-link" href="{{sectionchief_list_url }}">Caps de Secció</a>
+            <a class="nav-link" href="{{sectionchief_list_url }}">Caps de secció</a>
         </li>
 
         {% url 'school_list' as school_list_url %}
@@ -33,17 +33,17 @@
 
         {% url 'course_list' as course_list_url %}
         <li class="nav-item me-4 {% if '/academicinfo/courses/' in request.path %} active{% endif %}">
-            <a class="nav-link" href="{{ course_list_url }}">Cursos</a>
+            <a class="nav-link" href="{{ course_list_url }}">Assignatures</a>
         </li>        
         
         {% url 'field_list' as field_list_url %}
         <li class="nav-item me-4 {% if '/academicinfo/fields/' in request.path %} active{% endif %}">
-            <a class="nav-link" href="{{ field_list_url }}">Camps</a>
+            <a class="nav-link" href="{{ field_list_url }}">Camps de coneixament</a>
         </li>
   
         {% url 'typeprofessor_list' as typeprofessor_list_url %}
         <li class="nav-item me-4 {% if '/academicinfo/typeprofessor/' in request.path %} active{% endif %}">
-            <a class="nav-link" href="{{ typeprofessor_list_url }}">Tipus de Professorat</a>
+            <a class="nav-link" href="{{ typeprofessor_list_url }}">Contractació</a>
         </li>
         
         {% url 'language_list' as language_list_url %}
