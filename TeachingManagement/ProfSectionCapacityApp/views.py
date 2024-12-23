@@ -26,7 +26,7 @@ def capacityprofessor_list(request):
         try:
             selected_year = Year.objects.get(pk=int(selected_year_id))
         except Year.DoesNotExist:
-            messages.error(request, "Any seleccionat no existeix.")
+            messages.error(request, "Curs acadèmic seleccionat no existeix.")
     
     if not selected_year:
         selected_year = Year.objects.order_by('-Year').first()
@@ -128,7 +128,7 @@ def capacityprofessor_show(request,idProfessor=None):
         try:
             selected_year = Year.objects.get(pk=int(selected_year_id))
         except Year.DoesNotExist:
-           messages.error(request, "Any seleccionat no existeix.")
+           messages.error(request, "Curs acadèmic seleccionat no existeix.")
     
     if not selected_year:
         most_recent_capacity = Capacity.objects.filter(Professor_id=idProfessor).order_by('Year').first()
@@ -186,7 +186,7 @@ def create_capacity(request, idProfessor):
         form = CapacityForm(request.POST,professor=professor)
         if form.is_valid():
             form.save()  
-            messages.success(request, 'Capacitat correctament creada.')
+            messages.success(request, 'Punts totals correctament creats.')
             return redirect('capacityprofessor_show', idProfessor=idProfessor)
     else:
         form = CapacityForm(professor=professor)
@@ -202,7 +202,7 @@ def edit_capacity(request, idCapacity):
         form = CapacityForm(request.POST, instance=capacity)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Capacitat correctament editada.')
+            messages.success(request, 'Punts totals correctament editats.')
             return redirect('capacityprofessor_show', idProfessor=idProfessor)
     else:
         form = CapacityForm(instance=capacity)
@@ -214,9 +214,9 @@ def delete_capacity(request, idCapacity):
     idProfessor = capacity.Professor.idProfessor  
     try:
         capacity.delete()
-        messages.success(request, 'Capacitat correctament eliminada.')
+        messages.success(request, 'Punts totals correctament eliminats.')
     except Exception as e:
-        messages.error(request, f"Error: No s'ha pogut eliminar la capacitat ({e}).")
+        messages.error(request, f"Error: No s'ha pogut eliminar els punts totals ({e}).")
 
     return redirect('capacityprofessor_show', idProfessor=idProfessor)
 
@@ -229,7 +229,7 @@ def create_free(request, idProfessor):
         form = FreeForm(request.POST,professor=professor)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Punts Lliures correctament creats.')
+            messages.success(request, "Punts d'alliberació correctament creats.")
             return redirect('capacityprofessor_show', idProfessor=idProfessor)
     else:
         form = FreeForm(professor=professor)
@@ -245,7 +245,7 @@ def edit_free(request, idFree):
         form = FreeForm(request.POST, instance=free)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Punts Lliures correctament editats.')
+            messages.success(request, "Punts d'alliberació correctament editats.")
             return redirect('capacityprofessor_show', idProfessor=idProfessor)
     else:
         form = FreeForm(instance=free)
@@ -257,9 +257,9 @@ def delete_free(request, idFree):
     idProfessor = free.Professor.idProfessor  
     try:
         free.delete()
-        messages.success(request, 'Punts Lliures correctament eliminats.')
+        messages.success(request, "Punts d'alliberació correctament eliminats.")
     except Exception as e:
-        messages.error(request, f"Error: No s'ha pogut eliminar els punts lliures ({e}).")
+        messages.error(request, f"Error: No s'ha pogut eliminar els punts d'alliberaciós ({e}).")
 
     return redirect('capacityprofessor_show', idProfessor=idProfessor)
 
@@ -272,7 +272,7 @@ def create_capacity_section(request, idProfessor):
         form = CapacitySectionForm(request.POST,professor=professor)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Capacitat en la Secció correctament creada.')
+            messages.success(request, 'Punts per seccions correctament creats.')
             return redirect('capacityprofessor_show', idProfessor=idProfessor)
     else:
         form = CapacitySectionForm(professor=professor)
@@ -288,7 +288,7 @@ def edit_capacity_section(request, idCapacitySection):
         form = CapacitySectionForm(request.POST, instance=capsection,professor=capsection.Professor)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Capacitat en la Secció correctament editada.')
+            messages.success(request, 'Punts per seccions correctament editats.')
             return redirect('capacityprofessor_show', idProfessor=idProfessor)
     else:
         form = CapacitySectionForm(instance=capsection,professor=capsection.Professor)
@@ -300,9 +300,9 @@ def delete_capacity_section(request, idCapacitySection):
     idProfessor = capsection.Professor.idProfessor  
     try:
         capsection.delete()
-        messages.success(request, 'Capacitat en la secció correctament eliminada.')
+        messages.success(request, 'Punts per seccions correctament eliminat.')
     except Exception as e:
-        messages.error(request, f"Error: No s'ha pogut eliminar la capacitat ({e}).")
+        messages.error(request, f"Error: No s'ha pogut eliminar els punts per seccions ({e}).")
 
     return redirect('capacityprofessor_show', idProfessor=idProfessor)
 

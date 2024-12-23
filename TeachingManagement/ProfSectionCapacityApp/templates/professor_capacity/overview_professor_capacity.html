@@ -125,7 +125,7 @@
                             <td>{{ free.Comment }}</td>
                             <td class="actions-c" style="width:180px">
                                 <a href="{% url 'edit_free' free.idFree %}" class="button-edit btn-sm">Editar</a>
-                                <a href="{% url 'delete_free' free.idFree %}" class="button-delete btn-sm " onclick="return confirm('Segur que vols eliminar aquests punts d'alliberació ?');">Eliminar</a>
+                                <a href="{% url 'delete_free' free.idFree %}" class="button-delete btn-sm " onclick="return confirm('Segur que vols eliminar aquests punts d\'alliberació ?');">Eliminar</a>
                             </td>
                         </tr>
                         {% empty %}
