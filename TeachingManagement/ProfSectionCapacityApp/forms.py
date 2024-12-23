@@ -11,8 +11,8 @@ class CapacityForm(forms.ModelForm):
         fields = ['Professor', 'Year', 'Points', 'Comment']
         labels = {
             'Professor':'Professor',
-            'Year':'Any',            
-            'Points': 'Punts totals de Capacitat',
+            'Year':'Curs acadèmic',            
+            'Points': 'Punts totals ',
             'Comment':'Comentari',
         }
         widgets = {
@@ -20,9 +20,6 @@ class CapacityForm(forms.ModelForm):
             'Year': forms.Select(attrs={'required': 'required','class': 'form-select'}),
             'Points': forms.NumberInput(attrs={'required': 'required','class': 'form-control'}), 
             'Comment': forms.Textarea(attrs={'rows': 3,'class': 'form-control', 'placeholder': 'Comentari opcional'}),
-        }
-        help_texts = {
-            'Points': "Els punts de capacitat total del Professor aquell any.",
         }
 
     def __init__(self, *args, **kwargs):
