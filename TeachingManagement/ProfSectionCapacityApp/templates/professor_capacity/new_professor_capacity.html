@@ -1,20 +1,20 @@
 {% extends 'base-template/base.html' %}
 
-{% block title %}Seleccionar Professor{% endblock %}
+{% block title %}Seleccionar professor{% endblock %}
 
 {% block content %}
 <div class="container-fluid d-flex" style="min-height: 100vh;">
     <div class="col-lg-10 mx-auto">
 
-        <h2 class="text-center">Selecciona un Professor per Gestionar la Capacitat</h2>
+        <h2 class="text-center">Gestió de capacitat docent del professorat</h2>
         <hr>
         <div class="row">
             <div class="col-lg-10">
 
+                <h3>Seleccionar un professor de la llista</h3>
                 <!-- Dropdown or Filterable Table to Select Professor -->
-                <h3>Filtrar per Professor:</h3>
                 <select id="professorSelect" class="form-select mb-4">
-                    <option value="">Selecciona un Professor</option>
+                    <option value="">---</option>
                     {% for professor in professors %}
                         <option value="{% url 'capacityprofessor_show' professor.pk %}">
                             {{ professor.name }} {{ professor.family_name }}
@@ -38,7 +38,7 @@
                 <div class="col-lg-2">
                     <div class="sticky-top" style="top: 1rem">
                         <div class="buttons mb-2 d-flex flex-column align-items-center">
-                            <a href="{% url 'capacityprofessor_list' %}" class="button-return mb-2">Tornar a Gestió Capacitat del Professorat</a>
+                            <a href="{% url 'capacityprofessor_list' %}" class="button-return mb-2">Tornar a capacitat docent</a>
                         </div>
                     </div>
                 </div>
