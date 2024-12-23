@@ -1,11 +1,11 @@
 {% extends 'base-template/base.html' %}
 
-{% block title %}Gestió Secció{% endblock %}
+{% block title %}Gestió nomenclatura{% endblock %}
 
 {% block content %}
 <div class="container-fluid d-flex" style="min-height: 100vh;">
     <div class="col-lg-10 mx-auto">
-        <h2 style="text-align:center">Gestió de la Nomenclatura de les Seccions </h2>
+        <h2 style="text-align:center">Gestió de la nomenclatura de les seccions </h2>
 
         <!-- Display success, warning, or error messages -->
         {% if messages %}
@@ -24,20 +24,20 @@
             <div class="col-lg-10">
               
                 <!-- Filter Fields -->
-                <h3>Filtres pel Llistat de Seccions</h3>
+                <h3>Filtres per les seccions</h3>
                 <div class="d-flex justify-content-between row mb-2">
                     <!-- Filters section -->
                     <div class="filters d-flex flex-wrap">
                         <div class="col-md-12">
                             <label for="filter-all">Filtrar per contingut</label>
-                            <input type="text" id="filter-all" class="form-control" placeholder="Cerca per Lletra, Nom de Secció o Nom dels Punts">
+                            <input type="text" id="filter-all" class="form-control" placeholder="Cerca per acrònim, nom de secció o nom dels punts">
                         </div>
                     </div>
                 </div>
                 <!-- Year Filter Form -->
                 <form method="get" id="year-filter-form">
-                    <label for="year-select">Selecciona l'Any:</label>
-                    <select name="year" id="year-select" class="form-control" onchange="document.getElementById('year-filter-form').submit();">
+                    <label for="year-select">Selecciona un curs acadèmic</label>
+                    <select name="year" id="year-select" class="form-select" onchange="document.getElementById('year-filter-form').submit();">
                         {% for year in available_years %}
                             <!-- Use idYear as the value to send the ID, but display Year in the option text -->
                             <option value="{{ year.idYear }}" {% if year == selected_year %}selected{% endif %}>
@@ -52,7 +52,7 @@
                 <!-- List of all sections -->
                 {% if selected_year %}
                     <h5 style="text-align:center; color:blue">
-                            Seccions per l'any 
+                            Seccions pel curs acadèmic -  
                         {{ selected_year.Year }} 
 
                         {% if selected_year.Year != available_years.first.Year %}
@@ -61,20 +61,19 @@
                     </h5>
                 {% endif %}
 
-                <h3>Llista de les Seccions:</h3>
+                <h3>Llistat de les seccions:</h3>
 
-                <table class="table table-striped" id="section-table">
+                <table class="table table-striped" id="section-table"  style="width: 100%; table-layout: fixed;">
                     <thead>
                         <tr>
-                            <th style=" width: 8%;">Lletra</th>
-                            <th class="name-c">Secció</th>
-                            <th style=" width: 8%;">Any</th>
-                            <th style="width: auto;">Nom per Punts A</th>
-                            <th style="width: auto;">Nom per Punts B</th>
-                            <th style="width: auto;">Nom per Punts C</th>
-                            <th style="width: auto;">Nom per Punts D</th>
-                            <th style="width: auto;">Nom per Punts E</th>
-                            <th style="width: auto;">Nom per Punts F</th>
+                            <th style=" width: 9%;">Acrònim</th>
+                            <th class="name-c" style=" width: 10%;">Secció</th>
+                            <th style="text-align: center;">Nom punts A</th>
+                            <th style="text-align: center;">Nom punts B</th>
+                            <th style="text-align: center;">Nom punts C</th>
+                            <th style="text-align: center;">Nom punts D</th>
+                            <th style="text-align: center;">Nom punts E</th>
+                            <th style="text-align: center;">Nom punts F</th>
                             <th class="actions-c" style="width:200px">Accions</th>
                         </tr>
                     </thead>
@@ -83,7 +82,6 @@
                             {% for section in section_typepoints_info %}
                             <tr data-name="{{section.NameSection}}"
                             data-letter="{{section.LetterSection}}"
-                            data-year="{{section.Year}}"
                             data-pA="{{section.NamePointsA}}"
                             data-pB="{{section.NamePointsB}}"
                             data-pC="{{section.NamePointsC}}"
@@ -93,7 +91,6 @@
                             >
                                 <td>{{ section.LetterSection }}</td>
                                 <td>{{ section.NameSection }}</td>
-                                <td>{{ section.Year }}</td>
                                 <td>{{ section.NamePointsA|default:"-"  }}</td>
                                 <td>{{ section.NamePointsB|default:"-"  }}</td>
                                 <td>{{ section.NamePointsC|default:"-"  }}</td>
@@ -115,7 +112,7 @@
                             {% endfor %}
                         {% else %}
                             <tr>
-                                <td colspan="9" class="text-center">Cap Nomenclatura de Secció en any seleccionat.</td>
+                                <td colspan="8" class="text-center">Cap nomenclatura de secció en el curs acdèmic seleccionat.</td>
                             </tr>        
                         {% endif %}
                     </tbody>
@@ -131,10 +128,10 @@
             <div class="col-lg-2">
                 <div class="sticky-top" style="top: 1rem">
                     <div class="buttons mb-2 d-flex flex-column ">
-                        <a href="{% url 'create_typepoints' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Afegir Nomenclatura per Secció</a>
+                        <a href="{% url 'create_typepoints' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Afegir nomenclatura per una secció</a>
                     </div>
                     <div class="buttons mb-2 d-flex flex-column ">
-                        <a href="{% url 'create_typepoints' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Duplicar contingut de l'Any</a>
+                        <a href="{% url 'create_typepoints' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Duplicar contingut del curs acadèmic</a>
                     </div>
                 </div>
             </div>
@@ -147,7 +144,7 @@
 <script>
 
     function confirmDelete(SectionName) {
-        return confirm("Estàs segur que vols eliminar aquest noms de la Secció: " + SectionName + "?");
+        return confirm("Estàs segur que vols eliminar aquesta nomenclatura per la secció: " + SectionName + "?");
     }
 
     //Not using  accents in the filter and in the data
@@ -167,7 +164,6 @@
         tableRows.forEach(row => {
             const fieldName = row.getAttribute('data-name') ? normalizeString(row.getAttribute('data-name').toLowerCase()) : '';
             const fieldLetter = row.getAttribute('data-letter') ? normalizeString(row.getAttribute('data-letter').toLowerCase()) : '';
-            const fieldYear = row.getAttribute('data-year') ? normalizeString(row.getAttribute('data-year').toLowerCase()) : '';
             const fieldA = row.getAttribute('data-pA') ? normalizeString(row.getAttribute('data-pA').toLowerCase()) : '';
             const fieldB = row.getAttribute('data-pB') ? normalizeString(row.getAttribute('data-pB').toLowerCase()) : '';
             const fieldC = row.getAttribute('data-pC') ? normalizeString(row.getAttribute('data-pC').toLowerCase()) : '';
@@ -175,7 +171,7 @@
             const fieldE = row.getAttribute('data-pE') ? normalizeString(row.getAttribute('data-pE').toLowerCase()) : '';
             const fieldF = row.getAttribute('data-pF') ? normalizeString(row.getAttribute('data-pF').toLowerCase()) : '';
 
-            const matchesSearch = fieldName.includes(searchValue) || fieldLetter.includes(searchValue)|| fieldYear.includes(searchValue)|| fieldA.includes(searchValue)|| fieldB.includes(searchValue)|| fieldC.includes(searchValue)|| fieldD.includes(searchValue)|| fieldE.includes(searchValue) || fieldF.includes(searchValue);
+            const matchesSearch = fieldName.includes(searchValue) || fieldLetter.includes(searchValue)|| fieldA.includes(searchValue)|| fieldB.includes(searchValue)|| fieldC.includes(searchValue)|| fieldD.includes(searchValue)|| fieldE.includes(searchValue) || fieldF.includes(searchValue);
 
             if (matchesSearch) {
                 row.style.display = '';

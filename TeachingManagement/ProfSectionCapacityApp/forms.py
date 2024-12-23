@@ -121,24 +121,24 @@ class TypePointsForm(forms.ModelForm):
         model = TypePoints
         fields = ['Year','Section','NamePointsA','NamePointsB','NamePointsC','NamePointsD','NamePointsE','NamePointsF']
         labels = {
-            'Year':'Any',
+            'Year':'Curs acadèmic',
             'Section':'Secció',
-            'NamePointsA':'Nom pel Tipus de Punts A',
-            'NamePointsB':'Nom pel Tipus de Punts B',
-            'NamePointsC':'Nom pel Tipus de Punts C',
-            'NamePointsD':'Nom pel Tipus de Punts D',
-            'NamePointsE':'Nom pel Tipus de Punts E',
-            'NamePointsF':'Nom pel Tipus de Punts F',
+            'NamePointsA':'Nom pel tipus punts A',
+            'NamePointsB':'Nom pel tipus punts B',
+            'NamePointsC':'Nom pel tipus punts C',
+            'NamePointsD':'Nom pel tipus punts D',
+            'NamePointsE':'Nom pel tipus punts E',
+            'NamePointsF':'Nom pel tipus punts F',
         }
         widgets = {
             'Year': forms.Select(attrs={'required': 'required','class': 'form-select'}),
             'Section': forms.Select(attrs={'required': 'required','class': 'form-select'}),
-            'NamePointsA': forms.TextInput(attrs={'class': 'form-control','placeholder': ' Punts A'}),
-            'NamePointsB': forms.TextInput(attrs={'class': 'form-control','placeholder': ' Punts B'}),
-            'NamePointsC': forms.TextInput(attrs={'class': 'form-control','placeholder': ' Punts C'}),
-            'NamePointsD': forms.TextInput(attrs={'class': 'form-control','placeholder': ' Punts D'}),
-            'NamePointsE': forms.TextInput(attrs={'class': 'form-control','placeholder': ' Punts E'}),
-            'NamePointsF': forms.TextInput(attrs={'class': 'form-control','placeholder': ' Punts F'}),
+            'NamePointsA': forms.TextInput(attrs={'class': 'form-control','placeholder': '...'}),
+            'NamePointsB': forms.TextInput(attrs={'class': 'form-control','placeholder': '...'}),
+            'NamePointsC': forms.TextInput(attrs={'class': 'form-control','placeholder': '...'}),
+            'NamePointsD': forms.TextInput(attrs={'class': 'form-control','placeholder': '...'}),
+            'NamePointsE': forms.TextInput(attrs={'class': 'form-control','placeholder': '...'}),
+            'NamePointsF': forms.TextInput(attrs={'class': 'form-control','placeholder': '...'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -150,8 +150,8 @@ class CourseYearForm(forms.ModelForm):
         model = CourseYear
         fields = [ 'Course', 'Year', 'Semester', 'PointsA', 'PointsB', 'PointsC', 'PointsD', 'PointsE','PointsF', 'Language','Comment']
         labels = {
-            'Course': 'Curs',
-            'Year': 'Any',
+            'Course': 'Assignatura',
+            'Year': 'Curs acadèmic',
             'Semester': 'Semestre',
             'PointsA': 'Punts A',
             'PointsB': 'Punts B',

@@ -1,18 +1,12 @@
 {% extends 'base-template/base.html' %}
 
-{% block title %} 
-    {% if form.instance.pk %} 
-        Editar la Nomenclatura de la Secció
-    {% else %} 
-        Crear nova Nomenclatura de la Secció
-    {% endif %}
-{% endblock %}
+{% block title %} {% if form.instance.pk %} Editar la nomenclatura{% else %} Afegir nova nomenclatura {% endif %} {% endblock %}
 
 {% block content %}
 
 <div class="container-fluid d-flex" style="min-height: 70vh;">
     <div class="col-lg-10 mx-auto">
-        <h2 style="text-align:center">Gestió de la Nomenclatura de les Seccions </h2>
+        <h2 style="text-align:center">Gestió de la nomenclatura de les seccions </h2>
 
         <hr>
     
@@ -20,19 +14,13 @@
         <div class="row">
             <div class="col-lg-10">
                 <div class="d-flex justify-content-center align-items-center">
-                    <h3>
-                        {% if form.instance.pk %}
-                            Actualitzar la Nomenclatura de la Secció: {{ section.NameSection }} ({{ section.LetterSection }})
-                        {% else %}
-                            Afegir Nova Nomenclatura en una Secció
-                        {% endif %}
-                    </h3>
+                    <h3>{% if form.instance.pk %} Actualitzar nomenclatura de la secció{% else %} Afegir nova nomenclatura per la secció{% endif %}</h3>
                 </div>
                 <br>
 
                 <!-- Form for creating/updating fields -->
                 <div class="d-flex justify-content-center">
-                    <form method="post" class="mb-4">
+                    <form method="post" class="mb-6">
                         {% csrf_token %}
 
                         <!-- Display form errors -->
@@ -57,10 +45,10 @@
 
 
                         <!--FORM-->
-                        <div class="mb-3">
+                        <div class="mb-6">
                             {% for field in form %}
                             <div class="form-group row">
-                                <label for="{{ field.id_for_label }}" class="col-sm-4 col-form-label">{{ field.label }}</label>
+                                <label for="{{ field.id_for_label }}" class="col-sm-6 col-form-label">{{ field.label }}</label>
                                     <div class="col-sm-8">
                                         {{ field }}
                                         {% if field.help_text %}
@@ -72,7 +60,7 @@
                                 
                                 <!-- Display form errors for each field -->
                                 {% if field.errors %}
-                                    <div class="col-sm-8 offset-sm-4">
+                                    <div class="col-sm-6 offset-sm-6">
                                         <div class="text-danger">
                                             {% for error in field.errors %}
                                                 <p>{{ error }}</p>
@@ -91,7 +79,6 @@
                                 {% else %} 
                                     Afegir 
                                 {% endif %} 
-                                Nomenclatura en la Secció
                             </button>
                         </div>
                     </form>
@@ -102,7 +89,7 @@
             <div class="col-lg-2">
                 <div class="sticky-top" style="top: 1rem">
                     <div class="buttons mb-2 d-flex flex-column align-items-center">
-                        <a href="{% url 'sectiontypepoints_list' %}" class="button-return btn-sm mb-2;">Tornar a Gestió la Nomenclatura de les Seccions</a>
+                        <a href="{% url 'sectiontypepoints_list' %}" class="button-return btn-sm mb-2;">Tornar a capacitat docent del professorat</a>
                     </div>
                 </div>
             </div>
