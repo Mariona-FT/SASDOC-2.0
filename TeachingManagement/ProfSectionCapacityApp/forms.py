@@ -21,6 +21,9 @@ class CapacityForm(forms.ModelForm):
             'Points': forms.NumberInput(attrs={'required': 'required','class': 'form-control'}), 
             'Comment': forms.Textarea(attrs={'rows': 3,'class': 'form-control', 'placeholder': 'Comentari opcional'}),
         }
+        help_texts = {
+            'Points': "Els punts totals per aquell curs acadèmic.",
+        }
 
     def __init__(self, *args, **kwargs):
         professor = kwargs.pop('professor', None)
@@ -45,9 +48,9 @@ class FreeForm(forms.ModelForm):
         fields = ['Professor', 'Year', 'PointsFree', 'Comment']
         labels = {
             'Professor':'Professor',
-            'Year':'Any',
+            'Year':'Curs acadèmic',
             'Comment':'Comentari',
-            'PointsFree': 'Punts lliures',
+            'PointsFree': "Punts d'alliberació",
         }
         widgets = {
             'Professor': forms.Select(attrs={'required': 'required','class': 'form-select'}),
@@ -56,7 +59,7 @@ class FreeForm(forms.ModelForm):
             'Comment': forms.Textarea(attrs={'rows': 3, 'class': 'form-control','placeholder': 'Comentari opcional'}),
         }
         help_texts = {
-            'PointsFree': "Els punts que se li poden alliberar al professor aquest any.",
+            'PointsFree': "Els punts d'alliberació que se li vulguin concedir.",
         }
        
     

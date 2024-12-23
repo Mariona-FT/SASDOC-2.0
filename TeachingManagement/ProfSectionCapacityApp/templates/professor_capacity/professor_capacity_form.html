@@ -1,12 +1,6 @@
 {% extends 'base-template/base.html' %}
 
-{% block title %} 
-    {% if form.instance.pk %} 
-        Editar la punts totals 
-    {% else %} 
-        Crear nous punts totals
-    {% endif %}
-{% endblock %}
+{% block title %}  {% if form.instance.pk %}Editar punts totals{% else %}Afegir punts totals{% endif %} {% endblock %}
 
 {% block content %}
 

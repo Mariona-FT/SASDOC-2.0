@@ -250,7 +250,7 @@ def edit_free(request, idFree):
     else:
         form = FreeForm(instance=free)
 
-    return render(request, 'professor_capacity/professor_capacity_form.html', {'form': form, 'professor': free.Professor, 'year': free.Year})
+    return render(request, 'professor_capacity/professor_free_capacity_form.html', {'form': form, 'professor': free.Professor, 'year': free.Year})
 
 def delete_free(request, idFree):
     free = get_object_or_404(Free, pk=idFree)
