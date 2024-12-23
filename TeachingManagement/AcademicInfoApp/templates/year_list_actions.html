@@ -1,11 +1,11 @@
 {% extends 'base-template/base.html' %}
 
-{% block title %}Gestió Anys{% endblock %}
+{% block title %}Cursos acadèmics{% endblock %}
 
 {% block content %}
 <div class="container-fluid d-flex" style="min-height: 100vh;">
     <div class="col-lg-10 mx-auto">
-        <h2 style="text-align:center">Gestió dels Anys</h2>
+        <h2 style="text-align:center">Gestió dels cursos acadèmics</h2>
 
         <!-- Display success, warning, or error messages -->
         {% if messages %}
@@ -23,21 +23,21 @@
         <div class="row">
             <div class="col-lg-10">
                 <!-- Filter Fields -->
-                <h3>Filtres pels Anys</h3>
+                <h3>Filtres pels cursos acadèmics</h3>
                 <div class="d-flex justify-content-between row mb-2">
                     <!-- Filters section -->
                     <div class="filters d-flex flex-wrap">
                         <div class="col-md-9">
-                            <label for="filter-all">Filtrar per contingut:</label>
-                            <input type="text" id="filter-all" class="form-control" placeholder="Cerca per Any">
+                            <label for="filter-all">Filtrar per contingut</label>
+                            <input type="text" id="filter-all" class="form-control" placeholder="Cerca per curs ">
                         </div>
 
                         <div class="col-md-3">
-                            <label for="filter-edit">Filtrar per si és Any Editable:</label>
+                            <label for="filter-edit">Filtrar per edició</label>
                             <select id="filter-edit" class="form-select">
                                 <option value="">Tots</option>
                                 <option value="yes">Editable</option>
-                                <option value="no">No Editable</option>
+                                <option value="no">No editable</option>
                             </select>
                         </div>
                     </div>
@@ -47,12 +47,12 @@
 
 
                 <!-- List of all years -->
-                <h3>Llista d'Anys</h3>
+                <h3>Llistat dels cursos acadèmics</h3>
                 <table class="table table-hover" id="years-table">
                     <thead>
                         <tr>
-                            <th>Any</th>
-                            <th>Es Editable</th>
+                            <th>Curs acadèmic</th>
+                            <th>Editable</th>
                             <th class="actions-c" style="width:200px">Accions</th>
                         </tr>
                     </thead>
@@ -83,7 +83,7 @@
                             {% endfor %}
                         {% else %}
                             <tr>
-                                <td colspan="3" class="text-center">Cap any entrat.</td>
+                                <td colspan="3" class="text-center">Cap curs acadèmic entrat.</td>
                             </tr>        
                         {% endif %}
                     </tbody>
@@ -99,7 +99,7 @@
             <div class="col-lg-2">
                 <div class="sticky-top" style="top: 1rem;">
                     <div class="buttons mb-2 d-flex flex-column align-items-center">
-                        <a href="{% url 'year_create' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Afegir Any</a>
+                        <a href="{% url 'year_create' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Afegir curs acadèmic</a>
                     </div>
                 </div>
             </div>

@@ -1,11 +1,11 @@
 {% extends 'base-template/base.html' %}
 
-{% block title %}Gestió Caps Secció{% endblock %}
+{% block title %}Caps de secció{% endblock %}
 
 {% block content %}
 <div class="container-fluid d-flex" style="min-height: 100vh;">
     <div class="col-lg-10 mx-auto">
-        <h2 style="text-align:center">Gestió dels Caps de Secció</h2>
+        <h2 style="text-align:center">Gestió dels caps de secció</h2>
 
         <!-- Display success, warning, or error messages -->
         {% if messages %}
@@ -23,21 +23,21 @@
         <div class="row">
             <div class="col-lg-10">
                   <!-- Filter Fields -->
-                  <h3>Filtres per Caps de Secció</h3>
+                  <h3>Filtres pels caps de secció</h3>
                   <div class="d-flex justify-content-between row mb-2">
                       <!-- Filters section -->
                       <div class="filters d-flex flex-wrap">
                           <div class="col-md-9">
-                              <label for="filter-all">Filtrar per contingut:</label>
-                              <input type="text" id="filter-all" class="form-control" placeholder="Cerca per Nom, Cognom, Any o Secció">
+                              <label for="filter-all">Filtrar per contingut</label>
+                              <input type="text" id="filter-all" class="form-control" placeholder="Cerca per nom, cognom o secció">
                           </div>
   
                           <div class="col-md-3">
-                              <label for="filter-active">Filtrar per si és Professor actiu:</label>
+                              <label for="filter-active">Filtrar per  actiu</label>
                               <select id="filter-active" class="form-select">
                                   <option value="">Tots</option>
                                   <option value="yes">Actiu</option>
-                                  <option value="no">No Actiu</option>
+                                  <option value="no">No actiu</option>
                               </select>
                           </div>
                       </div>
@@ -46,16 +46,16 @@
                   <hr>
                 
                 <!-- List of all professors -->
-                <h3>Llista dels Caps de Secció</h3>
+                <h3>Llistat dels caps de secció</h3>
                 <table class="table table-striped" id="chiefs-table">
                     <thead>
                         <tr>
-                            <th class="name-c" style=" width: 12%;">Nom i Cognoms</th>
+                            <th class="name-c" style=" width: 15%;">Nom i cognoms</th>
                             <th class="email-c">Correu electrònic</th>
                             <th style=" width: 10%;">Secció</th>
                             <th style=" width: auto;">Comentaris</th>
-                            <th style=" width: 8%;">Està Actiu</th>
-                            <th class="actions-c" style="width:200px">Accions</th>
+                            <th style=" width: 70px;">Actiu</th>
+                            <th class="actions-c" style="width:180px">Accions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -113,7 +113,7 @@
             <div class="col-lg-2">
                 <div class="sticky-top" style="top: 1rem;">
                     <div class="buttons mb-2 d-flex flex-column align-items-center">
-                        <a href="{% url 'usersapp:sectionchief_create' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Afegir Cap de Secció</a>
+                        <a href="{% url 'usersapp:sectionchief_create' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Afegir cap de secció</a>
                     </div>
                 </div>
             </div>
@@ -125,7 +125,7 @@
 <!-- JavaScript function for confirmation -->
 <script>
     function confirmDelete(NameProfessor) {
-        return confirm("Estàs segur que vols eliminar aquest cap de Secció: " + NameProfessor + "?")|| false;
+        return confirm("Estàs segur que vols eliminar aquest cap de secció: " + NameProfessor + "?")|| false;
     }
 
     //Not using  accents in the filter and in the data

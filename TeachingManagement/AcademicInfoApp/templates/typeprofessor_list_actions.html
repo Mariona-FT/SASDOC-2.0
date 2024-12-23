@@ -1,11 +1,11 @@
 {% extends 'base-template/base.html' %}
 
-{% block title %}Tipus de Professorat{% endblock %}
+{% block title %}Contractació{% endblock %}
 
 {% block content %}
 <div class="container-fluid d-flex" style="min-height: 100vh;">
     <div class="col-lg-10 mx-auto">
-        <h2 style="text-align:center">Gestió dels Tipus de Professorat</h2>
+        <h2 style="text-align:center">Gestió de contractes</h2>
 
         <!-- Display success, warning, or error messages -->
         {% if messages %}
@@ -23,21 +23,21 @@
         <div class="row">
             <div class="col-lg-10">
                  <!-- Filter Fields -->
-                 <h3>Filtres pel tipus de Professorat</h3>
+                 <h3>Filtres pels contractes</h3>
                  <div class="d-flex justify-content-between row mb-2">
                      <!-- Filters section -->
                      <div class="filters d-flex flex-wrap">
                          <div class="col-md-9">
-                             <label for="filter-all">Filtrar per contingut:</label>
-                             <input type="text" id="filter-all" class="form-control" placeholder="Cerca per Nom, Temps Complert, Permanent o Comentaris">
+                             <label for="filter-all">Filtrar per contingut</label>
+                             <input type="text" id="filter-all" class="form-control" placeholder="Cerca per nom, temps complert, permanent o comentaris">
                          </div>
  
                          <div class="col-md-3">
-                             <label for="filter-active">Filtrar per si és un tipus actiu:</label>
+                             <label for="filter-active">Filtrar per actiu</label>
                              <select id="filter-active" class="form-select">
                                  <option value="">Tots</option>
                                  <option value="yes">Actiu</option>
-                                 <option value="no">No Actiu</option>
+                                 <option value="no">No actiu</option>
                              </select>
                          </div>
                      </div>
@@ -47,12 +47,12 @@
  
 
                 <!-- List of all types of professors -->
-                <h3>Llistat pel tipus de Professorat</h3>
+                <h3>Llistat de contractes</h3>
                 <table class="table table-hover" id="typeprofessors-table">
                     <thead>
                         <tr>
-                            <th class="name-c" style="width:200px">Nom</th>
-                            <th>Temps Complert</th>
+                            <th class="name-c" style="width:200px">Contracte</th>
+                            <th>Temps complert</th>
                             <th>Permanent</th>
                             <th>Comentaris</th>
                             <th class="active-c">Actiu</th>
@@ -92,7 +92,7 @@
                             {% endfor %}
                         {% else %}
                             <tr>
-                                <td colspan="6" class="text-center">Cap tipus de professorat entrat.</td>
+                                <td colspan="6" class="text-center">Cap contracte entrat.</td>
                             </tr>        
                         {% endif %}
                     </tbody>
@@ -108,7 +108,7 @@
             <div class="col-lg-2">
                 <div class="sticky-top" style="top: 1rem;">
                     <div class="buttons mb-2 d-flex flex-column align-items-center">
-                        <a href="{% url 'typeprofessor_create' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Afegir Tipus de Professor</a>
+                        <a href="{% url 'typeprofessor_create' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Afegir contracte</a>
                     </div>
                 </div>
             </div>
@@ -121,7 +121,7 @@
 <!-- JavaScript function for confirmation -->
 <script>
     function confirmDelete(TypeProfessorName) {
-        return confirm("Estàs segur que vols eliminar aquest tipus de professor: " + TypeProfessorName + "?");
+        return confirm("Estàs segur que vols eliminar aquest contracte: " + TypeProfessorName + "?");
     }
 
     //Not using  accents in the filter and in the data

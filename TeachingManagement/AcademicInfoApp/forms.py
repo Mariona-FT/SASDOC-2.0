@@ -7,9 +7,9 @@ class FieldForm(forms.ModelForm):
         model = Field
         fields = ['NameField', 'Description', 'isActive']
         labels = {
-            'NameField': "Nom del Camp",
+            'NameField': "Nom",
             'Description': 'Descripció',
-            'isActive': 'És Actiu?',
+            'isActive': 'És actiu?',
         }
         widgets = {
             'NameField': forms.TextInput(attrs={'required': 'required','class': 'form-control'}),
@@ -18,8 +18,8 @@ class FieldForm(forms.ModelForm):
         }
 
         help_texts = {
-            'Description': 'Descripció del Camp és opcional.',
-            'isActive': 'Marqueu si el Camp està actualment actiu.',
+            'Description': 'Opcional.',
+            'isActive': 'Marcar si el camp de coneixament està actiu.',
         }
 
 class SectionForm(forms.ModelForm):
@@ -27,9 +27,9 @@ class SectionForm(forms.ModelForm):
         model = Section
         fields = ['NameSection', 'LetterSection','isActive']
         labels = {
-            'NameSection': 'Nom de la Secció',
-            'LetterSection':'Lletra de la Secció',
-            'isActive': 'És Actiu?',
+            'NameSection': 'Nom',
+            'LetterSection':'Acrònim',
+            'isActive': 'És activa?',
         }
         widgets = {
             'NameSection': forms.TextInput(attrs={'required': 'required','class': 'form-control'}),
@@ -38,8 +38,8 @@ class SectionForm(forms.ModelForm):
         }
 
         help_texts = {
-            'LetterSection':'Una o dues lletres pel referir-se a la Secció.',
-            'isActive': 'Marqueu si la Secció està actualment activa.',
+            'LetterSection':'Màxim de 5 lletres.',
+            'isActive': 'Marcar si la secció està activa.',
         }
 
 class SchoolForm(forms.ModelForm):
@@ -47,10 +47,10 @@ class SchoolForm(forms.ModelForm):
         model = School
         fields = ['NameSchool', 'CodeSchool','Section','isActive']
         labels = {
-            'NameSchool': "Nom de l'Escola",
-            'CodeSchool': "Codi de l'Escola",
+            'NameSchool': "Nom",
+            'CodeSchool': "Codi",
             'Section': 'Secció',
-            'isActive': 'És Actiu?',
+            'isActive': 'És activa?',
         }
         widgets = {
             'NameSchool': forms.TextInput(attrs={'required': 'required','class': 'form-control'}),
@@ -59,8 +59,8 @@ class SchoolForm(forms.ModelForm):
             'isActive': forms.CheckboxInput(attrs={'class': 'form-check-input checkbox-field'}),
         }
         help_texts = {
-            'CodeSchool':"Entra un codi únic per identificar l'Escola.",
-            'isActive': "Marqueu si l'Escola està actualment activa.",
+            'CodeSchool':"Entra un codi únic.",
+            'isActive': "Marcar si l'escola està activa.",
         }
 
 class DegreeForm(forms.ModelForm):
@@ -68,10 +68,10 @@ class DegreeForm(forms.ModelForm):
         model = Degree
         fields = ['NameDegree','CodeDegree','School','isActive']
         labels = {
-            'NameDegree': 'Nom de la titulació',
-            'CodeDegree': 'Codi de la titulació',
+            'NameDegree': 'Nom ',
+            'CodeDegree': 'Codi',
             'School': 'Escola',
-            'isActive': 'És Actiu?',
+            'isActive': 'És actiu?',
         }
         widgets = {
             'NameDegree': forms.TextInput(attrs={'required': 'required','class': 'form-control'}),
@@ -80,8 +80,8 @@ class DegreeForm(forms.ModelForm):
             'isActive': forms.CheckboxInput(attrs={'class': 'form-check-input checkbox-field'}),
         }
         help_texts = {
-            'CodeDegree':"Entra un codi únic per identificar la Titulació.",
-            'isActive': "Marqueu si la Titulació està actualment activa.",
+            'CodeDegree':"Entra un codi únic.",
+            'isActive': "Marcar si la titulació està activa.",
         }
 
     def clean(self):
@@ -94,12 +94,12 @@ class DegreeForm(forms.ModelForm):
         if instance.pk:
             # Exclude the current instance from the query to allow for editing the same object
             if Degree.objects.filter(NameDegree=name_degree, School=school).exclude(pk=instance.pk).exists():
-                raise ValidationError('Aquesta Titulació ja existeix en aquesta Escola.')
+                raise ValidationError('Aquesta titulació ja existeix en aquesta escola.')
 
         else:
             # Check if a Degree already exists with the same NameDegree and School (for new entries)
             if Degree.objects.filter(NameDegree=name_degree, School=school).exists():
-                raise ValidationError('Aquesta Titulació ja existeix en aquesta Escola.')
+                raise ValidationError('Aquesta titulació ja existeix en aquesta escola.')
 
 
         return cleaned_data
@@ -109,12 +109,12 @@ class CourseForm(forms.ModelForm):
         model = Course
         fields = ['NameCourse', 'CodeCourse', 'ECTS', 'Degree', 'Field', 'isActive']
         labels = {
-            'NameCourse': 'Nom del Curs',
-            'CodeCourse': 'Codi del Curs',
+            'NameCourse': 'Nom',
+            'CodeCourse': 'Codi',
             'ECTS': 'ECTS',
-            'Degree': 'Grau',
-            'Field': 'Camp',
-            'isActive': 'És Actiu?',
+            'Degree': 'Titulació',
+            'Field': 'Camp de coneixament',
+            'isActive': 'És actiu?',
         }
         widgets = {
             'NameCourse': forms.TextInput(attrs={'required': 'required','class': 'form-control'}),
@@ -125,8 +125,8 @@ class CourseForm(forms.ModelForm):
             'isActive': forms.CheckboxInput(attrs={'class': 'form-check-input checkbox-field'}),
         }
         help_texts = {
-            'CodeCourse':"Entra un codi únic per identificar el Curs.",
-            'isActive': "Marqueu si el Curs està actualment actiu.",
+            'CodeCourse':"Entra un codi únic.",
+            'isActive': "Marcar l'assignatura està activa.",
         }
 
     def clean(self):
@@ -139,12 +139,12 @@ class CourseForm(forms.ModelForm):
         if instance.pk:
             # Exclude the current instance from the query to allow for editing the same object
             if Course.objects.filter(CodeCourse=code_course, Degree=degree).exclude(pk=instance.pk).exists():
-                raise ValidationError('Aquest Curs ja existeix en aquesta Titulació.')
+                raise ValidationError('Aquesta assignatura ja existeix en aquesta titulació.')
 
         else:
             # Check if a Course already exists with the same CodeCourse and Degree (for new entries)
             if Course.objects.filter(CodeCourse=code_course, Degree=degree).exists():
-                raise ValidationError('Aquest Curs ja existeix en aquesta Titulació.')
+                raise ValidationError('Aquesta assignatura ja existeix en aquesta titulació.')
 
         return cleaned_data
 
@@ -153,11 +153,11 @@ class TypeProfessorForm(forms.ModelForm):
         model = TypeProfessor
         fields = ['NameContract', 'isFullTime', 'isPermanent', 'Comment', 'isActive']
         labels = {
-            'NameContract': 'Tipus del Professor',
-            'isFullTime': 'És a Temps Complet?',
-            'isPermanent': 'És Permanent?',
+            'NameContract': 'Tipus de contracte',
+            'isFullTime': 'És a temps complet?',
+            'isPermanent': 'És permanent?',
             'Comment': 'Comentari',
-            'isActive': 'És Actiu?',
+            'isActive': 'És actiu?',
         }
         widgets = {
             'NameContract': forms.TextInput(attrs={'required': 'required','class': 'form-control'}),
@@ -167,10 +167,8 @@ class TypeProfessorForm(forms.ModelForm):
             'isActive': forms.CheckboxInput(attrs={'class': 'form-check-input checkbox-field'}),
         }
         help_texts = {
-            'isFullTime':"Marqueu si el Tipus de professor és a Temps Complet.",
-            'isPermanent':"Marqueu si el Tipus de professor és Permanent.",
-            'Comment':"Comentari Opcional.",
-            'isActive': "Marqueu si el Curs està actualment actiu.",
+            'Comment':"Opcional.",
+            'isActive': "Marcar si el contracte està actiu.",
         }
 
     def clean(self):
@@ -184,12 +182,12 @@ class TypeProfessorForm(forms.ModelForm):
         if instance.pk:
             # Exclude the current instance from the query to allow for editing the same object
             if TypeProfessor.objects.filter(NameContract=name_contract, isFullTime=is_full_time, isPermanent=is_permanent).exclude(pk=instance.pk).exists():
-                raise ValidationError('Ja existeix un tipus de professorat amb aquest nom, a temps complet i permanent.')
+                raise ValidationError('Ja existeix un contracte amb aquest nom, a temps complet i permanent.')
 
         else:
             # Check if a TypeProfessor already exists with the same NameContract, isFullTime, and isPermanent (for new entries)
             if TypeProfessor.objects.filter(NameContract=name_contract, isFullTime=is_full_time, isPermanent=is_permanent).exists():
-                raise ValidationError('Ja existeix un tipus de professorat amb aquest nom, a temps complet i permanent.')
+                raise ValidationError('Ja existeix un contracte amb aquest nom, a temps complet i permanent.')
         return cleaned_data
 
 class LanguageForm(forms.ModelForm):
@@ -208,7 +206,7 @@ class YearForm(forms.ModelForm):
         model = Year
         fields = ['Year', 'isEditable']
         labels = {
-            'Year': 'Any',
+            'Year': "Curs acadèmic",
             'isEditable': 'És editable?',
         }
         widgets = {
@@ -216,5 +214,5 @@ class YearForm(forms.ModelForm):
             'isEditable': forms.CheckboxInput(attrs={'class': 'form-check-input checkbox-field'}),
         }
         help_texts = {
-            'isEditable': 'Marqueu si aquest any pot ser modificat per un Cap de Secció.',
+            'isEditable': "Si les dades poden ser modificades per un cap de secció.",
         }

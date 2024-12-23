@@ -126,7 +126,7 @@ def section_courses_list(request):
         for field, point_name in typepoint_names_assigned.items():
             assigned_value = assigned_points.get(point_name, 0)
             total_value = total_points.get(point_name, 0)
-            points_summary += f"{point_name}: {total_value}/{assigned_value} , "
+            points_summary += f"{point_name}: {assigned_value}/{total_value}, "
 
         # Remove the trailing comma and space
         points_summary = points_summary.strip(', ')
@@ -638,7 +638,7 @@ def duplicate_course_assignment(request, idCourseYear):
     target_year = request.session.get('target_year') 
     
     if not source_year or not target_year:
-        messages.error(request, "Els anys seleccionats no són vàlids. Selecciona els anys correctes.")
+        messages.warning(request, "Els anys seleccionats no són vàlids. Selecciona els anys correctes.")
         return redirect('section_courses_list')
 
     source_year_obj = get_object_or_404(Year, Year=source_year)
@@ -648,7 +648,7 @@ def duplicate_course_assignment(request, idCourseYear):
     course_years = CourseYear.objects.filter(Course=course, Year=source_year_obj, Semester=course_year.Semester)
 
     if not course_years.exists():
-        messages.error(request, "No s'han trobat assignatures per duplicar en el curs i any seleccionats.")
+        messages.warinig(request, "No s'han trobat assignatures per duplicar en el curs i any seleccionats.")
         return redirect('section_courses_list')
     
     #Duplicate the typepoints for that section x year if does not exist

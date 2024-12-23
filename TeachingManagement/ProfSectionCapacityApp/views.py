@@ -26,7 +26,7 @@ def capacityprofessor_list(request):
         try:
             selected_year = Year.objects.get(pk=int(selected_year_id))
         except Year.DoesNotExist:
-            messages.error(request, "Any seleccionat no existeix.")
+            messages.error(request, "Curs acadèmic seleccionat no existeix.")
     
     if not selected_year:
         selected_year = Year.objects.order_by('-Year').first()
@@ -128,7 +128,7 @@ def capacityprofessor_show(request,idProfessor=None):
         try:
             selected_year = Year.objects.get(pk=int(selected_year_id))
         except Year.DoesNotExist:
-           messages.error(request, "Any seleccionat no existeix.")
+           messages.error(request, "Curs acadèmic seleccionat no existeix.")
     
     if not selected_year:
         most_recent_capacity = Capacity.objects.filter(Professor_id=idProfessor).order_by('Year').first()
@@ -186,7 +186,7 @@ def create_capacity(request, idProfessor):
         form = CapacityForm(request.POST,professor=professor)
         if form.is_valid():
             form.save()  
-            messages.success(request, 'Capacitat correctament creada.')
+            messages.success(request, 'Punts totals correctament creats.')
             return redirect('capacityprofessor_show', idProfessor=idProfessor)
     else:
         form = CapacityForm(professor=professor)
@@ -202,7 +202,7 @@ def edit_capacity(request, idCapacity):
         form = CapacityForm(request.POST, instance=capacity)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Capacitat correctament editada.')
+            messages.success(request, 'Punts totals correctament editats.')
             return redirect('capacityprofessor_show', idProfessor=idProfessor)
     else:
         form = CapacityForm(instance=capacity)
@@ -214,9 +214,9 @@ def delete_capacity(request, idCapacity):
     idProfessor = capacity.Professor.idProfessor  
     try:
         capacity.delete()
-        messages.success(request, 'Capacitat correctament eliminada.')
+        messages.success(request, 'Punts totals correctament eliminats.')
     except Exception as e:
-        messages.error(request, f"Error: No s'ha pogut eliminar la capacitat ({e}).")
+        messages.error(request, f"Error: No s'ha pogut eliminar els punts totals ({e}).")
 
     return redirect('capacityprofessor_show', idProfessor=idProfessor)
 
@@ -229,7 +229,7 @@ def create_free(request, idProfessor):
         form = FreeForm(request.POST,professor=professor)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Punts Lliures correctament creats.')
+            messages.success(request, "Punts d'alliberació correctament creats.")
             return redirect('capacityprofessor_show', idProfessor=idProfessor)
     else:
         form = FreeForm(professor=professor)
@@ -245,21 +245,21 @@ def edit_free(request, idFree):
         form = FreeForm(request.POST, instance=free)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Punts Lliures correctament editats.')
+            messages.success(request, "Punts d'alliberació correctament editats.")
             return redirect('capacityprofessor_show', idProfessor=idProfessor)
     else:
         form = FreeForm(instance=free)
 
-    return render(request, 'professor_capacity/professor_capacity_form.html', {'form': form, 'professor': free.Professor, 'year': free.Year})
+    return render(request, 'professor_capacity/professor_free_capacity_form.html', {'form': form, 'professor': free.Professor, 'year': free.Year})
 
 def delete_free(request, idFree):
     free = get_object_or_404(Free, pk=idFree)
     idProfessor = free.Professor.idProfessor  
     try:
         free.delete()
-        messages.success(request, 'Punts Lliures correctament eliminats.')
+        messages.success(request, "Punts d'alliberació correctament eliminats.")
     except Exception as e:
-        messages.error(request, f"Error: No s'ha pogut eliminar els punts lliures ({e}).")
+        messages.error(request, f"Error: No s'ha pogut eliminar els punts d'alliberaciós ({e}).")
 
     return redirect('capacityprofessor_show', idProfessor=idProfessor)
 
@@ -272,7 +272,7 @@ def create_capacity_section(request, idProfessor):
         form = CapacitySectionForm(request.POST,professor=professor)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Capacitat en la Secció correctament creada.')
+            messages.success(request, 'Punts per seccions correctament creats.')
             return redirect('capacityprofessor_show', idProfessor=idProfessor)
     else:
         form = CapacitySectionForm(professor=professor)
@@ -288,7 +288,7 @@ def edit_capacity_section(request, idCapacitySection):
         form = CapacitySectionForm(request.POST, instance=capsection,professor=capsection.Professor)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Capacitat en la Secció correctament editada.')
+            messages.success(request, 'Punts per seccions correctament editats.')
             return redirect('capacityprofessor_show', idProfessor=idProfessor)
     else:
         form = CapacitySectionForm(instance=capsection,professor=capsection.Professor)
@@ -300,9 +300,9 @@ def delete_capacity_section(request, idCapacitySection):
     idProfessor = capsection.Professor.idProfessor  
     try:
         capsection.delete()
-        messages.success(request, 'Capacitat en la secció correctament eliminada.')
+        messages.success(request, 'Punts per seccions correctament eliminat.')
     except Exception as e:
-        messages.error(request, f"Error: No s'ha pogut eliminar la capacitat ({e}).")
+        messages.error(request, f"Error: No s'ha pogut eliminar els punts per seccions ({e}).")
 
     return redirect('capacityprofessor_show', idProfessor=idProfessor)
 
@@ -323,7 +323,7 @@ def section_typepoints_list(request):
     except (ValueError, Year.DoesNotExist):
         selected_year = Year.objects.order_by('-Year').first()
         if not selected_year:
-            messages.error(request, "No hi ha anys disponibles.")
+            messages.error(request, "No hi ha cursos acadèmics disponibles.")
             return render(request, 'section_typepoints/section_typepoints_list_actions.html', {'available_years': available_years})
     
     # Determine if the selected year is the most recent year
@@ -332,7 +332,7 @@ def section_typepoints_list(request):
     all_typepoints = TypePoints.objects.filter(Year_id=selected_year.idYear)
 
     if not all_typepoints.exists():
-        messages.warning(request, "No s'han trobat tipus de punts per a l'any seleccionat.")
+        messages.warning(request, "No s'han trobat nomenclatures per les seccions en el curs acadèmic seleccionat.")
 
 
     section_typepoints_info = []
@@ -367,7 +367,7 @@ def create_typepoints(request):
         form = TypePointsForm(request.POST)
         if form.is_valid():
             form.save()  
-            messages.success(request, 'Tipus de punts correctament creat.')
+            messages.success(request, 'Nomenclatura de la secció correctament creada.')
             return redirect('sectiontypepoints_list')
         else:
             messages.error(request, "Hi ha errors al formulari. Revisa els camps.")
@@ -385,7 +385,7 @@ def edit_typepoints(request, idTypePoints):
         form = TypePointsForm(request.POST, instance=typepoints)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Tipus de punts correctament editat.')
+            messages.success(request, 'Nomenclatura de la secció correctament editada.')
             return redirect('sectiontypepoints_list')
         else:
             messages.error(request, "Hi ha errors al formulari. Revisa els camps.")
@@ -401,9 +401,9 @@ def delete_typepoints(request, idTypePoints):
 
     try:
         typepoints.delete()
-        messages.success(request, 'Tipus de punts correctament eliminat.')
+        messages.success(request, 'Nomenclatura de la secció correctament eliminada.')
     except Exception as e:
-        messages.error(request, f"Error: No s'ha pogut eliminar el tipus de punts ({e}).")
+        messages.error(request, f"Error: No s'ha pogut eliminar la nomenclatura ({e}).")
 
     return redirect('sectiontypepoints_list')
 
@@ -424,13 +424,13 @@ def course_year_list(request):
     except (ValueError, Year.DoesNotExist):
         selected_year = Year.objects.order_by('-Year').first()
         if not selected_year:
-            messages.error(request, "No hi ha anys disponibles.")
+            messages.error(request, "No hi ha cursos acadèmics disponibles.")
             return render(request, 'course_capacity/capacity_course_list_actions.html', {'available_years': available_years})
     
     # Determine if the selected year is the most recent year
     is_most_recent_year = selected_year == Year.objects.order_by('-Year').first()
 
-    all_courseyears=CourseYear.objects.filter(Year_id=selected_year.idYear).order_by('Course')
+    all_courseyears = CourseYear.objects.filter(Year_id=selected_year.idYear).select_related('Course__Degree').order_by('Course__Degree__NameDegree')
 
     for course_year in all_courseyears:
         course_year.TotalPoints = sum([
@@ -441,10 +441,16 @@ def course_year_list(request):
                 course_year.PointsE or 0,
                 course_year.PointsF or 0
             ])
+    
+        # Assign Degree to the course year by traversing relationships
+        course = course_year.Course  
+        if course:
+            course_year.Degree = course.Degree  
+            course_year.DegreeName = course.Degree.NameDegree if course.Degree else "Sense Grau"
         
     # Check for empty course list
     if not all_courseyears.exists():
-        messages.warning(request, "No hi ha cursos amb puntuació disponibles per l'any seleccionat.")
+        messages.warning(request, "No hi ha assignatures amb un encàrrec docent pel curs acadèmic seleccionat.")
    
     context = {
         'available_years': available_years,
@@ -461,7 +467,7 @@ def create_courseyear(request):
         form = CourseYearForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Puntuació del Curs creada correctament.')
+            messages.success(request, 'Encàrrec docent creat correctament.')
             return redirect('courseyear_list')
         else:
             messages.error(request, "Hi ha errors al formulari. Revisa els camps.")
@@ -478,7 +484,7 @@ def edit_courseyear(request, idCourseYear):
         form = CourseYearForm(request.POST, instance=course_year)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Puntuació del Curs editat correctament.')
+            messages.success(request, 'Encàrrec docent editat correctament.')
             return redirect('courseyear_list')
         else:
             messages.error(request, "Hi ha errors al formulari. Revisa els camps.")
@@ -494,7 +500,7 @@ def delete_courseyear(request, idCourseYear):
 
     try:
         course_year.delete()
-        messages.success(request, 'Puntuació del Curs eliminada correctament.')
+        messages.success(request, 'Encàrrec docent eliminat correctament.')
     except Exception as e:
         messages.error(request, f"Error: No s'ha pogut eliminar el curs. Motiu: {str(e)}")
 

@@ -1,11 +1,11 @@
 {% extends 'base-template/base.html' %}
 
-{% block title %}Gestió Puntuació Curs{% endblock %}
+{% block title %}Encàrrec docent{% endblock %}
 
 {% block content %}
 <div class="container-fluid d-flex" style="min-height: 100vh;">
     <div class="col-lg-10 mx-auto">
-        <h2 style="text-align:center">Gestió de la Puntuació dels Cursos </h2>
+        <h2 style="text-align:center">Encàrrec docent de les assignatures</h2>
 
         <!-- Display success, warning, or error messages -->
         {% if messages %}
@@ -21,22 +21,22 @@
         <hr>
 
         <div class="row">
-            <div class="col-lg-10">
+            <div class="col-lg-11">
               
                 <!-- Filter Fields -->
-                <h3>Filtres pel Llistat dels Cursos</h3>
+                <h3>Filtres per les assignatures</h3>
                 <div class="d-flex justify-content-between row mb-2">
                     <!-- Filters section -->
                     <div class="filters d-flex flex-wrap">
                         <div class="col-md-12">
-                            <label for="filter-all">Filtrar per contingut:</label>
-                            <input type="text" id="filter-all" class="form-control" placeholder="Cerca per Curs, Semestre, Idioma o punts Totals">
+                            <label for="filter-all">Filtrar per contingut</label>
+                            <input type="text" id="filter-all" class="form-control" placeholder="Cerca per assignatura, semestre, idioma o sumatori">
                         </div>
                     </div>
                 </div>
                 <!-- Year Filter Form -->
                 <form method="get" id="year-filter-form">
-                    <label for="year-select">Selecciona l'Any:</label>
+                    <label for="year-select">Selecciona un curs acadèmic</label>
                     <select name="year" id="year-select" class="form-control" onchange="document.getElementById('year-filter-form').submit();">
                         {% for year in available_years %}
                             <!-- Use idYear as the value to send the ID, but display Year in the option text -->
@@ -52,7 +52,7 @@
                 <!-- List of all courses -->
                 {% if selected_year %}
                     <h5 style="text-align:center; color:blue">
-                            Puntuació dels Cursos de l'any 
+                            Encàrrec docent pel curs acadèmic - 
                         {{ selected_year.Year }} 
 
                         {% if selected_year.Year != available_years.first.Year %}
@@ -61,22 +61,21 @@
                     </h5>
                 {% endif %}
 
-                <h3>Llistat dels Cursos:</h3>
+                <h3>Llistat de les assignatures:</h3>
 
                 <table class="table table-striped" id="coursesyear-table">
                     <thead>
                         <tr>
-                            <th style=" width: 8%;">Curs</th>
-                            <th style=" width: 8%;">Any</th>
-                            <th style=" width: 7%;">Semestre</th>
-                            <th style="width: 9%;">Idioma</th>
+                            <th style="width: 180px;">Titulació</th>
+                            <th style=" width: 180px;">Assignatura</th>
+                            <th style=" width: auto;">Semestre</th>
                             <th style="width: auto;">Punts A</th>
                             <th style="width: auto;">Punts B</th>
                             <th style="width: auto;">Punts C</th>
                             <th style="width: auto;">Punts D</th>
                             <th style="width: auto;">Punts E</th>
                             <th style="width: auto;">Punts F</th>
-                            <th class="actions-c" style="width:7%">Punts Totals</th>
+                            <th style="width:80px">Sum</th>
                             <th class="actions-c" style="width:180px">Accions</th>
                         </tr>
                     </thead>
@@ -84,22 +83,20 @@
                         {% if course_years %}
                             {% for course_year  in course_years  %}
                             <tr data-name="{{ course_year.Course.NameCourse }}"
-                            data-year="{{ course_year.Year.Year }}" 
                             data-semester="{{course_year.Semester}}"
-                            data-language="{{ course_year.Language}}"
+                            data-degree="{{ course_year.DegreeName}}"
                             data-totalpoints="{{ course_year.TotalPoints }}"
                             >
+                            <td>{{ course_year.DegreeName}}</td>
                             <td><strong>{{ course_year.Course.NameCourse }} </strong></td>
-                            <td><strong>{{ course_year.Year.Year }}</strong></td>
                             <td><strong>{{ course_year.Semester }}</stong></td>
-                            <td>{{ course_year.Language}}</td>
-                            <td>{{ course_year.PointsA|default:"-" }}</td>
-                            <td>{{ course_year.PointsB|default:"-" }}</td>
-                            <td>{{ course_year.PointsC|default:"-" }}</td>
-                            <td>{{ course_year.PointsD|default:"-" }}</td>
-                            <td>{{ course_year.PointsE|default:"-" }}</td>
-                            <td>{{ course_year.PointsF|default:"-" }}</td>
-                            <td><strong>{{ course_year.TotalPoints }}</strong></td>
+                            <td>{{ course_year.PointsA|floatformat:"-2" |default:"-" }}</td>
+                            <td>{{ course_year.PointsB|floatformat:"-2" |default:"-" }}</td>
+                            <td>{{ course_year.PointsC|floatformat:"-2" |default:"-" }}</td>
+                            <td>{{ course_year.PointsD|floatformat:"-2" |default:"-" }}</td>
+                            <td>{{ course_year.PointsE|floatformat:"-2" |default:"-" }}</td>
+                            <td>{{ course_year.PointsF|floatformat:"-2" |default:"-" }}</td>
+                            <td><strong>{{ course_year.TotalPoints|floatformat:"-2"  }}</strong></td>
                             <td class="actions-c" style="width:180px">
                                 <!-- Edit button -->
                                 <a href="{% url 'edit_courseyear' course_year.idCourseYear %}" class="button-edit btn-sm">Editar</a>
@@ -115,7 +112,7 @@
                             {% endfor %}
                         {% else %}
                             <tr>
-                                <td colspan="11" class="text-center">Cap Curs amb Puntuació en l'any seleccionat.</td>
+                                <td colspan="11" class="text-center">Cap encàrrec docent pel curs acadèmic seleccionat.</td>
                             </tr>        
                         {% endif %}
                     </tbody>
@@ -128,13 +125,13 @@
             </div>
 
             <!-- Buttons section fixed on the right -->
-            <div class="col-lg-2">
+            <div class="col-lg-1 d-flex flex-column align-items-end">
                 <div class="sticky-top" style="top: 1rem">
-                    <div class="buttons mb-2 d-flex flex-column ">
-                        <a href="{% url 'create_courseyear' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Afegir Curs amb Puntuació Nova</a>
+                    <div class="buttons mb-2 d-flex flex-column align-items-center">
+                        <a href="{% url 'create_courseyear' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Afegir encàrrec docent</a>
                     </div>
                     <div class="buttons mb-2 d-flex flex-column ">
-                        <a href="{% url 'create_typepoints' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Duplicar contingut de l'Any</a>
+                        <a href="{% url 'create_typepoints' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Duplicar encàrrec docent</a>
                     </div>
                 </div>
             </div>
@@ -147,7 +144,7 @@
 <script>
 
     function confirmDelete(CourseNameYear) {
-        return confirm("Estàs segur que vols eliminar aquesta puntuació del Curs: " + CourseNameYear + "?");
+        return confirm("Estàs segur que vols eliminar l'encàrrec docent de l'assignatura : " + CourseNameYear + "?");
     }
 
     //Not using  accents in the filter and in the data
@@ -166,12 +163,11 @@
 
         tableRows.forEach(row => {
             const fieldName = row.getAttribute('data-name') ? normalizeString(row.getAttribute('data-name')) : '';
-            const fieldYear = row.getAttribute('data-year') ? normalizeString(row.getAttribute('data-year')) : '';
             const fieldSemester = row.getAttribute('data-semester') ? normalizeString(row.getAttribute('data-semester')) : '';
-            const fieldLanguage = row.getAttribute('data-language') ? normalizeString(row.getAttribute('data-language')) : '';
+            const fieldDegree = row.getAttribute('data-degree') ? normalizeString(row.getAttribute('data-degree')) : '';
             const fieldTpoints = row.getAttribute('data-totalpoints') ? normalizeString(row.getAttribute('data-totalpoints')) : '';
 
-            const matchesSearch = fieldName.includes(searchValue) || fieldYear.includes(searchValue) || fieldSemester.includes(searchValue) || fieldLanguage.includes(searchValue) || fieldTpoints.includes(searchValue) 
+            const matchesSearch = fieldName.includes(searchValue) || fieldSemester.includes(searchValue) || fieldDegree.includes(searchValue) || fieldTpoints.includes(searchValue) 
             if (matchesSearch) {
                 row.style.display = '';
                 rowsVisible++;

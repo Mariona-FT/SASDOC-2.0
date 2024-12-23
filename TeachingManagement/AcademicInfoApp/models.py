@@ -18,7 +18,7 @@ class Field(models.Model):
 class Section(models.Model):
     idSection = models.AutoField(primary_key=True)
     NameSection = models.CharField(max_length=100,unique=True)
-    LetterSection=models.CharField(max_length=2, unique=True)
+    LetterSection=models.CharField(max_length=5, unique=True)
     isActive = models.BooleanField(default=True)
 
     class Meta:

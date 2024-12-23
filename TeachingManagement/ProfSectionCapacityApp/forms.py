@@ -11,8 +11,8 @@ class CapacityForm(forms.ModelForm):
         fields = ['Professor', 'Year', 'Points', 'Comment']
         labels = {
             'Professor':'Professor',
-            'Year':'Any',            
-            'Points': 'Punts totals de Capacitat',
+            'Year':'Curs acadèmic',            
+            'Points': 'Punts totals ',
             'Comment':'Comentari',
         }
         widgets = {
@@ -22,7 +22,7 @@ class CapacityForm(forms.ModelForm):
             'Comment': forms.Textarea(attrs={'rows': 3,'class': 'form-control', 'placeholder': 'Comentari opcional'}),
         }
         help_texts = {
-            'Points': "Els punts de capacitat total del Professor aquell any.",
+            'Points': "Els punts totals per aquell curs acadèmic.",
         }
 
     def __init__(self, *args, **kwargs):
@@ -48,9 +48,9 @@ class FreeForm(forms.ModelForm):
         fields = ['Professor', 'Year', 'PointsFree', 'Comment']
         labels = {
             'Professor':'Professor',
-            'Year':'Any',
+            'Year':'Curs acadèmic',
             'Comment':'Comentari',
-            'PointsFree': 'Punts lliures',
+            'PointsFree': "Punts d'alliberació",
         }
         widgets = {
             'Professor': forms.Select(attrs={'required': 'required','class': 'form-select'}),
@@ -59,7 +59,7 @@ class FreeForm(forms.ModelForm):
             'Comment': forms.Textarea(attrs={'rows': 3, 'class': 'form-control','placeholder': 'Comentari opcional'}),
         }
         help_texts = {
-            'PointsFree': "Els punts que se li poden alliberar al professor aquest any.",
+            'PointsFree': "Els punts d'alliberació que se li vulguin concedir.",
         }
        
     
@@ -85,10 +85,10 @@ class CapacitySectionForm(forms.ModelForm):
         fields = ['Professor', 'Year', 'Section', 'Points', 'Comment']
         labels = {
             'Professor':'Professor',
-            'Year':'Any',
+            'Year':"Curs acadèmic",
             'Section':'Secció',
             'Comment':'Comentari',
-            'Points': 'Punts totals en la Secció',
+            'Points': 'Punts per secció',
         }
         widgets = {
             'Professor': forms.Select(attrs={'required': 'required','class': 'form-select'}),
@@ -98,7 +98,7 @@ class CapacitySectionForm(forms.ModelForm):
             'Comment': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Comentari opcional','class': 'form-control'}),
         }  
         help_texts = {
-            'Points': "Repartiment dels punts entre les diferent seccions que treballa el professor aquest any.",
+            'Points': "Punts per aquella secció.",
         }
        
     
@@ -121,24 +121,24 @@ class TypePointsForm(forms.ModelForm):
         model = TypePoints
         fields = ['Year','Section','NamePointsA','NamePointsB','NamePointsC','NamePointsD','NamePointsE','NamePointsF']
         labels = {
-            'Year':'Any',
+            'Year':'Curs acadèmic',
             'Section':'Secció',
-            'NamePointsA':'Nom pel Tipus de Punts A',
-            'NamePointsB':'Nom pel Tipus de Punts B',
-            'NamePointsC':'Nom pel Tipus de Punts C',
-            'NamePointsD':'Nom pel Tipus de Punts D',
-            'NamePointsE':'Nom pel Tipus de Punts E',
-            'NamePointsF':'Nom pel Tipus de Punts F',
+            'NamePointsA':'Nom pel tipus punts A',
+            'NamePointsB':'Nom pel tipus punts B',
+            'NamePointsC':'Nom pel tipus punts C',
+            'NamePointsD':'Nom pel tipus punts D',
+            'NamePointsE':'Nom pel tipus punts E',
+            'NamePointsF':'Nom pel tipus punts F',
         }
         widgets = {
             'Year': forms.Select(attrs={'required': 'required','class': 'form-select'}),
             'Section': forms.Select(attrs={'required': 'required','class': 'form-select'}),
-            'NamePointsA': forms.TextInput(attrs={'class': 'form-control','placeholder': ' Punts A'}),
-            'NamePointsB': forms.TextInput(attrs={'class': 'form-control','placeholder': ' Punts B'}),
-            'NamePointsC': forms.TextInput(attrs={'class': 'form-control','placeholder': ' Punts C'}),
-            'NamePointsD': forms.TextInput(attrs={'class': 'form-control','placeholder': ' Punts D'}),
-            'NamePointsE': forms.TextInput(attrs={'class': 'form-control','placeholder': ' Punts E'}),
-            'NamePointsF': forms.TextInput(attrs={'class': 'form-control','placeholder': ' Punts F'}),
+            'NamePointsA': forms.TextInput(attrs={'class': 'form-control','placeholder': '...'}),
+            'NamePointsB': forms.TextInput(attrs={'class': 'form-control','placeholder': '...'}),
+            'NamePointsC': forms.TextInput(attrs={'class': 'form-control','placeholder': '...'}),
+            'NamePointsD': forms.TextInput(attrs={'class': 'form-control','placeholder': '...'}),
+            'NamePointsE': forms.TextInput(attrs={'class': 'form-control','placeholder': '...'}),
+            'NamePointsF': forms.TextInput(attrs={'class': 'form-control','placeholder': '...'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -150,8 +150,8 @@ class CourseYearForm(forms.ModelForm):
         model = CourseYear
         fields = [ 'Course', 'Year', 'Semester', 'PointsA', 'PointsB', 'PointsC', 'PointsD', 'PointsE','PointsF', 'Language','Comment']
         labels = {
-            'Course': 'Curs',
-            'Year': 'Any',
+            'Course': 'Assignatura',
+            'Year': 'Curs acadèmic',
             'Semester': 'Semestre',
             'PointsA': 'Punts A',
             'PointsB': 'Punts B',
@@ -166,12 +166,12 @@ class CourseYearForm(forms.ModelForm):
             'Course': forms.Select(attrs={'required': 'required','class': 'form-select'}),
             'Year': forms.Select(attrs={'required': 'required','class': 'form-select'}),
             'Semester': forms.Select(attrs={'required': 'required','class': 'form-select'}),
-            'PointsA': forms.NumberInput(attrs={'class': 'form-control','placeholder': ' Punts A'}),
-            'PointsB': forms.NumberInput(attrs={'class': 'form-control','placeholder': ' Punts B'}),
-            'PointsC': forms.NumberInput(attrs={'class': 'form-control','placeholder': ' Punts C'}),
-            'PointsD': forms.NumberInput(attrs={'class': 'form-control','placeholder': ' Punts D'}),
-            'PointsE': forms.NumberInput(attrs={'class': 'form-control','placeholder': ' Punts E'}),
-            'PointsF': forms.NumberInput(attrs={'class': 'form-control','placeholder': ' Punts F'}),
+            'PointsA': forms.NumberInput(attrs={'class': 'form-control','placeholder': '-'}),
+            'PointsB': forms.NumberInput(attrs={'class': 'form-control','placeholder': '-'}),
+            'PointsC': forms.NumberInput(attrs={'class': 'form-control','placeholder': '-'}),
+            'PointsD': forms.NumberInput(attrs={'class': 'form-control','placeholder': '-'}),
+            'PointsE': forms.NumberInput(attrs={'class': 'form-control','placeholder': '-'}),
+            'PointsF': forms.NumberInput(attrs={'class': 'form-control','placeholder': '-'}),
             'Language': forms.Select(attrs={'required': 'required','class': 'form-select'}),
             'Comment': forms.Textarea(attrs={'rows': 3,'class': 'form-control', 'placeholder': 'Comentari opcional'}),
         }

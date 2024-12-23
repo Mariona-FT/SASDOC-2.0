@@ -1,11 +1,11 @@
 {% extends 'base-template/base.html' %}
 
-{% block title %}Gestió Professorat{% endblock %}
+{% block title %}Capacitat docent professorat{% endblock %}
 
 {% block content %}
 <div class="container-fluid d-flex" style="min-height: 100vh;">
     <div class="col-lg-10 mx-auto">
-        <h2 style="text-align:center">Gestió de Capacitat del Professorat </h2>
+        <h2 style="text-align:center">Gestió de capacitat docent del professorat </h2>
 
         <!-- Display success, warning, or error messages -->
         {% if messages %}
@@ -24,28 +24,28 @@
             <div class="col-lg-11">
               
                 <!-- Filter Fields -->
-                <h3>Filtres pel Llistat del Professorat</h3>
+                <h3>Filtres pel professorat</h3>
                 <div class="d-flex justify-content-between row mb-2">
                     <!-- Filters section -->
                     <div class="filters d-flex flex-wrap">
                         <div class="col-md-10">
-                            <label for="filter-all">Filtrar per contingut:</label>
-                            <input type="text" id="filter-all" class="form-control" placeholder="Cerca per Nom i Cognom ">
+                            <label for="filter-all">Filtrar per contingut</label>
+                            <input type="text" id="filter-all" class="form-control" placeholder="Cerca per nom i cognom ">
                         </div>
 
                         <div class="col-md-2">
-                            <label for="filter-active">Filtrar per si és actiu:</label>
+                            <label for="filter-active">Filtrar per actiu</label>
                             <select id="filter-active" class="form-select">
                                 <option value="">Tots</option>
                                 <option value="yes">Actiu</option>
-                                <option value="no">No Actiu</option>
+                                <option value="no">No actiu</option>
                             </select>
                         </div>
                     </div>
                 </div>
                 <!-- Year Filter Form -->
                 <form method="get" id="year-filter-form">
-                    <label for="year-select">Selecciona l'Any:</label>
+                    <label for="year-select">Selecciona un curs acadèmic</label>
                     <select name="year" id="year-select" class="form-select mb-4" onchange="document.getElementById('year-filter-form').submit();">
                         {% for year in available_years %}
                             <!-- Use idYear as the value to send the ID, but display Year in the option text -->
@@ -61,7 +61,7 @@
                 <!-- List of all professors -->
                 {% if selected_year %}
                     <h5 style="text-align:center; color:blue">
-                            Professors per l'any 
+                            Professorat pel curs acadèmic -  
                         {{ selected_year.Year }} 
 
                         {% if selected_year.Year != available_years.first.Year %}
@@ -70,33 +70,23 @@
                     </h5>
                 {% endif %}
 
-                <h3>Llista del Professorat</h3>
+                <h3>Llistat del Professorat</h3>
+                <p>
+                    Veure per veure la llegenda de les seccions i dels colors  <a href="#explanation-section" class="text-decoration-underline">clicar aquí</a>, o anar al final de la taula.
+                </p>
 
-                <p><strong>Seccions:</strong> 
-                    {% for section in all_sections %}
-                        {{ section.LetterSection }} = {{ section.NameSection }}{% if not forloop.last %}, {% endif %}
-                    {% endfor %}
-                </p>
-                <p><strong>Llegenda de colors:</strong> 
-                    Si la fila és <span style="background-color: rgba(255, 255, 102, 0.3);">groga</span>  el balanç del professor està en positiu i es necessita treure punts assignats,
-                    si és <span style="background-color: rgba(255, 99, 71, 0.2);">vermell</span> el balanç es negatiu i falta repartir més punts.
-                    <br>
-                    Si és <span style="background-color: #DCDCDC;">gris fosc i </span> <span style="background-color: #DCDCDC; color:blue;" > <strong>NA - No Assignat </strong></span> no hi ha cap entrada de la capacitat d'aquell professor en aquell any.
-                    <br>
-                    Si no té <span style="background-color: white;"> cap color de fons</span> el balanç és correcte.
-                </p>
+                <br>
 
                 <table class="table" id="professors-table">
                     <thead>
                         <tr>
-                            <th class="name-c" style="width: auto;">Nom i Cognoms</th>
-                            <th class="name-c">Any</th>
-                            <th class="num-c" style="width: auto;" >Capacitat</th>
-                            <th class="num-c" style="width: auto;">Lliure</th>
+                            <th class="name-c" style="width:140px">Nom i Cognoms</th>
+                            <th class="num-c" style="width: auto;" >Punts totals</th>
+                            <th class="num-c" style="width: 120px;">Punts d'alliberació</th>
                             {% for section in all_sections %}
                                 <th class="num-c" style="width: auto;">{{ section.LetterSection }}</th>
                             {% endfor %}   
-                            <th class="num-c" style="width:9%">Balanç</th>                    
+                            <th class="num-c" style="width:80px">Balanç</th>                    
                             <th class="actions-c" style="width:100px";>Accions</th>
                         </tr>
                     </thead>
@@ -118,7 +108,6 @@
                                 {% endif %}
                                 >
                                     <td>{{ entry.professor.name }} {{ entry.professor.family_name }}</td>
-                                    <td>{{ entry.year }}</td>
 
                                     <!-- Capacity points -->
                                     <td>
@@ -165,11 +154,30 @@
                             {% endfor %}
                         {% else %}
                             <tr>
-                                <td colspan="12" class="text-center">Cap professor en la taula.</td>
+                                <td colspan="11" class="text-center">Cap professorat entrat en la taula.</td>
                             </tr>        
                         {% endif %}
                     </tbody>
                 </table>
+
+                <hr>
+
+                <div class="explanation-list" id="explanation-section" class="mt-4">
+                <h5>Seccions i llegenda dels colors de la taula:</h5>
+
+                    <p><strong>Seccions:</strong> 
+                        {% for section in all_sections %}
+                            {{ section.LetterSection }} = {{ section.NameSection }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    </p>
+                    <strong>Llegenda dels colors:</strong> 
+                    <ul>
+                        <li> Si la fila és <span style="background-color: rgba(255, 255, 102, 0.3);">groga</span>  el balanç és positiu i es necessita treure punts ja assignats.
+                        <li> Si és <span style="background-color: rgba(255, 99, 71, 0.2);">vermell</span> el balanç es negatiu i falta repartir més punts.
+                        <li> Si és <span style="background-color: #DCDCDC;">gris fosc i </span> <span style="background-color: #DCDCDC; color:blue;" > <strong>NA - No Assignat </strong></span> no hi ha cap entrada de la capacitat d'aquell professorat en aquell curs acadèmic.
+                        <li> Si no té <span style="background-color: white;"> cap color de fons</span> el balanç és correcte.
+                    </ul>
+                </div>
                 
                 <!-- No results message -->
                 <div id="no-results-message" class="text-center text-danger" style="display:none;">
@@ -178,10 +186,13 @@
             </div>
 
             <!-- Buttons section fixed on the right -->
-            <div class="col-lg-1">
+            <div class="col-lg-1 d-flex flex-column align-items-end">
                 <div class="sticky-top" style="top: 1rem">
+                    <div class="buttons mb-2 d-flex flex-column align-items-center">
+                        <a href="{% url 'capacityprofessor_select' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Afegir capacitat docent</a>
+                    </div>
                     <div class="buttons mb-2 d-flex flex-column ">
-                        <a href="{% url 'capacityprofessor_select' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Afegir Capacitat per Professor</a>
+                        <a href="#" class="button-secondary btn-sm mb-2" style="width: 100%;">Duplicar capacitats docents</a>
                     </div>
                 </div>
             </div>

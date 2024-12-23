@@ -1,11 +1,11 @@
 {% extends 'base-template/base.html' %}
 
-{% block title %}Informació de l'Escola{% endblock %}
+{% block title %}Escoles{% endblock %}
 
 {% block content %}
 <div class="container-fluid d-flex" style="min-height: 100vh;">
     <div class="col-lg-10 mx-auto">
-        <h2 style="text-align:center">Gestió de les Escoles</h2>
+        <h2 style="text-align:center">Gestió d'escoles</h2>
 
         <!-- Display success, warning, or error messages -->
         {% if messages %}
@@ -23,21 +23,21 @@
         <div class="row">
             <div class="col-lg-10">
                 <!-- Filter Fields -->
-                <h3>Filtres per les Escoles</h3>
+                <h3>Filtres per les escoles</h3>
                 <div class="d-flex justify-content-between row mb-2">
                     <!-- Filters schools -->
                     <div class="filters d-flex flex-wrap">
                         <div class="col-md-9">
-                            <label for="filter-all">Filtrar per contingut:</label>
+                            <label for="filter-all">Filtrar per contingut</label>
                             <input type="text" id="filter-all" class="form-control" placeholder="Cerca per Codi, Nom o Secció">
                         </div>
 
                         <div class="col-md-3">
-                            <label for="filter-active">Filtrar per si és Escola activa: </label>
+                            <label for="filter-active">Filtrar per activa</label>
                             <select id="filter-active" class="form-select">
                                 <option value="">Tots</option>
                                 <option value="yes">Activa</option>
-                                <option value="no">No Activa</option>
+                                <option value="no">No activa</option>
                             </select>
                         </div>
                     </div>
@@ -46,15 +46,15 @@
                 <hr>
 
                 <!-- List of all schools -->
-                <h3>Llista d'Escoles</h3>
+                <h3>Llistat d'escoles</h3>
                 <table class="table table-hover"  id="schools-table">
                     
                     <thead>
                         <tr>
-                            <th style="width:10%">Codi de l'Escola</th>
-                            <th style="width:auto" >Nom de l'Escola</th>
+                            <th style="width:10%">Codi</th>
+                            <th style="width:auto" >Nom</th>
                             <th style="width:auto">Secció</th>
-                            <th class="active-c">Actiu</th>
+                            <th class="active-c">Activa</th>
                             <th class="actions-c" style="width:200px">Accions</th>
                         </tr>
                     </thead>
@@ -112,7 +112,7 @@
               <div class="col-lg-2">
                 <div class="sticky-top" style="top: 1rem;">
                     <div class="buttons mb-2 d-flex flex-column align-items-center">
-                        <a href="{% url 'school_create' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Afegir Escola</a>
+                        <a href="{% url 'school_create' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Afegir escola</a>
                     </div>
                 </div>
             </div>

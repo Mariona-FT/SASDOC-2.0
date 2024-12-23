@@ -31,7 +31,6 @@ class ProfessorForm(forms.ModelForm):
         required=True, 
         label="Nom d'usuari", 
         widget=forms.TextInput(attrs={'class': 'form-control'}),
-        help_text="Sisplau, entreu un nom d'usuari únic."
     ) 
     
     # idprofessor = forms.CharField(
@@ -59,14 +58,14 @@ class ProfessorForm(forms.ModelForm):
         required=False, 
         label="Descripció", 
         widget=forms.Textarea(attrs={'rows': 3,'class': 'form-control'}),
-        help_text="Per si es vol una breu descripció del professor des de equip Directiu."
+        help_text="Informació per l'equip directiu."
     ) 
 
     comment = forms.CharField(
         required=False, 
         label="Comentari", 
         widget=forms.Textarea(attrs={'rows': 3,'class': 'form-control'}),
-        help_text=" Per si es vol afegir un comentari des del Cap de Secció."
+        help_text="Informació pel cap de secció."
     ) 
 
     email = forms.EmailField(
@@ -91,29 +90,29 @@ class ProfessorForm(forms.ModelForm):
     current_contract = forms.ModelChoiceField(
         queryset=TypeProfessor.objects.all(),
         required=True,
-        label="Assignar Contracte vigent",
+        label="Contracte vigent",
         widget=forms.Select(attrs={'class': 'form-select'})
     )
 
     possible_fields = forms.ModelMultipleChoiceField(
         queryset=Field.objects.filter(isActive=True),
         required=False,
-        label="Assignar Camps d'estudi",
-        widget=forms.CheckboxSelectMultiple,
+        label="Camps de coneixament",
+        widget=forms.CheckboxSelectMultiple(attrs={'class': 'checkbox-select-multiple'}),
 
     )
     possible_languages = forms.ModelMultipleChoiceField(
         queryset=Language.objects.all(),
         required=False,
-        label="Assignar Idiomes",
-        widget=forms.CheckboxSelectMultiple, 
+        label="Idiomes",
+        widget=forms.CheckboxSelectMultiple(attrs={'class': 'checkbox-select-multiple'}), 
     )
 
     class Meta:
         model = CustomUser
         fields = ['username', 'email']
         labels = {
-            'username': 'Nom del usuari',
+            'username': "Nom d'usuari",
             'email': 'Correu electrònic',
         }
     
@@ -140,8 +139,6 @@ class ProfessorForm(forms.ModelForm):
         username = cleaned_data.get('username')
         email = cleaned_data.get('email')
 
-        print("Cleaned data before validation:", cleaned_data)  # Print cleaned data before checks
-
         # Get the current instance to exclude it from the uniqueness check
         user_instance = self.instance
 
@@ -152,7 +149,6 @@ class ProfessorForm(forms.ModelForm):
         if CustomUser.objects.filter(email=email).exclude(pk=user_instance.pk).exists():
             raise ValidationError(f'El correu electrònic "{email}" ja està en ús.')
 
-        print("Cleaned data after validation:", cleaned_data)  # Print cleaned data after checks
         return cleaned_data
     
     def save(self, commit=True):
@@ -175,8 +171,6 @@ class ProfessorForm(forms.ModelForm):
             generated_password = f"{user.first_name.lower()}_{user.last_name.lower()}"
             user.password = make_password(generated_password)
         
-        print("User data before saving:", user)  # Print user instance before saving
-
         if commit:
             user.save()
         
@@ -193,7 +187,6 @@ class ProfessorForm(forms.ModelForm):
                 'current_contract':self.cleaned_data['current_contract'],
             }
         )
-        print("Professor data saved:", professor)  # Print professor instance after saving
 
         if commit:
             professor.save()
@@ -352,16 +345,14 @@ class ChiefRegistrationForm(forms.ModelForm):
    
     class Meta:
         model = Chief
-        fields = ['professor', 'year', 'section'] 
+        fields = ['professor', 'section'] 
         labels = {
             'professor': 'Nom del Professor',
-            'year': 'Any',
             'section':'Secció',
         }
 
         widgets = {
             'professor': forms.Select(attrs={'required': 'required','class': 'form-select'}),
-            'year': forms.Select(attrs={'required': 'required','class': 'form-select'}),
             'section': forms.Select(attrs={'required': 'required','class': 'form-select'}),
         }
 
@@ -369,27 +360,25 @@ class ChiefRegistrationForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         self.fields['professor'].queryset = Professor.objects.all().order_by('family_name')
-        self.fields['year'].queryset = Year.objects.all().order_by('-Year')
 
     def clean(self):
         cleaned_data = super().clean()
         professor = cleaned_data.get('professor')
-        year = cleaned_data.get('year')
         section = cleaned_data.get('section')
         
         # Check if we are editing an existing Chief (i.e., it has a pk)
         instance = self.instance  # The current instance of Chief being edited
 
-        if instance.pk:
-            # Exclude the current instance from the query to allow for editing the same object
-            if Chief.objects.filter(professor=professor, year=year, section=section).exclude(pk=instance.pk).exists():
-                raise ValidationError('Aquest Professor, amb aquest Any i Secció ja existeix.')
-
-        else:
-            # Check if a Chief already exists with the same professor, year, and section (for new entries)
-            if Chief.objects.filter(professor=professor, year=year, section=section).exists():
-                raise ValidationError('Aquest Professor, amb aquest Any i Secció ja existeix.')
-
+        if section:  # Only perform the check if a section is provided
+            if instance.pk:
+                # Exclude the current instance from the query to allow editing the same object
+                if Chief.objects.filter(section=section).exclude(pk=instance.pk).exists():
+                    raise ValidationError(f"La secció {section} ja té un cap assignat.")
+            else:
+                # Check if a Chief already exists with the same section (for new entries)
+                if Chief.objects.filter(section=section).exists():
+                    raise ValidationError(f"La secció {section} ja té un cap assignat.")
+    
         return cleaned_data
     
     def save(self, commit=True):

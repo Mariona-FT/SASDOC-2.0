@@ -1,11 +1,11 @@
 {% extends 'base-template/base.html' %}
 
-{% block title %}Gestió Professorat{% endblock %}
+{% block title %}Professorat{% endblock %}
 
 {% block content %}
 <div class="container-fluid d-flex" style="min-height: 100vh;">
     <div class="col-lg-10 mx-auto">
-        <h2 style="text-align:center">Gestió del Professorat</h2>
+        <h2 style="text-align:center">Gestió del professorat</h2>
 
         <!-- Display success, warning, or error messages -->
         {% if messages %}
@@ -23,21 +23,21 @@
         <div class="row">
             <div class="col-lg-11">
                 <!-- Filter Fields -->
-                <h3>Filtres pel Llistat del Professorat</h3>
+                <h3>Filtres pel professorat</h3>
                 <div class="d-flex justify-content-between row mb-2">
                     <!-- Filters section -->
                     <div class="filters d-flex flex-wrap">
                         <div class="col-md-10">
-                            <label for="filter-all">Filtrar per contingut:</label>
-                            <input type="text" id="filter-all" class="form-control" placeholder="Cerca per Nom, Cognom, Contracte, Camps d'Estudi o Idiomes">
+                            <label for="filter-all">Filtrar per contingut</label>
+                            <input type="text" id="filter-all" class="form-control" placeholder="Cerca per nom, cognom, contracte, camps de coneixamment o idiomes">
                         </div>
 
                         <div class="col-md-2">
-                            <label for="filter-active">Filtrar per si és actiu:</label>
+                            <label for="filter-active">Filtrar per actiu</label>
                             <select id="filter-active" class="form-select">
                                 <option value="">Tots</option>
                                 <option value="yes">Actiu</option>
-                                <option value="no">No Actiu</option>
+                                <option value="no">No actiu</option>
                             </select>
                         </div>
                     </div>
@@ -46,17 +46,17 @@
                 <hr>
 
                 <!-- List of all professors -->
-                <h3>Llista del Professorat</h3>
+                <h3>Llistat del professorat</h3>
                 <table class="table" id="professors-table">
                     <thead>
                         <tr>
-                            <th class="name-c">Nom i Cognoms</th>
-                            <th class="email-c">Correu electrònic</th>
-                            <th class=>Contracte Actual</th>
-                            <th>Camps d'estudi</th>
+                            <th class="name-c" style="width:140px">Nom i cognoms</th>
+                            <th class="email-c" style="width:200px">Correu electrònic</th>
+                            <th class=>Contracte</th>
+                            <th>Camps de coneixament</th>
                             <th>Idiomes</th>
-                            <th class="active-c">Està Actiu</th>
-                            <th class="actions-c" style="width:200px">Accions</th>
+                            <th class="active-c"  style="width:70px">Actiu</th>
+                            <th class="actions-c" style="width:180px">Accions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -107,7 +107,7 @@
                                         {% endif %}
                                     </td>
                                     <td class="active-status">{% if professor.isActive == 'yes' %}Sí{% else %}No{% endif %}</td>
-                                    <td class="actions-c" style="width:200px">
+                                    <td class="actions-c" style="width:180px">
                                         <!-- Edit button -->
                                         <a href="{% url 'usersapp:professor_edit' professor.idProfessor %}" class="button-edit btn-sm">Editar</a>
 
@@ -134,7 +134,7 @@
                             {% endfor %}
                         {% else %}
                             <tr>
-                                <td colspan="5" class="text-center">Cap professor en la taula.</td>
+                                <td colspan="5" class="text-center">Cap professorat en la taula.</td>
                             </tr>        
                         {% endif %}
                     </tbody>
@@ -147,11 +147,11 @@
             </div>
 
             <!-- Buttons section fixed on the right -->
-            <div class="col-lg-1">
+            <div class="col-lg-1 d-flex flex-column align-items-end">
                 <div class="sticky-top" style="top: 1rem">
                     <div class="buttons mb-2 d-flex flex-column align-items-center">
-                        <a href="{% url 'usersapp:professor_create' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Afegir Professor</a>
-                        <a href="{% url 'usersapp:upload_professors' %}" class="button-secondary btn-sm" style="width: 100%;">Afegir Professorat per Fitxer</a>
+                        <a href="{% url 'usersapp:professor_create' %}" class="button-secondary btn-sm mb-2" >Afegir professorat</a>
+                        <a href="{% url 'usersapp:upload_professors' %}" class="button-secondary btn-sm">Afegir professorat per fitxer</a>
                     </div>
                 </div>
             </div>

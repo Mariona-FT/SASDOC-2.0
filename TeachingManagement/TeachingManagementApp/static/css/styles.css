@@ -9,6 +9,9 @@ body {
     line-height: 1.4;
 }
 
+html {
+    overflow-y: scroll;
+}
 
 /* Navbar background color and general styling */
 .navbar {
