@@ -14,13 +14,7 @@
         <div class="row">
             <div class="col-lg-10">
                 <div class="d-flex justify-content-center align-items-center">
-                    <h3>
-                        {% if form.instance.pk %} 
-                            Actualitzar punts totals
-                        {% else %} 
-                            Afegir nous punts totals
-                        {% endif %} 
-                    </h3>
+                    <h3>{% if form.instance.pk %}Actualitzar punts totals {% else %} Afegir nous punts totals {% endif %} </h3>
                 </div>
                 <br>
 
@@ -104,7 +98,7 @@
             <div class="col-lg-2">
                 <div class="sticky-top" style="top: 1rem">
                     <div class="buttons mb-2 d-flex flex-column align-items-center">
-                        <a href="{% url 'capacityprofessor_show' professor.pk %}" class="button-return btn-sm mb-2;">Tornar a capacitat docent del professor</a>
+                        <a href="{% url 'capacityprofessor_show' professor.pk %}" class="button-return btn-sm mb-2;">Tornar a capacitat docent del professorat</a>
                     </div>
                 </div>
             </div>

@@ -85,10 +85,10 @@ class CapacitySectionForm(forms.ModelForm):
         fields = ['Professor', 'Year', 'Section', 'Points', 'Comment']
         labels = {
             'Professor':'Professor',
-            'Year':'Any',
+            'Year':"Curs acadèmic",
             'Section':'Secció',
             'Comment':'Comentari',
-            'Points': 'Punts totals en la Secció',
+            'Points': 'Punts per secció',
         }
         widgets = {
             'Professor': forms.Select(attrs={'required': 'required','class': 'form-select'}),
@@ -98,7 +98,7 @@ class CapacitySectionForm(forms.ModelForm):
             'Comment': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Comentari opcional','class': 'form-control'}),
         }  
         help_texts = {
-            'Points': "Repartiment dels punts entre les diferent seccions que treballa el professor aquest any.",
+            'Points': "Punts per aquella secció.",
         }
        
     
