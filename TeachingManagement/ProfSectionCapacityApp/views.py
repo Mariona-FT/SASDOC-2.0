@@ -323,7 +323,7 @@ def section_typepoints_list(request):
     except (ValueError, Year.DoesNotExist):
         selected_year = Year.objects.order_by('-Year').first()
         if not selected_year:
-            messages.error(request, "No hi ha anys disponibles.")
+            messages.error(request, "No hi ha cursos acadèmics disponibles.")
             return render(request, 'section_typepoints/section_typepoints_list_actions.html', {'available_years': available_years})
     
     # Determine if the selected year is the most recent year
@@ -332,7 +332,7 @@ def section_typepoints_list(request):
     all_typepoints = TypePoints.objects.filter(Year_id=selected_year.idYear)
 
     if not all_typepoints.exists():
-        messages.warning(request, "No s'han trobat tipus de punts per a l'any seleccionat.")
+        messages.warning(request, "No s'han trobat nomenclatures per les seccions en el curs acadèmic seleccionat.")
 
 
     section_typepoints_info = []
@@ -367,7 +367,7 @@ def create_typepoints(request):
         form = TypePointsForm(request.POST)
         if form.is_valid():
             form.save()  
-            messages.success(request, 'Tipus de punts correctament creat.')
+            messages.success(request, 'Nomenclatura de la secció correctament creada.')
             return redirect('sectiontypepoints_list')
         else:
             messages.error(request, "Hi ha errors al formulari. Revisa els camps.")
@@ -385,7 +385,7 @@ def edit_typepoints(request, idTypePoints):
         form = TypePointsForm(request.POST, instance=typepoints)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Tipus de punts correctament editat.')
+            messages.success(request, 'Nomenclatura de la secció correctament editada.')
             return redirect('sectiontypepoints_list')
         else:
             messages.error(request, "Hi ha errors al formulari. Revisa els camps.")
@@ -401,9 +401,9 @@ def delete_typepoints(request, idTypePoints):
 
     try:
         typepoints.delete()
-        messages.success(request, 'Tipus de punts correctament eliminat.')
+        messages.success(request, 'Nomenclatura de la secció correctament eliminada.')
     except Exception as e:
-        messages.error(request, f"Error: No s'ha pogut eliminar el tipus de punts ({e}).")
+        messages.error(request, f"Error: No s'ha pogut eliminar la nomenclatura ({e}).")
 
     return redirect('sectiontypepoints_list')
 
