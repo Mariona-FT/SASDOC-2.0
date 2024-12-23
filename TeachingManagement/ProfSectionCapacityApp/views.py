@@ -424,13 +424,13 @@ def course_year_list(request):
     except (ValueError, Year.DoesNotExist):
         selected_year = Year.objects.order_by('-Year').first()
         if not selected_year:
-            messages.error(request, "No hi ha anys disponibles.")
+            messages.error(request, "No hi ha cursos acadèmics disponibles.")
             return render(request, 'course_capacity/capacity_course_list_actions.html', {'available_years': available_years})
     
     # Determine if the selected year is the most recent year
     is_most_recent_year = selected_year == Year.objects.order_by('-Year').first()
 
-    all_courseyears=CourseYear.objects.filter(Year_id=selected_year.idYear).order_by('Course')
+    all_courseyears = CourseYear.objects.filter(Year_id=selected_year.idYear).select_related('Course__Degree').order_by('Course__Degree__NameDegree')
 
     for course_year in all_courseyears:
         course_year.TotalPoints = sum([
@@ -441,10 +441,16 @@ def course_year_list(request):
                 course_year.PointsE or 0,
                 course_year.PointsF or 0
             ])
+    
+        # Assign Degree to the course year by traversing relationships
+        course = course_year.Course  
+        if course:
+            course_year.Degree = course.Degree  
+            course_year.DegreeName = course.Degree.NameDegree if course.Degree else "Sense Grau"
         
     # Check for empty course list
     if not all_courseyears.exists():
-        messages.warning(request, "No hi ha cursos amb puntuació disponibles per l'any seleccionat.")
+        messages.warning(request, "No hi ha assignatures amb un encàrrec docent pel curs acadèmic seleccionat.")
    
     context = {
         'available_years': available_years,
@@ -461,7 +467,7 @@ def create_courseyear(request):
         form = CourseYearForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Puntuació del Curs creada correctament.')
+            messages.success(request, 'Encàrrec docent creat correctament.')
             return redirect('courseyear_list')
         else:
             messages.error(request, "Hi ha errors al formulari. Revisa els camps.")
@@ -478,7 +484,7 @@ def edit_courseyear(request, idCourseYear):
         form = CourseYearForm(request.POST, instance=course_year)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Puntuació del Curs editat correctament.')
+            messages.success(request, 'Encàrrec docent editat correctament.')
             return redirect('courseyear_list')
         else:
             messages.error(request, "Hi ha errors al formulari. Revisa els camps.")
@@ -494,7 +500,7 @@ def delete_courseyear(request, idCourseYear):
 
     try:
         course_year.delete()
-        messages.success(request, 'Puntuació del Curs eliminada correctament.')
+        messages.success(request, 'Encàrrec docent eliminat correctament.')
     except Exception as e:
         messages.error(request, f"Error: No s'ha pogut eliminar el curs. Motiu: {str(e)}")
 
