@@ -369,16 +369,16 @@ class ChiefRegistrationForm(forms.ModelForm):
         # Check if we are editing an existing Chief (i.e., it has a pk)
         instance = self.instance  # The current instance of Chief being edited
 
-        if instance.pk:
-            # Exclude the current instance from the query to allow for editing the same object
-            if Chief.objects.filter(professor=professor, section=section).exclude(pk=instance.pk).exists():
-                raise ValidationError('Aquest Professor, amb aquest Any i Secció ja existeix.')
-
-        else:
-            # Check if a Chief already exists with the same professor, year, and section (for new entries)
-            if Chief.objects.filter(professor=professor, section=section).exists():
-                raise ValidationError('Aquest Professor, amb aquest Any i Secció ja existeix.')
-
+        if section:  # Only perform the check if a section is provided
+            if instance.pk:
+                # Exclude the current instance from the query to allow editing the same object
+                if Chief.objects.filter(section=section).exclude(pk=instance.pk).exists():
+                    raise ValidationError(f"La secció {section} ja té un cap assignat.")
+            else:
+                # Check if a Chief already exists with the same section (for new entries)
+                if Chief.objects.filter(section=section).exists():
+                    raise ValidationError(f"La secció {section} ja té un cap assignat.")
+    
         return cleaned_data
     
     def save(self, commit=True):

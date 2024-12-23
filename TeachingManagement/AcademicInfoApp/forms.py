@@ -29,7 +29,7 @@ class SectionForm(forms.ModelForm):
         labels = {
             'NameSection': 'Nom',
             'LetterSection':'Acrònim',
-            'isActive': 'És actiu?',
+            'isActive': 'És activa?',
         }
         widgets = {
             'NameSection': forms.TextInput(attrs={'required': 'required','class': 'form-control'}),
