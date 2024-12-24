@@ -109,6 +109,19 @@ class DegreeUploadForm(forms.Form):
         label="Carregar fitxer Excel",
         widget=forms.ClearableFileInput(attrs={'class': 'form-control-file'})
     )
+
+    def clean_file(self):
+        uploaded_file = self.cleaned_data.get('file')
+        
+        # Check if the file has an extension
+        if uploaded_file:
+            file_extension = uploaded_file.name.split('.')[-1].lower()
+            
+            if file_extension != 'xlsx':
+                raise ValidationError("Només es permeten fitxers excel amb format .xlsx.")
+        
+        return uploaded_file
+
   
 class CourseForm(forms.ModelForm):
     class Meta:

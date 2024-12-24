@@ -36,10 +36,10 @@ def generate_degree_excel(request):
         sheet.cell(row=row_num, column=2, value=degree.NameDegree)
         sheet.cell(row=row_num, column=3, value=degree.CodeDegree)
         sheet.cell(row=row_num, column=4, value=degree.School.NameSchool if degree.School else "Sense Escola")
-        sheet.cell(row=row_num, column=5, value="Actiu" if degree.isActive else "Inactiu")
+        sheet.cell(row=row_num, column=5, value="Si" if degree.isActive else "No")
 
     # Generate a timestamped file name
-    current_datetime = datetime.now().strftime("%Y%m%d_%H%M%S")
+    current_datetime = datetime.now().strftime("%d%m%Y_%H%M%S")
     filename = f"graus_{current_datetime}.xlsx"
 
     # Set up the HTTP response
@@ -78,16 +78,30 @@ def upload_degree_excel(request):
                     school_name = row[3]
                     is_active = row[4]
 
-                    if not all([id_degree, name_degree, code_degree]):
+                    if not all([id_degree, name_degree, code_degree, school_name]):
                         messages.warning(
                             request, f"Fila {row_num} no s'ha processat correctament: informació incompleta."
                         )
                         error_occurred=True
                         continue
 
+                    if not isinstance(id_degree, (int, float)) or not str(id_degree).isdigit():
+                        messages.warning(
+                            request, f"Fila {row_num} no s'ha processat: l'ID de titulació ha de ser un número."
+                        )
+                        error_occurred = True
+                        continue
+
                     if not isinstance(code_degree, (int, float)) or not str(code_degree).isdigit():
                         messages.warning(
                             request, f"Fila {row_num} no s'ha processat: el codi de titulació ha de ser un número."
+                        )
+                        error_occurred = True
+                        continue
+
+                    if is_active not in ['Si', 'No']:
+                        messages.warning(
+                            request, f"Fila {row_num} no s'ha processat: l'estat d'activitat ha de ser 'Si' o 'No'."
                         )
                         error_occurred = True
                         continue
@@ -101,7 +115,7 @@ def upload_degree_excel(request):
                         error_occurred=True
                         continue
 
-                    # Check if the combination of NameDegree and School already exists
+                    #If exists
                     existing_degree = Degree.objects.filter(idDegree=id_degree).first()
 
                     if existing_degree:
@@ -111,14 +125,29 @@ def upload_degree_excel(request):
                             )
                             error_occurred = True
                             continue
+                        if Degree.objects.filter(CodeDegree=code_degree).exclude(CodeDegree=existing_degree.CodeDegree).exists():
+                            messages.warning(
+                                request, f"Fila {row_num} no s'ha processat: el codi de la titulació ja existeix."
+                            )
+                            error_occurred = True
+                            continue
                         # Update the existing degree
+                        existing_degree.NameDegree = name_degree
                         existing_degree.CodeDegree = code_degree
-                        existing_degree.isActive = is_active.lower() == "actiu" if isinstance(is_active, str) else bool(is_active)
+                        existing_degree.School = school
+                        existing_degree.isActive = is_active.lower() == "si" if isinstance(is_active, str) else bool(is_active)
                         existing_degree.save()
 
+                    #Does not exist - create
                     else:
+                        if Degree.objects.filter(CodeDegree=code_degree).exists():
+                            messages.warning(
+                                request, f"Fila {row_num} no s'ha processat: el codi de la titulació ja existeix."
+                            )
+                            error_occurred = True
+                            continue
+
                         if Degree.objects.filter(NameDegree=name_degree, School=school).exists():
-                            # If the combination exists, do not create the degree and warn
                             messages.warning(
                                 request, f"Fila {row_num} no s'ha processat: la combinació de titulació i escola ja existeix."
                             )
@@ -131,7 +160,7 @@ def upload_degree_excel(request):
                             NameDegree=name_degree,
                             CodeDegree=code_degree,
                             School=school,
-                            isActive=is_active.lower() == "actiu" if isinstance(is_active, str) else bool(is_active),
+                            isActive=is_active.lower() == "si" if isinstance(is_active, str) else bool(is_active),
                         )
                 
                 if not error_occurred:

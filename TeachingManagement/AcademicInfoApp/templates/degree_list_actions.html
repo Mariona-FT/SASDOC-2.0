@@ -48,13 +48,13 @@
 
                 <!-- List of all degrees -->
                 <h3>Llistat de titulacions</h3>
-                <table class="table table-striped" id="degrees-table">
+                <table class="table table-hover" id="degrees-table">
                     <thead>
                         <tr>
                             <th style="width:10%">Codi</th>
                             <th style="width:auto">Nom</th>
                             <th style="width:auto">Escola</th>
-                            <th class="active-c">Activa</th>
+                            <th class="active-c" style="width:10%">Activa</th>
                             <th class="actions-c" style="width:200px">Accions</th>
                         </tr>
                     </thead>
@@ -63,7 +63,7 @@
                             {% for degree in degrees %}
                                 <tr  style="background-color: 
                                 {% if not degree.isActive %}
-                                    #DCDCDC  ; 
+                                    #C0C0C0  ; 
                                 {% endif %}" 
                                 data-code="{{ degree.CodeDegree }}" 
                                 data-name="{{degree.NameDegree }}" 

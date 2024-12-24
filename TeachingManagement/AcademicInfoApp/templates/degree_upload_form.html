@@ -15,9 +15,9 @@
                 <div class="d-flex justify-content-center align-items-center">
                     <h3>Carregar fitxer en Excel</h3>
                 </div>
-                
+
                 <br>
-                    
+
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     {{ form.as_p }}
@@ -44,5 +44,13 @@
         </div>
     </div>
 </div>
+
+<style>
+    .errorlist {
+        color: red;
+        list-style-type: none;
+        padding: 0;
+    }
+</style>
 
 {% endblock %}
