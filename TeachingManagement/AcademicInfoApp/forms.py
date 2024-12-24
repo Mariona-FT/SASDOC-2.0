@@ -103,7 +103,13 @@ class DegreeForm(forms.ModelForm):
 
 
         return cleaned_data
-
+    
+class DegreeUploadForm(forms.Form):
+    file = forms.FileField(
+        label="Carregar fitxer Excel",
+        widget=forms.ClearableFileInput(attrs={'class': 'form-control-file'})
+    )
+  
 class CourseForm(forms.ModelForm):
     class Meta:
         model = Course

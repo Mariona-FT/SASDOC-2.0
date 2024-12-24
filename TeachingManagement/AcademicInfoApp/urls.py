@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from django.shortcuts import redirect
-from .import views
+from .import views,services
 
 urlpatterns = [
 
@@ -40,6 +40,10 @@ urlpatterns = [
     path('degrees/', views.degree_list, name='degree_list'),
     path('degrees/create/', views.degree_create_edit, name='degree_create'),
     path('degrees/edit/<int:idDegree>', views.degree_create_edit, name='degree_edit'),
+
+    path('export-degrees/', services.generate_degree_excel, name='degree_export'),
+    path('upload-degrees/', services.upload_degree_excel, name='degree_upload'),
+
 
     #COURSES ACTIONS
     path('courses/', views.course_list, name='course_list'),
