@@ -68,12 +68,12 @@
                 <!-- Display existing capacities -->
                 <h5 class="mt-4 d-flex justify-content-between align-items-center">
                 Punts totals
-                    <a href="{% url 'create_capacity' professor.pk %}" class="btn btn-primary btn-sm">Afegir punts totals</a>
+                    <a href="{% url 'create_capacity' professor.pk %}" class="btn btn-primary btn-sm">Afegir</a>
                 </h5>
                 <table class="table table-striped table-bordered" id="capacitiesTable">
                     <thead class="thead-dark">
                         <tr>
-                            <th style="width: 15%;">Any</th>
+                            <th style="width: 15%;">Curs</th>
                             <th style="width: 20%;">Punts</th>
                             <th style="width: 45%;">Comentari</th>
                             <th class="actions-c" style="width:180px">Accions</th>
@@ -92,7 +92,7 @@
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="4" class="text-center" style="font-style: italic;">Cap punts totals trobats pel curs acadèmic seleccionat.</td>
+                            <td colspan="4" class="text-center" style="font-style: italic;">Sense punts totals pel curs acadèmic seleccionat.</td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -106,12 +106,12 @@
                 <!-- Display existing free points -->
                 <h5 class="mt-4 d-flex justify-content-between align-items-center">
                 Punts d'alliberació
-                    <a href="{% url 'create_free' professor.pk %}" class="btn btn-primary btn-sm">Afegir punts d'alliberació</a>
+                    <a href="{% url 'create_free' professor.pk %}" class="btn btn-primary btn-sm">Afegir</a>
                 </h5>
                 <table class="table table-striped table-bordered" id="freesTable">
                     <thead class="thead-dark">
                         <tr>
-                            <th style="width: 15%;">Any</th>
+                            <th style="width: 15%;">Curs</th>
                             <th style="width: 20%;">Punts</th>
                             <th style="width: 45%;">Comentari</th>
                             <th class="actions-c" style="width:180px">Accions</th>
@@ -130,7 +130,7 @@
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="4" class="text-center " style="font-style: italic;">Cap punts d'alliberació trobats pel curs acadèmic seleccionat.</td>
+                            <td colspan="4" class="text-center " style="font-style: italic;">Sense punts d'alliberació pel curs acadèmic seleccionat.</td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -143,14 +143,14 @@
                 <!-- Display existing capacity sections -->
                 <h5 class="mt-4 d-flex justify-content-between align-items-center">
                 Punts per seccions
-                    <a href="{% url 'create_capacity_section' professor.pk %}" class="btn btn-primary btn-sm">Afegir punts per seccions</a>
+                    <a href="{% url 'create_capacity_section' professor.pk %}" class="btn btn-primary btn-sm">Afegir</a>
                 </h5>
                 <table class="table table-striped table-bordered" id="capacitySectionsTable">
                     <thead class="thead-dark">
                         <tr>
-                            <th style="width: 15%;">Any</th>
-                            <th style="width: 20%;">Secció</th>
-                            <th style="width: 10%;">Punts</th>
+                            <th style="width: 15%;">Curs</th>
+                            <th style="width: 10%;">Punts</th>                            
+                            <th style="width: 15%;">Secció</th>
                             <th style="width: 35%;">Comentari</th>
                             <th class="actions-c" style="width:180px">Accions</th>
                         </tr>
@@ -159,8 +159,8 @@
                         {% for capacity_section in capacity_sections %}
                         <tr>
                             <td>{{ capacity_section.Year.Year }}</td>
-                            <td>{{ capacity_section.Section.NameSection }}</td>
                             <td>{{ capacity_section.Points }}</td>
+                            <td>{{ capacity_section.Section.NameSection }}</td>
                             <td>{{ capacity_section.Comment }}</td>
                             <td class="actions-c" style="width:180px">
                                 <a href="{% url 'edit_capacity_section' capacity_section.idCapacitySection %}" class="button-edit btn-sm">Editar</a>
@@ -169,7 +169,7 @@
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="5" class="text-center" style="font-style: italic;">Cap punts per seccions trobat pel curs acadèmic seleccionat.</td>
+                            <td colspan="5" class="text-center" style="font-style: italic;">Sense punts per seccions pel curs acadèmic seleccionat.</td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -185,7 +185,7 @@
             <div class="col-lg-2">
                 <div class="sticky-top" style="top: 1rem">
                     <div class="buttons mb-2 d-flex flex-column align-items-center">
-                        <a href="{% url 'capacityprofessor_list' %}" class="button-return mb-2"> Tornar a capacitat docent</a>
+                        <a href="{% url 'capacityprofessor_list' %}" class="button-return mb-2"> Tornar capacitat docent</a>
                     </div>
                 </div>
             </div>

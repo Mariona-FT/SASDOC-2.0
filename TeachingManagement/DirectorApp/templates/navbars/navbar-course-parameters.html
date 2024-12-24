@@ -8,12 +8,12 @@
 
         {% url 'sectiontypepoints_list' as sectiontypepoints_list_url %}
         <li class="nav-item me-4 {% if '/section-typepoints/' in request.path %} active{% endif %}">
-            <a class="nav-link" href="{{sectiontypepoints_list_url}}">Nomenclatura de les seccions</a>
+            <a class="nav-link" href="{{sectiontypepoints_list_url}}">Nomenclatura de punts docents</a>
         </li>
 
         {% url 'courseyear_list' as courseyear_list_url %}
         <li class="nav-item me-4 {% if '/course-year/' in request.path %} active{% endif %}">
-            <a class="nav-link" href="{{courseyear_list_url}}">Encàrrec docent de les assignatures</a>
+            <a class="nav-link" href="{{courseyear_list_url}}">Encàrrec docent</a>
         </li>
     </ul>
 </nav>

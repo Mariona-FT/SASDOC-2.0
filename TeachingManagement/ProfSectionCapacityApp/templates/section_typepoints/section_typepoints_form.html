@@ -6,7 +6,7 @@
 
 <div class="container-fluid d-flex" style="min-height: 70vh;">
     <div class="col-lg-10 mx-auto">
-        <h2 style="text-align:center">Gestió de la nomenclatura de les seccions </h2>
+        <h2 style="text-align:center">Gestió de la nomenclatura de punts docents</h2>
 
         <hr>
     
@@ -14,13 +14,13 @@
         <div class="row">
             <div class="col-lg-10">
                 <div class="d-flex justify-content-center align-items-center">
-                    <h3>{% if form.instance.pk %} Actualitzar nomenclatura de la secció{% else %} Afegir nova nomenclatura per la secció{% endif %}</h3>
+                    <h3>{% if form.instance.pk %} Actualitzar nomenclatura de punts docents{% else %} Afegir nova nomenclatura de punts docents{% endif %}</h3>
                 </div>
                 <br>
 
                 <!-- Form for creating/updating fields -->
                 <div class="d-flex justify-content-center">
-                    <form method="post" class="mb-6">
+                    <form method="post" class="mb-8">
                         {% csrf_token %}
 
                         <!-- Display form errors -->
@@ -45,12 +45,14 @@
 
 
                         <!--FORM-->
-                        <div class="mb-6">
+                        <div class="mb-8">
                             {% for field in form %}
                             <div class="form-group row">
-                                <label for="{{ field.id_for_label }}" class="col-sm-6 col-form-label">{{ field.label }}</label>
-                                    <div class="col-sm-8">
-                                        {{ field }}
+                                <label for="{{ field.id_for_label }}" class="col-sm-10 col-form-label text-left" style="white-space: nowrap;">{{ field.label }}</label>
+                                    <div class="col-sm-8" >
+                                        <div class="ml-2">
+                                            {{ field }}
+                                        </div>
                                         {% if field.help_text %}
                                             <div class="help-text">
                                                 <small class="form-text text-muted">{{ field.help_text }}</small>
@@ -89,7 +91,7 @@
             <div class="col-lg-2">
                 <div class="sticky-top" style="top: 1rem">
                     <div class="buttons mb-2 d-flex flex-column align-items-center">
-                        <a href="{% url 'sectiontypepoints_list' %}" class="button-return btn-sm mb-2;">Tornar a capacitat docent del professorat</a>
+                        <a href="{% url 'sectiontypepoints_list' %}" class="button-return btn-sm mb-2;">Tornar nomenclatura</a>
                     </div>
                 </div>
             </div>
