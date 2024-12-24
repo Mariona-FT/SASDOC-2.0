@@ -27,14 +27,6 @@ def select_year(request):
         return redirect(referer_url)
     else:
         return redirect(reverse('sectionchiefapp:sectionchief_dashboard'))
-    
-#Testing
-def check_section_chief_section(request):
-    user = request.user
-    section = get_sectionchief_section(user)  # Call the utility function to fetch the section
-
-    context = {'section': section }
-    return render(request, 'test_sectionchief_info.html', context)
 
 # COURSES found in that SECTION - IN ALL SCHOOLS - IN ALL DEGREES
 def section_courses_list(request):

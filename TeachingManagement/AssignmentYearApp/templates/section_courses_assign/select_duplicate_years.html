@@ -6,14 +6,14 @@
 <div class="container-fluid d-flex" style="min-height: 100vh;">
     <div class="col-lg-10 mx-auto">
 
-        <h2 class="text-center">Selecciona els Anys per la Duplicació de l'assignació</h2>
+        <h2 class="text-center">Selecciona els cursos acadèmics per la duplicació de l'assignació</h2>
         <hr>
         <div class="row">
             <div class="col-lg-10">
 
                 <form method="post" id="duplicateForm">
                     {% csrf_token %}
-                    <label for="source_year">Any Original per duplicar:</label>
+                    <label for="source_year">Curs acadèmic que volem duplicar (Origen)</label>
                     <select name="source_year" id="source_year" class="form-select" required onchange="validateYears()">
                         <option value="" disabled {% if not source_year %}selected{% endif %}> ---- </option>
                         {% for year in years %}
@@ -24,7 +24,7 @@
                     </select>
                     <br><br>
                 
-                    <label for="target_year">Any on es vol duplicar:</label>
+                    <label for="target_year">Curs acadèmic que volem crear (Destí)</label>
                     <select name="target_year" id="target_year" class="form-select" required onchange="validateYears()">
                         <option value="" disabled {% if not target_year %}selected{% endif %}> ---- </option>
                         {% for year in years %}
@@ -41,7 +41,7 @@
                         <button type="submit" id="duplicateButton" class="button-create">Duplicar</button>
                         <br>                        
                         <!-- Message when years are the same -->
-                        <p id="errorMessage" style="color: red; display: none;">Els dos anys seleccionats són els mateixos. Tria un altre any.</p>
+                        <p id="errorMessage" style="color: red; display: none;">Els dos cursos seleccionats són els mateixos. Tria un altre curs acadèmic.</p>
                     </div>
                 
                 </form>
@@ -51,7 +51,7 @@
             <div class="col-lg-2">
                 <div class="sticky-top" style="top: 1rem">
                     <div class="buttons mb-2 d-flex flex-column align-items-center">
-                        <a href="{% url 'section_courses_list' %}" class="button-return mb-2">Tornar Assignatures de la Secció</a>
+                        <a href="{% url 'section_courses_list' %}" class="button-return mb-2">Tornar assignació docent</a>
                     </div>
                 </div>
             </div>
