@@ -2,6 +2,25 @@ from django import forms
 from .models import Field,Section,School,Degree,Course,TypeProfessor,Language,Year
 from django.core.exceptions import ValidationError
 
+class UploadForm(forms.Form):
+    file = forms.FileField(
+        label="Carregar fitxer Excel",
+        widget=forms.ClearableFileInput(attrs={'class': 'form-control-file'})
+    )
+
+    def clean_file(self):
+        uploaded_file = self.cleaned_data.get('file')
+        
+        # Check if the file has an extension
+        if uploaded_file:
+            file_extension = uploaded_file.name.split('.')[-1].lower()
+            
+            if file_extension != 'xlsx':
+                raise ValidationError("Només es permeten fitxers excel amb format .xlsx.")
+        
+        return uploaded_file
+
+
 class FieldForm(forms.ModelForm):
     class Meta:
         model = Field
@@ -104,24 +123,6 @@ class DegreeForm(forms.ModelForm):
 
         return cleaned_data
     
-class DegreeUploadForm(forms.Form):
-    file = forms.FileField(
-        label="Carregar fitxer Excel",
-        widget=forms.ClearableFileInput(attrs={'class': 'form-control-file'})
-    )
-
-    def clean_file(self):
-        uploaded_file = self.cleaned_data.get('file')
-        
-        # Check if the file has an extension
-        if uploaded_file:
-            file_extension = uploaded_file.name.split('.')[-1].lower()
-            
-            if file_extension != 'xlsx':
-                raise ValidationError("Només es permeten fitxers excel amb format .xlsx.")
-        
-        return uploaded_file
-
   
 class CourseForm(forms.ModelForm):
     class Meta:

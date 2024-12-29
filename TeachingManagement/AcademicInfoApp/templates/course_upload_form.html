@@ -1,0 +1,56 @@
+{% extends 'base-template/base.html' %}
+
+{% block title %}Carregar excel{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid d-flex" style="min-height: 70vh;">
+    <div class="col-lg-10 mx-auto">
+        <h2 style="text-align:center">Gestió d'assignatures</h2>
+        <hr>
+
+        <!--Header Form-->
+        <div class="row">
+            <div class="col-lg-10">
+                <div class="d-flex justify-content-center align-items-center">
+                    <h3>Carregar fitxer en Excel</h3>
+                </div>
+
+                <br>
+
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="button-create btn-sm">Carregar</button>
+                </form>
+
+                <br>
+
+                {% for message in messages %}
+                    <div class="alert alert-info">{{ message }}</div>
+                {% endfor %}
+            
+            </div>
+
+            <!-- Right Column for Return Button -->
+            <div class="col-lg-2">
+                <div class="sticky-top" style="top: 1rem">
+                    <div class="buttons mb-2 d-flex flex-column align-items-center">
+                        <a href="{% url 'course_list' %}" class="button-return btn-sm mb-2;">Tornar a assignatures</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    .errorlist {
+        color: red;
+        list-style-type: none;
+        padding: 0;
+    }
+</style>
+
+{% endblock %}

@@ -50,6 +50,10 @@ urlpatterns = [
     path('courses/create/', views.course_create_edit, name='course_create'),
     path('courses/edit/<int:idCourse>', views.course_create_edit, name='course_edit'),
 
+    path('courses/export/', services.generate_course_excel, name='course_export'),
+    path('courses/upload/', services.upload_course_excel, name='course_upload'),
+
+
     #TYPEPROFESSOR ACTIONS
     path('typeprofessor/', views.typeprofessor_list, name='typeprofessor_list'),
     path('typeprofessor/create/', views.typeprofessor_create_edit, name='typeprofessor_create'),
