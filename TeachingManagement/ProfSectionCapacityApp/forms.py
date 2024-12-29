@@ -4,6 +4,11 @@ from UsersApp.models import Professor
 from AcademicInfoApp.models import Year,Section,Course
 from django.core.exceptions import ValidationError
 
+class UploadForm(forms.Form):
+    file = forms.FileField(
+        label="Carregar fitxer Excel",
+        widget=forms.ClearableFileInput(attrs={'class': 'form-control-file'})
+    )
 
 class CapacityForm(forms.ModelForm):
     class Meta:

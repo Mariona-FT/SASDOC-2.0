@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from django.shortcuts import redirect
-from .import views
+from .import views,services
 
 app_name=''
 
@@ -27,6 +27,9 @@ urlpatterns = [
     path('capacity-professors/', views.capacityprofessor_list, name='capacityprofessor_list'),
     path('capacity-professors/select/', views.capacityprofessor_select, name='capacityprofessor_select'),
     path('capacity-professors/show/<int:idProfessor>', views.capacityprofessor_show, name='capacityprofessor_show'),
+
+    path('capacity-professors/export/<int:year_id>', services.generate_capacityprofessor_excel, name='capacityprofessor_export'),
+    path('capacity-professors/upload/', services.upload_capacityprofessor_excel, name='capacityprofessor_upload'),
 
     # For adding, editing, and deleting Capacity, Free, and CapacitySection entries
     
