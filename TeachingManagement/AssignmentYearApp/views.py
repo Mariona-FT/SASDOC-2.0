@@ -643,30 +643,34 @@ def duplicate_course_assignment(request, idCourseYear):
         messages.warinig(request, "No s'han trobat assignatures per duplicar en el curs i any seleccionats.")
         return redirect('section_courses_list')
     
-    #Duplicate the typepoints for that section x year if does not exist
+    # Validate and ensure matching TypePoints exist for the target year
     section = course_year.Course.Degree.School.Section
-    typepoints_section = get_object_or_404(TypePoints, Section=section, Year=source_year_obj)
+    source_typepoints = TypePoints.objects.filter(Section=section, Year=source_year_obj)
+    target_typepoints = TypePoints.objects.filter(Section=section, Year=target_year_obj)
 
-    # Query the TypePoints for the source year and section
-    existing_typepoints = TypePoints.objects.filter(Section=section, Year=source_year_obj)
+    if not source_typepoints.exists() or not target_typepoints.exists():
+        messages.warning(
+            request,
+            "La nomenclatura dels punts docents no existeixen per algun dels cursos acadèmics seleccionats. No es pot fer la duplicació."
+        )
+        return redirect('section_courses_list')
 
-    # Loop through each of the existing TypePoints and create a new one for the target year
-    for typepoint in existing_typepoints:
-        # Create a new TypePoints entry for the target year
-        existing_typepoint = TypePoints.objects.filter(Section=typepoint.Section, Year=target_year_obj).first()
-        
-         # Create a new TypePoints entry
-        if not existing_typepoint:
-            TypePoints.objects.create(
-                Section=typepoint.Section,  # The same section
-                Year=target_year_obj,  # The target year
-                NamePointsA=typepoints_section.NamePointsA,
-                NamePointsB=typepoints_section.NamePointsB,
-                NamePointsC=typepoints_section.NamePointsC,
-                NamePointsD=typepoints_section.NamePointsD,
-                NamePointsE=typepoints_section.NamePointsE,
-                NamePointsF=typepoints_section.NamePointsF,
+    for source_point in source_typepoints:
+        matching_target = target_typepoints.filter(
+            NamePointsA=source_point.NamePointsA,
+            NamePointsB=source_point.NamePointsB,
+            NamePointsC=source_point.NamePointsC,
+            NamePointsD=source_point.NamePointsD,
+            NamePointsE=source_point.NamePointsE,
+            NamePointsF=source_point.NamePointsF
+        ).exists()
+
+        if not matching_target:
+            messages.warning(
+                request,
+                "La nomenclatura dels punts docents entre els cursos acadèmics no són exactes. No es pot fer la duplicació de l'assignació."
             )
+            return redirect('section_courses_list')
 
     # Duplicate the course assignment
     for course_year in course_years:
