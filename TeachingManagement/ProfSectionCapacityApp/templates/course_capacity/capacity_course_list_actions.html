@@ -37,7 +37,7 @@
                 <!-- Year Filter Form -->
                 <form method="get" id="year-filter-form">
                     <label for="year-select">Selecciona un curs acadèmic</label>
-                    <select name="year" id="year-select" class="form-control" onchange="document.getElementById('year-filter-form').submit();">
+                    <select name="year" id="year-select" class="form-select" onchange="document.getElementById('year-filter-form').submit();">
                         {% for year in available_years %}
                             <!-- Use idYear as the value to send the ID, but display Year in the option text -->
                             <option value="{{ year.idYear }}" {% if year == selected_year %}selected{% endif %}>

@@ -112,7 +112,7 @@
                             {% endfor %}
                         {% else %}
                             <tr>
-                                <td colspan="8" class="text-center">Cap nomenclatura de secció en el curs acdèmic seleccionat.</td>
+                                <td colspan="9" class="text-center">Cap nomenclatura de punts docents en el curs acadèmic seleccionat.</td>
                             </tr>        
                         {% endif %}
                     </tbody>
@@ -131,7 +131,7 @@
                         <a href="{% url 'create_typepoints' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Afegir nomenclatura</a>
                     </div>
                     <div class="buttons mb-2 d-flex flex-column ">
-                        <a href="{% url 'create_typepoints' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Duplicar nomenclatures</a>
+                        <a href="{% url 'duplicate_typepoints' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Duplicar nomenclatures</a>
                     </div>
                 </div>
             </div>

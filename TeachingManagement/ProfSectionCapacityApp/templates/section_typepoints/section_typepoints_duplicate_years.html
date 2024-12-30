@@ -1,0 +1,100 @@
+{% extends 'base-template/base.html' %}
+
+{% block title %}Duplicar Nomenclatura{% endblock %}
+
+{% block content %}
+<div class="container-fluid d-flex" style="min-height: 100vh;">
+    <div class="col-lg-10 mx-auto">
+
+        <h2 class="text-center">Gestió de la nomenclatura de punts docents</h2>
+
+        <hr>
+
+        <div class="row">
+            <div class="col-lg-10">
+                <div class="d-flex justify-content-center align-items-center">
+                    <h3>Selecciona els cursos acadèmics per la duplicació en la nomenclatura <x/h3>
+                </div>
+                <br>
+
+                <form method="post" id="duplicateForm">
+                    {% csrf_token %}
+                    <label for="source_year">Curs acadèmic que volem duplicar (Origen)</label>
+                    <select name="source_year" id="source_year" class="form-select" required onchange="validateYears()">
+                        <option value="" disabled selected> ---- </option>
+                        {% for year in available_years %}
+                        <option value="{{ year.idYear }}">{{ year.Year }}</option>
+                        {% endfor %}
+                    </select>
+                    <br><br>
+
+                    <label for="target_year">Curs acadèmic que volem crear (Destí)</label>
+                    <select name="target_year" id="target_year" class="form-select" required onchange="validateYears()">
+                        <option value="" disabled selected> ---- </option>
+                        {% for year in available_years %}
+                        <option value="{{ year.idYear }}">{{ year.Year }}</option>
+                        {% endfor %}
+                    </select>
+                    
+                    <br><br>
+
+                    <div class="d-flex justify-content-center flex-column align-items-center">
+
+                        <button type="submit" id="duplicateButton" class="button-create" onclick="return confirmDuplicate();" >Duplicar</button>
+                        <br>
+                        <p id="errorMessage" style="color: red; display: none;">Els dos cursos seleccionats són els mateixos. Tria un altre curs acadèmic.</p>
+                    </div>
+
+                </form>
+            
+            </div>
+            
+            <div class="col-lg-2">
+                <div class="sticky-top" style="top: 1rem">
+                    <div class="buttons mb-2 d-flex flex-column align-items-center">
+                        <a href="{% url 'sectiontypepoints_list' %}" class="button-return">Tornar nomenclatura</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>     
+        
+
+<script>
+    function confirmDuplicate() {
+        var sourceYear = document.getElementById("source_year").value;
+        var targetYear = document.getElementById("target_year").value;
+
+        // Ensure both source and target years are selected before confirming
+        if (sourceYear && targetYear) {
+            var sourceYearText = document.querySelector("#source_year option:checked").text;
+            var targetYearText = document.querySelector("#target_year option:checked").text;
+
+            // Confirm duplicate with selected years
+            return confirm("Estàs segur que vols duplicar la nomenclatura de punts docents del curs acadèmic " + sourceYearText + " al curs acadèmic " + targetYearText + "?");
+        }
+    }
+
+    function validateYears() {
+        var sourceYear = document.getElementById("source_year").value;
+        var targetYear = document.getElementById("target_year").value;
+        var duplicateButton = document.getElementById("duplicateButton");
+        var errorMessage = document.getElementById("errorMessage");
+
+        if (sourceYear && targetYear) {
+            if (sourceYear === targetYear) {
+                duplicateButton.disabled = true; 
+                errorMessage.style.display = "block"; 
+            } else {
+                duplicateButton.disabled = false; 
+                errorMessage.style.display = "none";
+            }
+        } else {
+            duplicateButton.disabled = true; 
+            errorMessage.style.display = "none";
+        }
+    }
+</script>
+{% endblock %}

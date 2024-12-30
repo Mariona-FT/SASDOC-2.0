@@ -329,11 +329,7 @@ def section_typepoints_list(request):
     # Determine if the selected year is the most recent year
     is_most_recent_year = selected_year == Year.objects.order_by('-Year').first()
     
-    all_typepoints = TypePoints.objects.filter(Year_id=selected_year.idYear)
-
-    if not all_typepoints.exists():
-        messages.warning(request, "No s'han trobat nomenclatures per les seccions en el curs acadèmic seleccionat.")
-
+    all_typepoints = TypePoints.objects.filter(Year_id=selected_year.idYear).order_by('Section__NameSection')
 
     section_typepoints_info = []
     for typepoint in all_typepoints:
@@ -407,7 +403,62 @@ def delete_typepoints(request, idTypePoints):
 
     return redirect('sectiontypepoints_list')
 
+def duplicate_typepoints(request):
+    available_years = Year.objects.all().order_by('-Year')
+    if request.method == 'POST':
+        source_year_id = request.POST.get('source_year')
+        target_year_id = request.POST.get('target_year')
 
+        if source_year_id == target_year_id:
+            messages.error(request, "Els dos cursos seleccionats són els mateixos. Tria un altre curs acadèmic.")
+            return redirect('sectiontypepoints_list')
+        
+        try:
+            source_year = Year.objects.get(pk=source_year_id)
+            target_year = Year.objects.get(pk=target_year_id)
+        except Year.DoesNotExist:
+            messages.error(request, "Un dels cursos seleccionats no existeix.")
+            return render(request, 'section_typepoints/section_typepoints_duplicate_years.html', {'available_years': available_years})
+
+        source_typepoints = TypePoints.objects.filter(Year=source_year)
+
+        if not source_typepoints.exists():
+            messages.warning(request, f"No s'han trobat nomenclatures per duplicar per al curs {source_year.Year}.")
+            return render(request,'section_typepoints/section_typepoints_duplicate_years.html', {'available_years': available_years})
+
+        for typepoint in source_typepoints:
+            existing_typepoint = TypePoints.objects.filter(Year=target_year, Section=typepoint.Section).first()
+
+            if existing_typepoint:
+                # Update the existing TypePoints record with the new names
+                existing_typepoint.NamePointsA = typepoint.NamePointsA
+                existing_typepoint.NamePointsB = typepoint.NamePointsB
+                existing_typepoint.NamePointsC = typepoint.NamePointsC
+                existing_typepoint.NamePointsD = typepoint.NamePointsD
+                existing_typepoint.NamePointsE = typepoint.NamePointsE
+                existing_typepoint.NamePointsF = typepoint.NamePointsF
+                existing_typepoint.save()
+            else:
+                TypePoints.objects.create(
+                    Section=typepoint.Section,
+                    Year=target_year,
+                    NamePointsA=typepoint.NamePointsA,
+                    NamePointsB=typepoint.NamePointsB,
+                    NamePointsC=typepoint.NamePointsC,
+                    NamePointsD=typepoint.NamePointsD,
+                    NamePointsE=typepoint.NamePointsE,
+                    NamePointsF=typepoint.NamePointsF,
+                )
+
+        messages.success(
+            request,
+            f"Nomenclatures dels punts docents duplicades correctament, elements copiats de {source_year.Year} a {target_year.Year}."
+        )
+        return redirect('sectiontypepoints_list')
+
+    return render(request, 'section_typepoints/section_typepoints_duplicate_years.html', {'available_years': available_years})
+
+    
 ## FUNCTIONS FOR COURSES X YEAR
 def course_year_list(request):
     # Get all years for capacity selection

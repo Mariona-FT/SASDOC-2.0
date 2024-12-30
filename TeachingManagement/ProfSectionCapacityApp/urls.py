@@ -55,6 +55,8 @@ urlpatterns = [
     path('section-typepoints/edit/<int:idTypePoints>/', views.edit_typepoints, name='edit_typepoints'),
     path('section-typepoints/delete/<int:idTypePoints>/', views.delete_typepoints, name='delete_typepoints'),
 
+    path('section-typepoints/duplicate/', views.duplicate_typepoints, name='duplicate_typepoints'),
+    
     #For the COURSES
     path('course-year/', views.course_year_list, name='courseyear_list'),
     path('course-year/create/', views.create_courseyear, name='create_courseyear'),
