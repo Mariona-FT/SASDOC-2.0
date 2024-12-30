@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect,get_object_or_404
+from django.urls import reverse
 from .forms import CapacityForm, FreeForm, CapacitySectionForm,TypePointsForm,CourseYearForm
 from .models import Professor, Capacity, Free, CapacitySection,TypePoints,CourseYear
 from UsersApp.models import Professor
@@ -498,10 +499,6 @@ def course_year_list(request):
         if course:
             course_year.Degree = course.Degree  
             course_year.DegreeName = course.Degree.NameDegree if course.Degree else "Sense Grau"
-        
-    # Check for empty course list
-    if not all_courseyears.exists():
-        messages.warning(request, "No hi ha assignatures amb un encàrrec docent pel curs acadèmic seleccionat.")
    
     context = {
         'available_years': available_years,
@@ -517,9 +514,11 @@ def create_courseyear(request):
     if request.method == 'POST':
         form = CourseYearForm(request.POST)
         if form.is_valid():
-            form.save()
+            course_year=form.save()
             messages.success(request, 'Encàrrec docent creat correctament.')
-            return redirect('courseyear_list')
+           
+            selected_year_id = course_year.Year.idYear
+            return redirect(f"{reverse('courseyear_list')}?year={selected_year_id}")
         else:
             messages.error(request, "Hi ha errors al formulari. Revisa els camps.")
 
@@ -530,13 +529,14 @@ def create_courseyear(request):
 
 def edit_courseyear(request, idCourseYear):
     course_year = get_object_or_404(CourseYear, idCourseYear=idCourseYear)
+    selected_year_id = course_year.Year.idYear  
 
     if request.method == 'POST':
         form = CourseYearForm(request.POST, instance=course_year)
         if form.is_valid():
             form.save()
             messages.success(request, 'Encàrrec docent editat correctament.')
-            return redirect('courseyear_list')
+            return redirect(f"{reverse('courseyear_list')}?year={selected_year_id}")
         else:
             messages.error(request, "Hi ha errors al formulari. Revisa els camps.")
 
@@ -548,6 +548,7 @@ def edit_courseyear(request, idCourseYear):
 #Delete an existing Course Year entry
 def delete_courseyear(request, idCourseYear):
     course_year = get_object_or_404(CourseYear, idCourseYear=idCourseYear)
+    selected_year_id = course_year.Year.idYear  
 
     try:
         course_year.delete()
@@ -555,4 +556,71 @@ def delete_courseyear(request, idCourseYear):
     except Exception as e:
         messages.error(request, f"Error: No s'ha pogut eliminar el curs. Motiu: {str(e)}")
 
-    return redirect('courseyear_list')
+    return redirect(f"{reverse('courseyear_list')}?year={selected_year_id}")
+
+
+def duplicate_courseyear(request):
+    available_years = Year.objects.all().order_by('-Year')
+    if request.method == 'POST':
+        source_year_id = request.POST.get('source_year')
+        target_year_id = request.POST.get('target_year')
+
+        if source_year_id == target_year_id:
+            messages.error(request, "Els dos cursos seleccionats són els mateixos. Tria un altre curs acadèmic.")
+            return redirect('courseyear_list')
+        
+        try:
+            source_year = Year.objects.get(pk=source_year_id)
+            target_year = Year.objects.get(pk=target_year_id)
+        except Year.DoesNotExist:
+            messages.error(request, "Un dels cursos seleccionats no existeix.")
+            return render(request, 'course_capacity/capacity_course_duplicate_years.html', {'available_years': available_years})
+
+        source_course_years = CourseYear.objects.filter(Year=source_year)
+
+        if not source_course_years.exists():
+            messages.warning(request, f"No s'han trobat cursos associats per duplicar per al curs {source_year.Year}.")
+            return render(request, 'course_capacity/capacity_course_duplicate_years.html', {'available_years': available_years})
+
+        for course_year in source_course_years:
+            # Check if a CourseYear with the same Course and Semester already exists for the target year
+            existing_course_year = CourseYear.objects.filter(
+                Course=course_year.Course,
+                Year=target_year,
+                Semester=course_year.Semester
+            ).first()
+
+            if existing_course_year:
+                # Update the existing CourseYear record with new data
+                existing_course_year.PointsA = course_year.PointsA
+                existing_course_year.PointsB = course_year.PointsB
+                existing_course_year.PointsC = course_year.PointsC
+                existing_course_year.PointsD = course_year.PointsD
+                existing_course_year.PointsE = course_year.PointsE
+                existing_course_year.PointsF = course_year.PointsF
+                existing_course_year.Language = course_year.Language
+                existing_course_year.Comment = course_year.Comment
+                existing_course_year.save()
+            else:
+                # Create a new CourseYear record for the target year
+                CourseYear.objects.create(
+                    Course=course_year.Course,
+                    Year=target_year,
+                    Semester=course_year.Semester,
+                    PointsA=course_year.PointsA,
+                    PointsB=course_year.PointsB,
+                    PointsC=course_year.PointsC,
+                    PointsD=course_year.PointsD,
+                    PointsE=course_year.PointsE,
+                    PointsF=course_year.PointsF,
+                    Language=course_year.Language,
+                    Comment=course_year.Comment,
+                )
+
+        messages.success(
+            request,
+            f"Cursos associats duplicats correctament, elements copiats de {source_year.Year} a {target_year.Year}."
+        )
+        return redirect(f"{reverse('courseyear_list')}?year={target_year_id}")
+    
+    return render(request, 'course_capacity/capacity_course_duplicate_years.html', {'available_years': available_years})
