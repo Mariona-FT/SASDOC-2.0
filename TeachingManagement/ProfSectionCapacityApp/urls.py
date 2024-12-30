@@ -61,4 +61,7 @@ urlpatterns = [
     path('course-year/edit/<int:idCourseYear>/', views.edit_courseyear, name='edit_courseyear'),
     path('courses-year/delete/<int:idCourseYear>/', views.delete_courseyear, name='delete_courseyear'),
 
+    path('course-year/export/<int:year_id>', services.generate_courseyear_excel, name='courseyear_export'),
+    path('course-year/upload/', services.upload_courseyear_excel, name='courseyear_upload'),
+
 ]

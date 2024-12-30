@@ -131,7 +131,14 @@
                         <a href="{% url 'create_courseyear' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Afegir encàrrec docent</a>
                     </div>
                     <div class="buttons mb-2 d-flex flex-column ">
-                        <a href="{% url 'create_typepoints' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Duplicar encàrrec docent</a>
+                        <a href="#" class="button-secondary btn-sm mb-2" style="width: 100%;">Duplicar encàrrec docent</a>
+                    </div>
+                    <hr>
+                    <div class="buttons mb-2 d-flex flex-column align-items-center">
+                        <a href="{% url 'courseyear_export'  year_id=selected_year.idYear %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Descarregar excel</a>
+                    </div>
+                    <div class="buttons mb-2 d-flex flex-column align-items-center">
+                        <a href="{% url 'courseyear_upload' %}" class="button-secondary btn-sm mb-2" style="width: 100%;" >Carregar excel</a>
                     </div>
                 </div>
             </div>
