@@ -4,9 +4,8 @@ from django.contrib.auth.decorators import login_required,user_passes_test
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.hashers import make_password
 from django.contrib import messages
-from .forms import CustomLoginForm,ProfessorForm,ChiefRegistrationForm, UploadFileForm # customized forms in forms.py
+from .forms import CustomLoginForm,ProfessorForm,ChiefRegistrationForm # customized forms in forms.py
 from .models import Professor,Chief, CustomUser
-from .services import  process_professor_file #services of the app
 from django.db import IntegrityError
 
 
@@ -106,23 +105,6 @@ def professor_create_edit(request, idProfessor=None):
         else:
             form = ProfessorForm()
     return render(request, 'users/professor/professor_form.html', {'form': form})
-
-
-
-# REGISTER PROFESSOR - only for DIRECTOR - USING CSV or EXCEL
-@login_required
-@user_passes_test(is_director)
-def upload_professors(request):
-    if request.method == 'POST':
-        form = UploadFileForm(request.POST, request.FILES)
-        if form.is_valid():
-            file = request.FILES['file']
-            if process_professor_file(file, request):
-                return redirect('usersapp:upload_professors')
-    else:
-        form = UploadFileForm()
-
-    return render(request, 'actions/upload_professors.html', {'form': form})
 
 #SECTION CHIEF 
 #section chief list to manage - listing and actions of edit, delete and add section chiefs

@@ -151,7 +151,14 @@
                 <div class="sticky-top" style="top: 1rem">
                     <div class="buttons mb-2 d-flex flex-column align-items-center">
                         <a href="{% url 'usersapp:professor_create' %}" class="button-secondary btn-sm mb-2" >Afegir professorat</a>
-                        <a href="{% url 'usersapp:upload_professors' %}" class="button-secondary btn-sm">Afegir professorat per fitxer</a>
+                    </div>
+                    <hr>
+                    <div class="buttons mb-2 d-flex flex-column align-items-center">
+                        <a href="{% url 'usersapp:professor_export' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Descarregar excel</a>
+                    </div>
+                    <div class="buttons mb-2 d-flex flex-column align-items-center">
+                        <a href="{% url 'usersapp:professor_upload' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Carregar excel</a>
+                    </div>
                     </div>
                 </div>
             </div>

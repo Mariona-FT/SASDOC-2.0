@@ -336,9 +336,11 @@ class ExtraInfoProfessor(forms.ModelForm):
 
         return professor
 
-#To upload files .csv 
-class UploadFileForm(forms.Form):
-    file = forms.FileField(label="Puja un fitxer de tipus CSV o Excel:")
+class UploadForm(forms.Form):
+    file = forms.FileField(
+        label="Carregar fitxer Excel",
+        widget=forms.ClearableFileInput(attrs={'class': 'form-control-file'})
+    )
 
 
 class ChiefRegistrationForm(forms.ModelForm):

@@ -17,7 +17,7 @@ Including another URLconf
   **  URL ONLY FOR THIS APP **
 """
 from django.urls import path
-from . import views
+from . import views,services
 
 app_name = 'usersapp'
 
@@ -30,7 +30,9 @@ urlpatterns = [
     path('professor/', views.professor_list, name='professor_list'),
     path('professor/create/', views.professor_create_edit, name='professor_create'),
     path('professor/edit/<int:idProfessor>', views.professor_create_edit, name='professor_edit'),
-    path('professor/upload/', views.upload_professors, name='upload_professors'), #for file
+
+    path('professor/export/',  services.generate_professor_excel, name='professor_export'), 
+    path('professor/upload/',  services.upload_professor_excel, name='professor_upload'), 
 
     #Section chiefs
     path('sectionchief/', views.sectionchief_list, name='sectionchief_list'),
