@@ -94,11 +94,12 @@ def professor_create_edit(request, idProfessor=None):
         if request.method == 'POST':
             form = ProfessorForm(request.POST)
             if form.is_valid():
-                user = form.save(commit=True)  # Save the user but don't commit yet
+                user = form.save()  # Save the user but don't commit yet
                 user.role = 'professor'  # Set the role to 'professor'
                 user.save()  # Now save the user to the database
-                new_professor = form.save()
-                messages.success(request, f"El professorat {new_professor.first_name} {new_professor.last_name} s\'ha afegit correctament.")
+                
+                new_professor = user.professor
+                messages.success(request, f"El professorat {new_professor.name} {new_professor.family_name} s\'ha afegit correctament.")
                 return redirect('usersapp:professor_list')
             else:
                 messages.error(request, f"El professorat no s\'ha creat correctament.")

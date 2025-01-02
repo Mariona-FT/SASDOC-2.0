@@ -63,7 +63,7 @@
                         {% if professors %}
                             {% for professor in professors %}
                                 <tr style="background-color: 
-                                {% if professor.isActive == "no" %}
+                                {% if not professor.isActive %}
                                     #DCDCDC  ; 
                                 {% elif  not professor.current_contract or not professor.professor_fields.exists or not professor.professor_languages.exists %}
                                     #ffe6e6 ; 
@@ -94,7 +94,7 @@
                                                 <span class="professor-info">{{ field.Field.NameField }}</span>{% if not forloop.last %}, {% endif %}
                                             {% endfor %}
                                         {% else %}
-                                            <span class="no-data">No camps d'estudi</span>
+                                            <span class="no-data">No camps de coneixament</span>
                                         {% endif %}
                                     </td>
                                     <td>
@@ -106,7 +106,7 @@
                                             <span class="no-data">No Idiomes</span>
                                         {% endif %}
                                     </td>
-                                    <td class="active-status">{% if professor.isActive == 'yes' %}Sí{% else %}No{% endif %}</td>
+                                    <td class="active-status">{% if professor.isActive %}Sí{%elif not professor.isActive %}No{% endif %}</td>
                                     <td class="actions-c" style="width:180px">
                                         <!-- Edit button -->
                                         <a href="{% url 'usersapp:professor_edit' professor.idProfessor %}" class="button-edit btn-sm">Editar</a>

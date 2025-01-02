@@ -14,7 +14,7 @@ def generate_degree_excel(request):
         # Create a new Excel workbook
         workbook = openpyxl.Workbook()
         sheet = workbook.active
-        sheet.title = "Graus"
+        sheet.title = "Titulacions"
 
         headers = [
             ("ID del Grau", 15),
@@ -36,12 +36,12 @@ def generate_degree_excel(request):
             sheet.cell(row=row_num, column=1, value=degree.idDegree)
             sheet.cell(row=row_num, column=2, value=degree.NameDegree)
             sheet.cell(row=row_num, column=3, value=degree.CodeDegree)
-            sheet.cell(row=row_num, column=4, value=degree.School.NameSchool if degree.School else "Sense Escola")
+            sheet.cell(row=row_num, column=4, value=degree.School.NameSchool if degree.School else "")
             sheet.cell(row=row_num, column=5, value="Si" if degree.isActive else "No")
 
         # Generate a timestamped file name
         current_datetime = datetime.now().strftime("%d%m%Y_%H%M%S")
-        filename = f"graus_{current_datetime}.xlsx"
+        filename = f"Titulacions_{current_datetime}.xlsx"
 
         # Set up the HTTP response
         response = HttpResponse(
@@ -213,24 +213,16 @@ def generate_course_excel(request):
         )
         for row_num, course in enumerate(courses, start=2):
             sheet.cell(row=row_num, column=1, value=course.idCourse)
-            sheet.cell(
-                row=row_num,
-                column=2,
-                value=course.Degree.NameDegree if course.Degree else "Sense titulació",
-            )
+            sheet.cell( row=row_num,column=2,value=course.Degree.NameDegree if course.Degree else "")
             sheet.cell(row=row_num, column=3, value=course.NameCourse)
             sheet.cell(row=row_num, column=4, value=course.CodeCourse)
             sheet.cell(row=row_num, column=5, value=course.ECTS)
-            sheet.cell(
-                row=row_num,
-                column=6,
-                value=course.Field.NameField if course.Field else "Sense camp de coneixement",
-            )
+            sheet.cell(row=row_num,column=6, value=course.Field.NameField if course.Field else "")
             sheet.cell(row=row_num, column=7, value="Si" if course.isActive else "No")
 
         # Generate a timestamped file name
         current_datetime = datetime.now().strftime("%d%m%Y_%H%M%S")
-        filename = f"assignatures_{current_datetime}.xlsx"
+        filename = f"Assignatures_{current_datetime}.xlsx"
 
         # Return Excel file as HTTP response
         response = HttpResponse(
