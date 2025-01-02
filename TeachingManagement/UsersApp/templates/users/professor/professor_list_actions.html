@@ -63,11 +63,9 @@
                         {% if professors %}
                             {% for professor in professors %}
                                 <tr class="{% if not professor.isActive %}inactive-row{% endif %}"
-
                                 {% if  not professor.current_contract or not professor.professor_fields.exists or not professor.professor_languages.exists %}
-                                  style="background-color:  #ffe6e6 ; "
-                                {% endif %};"
-
+                                  style="background-color:  #ffe6e6;"
+                                {% endif %};
                                 data-name="{{ professor.name }} {{ professor.family_name }}" 
                                 data-email="{{ professor.email }}" 
                                 data-contract="{{ professor.current_contract|default:'No contracte' }}" 

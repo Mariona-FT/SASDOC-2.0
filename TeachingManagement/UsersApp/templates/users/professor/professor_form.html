@@ -62,8 +62,22 @@
                             {% for field in form %}
                             <div class="form-group row">
                                 <label for="{{ field.id_for_label }}" class="col-sm-4 col-form-label">{{ field.label }}</label>
-                    
-                                {% if 'checkbox-select-multiple' in field.field.widget.attrs.class %}
+                                
+                                {% if 'checkbox-field' in field.field.widget.attrs.class %}
+                                    <!-- If the field is a checkbox, place it in a smaller column -->
+                                    <div class="col-sm-2">
+                                        {{ field }}
+                                        <div>{{ field.widget.attrs.class }}</div>
+                                    </div>
+                                    <div class="col-sm-8 offset-sm-4" style="padding:0">
+                                        {% if field.help_text %}
+                                            <div class="help-text">
+                                                <small class="form-text text-muted">{{ field.help_text }}</small>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+
+                                {% elif 'checkbox-select-multiple' in field.field.widget.attrs.class %}
                                 <!-- If the field is a ModelMultipleChoiceField with CheckboxSelectMultiple widget -->
                                     <div class="col-sm-8">
                                             {% for checkbox in field %}
