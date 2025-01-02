@@ -61,10 +61,7 @@
                     <tbody>
                         {% if degrees %}
                             {% for degree in degrees %}
-                                <tr  style="background-color: 
-                                {% if not degree.isActive %}
-                                    #C0C0C0  ; 
-                                {% endif %}" 
+                                <tr class="{% if not degree.isActive %}inactive-row{% endif %}" 
                                 data-code="{{ degree.CodeDegree }}" 
                                 data-name="{{degree.NameDegree }}" 
                                 data-school="{{ degree.School.NameSchool }}" 

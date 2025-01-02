@@ -47,7 +47,7 @@
 
                 <!-- List of all professors -->
                 <h3>Llistat del professorat</h3>
-                <table class="table" id="professors-table">
+                <table class="table table-hover" id="professors-table">
                     <thead>
                         <tr>
                             <th class="name-c" style="width:140px">Nom i cognoms</th>
@@ -62,13 +62,10 @@
                     <tbody>
                         {% if professors %}
                             {% for professor in professors %}
-                                <tr style="background-color: 
-                                {% if not professor.isActive %}
-                                    #DCDCDC  ; 
-                                {% elif  not professor.current_contract or not professor.professor_fields.exists or not professor.professor_languages.exists %}
-                                    #ffe6e6 ; 
-                                {% else %}
-                                    #FFFFFF ; 
+                                <tr class="{% if not professor.isActive %}inactive-row{% endif %}"
+
+                                {% if  not professor.current_contract or not professor.professor_fields.exists or not professor.professor_languages.exists %}
+                                  style="background-color:  #ffe6e6 ; "
                                 {% endif %};"
 
                                 data-name="{{ professor.name }} {{ professor.family_name }}" 

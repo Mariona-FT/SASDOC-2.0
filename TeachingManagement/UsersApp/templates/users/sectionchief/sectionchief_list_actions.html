@@ -47,7 +47,7 @@
                 
                 <!-- List of all professors -->
                 <h3>Llistat dels caps de secció</h3>
-                <table class="table table-striped" id="chiefs-table">
+                <table class="table table-hover" id="chiefs-table">
                     <thead>
                         <tr>
                             <th class="name-c" style=" width: 15%;">Nom i cognoms</th>
@@ -63,10 +63,7 @@
                             {% for professor in professors %}
                                 {% if professor.user.role == 'section_chief' %}
                                     {% for chief in professor.chief_set.all %}
-                                        <tr  style="background-color: 
-                                        {% if not professor.isActive %}
-                                            #DCDCDC  ; 
-                                        {% endif %}" 
+                                        <tr class="{% if not professor.isActive %}inactive-row{% endif %}" 
                                             data-name="{{ professor.name }} {{ professor.family_name }}" 
                                             data-email="{{ professor.email }}"
                                             data-section="{{ chief.section }}"

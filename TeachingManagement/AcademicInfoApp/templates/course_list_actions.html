@@ -47,7 +47,7 @@
 
                 <!-- List of all courses -->
                 <h3>Llistat d'assignatures</h3>
-                <table class="table table-striped" id="courses-table">
+                <table class="table table-hover" id="courses-table">
                     <thead>
                         <tr>
                             <th  style="width:11%">Codi</th>    
@@ -62,10 +62,7 @@
                     <tbody>
                         {% if courses %}
                             {% for course in courses %}
-                                <tr  style="background-color: 
-                                {% if not course.isActive %}
-                                    #DCDCDC  ; 
-                                {% endif %}" 
+                                <tr class="{% if not course.isActive %}inactive-row{% endif %}"
                                 data-code="{{ course.CodeCourse }}" 
                                 data-name="{{  course.NameCourse }}"  
                                 data-degree="{{  course.Degree }}" 
