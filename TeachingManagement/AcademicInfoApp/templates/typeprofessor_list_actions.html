@@ -51,10 +51,10 @@
                 <table class="table table-hover" id="typeprofessors-table">
                     <thead>
                         <tr>
-                            <th class="name-c" style="width:200px">Contracte</th>
-                            <th>Temps complert</th>
-                            <th>Permanent</th>
-                            <th>Comentaris</th>
+                            <th class="name-c" style="width:180px">Contracte</th>
+                            <th style="width:11%">Temps complert</th>
+                            <th style="width:13%">Permanent</th>
+                            <th style="width:auto">Comentaris</th>
                             <th class="active-c">Actiu</th>
                             <th class="actions-c" style="width:200px">Accions</th>
                         </tr>
@@ -62,10 +62,7 @@
                     <tbody>
                         {% if type_professors %}
                             {% for type_professor in type_professors %}
-                                <tr style="background-color: 
-                                {% if not type_professor.isActive %}
-                                    #DCDCDC  ; 
-                                {% endif %}"  
+                                <tr class="{% if not type_professor.isActive %}inactive-row{% endif %}"
                                 data-contract="{{type_professor.NameContract }}"  
                                 data-fulltime="{{type_professor.isFullTime|yesno:'yes,no' }}"  
                                 data-permanent="{{  type_professor.isPermanent|yesno:'yes,no' }}" 

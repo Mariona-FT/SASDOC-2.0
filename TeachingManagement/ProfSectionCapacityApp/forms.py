@@ -4,13 +4,18 @@ from UsersApp.models import Professor
 from AcademicInfoApp.models import Year,Section,Course
 from django.core.exceptions import ValidationError
 
+class UploadForm(forms.Form):
+    file = forms.FileField(
+        label="Carregar fitxer Excel",
+        widget=forms.ClearableFileInput(attrs={'class': 'form-control-file'})
+    )
 
 class CapacityForm(forms.ModelForm):
     class Meta:
         model = Capacity
         fields = ['Professor', 'Year', 'Points', 'Comment']
         labels = {
-            'Professor':'Professor',
+            'Professor':'Professor/a',
             'Year':'Curs acadèmic',            
             'Points': 'Punts totals ',
             'Comment':'Comentari',
@@ -20,9 +25,6 @@ class CapacityForm(forms.ModelForm):
             'Year': forms.Select(attrs={'required': 'required','class': 'form-select'}),
             'Points': forms.NumberInput(attrs={'required': 'required','class': 'form-control'}), 
             'Comment': forms.Textarea(attrs={'rows': 3,'class': 'form-control', 'placeholder': 'Comentari opcional'}),
-        }
-        help_texts = {
-            'Points': "Els punts totals per aquell curs acadèmic.",
         }
 
     def __init__(self, *args, **kwargs):
@@ -47,7 +49,7 @@ class FreeForm(forms.ModelForm):
         model = Free
         fields = ['Professor', 'Year', 'PointsFree', 'Comment']
         labels = {
-            'Professor':'Professor',
+            'Professor':'Professor/a',
             'Year':'Curs acadèmic',
             'Comment':'Comentari',
             'PointsFree': "Punts d'alliberació",
@@ -57,9 +59,6 @@ class FreeForm(forms.ModelForm):
             'Year': forms.Select(attrs={'required': 'required','class': 'form-select'}),
             'PointsFree': forms.NumberInput(attrs={'required': 'required','class': 'form-control'}), 
             'Comment': forms.Textarea(attrs={'rows': 3, 'class': 'form-control','placeholder': 'Comentari opcional'}),
-        }
-        help_texts = {
-            'PointsFree': "Els punts d'alliberació que se li vulguin concedir.",
         }
        
     
@@ -84,7 +83,7 @@ class CapacitySectionForm(forms.ModelForm):
         model = CapacitySection
         fields = ['Professor', 'Year', 'Section', 'Points', 'Comment']
         labels = {
-            'Professor':'Professor',
+            'Professor':'Professor/a',
             'Year':"Curs acadèmic",
             'Section':'Secció',
             'Comment':'Comentari',
@@ -97,10 +96,6 @@ class CapacitySectionForm(forms.ModelForm):
             'Points': forms.NumberInput(attrs={'required': 'required','class': 'form-control'}), 
             'Comment': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Comentari opcional','class': 'form-control'}),
         }  
-        help_texts = {
-            'Points': "Punts per aquella secció.",
-        }
-       
     
     def __init__(self, *args, **kwargs):
         professor = kwargs.pop('professor', None)
@@ -123,12 +118,12 @@ class TypePointsForm(forms.ModelForm):
         labels = {
             'Year':'Curs acadèmic',
             'Section':'Secció',
-            'NamePointsA':'Nom pel tipus punts A',
-            'NamePointsB':'Nom pel tipus punts B',
-            'NamePointsC':'Nom pel tipus punts C',
-            'NamePointsD':'Nom pel tipus punts D',
-            'NamePointsE':'Nom pel tipus punts E',
-            'NamePointsF':'Nom pel tipus punts F',
+            'NamePointsA':'Nom punts A',
+            'NamePointsB':'Nom punts B',
+            'NamePointsC':'Nom punts C',
+            'NamePointsD':'Nom punts D',
+            'NamePointsE':'Nom punts E',
+            'NamePointsF':'Nom punts F',
         }
         widgets = {
             'Year': forms.Select(attrs={'required': 'required','class': 'form-select'}),

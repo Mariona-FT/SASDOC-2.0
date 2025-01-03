@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from django.shortcuts import redirect
-from .import views
+from .import views,services
 
 app_name=''
 
@@ -27,6 +27,9 @@ urlpatterns = [
     path('capacity-professors/', views.capacityprofessor_list, name='capacityprofessor_list'),
     path('capacity-professors/select/', views.capacityprofessor_select, name='capacityprofessor_select'),
     path('capacity-professors/show/<int:idProfessor>', views.capacityprofessor_show, name='capacityprofessor_show'),
+
+    path('capacity-professors/export/<int:year_id>', services.generate_capacityprofessor_excel, name='capacityprofessor_export'),
+    path('capacity-professors/upload/', services.upload_capacityprofessor_excel, name='capacityprofessor_upload'),
 
     # For adding, editing, and deleting Capacity, Free, and CapacitySection entries
     
@@ -52,10 +55,17 @@ urlpatterns = [
     path('section-typepoints/edit/<int:idTypePoints>/', views.edit_typepoints, name='edit_typepoints'),
     path('section-typepoints/delete/<int:idTypePoints>/', views.delete_typepoints, name='delete_typepoints'),
 
+    path('section-typepoints/duplicate/', views.duplicate_typepoints, name='duplicate_typepoints'),
+    
     #For the COURSES
     path('course-year/', views.course_year_list, name='courseyear_list'),
     path('course-year/create/', views.create_courseyear, name='create_courseyear'),
     path('course-year/edit/<int:idCourseYear>/', views.edit_courseyear, name='edit_courseyear'),
-    path('courses-year/delete/<int:idCourseYear>/', views.delete_courseyear, name='delete_courseyear'),
+    path('course-year/delete/<int:idCourseYear>/', views.delete_courseyear, name='delete_courseyear'),
+
+    path('course-year/duplicate/', views.duplicate_courseyear, name='duplicate_courseyear'),
+
+    path('course-year/export/<int:year_id>', services.generate_courseyear_excel, name='courseyear_export'),
+    path('course-year/upload/', services.upload_courseyear_excel, name='courseyear_upload'),
 
 ]

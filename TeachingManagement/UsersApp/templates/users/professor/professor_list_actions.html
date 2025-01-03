@@ -47,7 +47,7 @@
 
                 <!-- List of all professors -->
                 <h3>Llistat del professorat</h3>
-                <table class="table" id="professors-table">
+                <table class="table table-hover" id="professors-table">
                     <thead>
                         <tr>
                             <th class="name-c" style="width:140px">Nom i cognoms</th>
@@ -62,15 +62,10 @@
                     <tbody>
                         {% if professors %}
                             {% for professor in professors %}
-                                <tr style="background-color: 
-                                {% if professor.isActive == "no" %}
-                                    #DCDCDC  ; 
-                                {% elif  not professor.current_contract or not professor.professor_fields.exists or not professor.professor_languages.exists %}
-                                    #ffe6e6 ; 
-                                {% else %}
-                                    #FFFFFF ; 
-                                {% endif %};"
-
+                                <tr class="{% if not professor.isActive %}inactive-row{% endif %}"
+                                {% if  not professor.current_contract or not professor.professor_fields.exists or not professor.professor_languages.exists %}
+                                  style="background-color:  #ffe6e6;"
+                                {% endif %};
                                 data-name="{{ professor.name }} {{ professor.family_name }}" 
                                 data-email="{{ professor.email }}" 
                                 data-contract="{{ professor.current_contract|default:'No contracte' }}" 
@@ -94,7 +89,7 @@
                                                 <span class="professor-info">{{ field.Field.NameField }}</span>{% if not forloop.last %}, {% endif %}
                                             {% endfor %}
                                         {% else %}
-                                            <span class="no-data">No camps d'estudi</span>
+                                            <span class="no-data">No camps de coneixament</span>
                                         {% endif %}
                                     </td>
                                     <td>
@@ -106,7 +101,7 @@
                                             <span class="no-data">No Idiomes</span>
                                         {% endif %}
                                     </td>
-                                    <td class="active-status">{% if professor.isActive == 'yes' %}Sí{% else %}No{% endif %}</td>
+                                    <td class="active-status">{% if professor.isActive %}Sí{%elif not professor.isActive %}No{% endif %}</td>
                                     <td class="actions-c" style="width:180px">
                                         <!-- Edit button -->
                                         <a href="{% url 'usersapp:professor_edit' professor.idProfessor %}" class="button-edit btn-sm">Editar</a>
@@ -151,7 +146,14 @@
                 <div class="sticky-top" style="top: 1rem">
                     <div class="buttons mb-2 d-flex flex-column align-items-center">
                         <a href="{% url 'usersapp:professor_create' %}" class="button-secondary btn-sm mb-2" >Afegir professorat</a>
-                        <a href="{% url 'usersapp:upload_professors' %}" class="button-secondary btn-sm">Afegir professorat per fitxer</a>
+                    </div>
+                    <hr>
+                    <div class="buttons mb-2 d-flex flex-column align-items-center">
+                        <a href="{% url 'usersapp:professor_export' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Descarregar excel</a>
+                    </div>
+                    <div class="buttons mb-2 d-flex flex-column align-items-center">
+                        <a href="{% url 'usersapp:professor_upload' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Carregar excel</a>
+                    </div>
                     </div>
                 </div>
             </div>

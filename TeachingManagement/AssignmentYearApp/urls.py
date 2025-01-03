@@ -20,8 +20,6 @@ from django.shortcuts import redirect
 from .import views
 
 urlpatterns = [
-    path('check-section/', views.check_section_chief_section, name='test_sectionchief'),
-
     #For the COURSES
     path('section-courses/', views.section_courses_list, name='section_courses_list'),
     path('section-courses/show/<int:idCourseYear>/', views.courseyear_show, name='courseyear_show'),

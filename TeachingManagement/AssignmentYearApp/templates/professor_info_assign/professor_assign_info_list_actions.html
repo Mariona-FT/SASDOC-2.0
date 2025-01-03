@@ -26,13 +26,13 @@
             <div class="col-lg-12 mx-auto" >
               
                 <!-- Filter Fields -->
-                <h3>Filtres pel Professorat</h3>
+                <h3>Filtres pel pofessorat</h3>
                 <div class="d-flex justify-content-between row mb-2">
                     <!-- Filters section -->
                     <div class="filters d-flex flex-wrap">
                         <div class="col-md-12 p-0">
                             <label for="filter-all">Filtrar per contingut</label>
-                            <input type="text" id="filter-all" class="form-control" placeholder="Cerca per Nom i Cognom i % Total">
+                            <input type="text" id="filter-all" class="form-control" placeholder="Cerca per nom, cognom i % total">
                         </div>
                     </div>
 
@@ -40,22 +40,22 @@
                 
                 <hr>
 
-                <h3>Llistat del Professorat:</h3>
+                <h3>Llistat del professorat</h3>
 
                 <table class="table" id="professorssection-table"  style="table-layout: fixed;">
                     <thead>
                         <tr>   
-                            <th class="name-c" style="text-align: left; width: 15%;" >Nom i Cognom</th>
+                            <th class="name-c" style="text-align: left; width: 15%;" >Nom i cognom</th>
                             <th style="text-align: left; width:95px;">% Total</th>
                             <th style="text-align: left; width:8%;">Punts Q1</th>
                             <th style="text-align: left; width:8%;">Punts Q2</th>
-                            <th style="text-align: center; width:8%;">Capacitat total</th>
-                            <th style="text-align: center; width:9%;">Capacitat en la Secció</th>
-                            <th style="text-align: left; width: 8%;">Punts no assignats</th> 
+                            <th style="text-align: center; width:8%;">Capacitat docent al departament</th>
+                            <th style="text-align: center; width:9%;">Capacitat docent a la secció</th>
+                            <th style="text-align: left; width: 8%;">Punts no assignats a la secció</th> 
                             {% for schools in schools_section %}
                                 <th style="text-align: left; font-style: italic">{{ schools.NameSchool }}</th>
                             {% endfor %}
-                            <th class="actions-c" style="width:100px">Accions</th>
+                            <th class="actions-c" style="width:100px">Acció</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -122,7 +122,7 @@
                             {% endfor %}
                         {% else %}
                             <tr>
-                                <td colspan="12" class="text-center">Cap Curs en cap Professor a la Secció d'aquest Cap de Secció.</td>
+                                <td colspan="12" class="text-center">Cap assignació docent en cap professorat en aquesta secció.</td>
                             </tr>        
                         {% endif %} 
                     </tbody>

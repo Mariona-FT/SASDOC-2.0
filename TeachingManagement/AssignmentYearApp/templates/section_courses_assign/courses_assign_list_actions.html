@@ -24,13 +24,13 @@
             <div class="col-lg-10" >
               
                 <!-- Filter Fields -->
-                <h3>Filtres pels Cursos</h3>
+                <h3>Filtres per assignatures</h3>
                 <div class="d-flex justify-content-between row mb-2">
                     <!-- Filters section -->
                     <div class="filters d-flex flex-wrap">
                         <div class="col-md-12">
                             <label for="filter-all">Filtrar per contingut</label>
-                            <input type="text" id="filter-all" class="form-control" placeholder="Cerca per Titulació, Nom Curs o Semestre">
+                            <input type="text" id="filter-all" class="form-control" placeholder="Cerca per titulació, assignatura o semestre">
                         </div>
                     </div>
 
@@ -41,7 +41,7 @@
                 <!-- List of all courses -->
                 {% if global_selected_year %}
                     <h6 style="text-align:center; color:blue">
-                        Assignació Any
+                        Assignació curs acadèmic 
                         {{ global_selected_year }} 
 
                         {% if global_selected_year|stringformat:"s" != global_available_years|first|stringformat:"s" %}
@@ -50,10 +50,10 @@
                     </h6>
                 {% endif %}
 
-                <h3>Llistat dels Cursos:</h3>
+                <h3>Llistat d'assignatures</h3>
                 <div class="d-flex justify-content-between row mb-2">
                     {% if not source_year and not target_year %}
-                        <li>Si es vol tenir la funcionalitat de  <strong>duplicar l'assignació </strong>, sisplau trii un any original i un any a duplicar en el botó de la dreta.</li>
+                        <li>Si es vol tenir la funcionalitat de  <strong>duplicar l'assignació </strong>, sisplau trii un curs origen i un curs destí a duplicar en el botó de la dreta.</li>
                     {% endif %}
                 </div>
 
@@ -61,10 +61,10 @@
                     <thead>
                         <tr>
                             <th style="text-align: left; width:22%;">Titulació</th>
-                            <th style="text-align: left; width:20%;">Nom Curs</th>
+                            <th style="text-align: left; width:20%;">Assignatura</th>
                             <th style="text-align: left; width:12%;">Semestre</th>
-                            <th style="text-align: left; width: 12%;">Punts Assignats</th>  
-                            <th style="text-align: left; width: 10%;">Punts Totals</th> 
+                            <th style="text-align: left; width: 12%;">Punts assignats</th>  
+                            <th style="text-align: left; width: 10%;">Punts totals</th> 
                             <th class="actions-c" style="width:200px">Accions</th>
                         </tr>
                     </thead>
@@ -104,9 +104,9 @@
                                 <!-- Expanded Row for Details -->
                                 <tr class="professor-details-row" style="display: none;">
                                     <td colspan="6" class="professor-details">
-                                        <strong>Informació dels punts:</strong>  <span style="font-style: italic;"> ( Punts Assignats / Punts Totals ) </span>
+                                        <strong>Informació dels punts:</strong>  <span style="font-style: italic;"> ( Punts assignats / Punts totals ) </span>
                                         <p><strong>Sumatori:</strong> {{ selected_course.total_assigned_points }}/{{ selected_course.total_course_points }} <strong>   
-                                            Per Grups:</strong>
+                                            Per grups:</strong>
                                             {{ selected_course.points_summary|default:"No hi ha punts per assignar"|safe }}
                                         </p>
                                     </td>
@@ -115,7 +115,7 @@
                             {% endfor %}
                         {% else %}
                             <tr>
-                                <td colspan="10" class="text-center">Cap Curs en cap Titulació a la Secció d'aquest Cap de Secció.</td>
+                                <td colspan="10" class="text-center">Cap assignatura en cap titulació en aquesta secció.</td>
                             </tr>        
                         {% endif %} 
                     </tbody>
@@ -131,20 +131,20 @@
             <div class="col-lg-2">
                 <div class="sticky-top" style="top: 1rem">
                     <div class="buttons mb-2 d-flex flex-column align-items-center">
-                        <a href="{% url 'select_years' %}" class="button-secondary btn-sm">Seleccionar Any a Duplicar</a>
+                        <a href="{% url 'select_years' %}" class="button-secondary btn-sm">Seleccionar cursos a duplicar</a>
                         
                             <!-- Display selected years or message if not selected -->
                             <div id="selectedYears" class="mt-3">
                                 {% if source_year  %}
-                                    <p style="text-align:center; color:blue; font-style:italic; ">Any Original: {{ source_year }}</p>
+                                    <p style="text-align:center; color:blue; font-style:italic; ">Curs origen: {{ source_year }}</p>
                                 {% else %}
-                                    <p style="text-align:center; color:blue; font-style:italic; "> Anys original encara per seleccionar</p>
+                                    <p style="text-align:center; color:blue; font-style:italic; "> Curs origen sense seleccionar</p>
                                 {% endif %}
 
                                 {% if target_year  %}
-                                    <p style="text-align:center; color:blue; font-style:italic; ">Any a Duplicar: {{ target_year }}</p>
+                                    <p style="text-align:center; color:blue; font-style:italic; ">Curs destí: {{ target_year }}</p>
                                 {% else %}
-                                    <p style="text-align:center; color:blue; font-style:italic; ">Anys a duplicar encara per seleccionar</p>
+                                    <p style="text-align:center; color:blue; font-style:italic; ">Curs destí sense seleccionar</p>
                                 {% endif %}
                             </div>
                     </div>
@@ -211,7 +211,7 @@
 
         // No results message logic
         if (rowsVisible === 0) {
-            let message = "Cap Curs amb Puntuació amb els criteris de cerca";
+            let message = "Cap assignatura amb els criteris de cerca";
             if (searchValue) {
                 message += ` amb el terme "${searchValue}"`;
             }
@@ -223,7 +223,7 @@
     }
 
     function confirmDuplicate(courseName, sourceYear, targetYear) {
-        return confirm("Estàs segur que vols duplicar el curs '" + courseName + "' agafant l'assignació de l'any: " + sourceYear + " i duplicar-lo a l'any: " + targetYear + "?");
+        return confirm("Estàs segur que vols duplicar l'assignatura '" + courseName + "' agafant l'assignació del curs : " + sourceYear + " i duplicar-lo al curs: " + targetYear + "?");
     }
 
 </script>

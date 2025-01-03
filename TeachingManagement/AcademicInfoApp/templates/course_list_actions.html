@@ -47,7 +47,7 @@
 
                 <!-- List of all courses -->
                 <h3>Llistat d'assignatures</h3>
-                <table class="table table-striped" id="courses-table">
+                <table class="table table-hover" id="courses-table">
                     <thead>
                         <tr>
                             <th  style="width:11%">Codi</th>    
@@ -62,10 +62,7 @@
                     <tbody>
                         {% if courses %}
                             {% for course in courses %}
-                                <tr  style="background-color: 
-                                {% if not course.isActive %}
-                                    #DCDCDC  ; 
-                                {% endif %}" 
+                                <tr class="{% if not course.isActive %}inactive-row{% endif %}"
                                 data-code="{{ course.CodeCourse }}" 
                                 data-name="{{  course.NameCourse }}"  
                                 data-degree="{{  course.Degree }}" 
@@ -110,6 +107,13 @@
                 <div class="sticky-top" style="top: 1rem;">
                     <div class="buttons mb-2 d-flex flex-column align-items-center">
                         <a href="{% url 'course_create' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Afegir assignatura</a>
+                    </div>
+                    <hr>
+                    <div class="buttons mb-2 d-flex flex-column align-items-center">
+                        <a href="{% url 'course_export' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Descarregar excel</a>
+                    </div>
+                    <div class="buttons mb-2 d-flex flex-column align-items-center">
+                        <a href="{% url 'course_upload' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Carregar excel</a>
                     </div>
                 </div>
             </div>

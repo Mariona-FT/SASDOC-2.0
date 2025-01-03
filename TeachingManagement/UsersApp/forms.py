@@ -74,18 +74,11 @@ class ProfessorForm(forms.ModelForm):
         widget=forms.EmailInput(attrs={'class': 'form-control'}),
     )
 
-    ACTIVE_CHOICES = [
-        ('yes', 'Si'),
-        ('no', 'No'),
-    ]
-
-    isactive = forms.ChoiceField(
-        choices=ACTIVE_CHOICES, 
-        required=True, 
-        label="Està Actiu?", 
-        widget=forms.Select(attrs={'class': 'form-select'}),
-        help_text="Seleccioneu si el professor està Actiu."
-    )   
+    isactive = forms.BooleanField(
+        required=False, 
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input checkbox-field'}),
+        label="Està Actiu?"
+    )
 
     current_contract = forms.ModelChoiceField(
         queryset=TypeProfessor.objects.all(),
@@ -127,7 +120,7 @@ class ProfessorForm(forms.ModelForm):
             self.fields['description'].initial = professor.description
             self.fields['comment'].initial = professor.comment
             self.fields['email'].initial = professor.email
-            self.fields['isactive'].initial = 'yes' if professor.isActive == 'yes' else 'no'
+            self.fields['isactive'].initial =professor.isActive
            
             self.fields['current_contract'].initial = professor.current_contract 
             self.fields['possible_fields'].initial = professor.professor_fields.values_list('Field', flat=True)
@@ -153,28 +146,25 @@ class ProfessorForm(forms.ModelForm):
     
     def save(self, commit=True):
        
+    # Ensure we have a user instance
         user = self.instance or CustomUser()
-        professor = getattr(user, 'professor', None)
 
-        current_contract = self.cleaned_data['current_contract']
-        
-        # Update user fields
         user.username = self.cleaned_data['username']
         user.email = self.cleaned_data['email']
         user.first_name = self.cleaned_data['name']
         user.last_name = self.cleaned_data['family_name']
-       
-        if commit:
-            user.save()
-        
-        if not user.pk:  # Only set password for new user
+        user.is_active=self.cleaned_data['isactive']
+
+        # Set the password only for new users
+        if not user.pk:
             generated_password = f"{user.first_name.lower()}_{user.last_name.lower()}"
             user.password = make_password(generated_password)
-        
+
+        # Save the user if commit is True
         if commit:
             user.save()
-        
-        # Update or create professor instance
+
+        # Associate the professor with the user, creating a new one if it doesn't exist
         professor, created = Professor.objects.update_or_create(
             user=user,
             defaults={
@@ -183,25 +173,30 @@ class ProfessorForm(forms.ModelForm):
                 'email': self.cleaned_data['email'],
                 'description': self.cleaned_data['description'],
                 'comment': self.cleaned_data['comment'],
-                'isActive': self.cleaned_data['isactive'].lower(),
-                'current_contract':self.cleaned_data['current_contract'],
+                'isActive': self.cleaned_data['isactive'],
+                'current_contract': self.cleaned_data['current_contract'],
             }
         )
 
+        # Handle related fields and languages
+        possible_fields = self.cleaned_data['possible_fields']
+        possible_languages = self.cleaned_data['possible_languages']
+
+        # Clear existing fields and languages
+        professor.professor_fields.all().delete()
+        professor.professor_languages.all().delete()
+
+        # Add new fields and languages
+        for field in possible_fields:
+            professor.professor_fields.create(Field=field)
+
+        for language in possible_languages:
+            professor.professor_languages.create(Language=language)
+
+        # Now save the professor if commit is True
         if commit:
             professor.save()
 
-            possible_fields = self.cleaned_data['possible_fields']
-            possible_languages = self.cleaned_data['possible_languages']
-                
-            professor.professor_fields.all().delete()  # Clear existing fields
-            for field in possible_fields:
-                professor.professor_fields.create(Field=field)
-
-            professor.professor_languages.all().delete()  # Clear existing languages
-            for language in possible_languages:
-                professor.professor_languages.create(Language=language)
-                
         return user
 
 #Basic form for professor - Not USED
@@ -336,9 +331,11 @@ class ExtraInfoProfessor(forms.ModelForm):
 
         return professor
 
-#To upload files .csv 
-class UploadFileForm(forms.Form):
-    file = forms.FileField(label="Puja un fitxer de tipus CSV o Excel:")
+class UploadForm(forms.Form):
+    file = forms.FileField(
+        label="Carregar fitxer Excel",
+        widget=forms.ClearableFileInput(attrs={'class': 'form-control-file'})
+    )
 
 
 class ChiefRegistrationForm(forms.ModelForm):

@@ -61,10 +61,7 @@
                     <tbody>
                         {% if sections %}
                             {% for section in sections %}
-                                <tr  style="background-color: 
-                                {% if not section.isActive %}
-                                    #e0e0e0  ; 
-                                {% endif %}" 
+                                <tr  class="{% if not section.isActive %}inactive-row{% endif %}"
                                 data-letter="{{section.LetterSection }}" 
                                 data-name="{{section.NameSection }}" 
                                 data-active="{{ section.isActive|yesno:'yes,no' }}"

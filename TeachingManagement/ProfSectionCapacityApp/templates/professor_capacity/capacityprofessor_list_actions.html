@@ -70,7 +70,7 @@
                     </h5>
                 {% endif %}
 
-                <h3>Llistat del Professorat</h3>
+                <h3>Llistat del professorat</h3>
                 <p>
                     Veure per veure la llegenda de les seccions i dels colors  <a href="#explanation-section" class="text-decoration-underline">clicar aquí</a>, o anar al final de la taula.
                 </p>
@@ -154,7 +154,7 @@
                             {% endfor %}
                         {% else %}
                             <tr>
-                                <td colspan="11" class="text-center">Cap professorat entrat en la taula.</td>
+                                <td colspan="11" class="text-center">Cap professor/a pel curs seleccionat en la taula.</td>
                             </tr>        
                         {% endif %}
                     </tbody>
@@ -193,6 +193,13 @@
                     </div>
                     <div class="buttons mb-2 d-flex flex-column ">
                         <a href="#" class="button-secondary btn-sm mb-2" style="width: 100%;">Duplicar capacitats docents</a>
+                    </div>
+                    <hr>
+                    <div class="buttons mb-2 d-flex flex-column align-items-center">
+                        <a href="{% url 'capacityprofessor_export'  year_id=selected_year.idYear %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Descarregar excel</a>
+                    </div>
+                    <div class="buttons mb-2 d-flex flex-column align-items-center">
+                        <a href="{% url 'capacityprofessor_upload' %}" class="button-secondary btn-sm mb-2" style="width: 100%;" >Carregar excel</a>
                     </div>
                 </div>
             </div>

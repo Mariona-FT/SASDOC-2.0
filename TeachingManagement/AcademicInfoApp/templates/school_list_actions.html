@@ -62,10 +62,7 @@
                     <tbody>
                         {% if schools %}
                             {% for school in schools %}
-                            <tr  style="background-color: 
-                            {% if not school.isActive %}
-                                #DCDCDC  ; 
-                            {% endif %}"
+                            <tr  class="{% if not school.isActive %}inactive-row{% endif %}"
                             data-code="{{ school.CodeSchool }}" 
                             data-name="{{ school.NameSchool }}" 
                             data-section="{{ school.Section.NameSection }}" 

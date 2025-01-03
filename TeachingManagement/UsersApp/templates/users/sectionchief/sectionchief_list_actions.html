@@ -47,12 +47,12 @@
                 
                 <!-- List of all professors -->
                 <h3>Llistat dels caps de secció</h3>
-                <table class="table table-striped" id="chiefs-table">
+                <table class="table table-hover" id="chiefs-table">
                     <thead>
                         <tr>
                             <th class="name-c" style=" width: 15%;">Nom i cognoms</th>
                             <th class="email-c">Correu electrònic</th>
-                            <th style=" width: 10%;">Secció</th>
+                            <th style=" width: 11%;">Secció</th>
                             <th style=" width: auto;">Comentaris</th>
                             <th style=" width: 70px;">Actiu</th>
                             <th class="actions-c" style="width:180px">Accions</th>
@@ -63,10 +63,7 @@
                             {% for professor in professors %}
                                 {% if professor.user.role == 'section_chief' %}
                                     {% for chief in professor.chief_set.all %}
-                                        <tr  style="background-color: 
-                                        {% if professor.isActive == 'no' %}
-                                            #DCDCDC  ; 
-                                        {% endif %}" 
+                                        <tr class="{% if not professor.isActive %}inactive-row{% endif %}" 
                                             data-name="{{ professor.name }} {{ professor.family_name }}" 
                                             data-email="{{ professor.email }}"
                                             data-section="{{ chief.section }}"
@@ -79,7 +76,7 @@
                                                 <span class="professor-info">{{ chief.section }}</span>
                                             </td>
                                             <td class="no-data">{{ professor.comment }}</td>
-                                            <td>{% if professor.isActive == 'yes' %}Sí{% else %}No{% endif %}</td>
+                                            <td>{% if professor.isActive %}Sí{% else %}No{% endif %}</td>
                                             <td class="actions-c" style="width:200px">
                                                 <!-- Edit button -->
                                                 <a href="{% url 'usersapp:sectionchief_edit' chief.id %}" class="button-edit btn-sm">Editar</a>

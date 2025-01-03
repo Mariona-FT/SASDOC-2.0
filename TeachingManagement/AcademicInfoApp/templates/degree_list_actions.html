@@ -48,23 +48,20 @@
 
                 <!-- List of all degrees -->
                 <h3>Llistat de titulacions</h3>
-                <table class="table table-striped" id="degrees-table">
+                <table class="table table-hover" id="degrees-table">
                     <thead>
                         <tr>
                             <th style="width:10%">Codi</th>
                             <th style="width:auto">Nom</th>
                             <th style="width:auto">Escola</th>
-                            <th class="active-c">Activa</th>
+                            <th class="active-c" style="width:10%">Activa</th>
                             <th class="actions-c" style="width:200px">Accions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% if degrees %}
                             {% for degree in degrees %}
-                                <tr  style="background-color: 
-                                {% if not degree.isActive %}
-                                    #DCDCDC  ; 
-                                {% endif %}" 
+                                <tr class="{% if not degree.isActive %}inactive-row{% endif %}" 
                                 data-code="{{ degree.CodeDegree }}" 
                                 data-name="{{degree.NameDegree }}" 
                                 data-school="{{ degree.School.NameSchool }}" 
@@ -112,6 +109,13 @@
                 <div class="sticky-top" style="top: 1rem;">
                     <div class="buttons mb-2 d-flex flex-column align-items-center">
                         <a href="{% url 'degree_create' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Afegir titulació</a>
+                    </div>
+                    <hr>
+                    <div class="buttons mb-2 d-flex flex-column align-items-center">
+                        <a href="{% url 'degree_export' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Descarregar excel</a>
+                    </div>
+                    <div class="buttons mb-2 d-flex flex-column align-items-center">
+                        <a href="{% url 'degree_upload' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Carregar excel</a>
                     </div>
                 </div>
             </div>

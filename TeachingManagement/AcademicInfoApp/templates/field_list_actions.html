@@ -61,10 +61,7 @@
                     <tbody>
                         {% if fields %}
                             {% for field in fields %}
-                                <tr  style="background-color: 
-                                {% if not field.isActive %}
-                                    #DCDCDC  ; 
-                                {% endif %}" 
+                                <tr class="{% if not field.isActive %}inactive-row{% endif %}"
                                 data-name="{{ field.NameField }}" 
                                 data-description="{{ field.Description }}" 
                                 data-active="{{ field.isActive|yesno:'yes,no' }}"

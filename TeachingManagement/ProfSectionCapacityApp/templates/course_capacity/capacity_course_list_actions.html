@@ -5,7 +5,7 @@
 {% block content %}
 <div class="container-fluid d-flex" style="min-height: 100vh;">
     <div class="col-lg-10 mx-auto">
-        <h2 style="text-align:center">Encàrrec docent de les assignatures</h2>
+        <h2 style="text-align:center">Gestió de l'encàrrec docent</h2>
 
         <!-- Display success, warning, or error messages -->
         {% if messages %}
@@ -30,14 +30,14 @@
                     <div class="filters d-flex flex-wrap">
                         <div class="col-md-12">
                             <label for="filter-all">Filtrar per contingut</label>
-                            <input type="text" id="filter-all" class="form-control" placeholder="Cerca per assignatura, semestre, idioma o sumatori">
+                            <input type="text" id="filter-all" class="form-control" placeholder="Cerca per titulació, assignatura, semestre, idioma o sumatori">
                         </div>
                     </div>
                 </div>
                 <!-- Year Filter Form -->
                 <form method="get" id="year-filter-form">
                     <label for="year-select">Selecciona un curs acadèmic</label>
-                    <select name="year" id="year-select" class="form-control" onchange="document.getElementById('year-filter-form').submit();">
+                    <select name="year" id="year-select" class="form-select" onchange="document.getElementById('year-filter-form').submit();">
                         {% for year in available_years %}
                             <!-- Use idYear as the value to send the ID, but display Year in the option text -->
                             <option value="{{ year.idYear }}" {% if year == selected_year %}selected{% endif %}>
@@ -61,13 +61,13 @@
                     </h5>
                 {% endif %}
 
-                <h3>Llistat de les assignatures:</h3>
+                <h3>Llistat d'assignatures</h3>
 
                 <table class="table table-striped" id="coursesyear-table">
                     <thead>
                         <tr>
-                            <th style="width: 180px;">Titulació</th>
-                            <th style=" width: 180px;">Assignatura</th>
+                            <th style="width: 150px;">Titulació</th>
+                            <th style=" width: 150px;">Assignatura</th>
                             <th style=" width: auto;">Semestre</th>
                             <th style="width: auto;">Punts A</th>
                             <th style="width: auto;">Punts B</th>
@@ -131,7 +131,14 @@
                         <a href="{% url 'create_courseyear' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Afegir encàrrec docent</a>
                     </div>
                     <div class="buttons mb-2 d-flex flex-column ">
-                        <a href="{% url 'create_typepoints' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Duplicar encàrrec docent</a>
+                        <a href="{% url 'duplicate_courseyear' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Duplicar encàrrec docent</a>
+                    </div>
+                    <hr>
+                    <div class="buttons mb-2 d-flex flex-column align-items-center">
+                        <a href="{% url 'courseyear_export'  year_id=selected_year.idYear %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Descarregar excel</a>
+                    </div>
+                    <div class="buttons mb-2 d-flex flex-column align-items-center">
+                        <a href="{% url 'courseyear_upload' %}" class="button-secondary btn-sm mb-2" style="width: 100%;" >Carregar excel</a>
                     </div>
                 </div>
             </div>

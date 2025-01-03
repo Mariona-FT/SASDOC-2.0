@@ -44,13 +44,8 @@ class Professor(models.Model):
     description = models.TextField(null=True, blank=True)
     comment = models.TextField(null=True, blank=True)
     email = models.EmailField(unique=True)
-    
-    ACTIVE_CHOICES = [
-        ('yes', 'Yes'),
-        ('no', 'No'),
-    ]
-    
-    isActive = models.CharField(max_length=3, choices=ACTIVE_CHOICES, default='yes')
+    isActive = models.BooleanField(default=True)
+
     current_contract = models.ForeignKey(TypeProfessor, on_delete=models.SET_NULL, null=True, blank=True)
     
     class Meta:

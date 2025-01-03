@@ -5,7 +5,7 @@
 {% block content %}
 <div class="container-fluid d-flex" style="min-height: 100vh;">
     <div class="col-lg-10 mx-auto">
-        <h2 style="text-align:center">Gestió de la nomenclatura de les seccions </h2>
+        <h2 style="text-align:center">Gestió de la nomenclatura de punts docents</h2>
 
         <!-- Display success, warning, or error messages -->
         {% if messages %}
@@ -61,19 +61,19 @@
                     </h5>
                 {% endif %}
 
-                <h3>Llistat de les seccions:</h3>
+                <h3>Llistat de seccions</h3>
 
                 <table class="table table-striped" id="section-table"  style="width: 100%; table-layout: fixed;">
                     <thead>
                         <tr>
                             <th style=" width: 9%;">Acrònim</th>
-                            <th class="name-c" style=" width: 10%;">Secció</th>
-                            <th style="text-align: center;">Nom punts A</th>
-                            <th style="text-align: center;">Nom punts B</th>
-                            <th style="text-align: center;">Nom punts C</th>
-                            <th style="text-align: center;">Nom punts D</th>
-                            <th style="text-align: center;">Nom punts E</th>
-                            <th style="text-align: center;">Nom punts F</th>
+                            <th class="name-c" style=" width: 100px;">Secció</th>
+                            <th style="text-align: center;" style=" width: auto;">Punts A</th>
+                            <th style="text-align: center;" style=" width: auto;">Punts B</th>
+                            <th style="text-align: center;" style=" width: auto;">Punts C</th>
+                            <th style="text-align: center;" style=" width: auto;">Punts D</th>
+                            <th style="text-align: center;" style=" width: auto;">Punts E</th>
+                            <th style="text-align: center;" style=" width: auto;">Punts F</th>
                             <th class="actions-c" style="width:200px">Accions</th>
                         </tr>
                     </thead>
@@ -91,12 +91,12 @@
                             >
                                 <td>{{ section.LetterSection }}</td>
                                 <td>{{ section.NameSection }}</td>
-                                <td>{{ section.NamePointsA|default:"-"  }}</td>
-                                <td>{{ section.NamePointsB|default:"-"  }}</td>
-                                <td>{{ section.NamePointsC|default:"-"  }}</td>
-                                <td>{{ section.NamePointsD|default:"-"  }}</td>
-                                <td>{{ section.NamePointsE|default:"-"  }}</td>
-                                <td>{{ section.NamePointsF|default:"-"  }}</td>
+                                <td style="text-align: center;">{{ section.NamePointsA|default:"-"  }}</td>
+                                <td style="text-align: center;">{{ section.NamePointsB|default:"-"  }}</td>
+                                <td style="text-align: center;">{{ section.NamePointsC|default:"-"  }}</td>
+                                <td style="text-align: center;">{{ section.NamePointsD|default:"-"  }}</td>
+                                <td style="text-align: center;">{{ section.NamePointsE|default:"-"  }}</td>
+                                <td style="text-align: center;">{{ section.NamePointsF|default:"-"  }}</td>
                                 <td class="actions-c" style="width:200px">
                                     <!-- Edit button -->
                                     <a href="{% url 'edit_typepoints' section.Typepoint_id %}" class="button-edit btn-sm">Editar</a>
@@ -112,7 +112,7 @@
                             {% endfor %}
                         {% else %}
                             <tr>
-                                <td colspan="8" class="text-center">Cap nomenclatura de secció en el curs acdèmic seleccionat.</td>
+                                <td colspan="9" class="text-center">Cap nomenclatura de punts docents en el curs acadèmic seleccionat.</td>
                             </tr>        
                         {% endif %}
                     </tbody>
@@ -131,7 +131,7 @@
                         <a href="{% url 'create_typepoints' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Afegir nomenclatura</a>
                     </div>
                     <div class="buttons mb-2 d-flex flex-column ">
-                        <a href="{% url 'create_typepoints' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Duplicar nomenclatures</a>
+                        <a href="{% url 'duplicate_typepoints' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Duplicar nomenclatures</a>
                     </div>
                 </div>
             </div>

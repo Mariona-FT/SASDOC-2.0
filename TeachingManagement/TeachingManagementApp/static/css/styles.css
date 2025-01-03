@@ -217,6 +217,10 @@ html {
     color: #1e90ff; /* Brighter blue */
 }
 
+.inactive-row{
+    background-color: #C0C0C0 !important;
+}
+
 .text-content {
     display: block;
     max-height: 3em; /* Display only two lines */

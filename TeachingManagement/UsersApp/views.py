@@ -4,9 +4,8 @@ from django.contrib.auth.decorators import login_required,user_passes_test
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.hashers import make_password
 from django.contrib import messages
-from .forms import CustomLoginForm,ProfessorForm,ChiefRegistrationForm, UploadFileForm # customized forms in forms.py
+from .forms import CustomLoginForm,ProfessorForm,ChiefRegistrationForm # customized forms in forms.py
 from .models import Professor,Chief, CustomUser
-from .services import  process_professor_file #services of the app
 from django.db import IntegrityError
 
 
@@ -95,34 +94,18 @@ def professor_create_edit(request, idProfessor=None):
         if request.method == 'POST':
             form = ProfessorForm(request.POST)
             if form.is_valid():
-                user = form.save(commit=True)  # Save the user but don't commit yet
+                user = form.save()  # Save the user but don't commit yet
                 user.role = 'professor'  # Set the role to 'professor'
                 user.save()  # Now save the user to the database
-                new_professor = form.save()
-                messages.success(request, f"El professorat {new_professor.first_name} {new_professor.last_name} s\'ha afegit correctament.")
+                
+                new_professor = user.professor
+                messages.success(request, f"El professorat {new_professor.name} {new_professor.family_name} s\'ha afegit correctament.")
                 return redirect('usersapp:professor_list')
             else:
                 messages.error(request, f"El professorat no s\'ha creat correctament.")
         else:
             form = ProfessorForm()
     return render(request, 'users/professor/professor_form.html', {'form': form})
-
-
-
-# REGISTER PROFESSOR - only for DIRECTOR - USING CSV or EXCEL
-@login_required
-@user_passes_test(is_director)
-def upload_professors(request):
-    if request.method == 'POST':
-        form = UploadFileForm(request.POST, request.FILES)
-        if form.is_valid():
-            file = request.FILES['file']
-            if process_professor_file(file, request):
-                return redirect('usersapp:upload_professors')
-    else:
-        form = UploadFileForm()
-
-    return render(request, 'actions/upload_professors.html', {'form': form})
 
 #SECTION CHIEF 
 #section chief list to manage - listing and actions of edit, delete and add section chiefs

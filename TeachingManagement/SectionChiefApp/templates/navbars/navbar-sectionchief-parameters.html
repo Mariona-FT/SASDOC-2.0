@@ -2,25 +2,20 @@
 <nav class="navbar-sub-nav navbar-expand-lg navbar-light d-flex justify-content-center">
     <ul class="navbar-nav d-flex align-items-center  mb-0">
 
-        {% url 'test_sectionchief' as test_sectionchief_url %}
-        <li class="nav-item me-4 {% if '/section-courses/' in request.path %} active{% endif %}">
-            <a class="nav-link" href="{{test_sectionchief_url}}">Test</a>
-        </li>
-
         {% url 'section_courses_list' as section_courses_list_url %}
         <li class="nav-item me-4 {% if '/section-courses/' in request.path %} active{% endif %}">
-            <a class="nav-link" href="{{section_courses_list_url}}">Assignatures</a>
+            <a class="nav-link" href="{{section_courses_list_url}}">Assignació docent</a>
         </li>
 
         {% url 'section_professors_list' as section_professors_list_url %}
         <li class="nav-item me-4 {% if '/section-professors/' in request.path %} active{% endif %}">
-            <a class="nav-link" href="{{section_professors_list_url}}">Professorat</a>
+            <a class="nav-link" href="{{section_professors_list_url}}">Resultat d'assignació del professorat</a>
         </li>
 
         <!-- Year Selector in the Navbar -->
         <li class="nav-item me-6  d-flex align-items-center">
             <form method="GET" action="{% url 'sectionchiefapp:select_year' %}" class="d-flex align-items-center mb-0" style="width: auto;">
-                <label for="year" class="mb-0 me-2">Seleccionar Any:</label> 
+                <label for="year" class="mb-0 me-2">Seleccionar curs acadèmic:</label> 
                 <select name="year" id="year" class="form-select form-select-sm" onchange="this.form.submit()" style="width: 160px;">
                     <option value="" disabled {% if not global_selected_year %}selected{% endif %}> ---- </option>
                     {% for year in global_available_years %}
