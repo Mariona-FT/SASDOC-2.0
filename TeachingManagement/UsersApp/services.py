@@ -147,7 +147,7 @@ def upload_professor_excel(request):
 
                     create_sectorchief=False
 
-                    if not all([id_professor, username, name, family_name, email,role,contract_name,fields,languages,is_active]):
+                    if not all([id_professor, username, name, family_name, email,role,is_active]):
                         messages.warning(request, f"Fila {row_num}: no s'ha processat correctament: informació incompleta.")
                         error_occurred = True
                         continue
@@ -162,10 +162,7 @@ def upload_professor_excel(request):
                         error_occurred = True
                         continue
 
-                    if role == "cap de secció":
-                        actual_role = "section_chief"
-                    else:
-                       actual_role = "professor" 
+                    actual_role = "section_chief" if role == "cap de secció" else "professor"
 
                     if role=="cap de secció":                    
                         exist_section = Section.objects.filter(NameSection=section).first()
@@ -175,8 +172,10 @@ def upload_professor_excel(request):
                             continue
 
                         # Check if the section already has a chief assigned
-                        if Chief.objects.filter(section=exist_section).exists():
-                            messages.warning(  request, f"Fila {row_num}: La secció '{section}' ja té un cap de secció assignat.")
+                        current_chief = Chief.objects.filter(section=exist_section).first()
+                        professor = Professor.objects.filter(idProfessor=id_professor).first()
+                        if current_chief and current_chief.professor != professor:
+                            messages.warning(request, f"Fila {row_num}: La secció '{section}' ja té un cap de secció assignat.")
                             error_occurred = True
                             continue
 
@@ -190,38 +189,41 @@ def upload_professor_excel(request):
                         error_occurred = True
                         continue
 
-                    #Make it boolean
-                    if is_active == "Si":
-                        is_active = True
-                    elif is_active == "No":
-                        is_active = False
-                
-                    if not TypeProfessor.objects.filter(NameContract=contract_name).exists():
-                        messages.warning(request, f"Fila {row_num}: El tipus de contracte '{contract_name}' no existeix.")
-                        error_occurred = True
-                        continue
-                    
-                    contract=TypeProfessor.objects.filter(NameContract=contract_name).first()
+                    is_active = is_active.lower() == "si"
 
+                    if contract_name:
+                        if not TypeProfessor.objects.filter(NameContract=contract_name).exists():
+                            messages.warning(request, f"Fila {row_num}: El tipus de contracte '{contract_name}' no existeix.")
+                            contract = None
+                        else:
+                            contract = TypeProfessor.objects.filter(NameContract=contract_name).first()
+                    else:
+                        contract = None
+
+                    missing_fields = []
+                    valid_fields = []
                     for field_name in (fields or '').split(','):
                         field_name = field_name.strip()
                         if field_name:
                             field = Field.objects.filter(NameField=field_name).first()
                             if not field:
-                                messages.warning(request, f"Fila {row_num}: El camp de coneixement '{field_name}' no existeix.")
-                                error_occurred = True
-                                break
-                    if error_occurred: continue
+                                missing_fields.append(field_name)
+                            else:
+                                valid_fields.append(field)
 
+                    missing_languages = []
+                    valid_languages = []
                     for language_name in (languages or '').split(','):
                         language_name = language_name.strip()
                         if language_name:
                             language = Language.objects.filter(Language=language_name).first()
                             if not language:
-                                messages.warning(request, f"Fila {row_num}: L'idioma '{language_name}' no existeix.")
-                                error_occurred = True
-                                break
-                    if error_occurred: continue
+                                missing_languages.append(language_name)
+                            else:
+                                valid_languages.append(language)
+
+                    if missing_fields or missing_languages:
+                        messages.warning(request, f"Fila {row_num}: Alguns camps o idiomes no existeixen: {', '.join(missing_fields + missing_languages)}.")
 
 
                     # Check for existing professor
@@ -237,14 +239,6 @@ def upload_professor_excel(request):
                             messages.warning(request, f"Fila {row_num}: El correu '{email}' ja està en ús.")
                             error_occurred = True
                             continue
-
-                        if create_sectorchief:
-                            try:
-                                Chief.objects.create(professor=professor, section=exist_section)
-                            except Exception as e:
-                                messages.warning(request, f"Fila {row_num}: Error al crear el cap de secció per al professor '{professor.name}': {str(e)}")
-                                error_occurred = True
-                                continue
 
                         # Update existing professor
                         user=professor.user
@@ -263,27 +257,7 @@ def upload_professor_excel(request):
                         professor.isActive = is_active
                         
                         user.save()
-
-                        professor.save()
-
-                        # Update related fields and languages
-                        ProfessorField.objects.filter(Professor=professor).delete()
-                        ProfessorLanguage.objects.filter(Professor=professor).delete()
-
-                        for field_name in (fields or '').split(','):
-                            field_name = field_name.strip()
-                            if field_name:
-                                field = Field.objects.filter(NameField=field_name).first()
-                                if field:
-                                    ProfessorField.objects.create(Professor=professor, Field=field)
-
-                        for language_name in (languages or '').split(','):
-                            language_name = language_name.strip()
-                            if language_name:
-                                language = Language.objects.filter(Language=language_name).first()
-                                if language:
-                                    ProfessorLanguage.objects.create (Professor=professor, Language=language)
-                                
+                        professor.save()                       
 
                     else:
                         # Create new professor
@@ -317,38 +291,34 @@ def upload_professor_excel(request):
                                 isActive = is_active,
                             )
 
-                            if create_sectorchief:
-                                try:
-                                    Chief.objects.create(professor=professor, section=exist_section)
-                                except Exception as e:
-                                    messages.warning(request, f"Fila {row_num}: Error al crear el cap de secció per al professor '{professor.name}': {str(e)}")
-                                    error_occurred = True
-                                    continue
-
-                                # Update related fields and languages
-                                ProfessorField.objects.filter(Professor=professor).delete()
-                                ProfessorLanguage.objects.filter(Professor=professor).delete()
-
-                                for field_name in (fields or '').split(','):
-                                    field_name = field_name.strip()
-                                    if field_name:
-                                        field = Field.objects.filter(NameField=field_name).first()
-                                        if field:
-                                            ProfessorField.objects.create(Professor=professor, Field=field)
-
-                                for language_name in (languages or '').split(','):
-                                    language_name = language_name.strip()
-                                    if language_name:
-                                        language = Language.objects.filter(Language=language_name).first()
-                                        if language:
-                                            ProfessorLanguage.objects.create (Professor=professor, Language=language)
-
 
                         except Exception as e:
                             messages.warning(request, f"Fila {row_num}: Error al crear el professor. {e}")
                             error_occurred = True
                             continue
 
+                    # Update related fields and languages
+                    ProfessorField.objects.filter(Professor=professor).delete()
+                    for field in valid_fields:
+                        ProfessorField.objects.create(Professor=professor, Field=field)
+
+                    ProfessorLanguage.objects.filter(Professor=professor).delete()
+                    for language in valid_languages:
+                        ProfessorLanguage.objects.create(Professor=professor, Language=language)
+
+                    if create_sectorchief:
+                        try:
+                            existing_chief = Chief.objects.filter(section=exist_section).first()
+                            if existing_chief:
+                                if existing_chief.professor != professor:
+                                    messages.warning( request, f"Fila {row_num}: La secció '{section}' ja té un cap de secció assignat.")
+                                    error_occurred = True
+                            else:
+                                Chief.objects.create(professor=professor, section=exist_section)
+                        except Exception as e:
+                            messages.warning(request, f"Fila {row_num}: Error al crear el cap de secció per al professor '{professor.name}': {str(e)}")
+                            error_occurred = True
+                
                 if not error_occurred:
                     messages.success(request, "Els professors s'han actualitzat correctament.")
                     return redirect("usersapp:professor_list")
