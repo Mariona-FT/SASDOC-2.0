@@ -39,10 +39,10 @@
                     <!-- Professor Role -->
                     {% elif user.role == 'professor' %}
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Tauler Professor</a>
+                            <a class="nav-link" href="{% url 'professorapp:professor_dashboard' %}"> Inici</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Funció per Professor</a>
+                            <a class="nav-link" href="{% url 'professorapp:info_assignments' %}"> Informe assignació docent</a>
                         </li>
                     {% endif %}
                 {% endif %}

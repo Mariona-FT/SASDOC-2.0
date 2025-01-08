@@ -35,5 +35,8 @@ urlpatterns = [
     path('sectionchief/',include('SectionChiefApp.urls')),  # URL for every APP - SectionChiefApp
     path('infosection/',include('AssignmentYearApp.urls')),  # URL for every APP - AssignmentYearApp
 
+    #For professor + their functions
+    path('professor/',include('ProfessorApp.urls')), # URL for every APP - ProfessorApp
+
     path('admin/', admin.site.urls),
 ]

@@ -38,7 +38,5 @@ urlpatterns = [
     path('sectionchief/', views.sectionchief_list, name='sectionchief_list'),
     path('sectionchief/create/', views.sectionchief_create_edit, name='sectionchief_create'),
     path('sectionchief/edit/<int:idChief>', views.sectionchief_create_edit, name='sectionchief_edit'),
- 
-    #provisional Dashboards
-    path('dashprofessor/', views.professor_dashboard, name='professor_dashboard'),
+
     ]
