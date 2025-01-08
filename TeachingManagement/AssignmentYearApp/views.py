@@ -224,7 +224,7 @@ def courseyear_show(request,idCourseYear=None):
         idProfessor__in=Assignment.objects.filter(CourseYear=course_year).values('Professor_id')
     )
 
-    unassigned_professors = Professor.objects.filter(isActive='yes').exclude(
+    unassigned_professors = Professor.objects.filter(isActive=True).exclude(
         idProfessor__in=Assignment.objects.filter(CourseYear=course_year).values('Professor_id')
     )
 
@@ -483,7 +483,7 @@ def section_professors_list(request):
     #get all the scools in that section
     all_schools=School.objects.filter(Section=section)
    
-    all_professors = Professor.objects.filter(isActive='yes').order_by('family_name')
+    all_professors = Professor.objects.filter(isActive=True).order_by('family_name')
     
     professor_data = []
     for professor in all_professors:
