@@ -1,18 +1,195 @@
 {% extends 'base-template/base.html' %}
-{% load tz %}
 
-{% block title %}Professor/a - SASDOC 2.0{% endblock %}
+{% block title %}Informació assignació docent{% endblock %}
 
 {% block content %}
-<div class="dashboard container mt-4">
-
-    <h1 class="text-center">INFORMACIO ASSIGNACIO DOCENTa</h1>
-
-    <h3 class="text-center">Benvingut, Director {{ user.username }}</h3>
-    {% now "l, F j, Y" as current_date %} 
-
-    <p class="text-center">Data: {{ current_date }}</p>
+<div class="container-fluid d-flex" style="min-height: 100vh;">
+    <div class="col-lg-10 mx-auto">
+        <h2 style="text-align:center">Assignació docent del professor</h2>
+        <h2 style="text-align:center"> {{professor.name }} {{ professor.family_name }}</h2>
 
 
+        <!-- Display success, warning, or error messages -->
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="{% if message.tags %}alert alert-{{ message.tags }}{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <hr>
+
+        <div class="row">
+            <div class="col-lg-11">
+              
+                <!-- Filter Fields -->
+                <h3>Filtrar per curs</h3>
+                <div class="d-flex justify-content-between row mb-2">
+                
+                    <!-- Year Filter Form -->
+                <form method="get" id="year-filter-form">
+                    <label for="year-select">Selecciona un curs acadèmic</label>
+                    <select name="year" id="year-select" class="form-select" onchange="document.getElementById('year-filter-form').submit();">
+                        {% for year in available_years %}
+                            <!-- Use idYear as the value to send the ID, but display Year in the option text -->
+                            <option value="{{ year.idYear }}" {% if year == selected_year %}selected{% endif %}>
+                                {{ year.Year }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </form>
+                <br>
+                <hr>
+
+                <!-- List of all courses -->
+                {% if selected_year %}
+                    <h5 style="text-align:center; color:blue">
+                            Assignació docent pel curs acadèmic - 
+                        {{ selected_year.Year }} 
+
+                        {% if selected_year.Year != available_years.first.Year %}
+                            (Historial)
+                        {% endif %}
+                    </h5>
+                {% endif %}
+
+                <h3>Capacitat total</h3> {{capacity.Points}}
+
+                <h3>Punts d'alliberació</h3>
+
+                <h3>Llistat d'assignatures</h3>
+
+                <table class="table table-striped" id="coursesyear-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 150px;">Titulació</th>
+                            <th style=" width: 150px;">Assignatura</th>
+                            <th style=" width: auto;">Semestre</th>
+                            <th style="width: auto;">Punts A</th>
+                            <th style="width: auto;">Punts B</th>
+                            <th style="width: auto;">Punts C</th>
+                            <th style="width: auto;">Punts D</th>
+                            <th style="width: auto;">Punts E</th>
+                            <th style="width: auto;">Punts F</th>
+                            <th style="width:80px">Sum</th>
+                            <th class="actions-c" style="width:180px">Accions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if course_years %}
+                            {% for course_year  in course_years  %}
+                            <tr data-name="{{ course_year.Course.NameCourse }}"
+                            data-semester="{{course_year.Semester}}"
+                            data-degree="{{ course_year.DegreeName}}"
+                            data-totalpoints="{{ course_year.TotalPoints }}"
+                            >
+                            <td>{{ course_year.DegreeName}}</td>
+                            <td><strong>{{ course_year.Course.NameCourse }} </strong></td>
+                            <td><strong>{{ course_year.Semester }}</stong></td>
+                            <td>{{ course_year.PointsA|floatformat:"-2" |default:"-" }}</td>
+                            <td>{{ course_year.PointsB|floatformat:"-2" |default:"-" }}</td>
+                            <td>{{ course_year.PointsC|floatformat:"-2" |default:"-" }}</td>
+                            <td>{{ course_year.PointsD|floatformat:"-2" |default:"-" }}</td>
+                            <td>{{ course_year.PointsE|floatformat:"-2" |default:"-" }}</td>
+                            <td>{{ course_year.PointsF|floatformat:"-2" |default:"-" }}</td>
+                            <td><strong>{{ course_year.TotalPoints|floatformat:"-2"  }}</strong></td>
+                            <td class="actions-c" style="width:180px">
+                                <!-- Edit button -->
+                                <a href="#" class="button-edit btn-sm">Editar</a>
+
+                                <!-- Delete form with JavaScript confirmation -->
+                                <form method="post" action="#" style="display:inline;" onsubmit="return confirmDelete('{{ course_year.Course.NameCourse }}');">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="confirm_delete" value="{{  course_year.idCourseYear }}">
+                                    <button type="submit" class="button-delete btn-sm">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="11" class="text-center">Cap encàrrec docent pel curs acadèmic seleccionat.</td>
+                            </tr>        
+                        {% endif %}
+                    </tbody>
+                </table>
+                
+                <!-- No results message -->
+                <div id="no-results-message" class="text-center text-danger" style="display:none;">
+                    <span id="no-results-text"></span>
+                </div>
+            </div>
+
+            <!-- Buttons section fixed on the right -->
+            <div class="col-lg-1 d-flex flex-column align-items-end">
+                <div class="sticky-top" style="top: 1rem">
+                    <div class="buttons mb-2 d-flex flex-column align-items-center">
+                        {% comment %} <a href="{% url 'courseyear_export'  year_id=selected_year.idYear %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Descarregar excel</a> {% endcomment %}
+                    </div>
+                    <div class="buttons mb-2 d-flex flex-column align-items-center">
+                        {% comment %} <a href="{% url 'courseyear_upload' %}" class="button-secondary btn-sm mb-2" style="width: 100%;" >Carregar excel</a> {% endcomment %}
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
 </div>
+
+<!-- JavaScript function for confirmation -->
+<script>
+
+    function confirmDelete(CourseNameYear) {
+        return confirm("Estàs segur que vols eliminar l'encàrrec docent de l'assignatura : " + CourseNameYear + "?");
+    }
+
+    //Not using  accents in the filter and in the data
+    function normalizeString(str) {
+        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    }
+
+    // JavaScript for dynamic filtering
+    document.getElementById('filter-all').addEventListener('input', filterTable);
+
+    function filterTable() {
+        const searchValue = normalizeString(document.getElementById('filter-all').value);
+        const tableRows = document.querySelectorAll('#coursesyear-table tbody tr');
+
+        let rowsVisible = 0;
+
+        tableRows.forEach(row => {
+            const fieldName = row.getAttribute('data-name') ? normalizeString(row.getAttribute('data-name')) : '';
+            const fieldSemester = row.getAttribute('data-semester') ? normalizeString(row.getAttribute('data-semester')) : '';
+            const fieldDegree = row.getAttribute('data-degree') ? normalizeString(row.getAttribute('data-degree')) : '';
+            const fieldTpoints = row.getAttribute('data-totalpoints') ? normalizeString(row.getAttribute('data-totalpoints')) : '';
+
+            const matchesSearch = fieldName.includes(searchValue) || fieldSemester.includes(searchValue) || fieldDegree.includes(searchValue) || fieldTpoints.includes(searchValue) 
+            if (matchesSearch) {
+                row.style.display = '';
+                rowsVisible++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        const noResultsMessage = document.getElementById('no-results-message');
+        const noResultsText = document.getElementById('no-results-text');
+
+        // No results message logic
+        if (rowsVisible === 0) {
+            let message = "Cap Curs amb Puntuació amb els criteris de cerca";
+            if (searchValue) {
+                message += ` amb el terme "${searchValue}"`;
+            }
+            noResultsText.textContent = message + ".";
+            noResultsMessage.style.display = 'block';
+        } else {
+            noResultsMessage.style.display = 'none';
+        }
+    }
+</script>
+
 {% endblock %}
