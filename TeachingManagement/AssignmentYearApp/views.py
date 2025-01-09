@@ -12,6 +12,7 @@ import json
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Sum
+from decimal import Decimal
 
 # Create your views here.
 
@@ -215,10 +216,9 @@ def courseyear_show(request,idCourseYear=None):
         
         for field, point_name in typepoint_names_assigned.items():
             value = getattr(assignment, field, None) or 0
-            data[point_name] = value
+            data[point_name] = f"{value:.2f}".replace(',', '.')
 
-        assignment_data.append(data)
-
+        assignment_data.append(data)    
     # Query for all professors that are either assigned or not assigned to the courseYear
     assigned_professors = Professor.objects.filter(
         idProfessor__in=Assignment.objects.filter(CourseYear=course_year).values('Professor_id')
@@ -328,12 +328,12 @@ def assign_professor(request, professor_id, course_year_id):
         CourseYear=course_year,
         isCoordinator=False,  # Set IsCoordinator to False as per requirement
         # Set all points to null (or default to 0)
-        PointsA=None,
-        PointsB=None,
-        PointsC=None,
-        PointsD=None,
-        PointsE=None,
-        PointsF=None,
+        PointsA=0,
+        PointsB=0,
+        PointsC=0,
+        PointsD=0,
+        PointsE=0,
+        PointsF=0,
     )
     assignment.save()
 
@@ -372,11 +372,12 @@ def update_assignment(request,idAssignment):
             for point_field, point_name in typepoint_fields.items():
                 if point_name:  # If a point name is defined
                     form_value = request.POST.get(point_name)
-                    if form_value is not None:
-                        setattr(assignment, point_field, float(form_value) if form_value else None)
+                    if form_value is not None and form_value != '':
+                        normalized_value = form_value.replace(',', '.')
+                        setattr(assignment, point_field, float(normalized_value))
                     else:
-                        setattr(assignment, point_field, None)  
-           
+                        setattr(assignment, point_field, 0)  
+            
             # Update Is Coordinator field
             is_coordinator = request.POST.get('is_coordinator')
             if is_coordinator == 'yes':

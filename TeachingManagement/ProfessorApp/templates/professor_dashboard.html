@@ -1,18 +1,11 @@
 {% extends 'base-template/base.html' %}
-{% load tz %}
 
-{% block title %}Professor/a - SASDOC 2.0{% endblock %}
+{% block title %}Test pàgina{% endblock %}
 
 {% block content %}
 <div class="dashboard container mt-4">
 
-    <h1 class="text-center">NOVA PAGINA TAULER PROFESSOR/a</h1>
-
-    <h3 class="text-center">Benvingut, Director {{ user.username }}</h3>
-    {% now "l, F j, Y" as current_date %} 
-
-    <p class="text-center">Data: {{ current_date }}</p>
-
+    <h1 class="text-center">Test pàgina</h1>
 
 </div>
 {% endblock %}
