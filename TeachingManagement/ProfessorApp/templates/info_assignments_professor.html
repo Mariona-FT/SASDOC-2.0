@@ -68,16 +68,22 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for capacity in capacities %}
-                        <tr>
-                            <td>{{ capacity.Points }}</td>
-                            <td>{{ capacity.Points }} x hores </td>
-                            <td>{{ capacity.Comment }}</td>
-                        </tr>
+                        {% for professor in professor_data %}
+                            {% for capacity in professor.capacities %}
+                                <tr>
+                                    <td>{{ capacity.Points }}</td>
+                                    <td>{{ capacity.Points }} x hores</td>
+                                    <td>{{ capacity.Comment }}</td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="3" class="text-center" style="font-style: italic;">Sense punts totals pel curs acadèmic seleccionat.</td>
+                                </tr>
+                            {% endfor %}
                         {% empty %}
-                        <tr>
-                            <td colspan="3" class="text-center" style="font-style: italic;">Sense punts totals pel curs acadèmic seleccionat.</td>
-                        </tr>
+                            <tr>
+                                <td colspan="3" class="text-center" style="font-style: italic;">Cap informació disponible.</td>
+                            </tr>
                         {% endfor %}
                     </tbody>
                 </table>
@@ -95,16 +101,22 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for free in frees %}
-                        <tr>
-                            <td>{{ free.PointsFree }}</td>
-                            <td> {{ free.PointsFree }} x hores </td>
-                            <td>{{ free.Comment }}</td>
-                        </tr>
+                        {% for professor in professor_data %}
+                            {% for free in professor.frees %}
+                                <tr>
+                                    <td>{{ free.PointsFree }}</td>
+                                    <td> {{ free.PointsFree }} x hores </td>
+                                    <td>{{ free.Comment }}</td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="3" class="text-center " style="font-style: italic;">Sense punts d'alliberació pel curs acadèmic seleccionat.</td>
+                                </tr>
+                            {% endfor %}
                         {% empty %}
-                        <tr>
-                            <td colspan="3" class="text-center " style="font-style: italic;">Sense punts d'alliberació pel curs acadèmic seleccionat.</td>
-                        </tr>
+                            <tr>
+                                <td colspan="3" class="text-center" style="font-style: italic;">Cap informació disponible.</td>
+                            </tr>
                         {% endfor %}
                     </tbody>
                 </table>
@@ -122,18 +134,24 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for capacity_section in capacity_sections %}
-                            <tr>
-                                <td>{{ capacity_section.Points }}</td>
-                                <td>Hores</td>
-                                <td>{{ capacity_section.Section.NameSection }}</td>
-                                <td>{{ capacity_section.Comment }}</td>
-                            </tr>
+                            {% for professor in professor_data %}
+                                {% for capacity_section in professor.capacity_sections %}
+                                <tr>
+                                    <td>{{ capacity_section.Points }}</td>
+                                    <td>Hores</td>
+                                    <td>{{ capacity_section.Section.NameSection }}</td>
+                                    <td>{{ capacity_section.Comment }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center" style="font-style: italic;">Sense punts per seccions pel curs acadèmic seleccionat.</td>
+                                </tr>
+                                {% endfor %}
                             {% empty %}
                             <tr>
-                                <td colspan="4" class="text-center" style="font-style: italic;">Sense punts per seccions pel curs acadèmic seleccionat.</td>
+                                <td colspan="3" class="text-center" style="font-style: italic;">Cap informació disponible.</td>
                             </tr>
-                            {% endfor %}
+                        {% endfor %}
                         </tbody>
                     </table>
                     

@@ -39,7 +39,7 @@ def info_assignments(request):
             return render(request, 'info_assignments_professor.html', {'available_years': available_years})
     
     # Determine if the selected year is the most recent year
-    is_most_recent_year = selected_year == Year.objects.order_by('-Year').first()
+    selected_year == Year.objects.order_by('-Year').first()
    
     user = request.user
     professor=None
@@ -54,15 +54,24 @@ def info_assignments(request):
     capacities = Capacity.objects.filter(Professor=professor, Year=selected_year).order_by('-Year__Year')
     frees = Free.objects.filter(Professor=professor, Year=selected_year).order_by('-Year__Year')
     capacity_sections = CapacitySection.objects.filter(Professor=professor, Year=selected_year).order_by('-Year__Year')
-  
-    print(capacities, frees, capacity_sections)
-
+   
     # Calculate the balance
     capacity_points = sum(c.Points for c in capacities)
     free_points = sum(f.PointsFree for f in frees)
     section_points_sum = sum(s.Points for s in capacity_sections)
 
     balance = capacity_points - free_points - section_points_sum
+
+    professor_data.append({
+        'capacities': capacities,
+        'frees': frees,
+        'capacity_sections': capacity_sections,
+        'capacity_points':capacity_points,
+        'free_points': free_points,
+        'capacity_sections': capacity_sections,
+        'balance':balance,
+    })
+
 
     #Get ALL COURSES for each SECTION assigned
     assignments = Assignment.objects.filter(
@@ -95,30 +104,22 @@ def info_assignments(request):
         ]
         # Append data to result dictionary
         sections_info.append({
-        'section':course_year.Course.Degree.School.Section.NameSection,
-        'school': course_year.Course.Degree.School.NameSchool,
-        'degree': course_year.Course.Degree.NameDegree,
-        'course': course_year.Course.NameCourse,
-        'semester': course_year.Semester,
-        'total_points': total_points,
-        'coordinator': coordinator,
-        'coworkers': coworkers,
-    })
-
-
+            'section':course_year.Course.Degree.School.Section.NameSection,
+            'school': course_year.Course.Degree.School.NameSchool,
+            'degree': course_year.Course.Degree.NameDegree,
+            'course': course_year.Course.NameCourse,
+            'semester': course_year.Semester,
+            'total_points': total_points,
+            'coordinator': coordinator,
+            'coworkers': coworkers,
+        })
+        
     context = {
         'professor':professor,
         'available_years': available_years,
         'selected_year': selected_year,
-        'is_most_recent_year': is_most_recent_year,
+
         'professor_data': professor_data,        
-        'capacities': capacities,
-        'frees': frees,
-        'capacity_sections': capacity_sections,
-        'capacities':capacities,
-        'free_points': free_points,
-        'capacity_sections': capacity_sections,
-        'balance':balance,
         'sections_info': sections_info,
     }
 
