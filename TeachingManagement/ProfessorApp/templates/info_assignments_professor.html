@@ -28,19 +28,27 @@
                 <!-- Filter Fields -->
                 <h3>Filtrar per curs</h3>
                 <div class="d-flex justify-content-between row mb-2">
-                
-                    <!-- Year Filter Form -->
-                <form method="get" id="year-filter-form">
-                    <label for="year-select">Selecciona un curs acadèmic</label>
-                    <select name="year" id="year-select" class="form-select" onchange="document.getElementById('year-filter-form').submit();">
-                        {% for year in available_years %}
-                            <!-- Use idYear as the value to send the ID, but display Year in the option text -->
-                            <option value="{{ year.idYear }}" {% if year == selected_year %}selected{% endif %}>
-                                {{ year.Year }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </form>
+                    <div class="filters d-flex flex-wrap  w-100">
+                        <div class="col-md-9">
+                            <!-- Year Filter Form -->
+                            <form method="get" id="year-filter-form">
+                                <label for="year-select">Selecciona un curs acadèmic</label>
+                                <select name="year" id="year-select" class="form-select" onchange="document.getElementById('year-filter-form').submit();">
+                                    {% for year in available_years %}
+                                        <!-- Use idYear as the value to send the ID, but display Year in the option text -->
+                                        <option value="{{ year.idYear }}" {% if year == selected_year %}selected{% endif %}>
+                                            {{ year.Year }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </form>
+                        </div> 
+                        <div class="col-md-2 d-flex flex-column justify-content-end ms-auto">
+                            <a href="#"  class="button-secondary btn-sm">Descarregar en PDF</a>
+                        </div>
+                    </div>
+                </div>
+            
             </p>
 
                 <!-- List of all courses -->
@@ -171,13 +179,13 @@
                     <table class="table table-striped table-bordered">
                         <thead class="thead-dark">
                             <tr>
-                                <th style="width: 10%;">Escola</th>
-                                <th style="width: 10%;">Titulació</th>
-                                <th style="width: 15%;">Assignatura</th>
-                                <th style="width: 5%;" >Punts totals</th>
-                                <th style="width: 4%;" >Hores</th>
-                                <th style="width: 10%;">Coordinator/a</th>
-                                <th style="width: 10%;">Companys</th>
+                                <th style="width: 12%;">Escola</th>
+                                <th style="width: 20%;">Titulació</th>
+                                <th style="width: 20%;">Assignatura</th>
+                                <th style="width: 20px;">Punts totals</th>
+                                <th style="width: 20px;">Hores</th>
+                                <th style="width: 12%;">Coordinador/a</th>
+                                <th style="width: 15%;">Companys</th>
                             </tr>
                         </thead>
                         <tbody>
