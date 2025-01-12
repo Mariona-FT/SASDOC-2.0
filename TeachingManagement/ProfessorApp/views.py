@@ -81,11 +81,14 @@ def info_assignments(request):
                     'CourseYear__Course__Degree', 'CourseYear__Course__Degree__School', 
                     'CourseYear__Course__Degree__School__Section')
 
-    # Get unique CourseYear IDs from the assignments
-    course_years = {assignment.CourseYear for assignment in assignments}
+    # Prepare sections data with the corresponding points for each section
+    sections_info = {}
+    for capacity_section in capacity_sections:
+        section_name = capacity_section.Section.NameSection
+        if section_name not in sections_info:
+            sections_info[section_name] = []
 
-    # Prepare sections info
-    sections_info = []
+    course_years = {assignment.CourseYear for assignment in assignments}
     for course_year in course_years:
         # Filter assignments for this specific CourseYear
         section_assignments = [a for a in assignments if a.CourseYear == course_year]
@@ -102,9 +105,13 @@ def info_assignments(request):
         coworkers = [
             a.Professor for a in Assignment.objects.filter(CourseYear=course_year)
         ]
-        # Append data to result dictionary
-        sections_info.append({
-            'section':course_year.Course.Degree.School.Section.NameSection,
+
+        # Append data to result dictionary            
+        section_name = course_year.Course.Degree.School.Section.NameSection
+        if section_name not in sections_info:
+            sections_info[section_name] = []
+
+        sections_info[section_name].append({
             'school': course_year.Course.Degree.School.NameSchool,
             'degree': course_year.Course.Degree.NameDegree,
             'course': course_year.Course.NameCourse,
@@ -113,6 +120,10 @@ def info_assignments(request):
             'coordinator': coordinator,
             'coworkers': coworkers,
         })
+
+    # Sort sections_info2 by section name
+    sorted_sections_info = sorted(sections_info, key=lambda x: x[0])  # Sorting by section name
+
         
     context = {
         'professor':professor,
@@ -121,6 +132,7 @@ def info_assignments(request):
 
         'professor_data': professor_data,        
         'sections_info': sections_info,
+
     }
 
     return render(request, 'info_assignments_professor.html',context)
