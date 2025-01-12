@@ -56,140 +56,136 @@
                     </h5>
                 {% endif %}
 
-                <h3>Capacitat total</h3> {{capacity.Points}}
+            <h3>Resum capacitat docent </h3>
 
-                <h3>Punts d'alliberació</h3>
-
-                <h3>Llistat d'assignatures</h3>
-
-                <table class="table table-striped" id="coursesyear-table">
-                    <thead>
+                <h5>Punts totals</h5> 
+                <table class="table table-striped table-bordered" id="capacitiesTable">
+                    <thead class="thead-dark">
                         <tr>
-                            <th style="width: 150px;">Titulació</th>
-                            <th style=" width: 150px;">Assignatura</th>
-                            <th style=" width: auto;">Semestre</th>
-                            <th style="width: auto;">Punts A</th>
-                            <th style="width: auto;">Punts B</th>
-                            <th style="width: auto;">Punts C</th>
-                            <th style="width: auto;">Punts D</th>
-                            <th style="width: auto;">Punts E</th>
-                            <th style="width: auto;">Punts F</th>
-                            <th style="width:80px">Sum</th>
-                            <th class="actions-c" style="width:180px">Accions</th>
+                            <th style="width: 20%;">Punts</th>
+                            <th style="width: 20%;">Hores</th>
+                            <th style="width: 45%;">Comentari</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% if course_years %}
-                            {% for course_year  in course_years  %}
-                            <tr data-name="{{ course_year.Course.NameCourse }}"
-                            data-semester="{{course_year.Semester}}"
-                            data-degree="{{ course_year.DegreeName}}"
-                            data-totalpoints="{{ course_year.TotalPoints }}"
-                            >
-                            <td>{{ course_year.DegreeName}}</td>
-                            <td><strong>{{ course_year.Course.NameCourse }} </strong></td>
-                            <td><strong>{{ course_year.Semester }}</stong></td>
-                            <td>{{ course_year.PointsA|floatformat:"-2" |default:"-" }}</td>
-                            <td>{{ course_year.PointsB|floatformat:"-2" |default:"-" }}</td>
-                            <td>{{ course_year.PointsC|floatformat:"-2" |default:"-" }}</td>
-                            <td>{{ course_year.PointsD|floatformat:"-2" |default:"-" }}</td>
-                            <td>{{ course_year.PointsE|floatformat:"-2" |default:"-" }}</td>
-                            <td>{{ course_year.PointsF|floatformat:"-2" |default:"-" }}</td>
-                            <td><strong>{{ course_year.TotalPoints|floatformat:"-2"  }}</strong></td>
-                            <td class="actions-c" style="width:180px">
-                                <!-- Edit button -->
-                                <a href="#" class="button-edit btn-sm">Editar</a>
-
-                                <!-- Delete form with JavaScript confirmation -->
-                                <form method="post" action="#" style="display:inline;" onsubmit="return confirmDelete('{{ course_year.Course.NameCourse }}');">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="confirm_delete" value="{{  course_year.idCourseYear }}">
-                                    <button type="submit" class="button-delete btn-sm">Eliminar</button>
-                                </form>
-                            </td>
+                        {% for capacity in capacities %}
+                        <tr>
+                            <td>{{ capacity.Points }}</td>
+                            <td>{{ capacity.Points }} x hores </td>
+                            <td>{{ capacity.Comment }}</td>
                         </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center" style="font-style: italic;">Sense punts totals pel curs acadèmic seleccionat.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <br>
+
+                <h5>Punts d'alliberació</h5>
+                <table class="table table-striped table-bordered" id="freesTable">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th style="width: 20%;">Punts</th>
+                            <th style="width:180px">Hores</th>
+                            <th style="width: 45%;">Comentari</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for free in frees %}
+                        <tr>
+                            <td>{{ free.PointsFree }}</td>
+                            <td> {{ free.PointsFree }} x hores </td>
+                            <td>{{ free.Comment }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center " style="font-style: italic;">Sense punts d'alliberació pel curs acadèmic seleccionat.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                
+                <br>
+
+                <h5> Punts per seccions</h5>
+                    <table class="table table-striped table-bordered" id="capacitySectionsTable">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th style="width: 10%;">Punts</th> 
+                                <th style="width: 10%;">Hores</th>                                                       
+                                <th style="width: 15%;">Secció</th>
+                                <th style="width: 35%;">Comentari</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for capacity_section in capacity_sections %}
+                            <tr>
+                                <td>{{ capacity_section.Points }}</td>
+                                <td>Hores</td>
+                                <td>{{ capacity_section.Section.NameSection }}</td>
+                                <td>{{ capacity_section.Comment }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center" style="font-style: italic;">Sense punts per seccions pel curs acadèmic seleccionat.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    
+
+                <h3>Assignació docent per seccions</h3>
+
+                    <table class="table table-striped" id="coursesyear-table">
+                        <thead>
+                            <tr>
+                                <th>Section</th>
+                                <th>School</th>
+                                <th>Degree</th>
+                                <th>Course</th>
+                                <th>Total Points</th>
+                                <th>Coordinator</th>
+                                <th>Coworkers</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% if sections_info %}
+                            {% for section in sections_info %}
+                            <tr>
+                                <td>{{ section.section}} </td>
+                                <td>{{ section.school }}</td>
+                                <td>{{ section.degree }}</td>
+                                <td>{{ section.course }} ({{ section.semester }})</td>
+                                <td>{{ section.total_points }}</td>
+                                <td>
+                                    {% if section.coordinator %}
+                                        {{ section.coordinator.name }} {{ section.coordinator.family_name }}
+                                        {% else %}
+                                        No assignat
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% for coworker in section.coworkers %}
+                                    {{ coworker.name }} {{ coworker.family_name }}{% if not forloop.last %}, {% endif %}
+                                    {% endfor %}
+                                </td>
+                            </tr>
                             {% endfor %}
                         {% else %}
                             <tr>
-                                <td colspan="11" class="text-center">Cap encàrrec docent pel curs acadèmic seleccionat.</td>
+                                <td colspan="7" class="text-center">Cap encàrrec docent pel curs acadèmic seleccionat.</td>
                             </tr>        
                         {% endif %}
                     </tbody>
                 </table>
-                
-                <!-- No results message -->
-                <div id="no-results-message" class="text-center text-danger" style="display:none;">
-                    <span id="no-results-text"></span>
-                </div>
-            </div>
-
-            <!-- Buttons section fixed on the right -->
-            <div class="col-lg-1 d-flex flex-column align-items-end">
-                <div class="sticky-top" style="top: 1rem">
-                    <div class="buttons mb-2 d-flex flex-column align-items-center">
-                        {% comment %} <a href="{% url 'courseyear_export'  year_id=selected_year.idYear %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Descarregar excel</a> {% endcomment %}
-                    </div>
-                    <div class="buttons mb-2 d-flex flex-column align-items-center">
-                        {% comment %} <a href="{% url 'courseyear_upload' %}" class="button-secondary btn-sm mb-2" style="width: 100%;" >Carregar excel</a> {% endcomment %}
-                    </div>
-                </div>
             </div>
             
         </div>
     </div>
 </div>
-
-<!-- JavaScript function for confirmation -->
-<script>
-
-    function confirmDelete(CourseNameYear) {
-        return confirm("Estàs segur que vols eliminar l'encàrrec docent de l'assignatura : " + CourseNameYear + "?");
-    }
-
-    //Not using  accents in the filter and in the data
-    function normalizeString(str) {
-        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-    }
-
-    // JavaScript for dynamic filtering
-    document.getElementById('filter-all').addEventListener('input', filterTable);
-
-    function filterTable() {
-        const searchValue = normalizeString(document.getElementById('filter-all').value);
-        const tableRows = document.querySelectorAll('#coursesyear-table tbody tr');
-
-        let rowsVisible = 0;
-
-        tableRows.forEach(row => {
-            const fieldName = row.getAttribute('data-name') ? normalizeString(row.getAttribute('data-name')) : '';
-            const fieldSemester = row.getAttribute('data-semester') ? normalizeString(row.getAttribute('data-semester')) : '';
-            const fieldDegree = row.getAttribute('data-degree') ? normalizeString(row.getAttribute('data-degree')) : '';
-            const fieldTpoints = row.getAttribute('data-totalpoints') ? normalizeString(row.getAttribute('data-totalpoints')) : '';
-
-            const matchesSearch = fieldName.includes(searchValue) || fieldSemester.includes(searchValue) || fieldDegree.includes(searchValue) || fieldTpoints.includes(searchValue) 
-            if (matchesSearch) {
-                row.style.display = '';
-                rowsVisible++;
-            } else {
-                row.style.display = 'none';
-            }
-        });
-
-        const noResultsMessage = document.getElementById('no-results-message');
-        const noResultsText = document.getElementById('no-results-text');
-
-        // No results message logic
-        if (rowsVisible === 0) {
-            let message = "Cap Curs amb Puntuació amb els criteris de cerca";
-            if (searchValue) {
-                message += ` amb el terme "${searchValue}"`;
-            }
-            noResultsText.textContent = message + ".";
-            noResultsMessage.style.display = 'block';
-        } else {
-            noResultsMessage.style.display = 'none';
-        }
-    }
-</script>
 
 {% endblock %}

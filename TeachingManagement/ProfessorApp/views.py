@@ -5,6 +5,7 @@ from django.urls import reverse
 from ProfSectionCapacityApp.models import Professor, Capacity, Free, CapacitySection,TypePoints,CourseYear
 from UsersApp.models import Professor
 from AcademicInfoApp.models import Section,Year
+from AssignmentYearApp.models import Assignment
 from django.contrib import messages
 from itertools import chain
 from django.db.models import Sum
@@ -48,12 +49,61 @@ def info_assignments(request):
         messages.error(request, "No es troba el professor per l'usuari actual.")
         return render(request, 'info_assignments_professor.html', {'available_years': available_years})
 
-    #Capacity - punts totals - of selected year
-    capacity = Capacity.objects.filter(Year=selected_year, Professor=professor).first()
-    if not capacity:
-        total_capacity = 0
-    else:
-        total_capacity = capacity.Points if hasattr(capacity, 'Points') else 0
+    professor_data=[]
+    # Filter capacity, free, and capacity_section entries by the selected year
+    capacities = Capacity.objects.filter(Professor=professor, Year=selected_year).order_by('-Year__Year')
+    frees = Free.objects.filter(Professor=professor, Year=selected_year).order_by('-Year__Year')
+    capacity_sections = CapacitySection.objects.filter(Professor=professor, Year=selected_year).order_by('-Year__Year')
+  
+    print(capacities, frees, capacity_sections)
+
+    # Calculate the balance
+    capacity_points = sum(c.Points for c in capacities)
+    free_points = sum(f.PointsFree for f in frees)
+    section_points_sum = sum(s.Points for s in capacity_sections)
+
+    balance = capacity_points - free_points - section_points_sum
+
+    #Get ALL COURSES for each SECTION assigned
+    assignments = Assignment.objects.filter(
+        Professor=professor, 
+        CourseYear__Year__idYear=selected_year_id
+    ).select_related('CourseYear', 'CourseYear__Course', 'CourseYear__Year', 
+                    'CourseYear__Course__Degree', 'CourseYear__Course__Degree__School', 
+                    'CourseYear__Course__Degree__School__Section')
+
+    # Get unique CourseYear IDs from the assignments
+    course_years = {assignment.CourseYear for assignment in assignments}
+
+    # Prepare sections info
+    sections_info = []
+    for course_year in course_years:
+        # Filter assignments for this specific CourseYear
+        section_assignments = [a for a in assignments if a.CourseYear == course_year]
+
+        # Calculate total points for the section
+        total_points = sum(
+            (a.PointsA or 0) + (a.PointsB or 0) + (a.PointsC or 0) +
+            (a.PointsD or 0) + (a.PointsE or 0) + (a.PointsF or 0)
+            for a in section_assignments
+        )
+
+        # Get coordinator and coworkers
+        coordinator = next((a.Professor for a in section_assignments if a.isCoordinator), "")
+        coworkers = [
+            a.Professor for a in Assignment.objects.filter(CourseYear=course_year)
+        ]
+        # Append data to result dictionary
+        sections_info.append({
+        'section':course_year.Course.Degree.School.Section.NameSection,
+        'school': course_year.Course.Degree.School.NameSchool,
+        'degree': course_year.Course.Degree.NameDegree,
+        'course': course_year.Course.NameCourse,
+        'semester': course_year.Semester,
+        'total_points': total_points,
+        'coordinator': coordinator,
+        'coworkers': coworkers,
+    })
 
 
     context = {
@@ -61,9 +111,15 @@ def info_assignments(request):
         'available_years': available_years,
         'selected_year': selected_year,
         'is_most_recent_year': is_most_recent_year,
-        'capacity':capacity,
-        # 'professor_id': professor_id,
-        # 'assignment_data': assignment_data,
+        'professor_data': professor_data,        
+        'capacities': capacities,
+        'frees': frees,
+        'capacity_sections': capacity_sections,
+        'capacities':capacities,
+        'free_points': free_points,
+        'capacity_sections': capacity_sections,
+        'balance':balance,
+        'sections_info': sections_info,
     }
 
     return render(request, 'info_assignments_professor.html',context)
