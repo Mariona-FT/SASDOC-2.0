@@ -131,7 +131,7 @@
                                 {% for point_name in typepoint_names_assigned.values %}
                                     <td>
                                         <input type="number" name="{{ point_name }}" class="form-control" step="any" min="0"
-                                        value="{{ data|get_item:point_name|floatformat:"-2" }}" disabled>
+                                        value="{{ data|get_item:point_name }}" disabled>
                                     </td>
                                 {% endfor %}
             

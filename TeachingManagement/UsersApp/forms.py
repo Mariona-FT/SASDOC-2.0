@@ -344,7 +344,7 @@ class ChiefRegistrationForm(forms.ModelForm):
         model = Chief
         fields = ['professor', 'section'] 
         labels = {
-            'professor': 'Nom del Professor',
+            'professor': 'Professor/a',
             'section':'Secció',
         }
 

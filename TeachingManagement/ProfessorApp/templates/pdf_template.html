@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ca" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            color: #333;
+        }
+        h1, h2, h3, h4, h5 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 2px;
+        }
+        h2 {
+            font-size: 20px;
+            margin-bottom: 2px;
+        }
+        h3 {
+            font-size: 18px;
+            margin-top: 10px;
+            margin-bottom: 2px;
+        }
+        h4 {
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        h5 {
+            font-size: 15px; 
+            margin-top: 10px;
+            margin-bottom: 3px;
+            text-align: left;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2px 10px;
+            font-size: 11px;
+        }
+        .table-container-centered {
+            width: 80%; 
+            margin: 0 auto;
+            text-align: center;
+        }
+        table th,table td {
+            border: 1px solid #ddd;
+            text-align: center;
+            padding: 2px;
+            white-space: nowrap;
+        }
+        th {
+            background-color: #f2f2f2;
+            color: #2c3e50;
+            font-weight: bold;
+            margin-top: 5px;
+            margin-bottom: 5px;
+            font-size: 12px; 
+            white-space: nowrap;
+        }
+        .section-title {
+            text-align: left;
+            font-size: 15px;
+            color: DodgerBlue;
+            margin-top: 10px;
+            margin-bottom: 3px;
+        }
+        .no-data {
+            font-style: italic;
+            text-align: center;
+            color: #888;
+            padding: 2px;
+        }
+        .table-container th, .table-container td {
+            padding: 2px;
+        }
+        .table-container thead {
+            background-color: #f4f4f4;
+        }
+        .table-container td {
+            text-align: left;
+        }
+        .table-container td, .table-container th {
+            border: 1px solid #ddd;
+        }
+        
+    </style>
+</head>
+<body>
+    <h1>{{ title }}</h1>
+    <h2>{{ professor.name }} {{ professor.family_name }}</h2>
+
+    {% if selected_year %}
+        <h3>Assignació docent pel curs acadèmic - {{ selected_year.Year }} 
+        {% if selected_year.Year != available_years.first.Year %}
+            <span>(Historial)</span>
+        {% endif %}
+        </h3>
+    {% endif %}
+
+<div style=" text-align: center;">
+    <h3>Resum capacitat docent</h3>
+
+        <div style="text-align: center;">  
+            <h5>Punts totals</h5>
+            <table style="margin: 0 auto; border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <th  style="width: 20%; text-align: center;">Punts</th>
+                        <th  style="width: 20%; text-align: center;">Hores</th>
+                        <th  style="width: 50%; text-align: center;">Comentari</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for professor in professor_data %}
+                        {% for capacity in professor.capacities %}
+                            <tr>
+                                <td  style="text-align: center;">{{ capacity.Points }}</td>
+                                <td  style="text-align: center;">XX</td>
+                                <td  style="text-align: left;"> 
+                                    {% if not capacity.Comment %}
+                                        <p></p>
+                                    {% else %}
+                                        {{ capacity.Comment }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="3" class="no-data">Sense punts totals pel curs acadèmic seleccionat.</td>
+                            </tr>
+                        {% endfor %}
+                    {% empty %}
+                        <tr>
+                            <td colspan="3" class="no-data">Cap informació disponible.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>    
+        </div>
+
+        <div> 
+            <h5>Punts d'alliberació</h5>
+            <table>
+                <thead>
+                    <tr>
+                        <th  style="width: 20%; text-align: center;">Punts</th>
+                        <th  style="width: 20%; text-align: center;">Hores</th>
+                        <th  style="width: 50%; text-align: center;">Comentari</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for professor in professor_data %}
+                        {% for free in professor.frees %}
+                            <tr>
+                                <td  style="text-align: center;">{{ free.PointsFree }}</td>
+                                <td  style="text-align: center;">XX</td>
+                                <td  style="text-align: left;"> 
+                                    {% if not free.Comment %}
+                                        <p></p>
+                                    {% else %}
+                                        {{ free.Comment }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="3" class="no-data">Sense punts d'alliberació pel curs acadèmic seleccionat.</td>
+                            </tr>
+                        {% endfor %}
+                    {% empty %}
+                        <tr>
+                            <td colspan="3" class="no-data">Cap informació disponible.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div> 
+            <h5>Punts per seccions</h5>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 20%; text-align: center;">Punts</th>
+                        <th style="width: 20%; text-align: center;">Hores</th>
+                        <th style="width: 25%; text-align: center;">Secció</th>
+                        <th style="width: 25%; text-align: center;">Comentari</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for professor in professor_data %}
+                        {% for capacity_section in professor.capacity_sections %}
+                            <tr>
+                                <td style="text-align: center;" >{{ capacity_section.Points }}</td>
+                                <td style="text-align: center;" >XX</td>
+                                <td style="text-align: center;">{{ capacity_section.Section.NameSection }}</td>
+                                <td style="text-align: left;">
+                                {% if not capacity_section.Comment %}
+                                    <p></p>
+                                {% else %}
+                                    {{ capacity_section.Comment }}
+                                {% endif %}
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="4" class="no-data">Sense punts per seccions pel curs acadèmic seleccionat.</td>
+                            </tr>
+                        {% endfor %}
+                    {% empty %}
+                        <tr>
+                            <td colspan="4" class="no-data">Cap informació disponible.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    
+
+</div>
+
+<br>
+
+<div>
+    <h3>Assignació docent per seccions</h3>
+    {% if sections_info %}
+        {% for section_name, section_data in sections_info.items %}
+            <h4 class="section-title">{{ section_name }}</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 15%;">Escola</th>
+                        <th style="width: 20%;">Titulació</th>
+                        <th style="width: 18%;">Assignatura</th>
+                        <th style="width: 10%;">Punts totals</th>
+                        <th style="width: 8%;">Hores</th>
+                        <th style="width: 18%;">Coordinador/a</th>
+                        <th style="width: 18%;">Companys</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for course_info in section_data %}
+                        <tr>
+                            <td>{{ course_info.school }}</td>
+                            <td>{{ course_info.degree }}</td>
+                            <td>{{ course_info.course }} ({{ course_info.semester }})</td>
+                            <td>{{ course_info.total_points }}</td>
+                            <td>XX</td>
+                            <td style="font-size: 9px;  white-space: nowrap; padding: 0px" >
+                                {% if not course_info.coordinator %}
+                                    <p></p>
+                                {% else %}
+                                    {{ course_info.coordinator}}
+                                {% endif %} 
+                            </td>
+                            <td style="font-size: 9px; white-space: nowrap;  padding: 0px" >
+                                {% for coworker in course_info.coworkers %}
+                                    {{ coworker.name }} {{ coworker.family_name }}<br>
+                                {% empty %}
+                                    <p></p>
+                                {% endfor %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="7"  style="padding-top: 5px;">
+                                <strong>Informació dels punts i hores:</strong> 
+                                {{ course_info.points_summary|default:"No hi ha punts o nomenclatura per aquesta assignatura o secció."|safe }}
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="7" class="no-data">No hi ha assignacions.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endfor %}
+    {% else %}
+        <p class="no-data">Sense assignacions per mostrar.</p>
+    {% endif %}
+</div>
+
+</body>
+</html>

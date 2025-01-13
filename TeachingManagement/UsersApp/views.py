@@ -23,13 +23,6 @@ def is_section_chief(user):
 def is_professor(user):
     return user.role == 'professor'
 
-@login_required
-@user_passes_test(is_professor)
-def professor_dashboard(request):
-    #Delete this dashboard in the future
-    return render(request, 'users/professor/professor_dashboard.html')
-
-
 ### PROFESSOR ###
 #Professor list to manage - listing and actions of edit, delete and add professors
 @login_required
@@ -190,7 +183,7 @@ def login_session(request):
                     elif user.role == 'section_chief':
                         return redirect('sectionchiefapp:sectionchief_dashboard')  # URL for Section Chief
                     elif user.role ==  'professor':
-                        return redirect('usersapp:professor_dashboard')  # URL for Professor
+                        return redirect('professorapp:professor_dashboard')  # URL for Professor
                 else:
                     return render(request, 'actions/login.html', {'error': 'Invalid credentials'})
     else:

@@ -309,14 +309,12 @@ html {
 /* Global form styles */
 .form-group {
     margin-bottom: 1.5rem;
-    display: flex;
-    flex-wrap: wrap;
     align-items: center;
     width: 100%;
 }
 
 .form-group label {
-    display: block;
+    width: 20%;
     margin-bottom: 0.5rem;
     text-align: left; /* Left-align the label */
 }

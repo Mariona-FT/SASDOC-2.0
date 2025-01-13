@@ -27,5 +27,10 @@
             </form>
         </li>
 
+        {% url 'professorapp:info_assignments' as info_assignments_url %}
+        <li class="nav-item me-4 {% if '/professor/info/' in request.path %} active{% endif %}"  style="margin-left: 2rem;">
+            <a class="nav-link" href="{{info_assignments_url}}">Informe assignació docent personal</a>
+        </li>
+
     </ul>
 </nav>
