@@ -9,6 +9,13 @@ from AssignmentYearApp.models import Assignment
 from django.contrib import messages
 from itertools import chain
 from django.db.models import Sum
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from io import BytesIO
+from django.http import HttpResponse
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+
 # Create your views here
 
 def is_professor(user):
@@ -170,3 +177,22 @@ def generate_infoassigments_pdf(request):
     data = {
         'title': 'Example PDF',
         'message': 'This is a PDF generated using xhtml2pdf in Django.',
+    }
+
+    # Render the HTML template into a string
+    html = render_to_string('pdf_template.html', data)
+
+    # Create an HttpResponse object with PDF headers
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="example.pdf"'
+
+    # Create a PDF using xhtml2pdf
+    pisa_status = pisa.CreatePDF(
+        html, dest=response
+    )
+
+    # Check for errors
+    if pisa_status.err:
+        return HttpResponse('We had some errors <pre>' + html + '</pre>')
+
+    return response
