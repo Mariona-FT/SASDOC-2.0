@@ -67,7 +67,7 @@
             <hr>
                 <div class="table-responsive" style="max-width: 80%; margin: 0 auto;"> 
                     <h5 style="text-align:left;">Punts totals</h5> 
-                    <table class="table table-bordered" id="totalpointsTable"> 
+                    <table class="table table-bordered" id="totalpointsTable " style="border: 1px solid #888;"> 
                         <thead class="thead-dark">
                             <tr>
                                 <th style="width: 20%; text-align: center;">Punts</th>
@@ -98,9 +98,9 @@
                 </div>
 
                 <br>
-                <div class="table-responsive" style="max-width: 80%; margin: 0 auto;"> 
+                <div class="table-responsive" style="max-width: 80%; margin: 0 auto;" > 
                     <h5 style="text-align:left;">Punts d'alliberació</h5>
-                    <table class="table table-bordered" id="freesTable">
+                    <table class="table table-bordered" id="freesTable" style="border: 1px solid #888;">
                         <thead class="thead-dark">
                             <tr>
                                 <th style="width: 20%; text-align: center;">Punts</th>
@@ -135,8 +135,8 @@
 
                 <div class="table-responsive" style="max-width: 80%; margin: 0 auto;"> 
                     <h5 style="text-align:left;">Punts per seccions</h5>
-                    <table class="table table-bordered" id="capacitySectionsTable">
-                        <thead class="thead-dark">
+                    <table class="table table-bordered" id="capacitySectionsTable" style="border: 1px solid #888;">
+                        <thead class="thead-dark" >
                             <tr>
                                 <th style="width: 20%; text-align: center;">Punts</th> 
                                 <th style="width: 20%; text-align: center;">Hores</th>                                                       
@@ -190,7 +190,7 @@
                         </thead>
                         <tbody>
                             {% for course_info in section_data %}
-                                <tr>
+                                <tr  onclick="toggleDetails(this)" >
                                     <td>{{ course_info.school }}</td>
                                     <td>{{ course_info.degree }}</td>
                                     <td>{{ course_info.course }} - {{ course_info.semester }}</td>
@@ -205,6 +205,13 @@
                                         {% endfor %}
                                     </td>
                                 </tr>
+                                 <!-- Expanded Row for Details -->
+                                 <tr class="professor-details-row" style="display: none;">
+                                    <td colspan="7" class="professor-details">
+                                        <strong>Informació dels punts i hores:</strong> {{ course_info.points_summary|default:"No hi ha punts o nomenclatura per aquesta assignatura o secció."|safe }}
+                                    </td>
+                                </tr>
+
                             {% empty %}
                                 <tr>
                                     <td colspan="7" class="text-center"  style="font-style: italic;">
@@ -228,5 +235,15 @@
         </div>
     </div>
 </div>
+
+<script>
+    function toggleDetails(row) {
+        // Find the next row, which is the details row
+        let detailsRow = row.nextElementSibling;
+        if (detailsRow && detailsRow.classList.contains('professor-details-row')) {
+            detailsRow.style.display = detailsRow.style.display === 'none' ? 'table-row' : 'none';
+        }
+    }
+</script>
 
 {% endblock %}

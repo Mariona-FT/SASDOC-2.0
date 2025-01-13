@@ -30,16 +30,17 @@ def info_assignments(request):
 
     # Try to retrieve the selected year, default to the most recent year
     try:
-        selected_year_id = int(selected_year_id) if selected_year_id else 0
         selected_year = Year.objects.get(pk=selected_year_id)
+        selected_year_id = int(selected_year_id) if selected_year_id else 0
+        
     except (ValueError, Year.DoesNotExist):
         selected_year = Year.objects.order_by('-Year').first()
-        if not selected_year:
-            messages.error(request, "No hi ha cursos acadèmics disponibles.")
-            return render(request, 'info_assignments_professor.html', {'available_years': available_years})
+        selected_year_id = selected_year.idYear if selected_year else None
     
-    # Determine if the selected year is the most recent year
-    selected_year == Year.objects.order_by('-Year').first()
+    if not selected_year:
+        messages.error(request, "No hi ha cursos acadèmics disponibles.")
+        return render(request, 'info_assignments_professor.html', {'available_years': available_years})
+    
    
     user = request.user
     professor=None
@@ -55,21 +56,11 @@ def info_assignments(request):
     frees = Free.objects.filter(Professor=professor, Year=selected_year).order_by('-Year__Year')
     capacity_sections = CapacitySection.objects.filter(Professor=professor, Year=selected_year).order_by('-Year__Year')
    
-    # Calculate the balance
-    capacity_points = sum(c.Points for c in capacities)
-    free_points = sum(f.PointsFree for f in frees)
-    section_points_sum = sum(s.Points for s in capacity_sections)
-
-    balance = capacity_points - free_points - section_points_sum
 
     professor_data.append({
         'capacities': capacities,
         'frees': frees,
         'capacity_sections': capacity_sections,
-        'capacity_points':capacity_points,
-        'free_points': free_points,
-        'capacity_sections': capacity_sections,
-        'balance':balance,
     })
 
 
@@ -111,18 +102,18 @@ def info_assignments(request):
         if section_name not in sections_info:
             sections_info[section_name] = []
 
+        points_summary = get_assigned_points_summary(course_year, professor)
+
         sections_info[section_name].append({
             'school': course_year.Course.Degree.School.NameSchool,
             'degree': course_year.Course.Degree.NameDegree,
             'course': course_year.Course.NameCourse,
             'semester': course_year.Semester,
             'total_points': total_points,
+            'points_summary':points_summary,
             'coordinator': coordinator,
             'coworkers': coworkers,
         })
-
-    # Sort sections_info2 by section name
-    sorted_sections_info = sorted(sections_info, key=lambda x: x[0])  # Sorting by section name
 
         
     context = {
@@ -136,3 +127,46 @@ def info_assignments(request):
     }
 
     return render(request, 'info_assignments_professor.html',context)
+
+#return the string with the points and the typepoints for each courseyear 
+def get_assigned_points_summary(courseyear,professor):
+    section=courseyear.Course.Degree.School.Section
+    year=courseyear.Year
+    typepoints_section = TypePoints.objects.filter(Section=section, Year=year).first()
+
+    # Extract the names of point types dynamically
+    typepoint_names_assigned = {}
+    if typepoints_section:
+        typepoints_fields = {
+            'PointsA': 'NamePointsA',
+            'PointsB': 'NamePointsB',
+            'PointsC': 'NamePointsC',
+            'PointsD': 'NamePointsD',
+            'PointsE': 'NamePointsE',
+            'PointsF': 'NamePointsF',
+        }
+        for field, name_field in typepoints_fields.items():
+            point_name = getattr(typepoints_section, name_field, None)
+            if point_name: 
+                typepoint_names_assigned[field] = point_name
+
+    assigned_points = {name: 0 for name in typepoint_names_assigned.values()}
+
+    assignments = Assignment.objects.filter(CourseYear=courseyear,Professor=professor)
+
+    for assignment in assignments:
+        for field, point_name in typepoint_names_assigned.items():
+            assigned_value = getattr(assignment, field, 0) or 0
+            assigned_points[point_name] += assigned_value
+
+    points_summary = ", ".join([f"{point_name}: {value}" for point_name, value in assigned_points.items()])
+    
+    return points_summary
+
+
+
+def generate_infoassigments_pdf(request):
+        # Fetch your data for the template
+    data = {
+        'title': 'Example PDF',
+        'message': 'This is a PDF generated using xhtml2pdf in Django.',
