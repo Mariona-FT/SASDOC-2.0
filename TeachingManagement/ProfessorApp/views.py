@@ -143,7 +143,6 @@ def get_assigned_points_summary(courseyear,professor):
 
 
 @login_required
-@user_passes_test(is_professor)
 def info_assignments(request):
     context, error = get_professor_assignments_data(request)
     if error:
@@ -154,7 +153,6 @@ def info_assignments(request):
 
 
 @login_required
-@user_passes_test(is_professor)
 def generate_assignments_pdf(request):
     
     selected_year_id = request.GET.get('year')
