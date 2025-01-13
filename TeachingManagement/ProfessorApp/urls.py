@@ -23,5 +23,5 @@ urlpatterns = [
     path('', views.professor_dashboard, name='professor_dashboard'),
     path('info/', views.info_assignments, name='info_assignments'),
     
-    path('download_info_assigments/', views.generate_infoassigments_pdf, name='generate_info_pdf'),
+    path('download_info_assigments/', views.generate_assignments_pdf, name='generate_info_pdf'),
 ]
