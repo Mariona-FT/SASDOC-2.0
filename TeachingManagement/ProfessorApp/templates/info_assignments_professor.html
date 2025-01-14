@@ -5,7 +5,7 @@
 {% block content %}
 <div class="container-fluid d-flex" style="min-height: 100vh;">
     <div class="col-lg-10 mx-auto">
-        <h2 style="text-align:center">Assignació docent del professor/a</h2>
+        <h2 style="text-align:center">Assignació docent del professorat</h2>
         <h2 style="text-align:center"> {{professor.name }} {{ professor.family_name }}</h2>
 
 
@@ -82,9 +82,9 @@
                             {% for professor in professor_data %}
                                 {% for capacity in professor.capacities %}
                                     <tr>
-                                        <td style="text-align: center;"> {{ capacity.Points }}</td>
-                                        <td style="text-align: center;"> XX</td>
-                                        <td style="text-align: left;"> {{ capacity.Comment }}</td>
+                                        <td style="text-align: center;">{{ capacity.object.Points }}</td>
+                                        <td style="text-align: center;">{{ capacity.total_hours|floatformat:2 }}</td>
+                                        <td style="text-align: left;">{{ capacity.object.Comment }}</td>
                                     </tr>
                                 {% empty %}
                                     <tr>
@@ -116,9 +116,9 @@
                             {% for professor in professor_data %}
                                 {% for free in professor.frees %}
                                     <tr>
-                                        <td style="text-align: center;">{{ free.PointsFree }}</td>
-                                        <td style="text-align: center;">XX </td>
-                                        <td style="text-align: left;">{{ free.Comment }}</td>
+                                        <td style="text-align: center;">{{ free.object.PointsFree }}</td>
+                                        <td style="text-align: center;">{{ free.total_hours|floatformat:2 }} </td>
+                                        <td style="text-align: left;">{{ free.object.Comment }}</td>
                                     </tr>
                                 {% empty %}
                                     <tr>
@@ -151,10 +151,10 @@
                             {% for professor in professor_data %}
                                 {% for capacity_section in professor.capacity_sections %}
                                 <tr>
-                                    <td style="text-align: center;"> {{ capacity_section.Points }}</td>
-                                    <td style="text-align: center;"> XX </td>
-                                    <td style="text-align: center;">{{ capacity_section.Section.NameSection }}</td>
-                                    <td style="text-align: left;">{{ capacity_section.Comment }}</td>
+                                    <td style="text-align: center;">{{ capacity_section.object.Points }}</td>
+                                    <td style="text-align: center;">{{ capacity_section.total_hours|floatformat:2 }}</td>
+                                    <td style="text-align: center;">{{ capacity_section.object.Section.NameSection }}</td>
+                                    <td style="text-align: left;">{{ capacity_section.object.Comment }}</td>
                                 </tr>
                                 {% empty %}
                                 <tr>
@@ -187,8 +187,8 @@
                                 <th style="width: 20%;">Assignatura</th>
                                 <th style="width: 20px;">Punts totals</th>
                                 <th style="width: 20px;">Hores</th>
-                                <th style="width: 12%;">Coordinador/a</th>
-                                <th style="width: 15%;">Companys</th>
+                                <th style="width: 15%;">Coordinador/a</th>
+                                <th style="width: 19%;">Professorat</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -198,13 +198,13 @@
                                     <td>{{ course_info.degree }}</td>
                                     <td>{{ course_info.course }} - {{ course_info.semester }}</td>
                                     <td> <strong>{{ course_info.total_points }}</strong></td>
-                                    <td> <strong> XX <strong> </td>  
+                                    <td> <strong> {{course_info.total_hours|floatformat:2  }} <strong> </td>  
                                     <td>{{ course_info.coordinator }}</td>
                                     <td>
                                         {% for coworker in course_info.coworkers %}
-                                            {{ coworker.name }} {{ coworker.family_name }}<br>
+                                            {{ coworker.name }} {{ coworker.family_name }} - {{ coworker.total_hours|floatformat:2}} h<br>
                                         {% empty %}
-                                            No hi ha companys assignats.
+                                           <p></p>
                                         {% endfor %}
                                     </td>
                                 </tr>

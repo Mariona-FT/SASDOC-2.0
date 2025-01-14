@@ -15,6 +15,7 @@ from io import BytesIO
 from django.http import HttpResponse
 from django.template.loader import get_template
 from xhtml2pdf import pisa
+from decimal import Decimal
 
 # Create your views here
 
@@ -49,10 +50,38 @@ def get_professor_assignments_data(request):
     capacities = Capacity.objects.filter(Professor=professor, Year=selected_year).order_by('-Year__Year')
     frees = Free.objects.filter(Professor=professor, Year=selected_year).order_by('-Year__Year')
     capacity_sections = CapacitySection.objects.filter(Professor=professor, Year=selected_year).order_by('-Year__Year')
+
+    capacity_data = []
+    for capacity in capacities:
+        total_points = capacity.Points or 0
+        total_hours = total_points * Decimal(3.3333)
+        capacity_data.append({
+            'object': capacity,
+            'total_hours': total_hours,
+        })
+    
+    free_data = []
+    for free in frees:
+        total_points = free.PointsFree or 0 
+        total_hours = total_points * Decimal(3.3333)
+        free_data.append({
+            'object': free,
+            'total_hours': total_hours,
+        })
+
+    capacity_section_data = []
+    for cap_section in capacity_sections:
+        total_points = cap_section.Points or 0  
+        total_hours = total_points * Decimal(3.3333)
+        capacity_section_data.append({
+            'object':cap_section,
+            'total_hours': total_hours,
+        })
+
     professor_data.append({
-        'capacities': capacities,
-        'frees': frees,
-        'capacity_sections': capacity_sections,
+        'capacities': capacity_data,
+        'frees': free_data,
+        'capacity_sections': capacity_section_data,
     })
 
     assignments = Assignment.objects.filter(
@@ -80,8 +109,21 @@ def get_professor_assignments_data(request):
         )
         coordinator = next((a.Professor for a in section_assignments if a.isCoordinator), "")
         coworkers = [
-            a.Professor for a in Assignment.objects.filter(CourseYear=course_year)
+        {
+            'name': a.Professor.name,
+            'family_name': a.Professor.family_name,
+            'total_points':(
+                (a.PointsA or 0) + (a.PointsB or 0) + (a.PointsC or 0) +
+                (a.PointsD or 0) + (a.PointsE or 0) + (a.PointsF or 0)
+            ),
+            'total_hours': (
+                ((a.PointsA or 0) + (a.PointsB or 0) + (a.PointsC or 0) +
+                (a.PointsD or 0) + (a.PointsE or 0) + (a.PointsF or 0)) * Decimal(3.3333)
+            )
+        }
+        for a in Assignment.objects.filter(CourseYear=course_year)
         ]
+
         section_name = course_year.Course.Degree.School.Section.NameSection
         if section_name not in sections_info:
             sections_info[section_name] = []
@@ -93,6 +135,7 @@ def get_professor_assignments_data(request):
             'course': course_year.Course.NameCourse,
             'semester': course_year.Semester,
             'total_points': total_points,
+            'total_hours': (total_points * Decimal(3.3333)),
             'points_summary': points_summary,
             'coordinator': coordinator,
             'coworkers': coworkers,
