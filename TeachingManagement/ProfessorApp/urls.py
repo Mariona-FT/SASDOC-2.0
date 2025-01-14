@@ -21,7 +21,11 @@ app_name='professorapp'
 
 urlpatterns = [
     path('', views.professor_dashboard, name='professor_dashboard'),
+
     path('info/', views.info_assignments, name='info_assignments'),
-    
     path('download_info_assigments/', views.generate_assignments_pdf, name='generate_info_pdf'),
+
+    path('details-professor/<int:professor_id>/year/<int:year_id>/',views.professor_year_assignments_summary, name='professor_details'),
+    path('download_info_assigments/<int:professor_id>/year/<int:year_id>/', views.generate_professor_year_assignments_pdf, name='generate_info_pdf_given_professor'),
+
 ]

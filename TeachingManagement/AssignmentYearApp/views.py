@@ -588,6 +588,7 @@ def section_professors_list(request):
     
     context = {
         'section':section,
+        'year':year_obj,
         #list of all the schools in the section
         'schools_section':all_schools,
         #Table of professors candidates  to be assigned
