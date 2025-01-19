@@ -61,7 +61,7 @@ class Course(models.Model):
     idCourse = models.AutoField(primary_key=True)
     NameCourse = models.CharField(max_length=100)
     CodeCourse = models.IntegerField(unique=True)
-    ECTS = models.IntegerField()
+    ECTS = models.DecimalField(max_digits=5, decimal_places=2)  
     Degree = models.ForeignKey('Degree', on_delete=models.CASCADE, null=True) #eliminate course if degree eliminated
     Field = models.ForeignKey('Field', on_delete=models.SET_NULL, null=True) #do not eliminate course if field eliminated
     isActive = models.BooleanField(default=True)

@@ -186,9 +186,11 @@ def create_capacity(request, idProfessor):
     if request.method == 'POST':
         form = CapacityForm(request.POST,professor=professor)
         if form.is_valid():
-            form.save()  
+            capacity = form.save()  
+            idYear = capacity.Year.idYear 
             messages.success(request, 'Punts totals correctament creats.')
-            return redirect('capacityprofessor_show', idProfessor=idProfessor)
+
+            return redirect(f"{reverse('capacityprofessor_show', kwargs={'idProfessor': idProfessor})}?year={idYear}")
     else:
         form = CapacityForm(professor=professor)
 
@@ -198,13 +200,14 @@ def create_capacity(request, idProfessor):
 def edit_capacity(request, idCapacity):
     capacity = get_object_or_404(Capacity, pk=idCapacity)
     idProfessor = capacity.Professor.idProfessor  
-
+    idYear = capacity.Year.idYear
+    
     if request.method == 'POST':
         form = CapacityForm(request.POST, instance=capacity)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Punts totals correctament editats.')
-            return redirect('capacityprofessor_show', idProfessor=idProfessor)
+            messages.success(request, 'Punts totals correctament editats.') 
+            return redirect(f"{reverse('capacityprofessor_show', kwargs={'idProfessor': idProfessor})}?year={idYear}")
     else:
         form = CapacityForm(instance=capacity)
 
@@ -212,14 +215,16 @@ def edit_capacity(request, idCapacity):
 
 def delete_capacity(request, idCapacity):
     capacity = get_object_or_404(Capacity, pk=idCapacity)
-    idProfessor = capacity.Professor.idProfessor  
+    idProfessor = capacity.Professor.idProfessor
+    idYear = capacity.Year.idYear
+  
     try:
         capacity.delete()
         messages.success(request, 'Punts totals correctament eliminats.')
     except Exception as e:
         messages.error(request, f"Error: No s'ha pogut eliminar els punts totals ({e}).")
 
-    return redirect('capacityprofessor_show', idProfessor=idProfessor)
+    return redirect(f"{reverse('capacityprofessor_show', kwargs={'idProfessor': idProfessor})}?year={idYear}")
 
 #FREE
 # Create a new Free entry
@@ -229,9 +234,10 @@ def create_free(request, idProfessor):
     if request.method == 'POST':
         form = FreeForm(request.POST,professor=professor)
         if form.is_valid():
-            form.save()
+            free=form.save()
+            idYear=free.Year.idYear
             messages.success(request, "Punts d'alliberació correctament creats.")
-            return redirect('capacityprofessor_show', idProfessor=idProfessor)
+            return redirect(f"{reverse('capacityprofessor_show', kwargs={'idProfessor': idProfessor})}?year={idYear}")
     else:
         form = FreeForm(professor=professor)
 
@@ -241,13 +247,14 @@ def create_free(request, idProfessor):
 def edit_free(request, idFree):
     free = get_object_or_404(Free, pk=idFree)
     idProfessor = free.Professor.idProfessor  
+    idYear = free.Year.idYear
 
     if request.method == 'POST':
         form = FreeForm(request.POST, instance=free)
         if form.is_valid():
             form.save()
             messages.success(request, "Punts d'alliberació correctament editats.")
-            return redirect('capacityprofessor_show', idProfessor=idProfessor)
+            return redirect(f"{reverse('capacityprofessor_show', kwargs={'idProfessor': idProfessor})}?year={idYear}")
     else:
         form = FreeForm(instance=free)
 
@@ -256,13 +263,15 @@ def edit_free(request, idFree):
 def delete_free(request, idFree):
     free = get_object_or_404(Free, pk=idFree)
     idProfessor = free.Professor.idProfessor  
+    idYear = free.Year.idYear
+
     try:
         free.delete()
         messages.success(request, "Punts d'alliberació correctament eliminats.")
     except Exception as e:
         messages.error(request, f"Error: No s'ha pogut eliminar els punts d'alliberaciós ({e}).")
 
-    return redirect('capacityprofessor_show', idProfessor=idProfessor)
+    return redirect(f"{reverse('capacityprofessor_show', kwargs={'idProfessor': idProfessor})}?year={idYear}")
 
 #CAPACITY SECTION
 # Create a new Capacity section entry
@@ -272,9 +281,10 @@ def create_capacity_section(request, idProfessor):
     if request.method == 'POST':
         form = CapacitySectionForm(request.POST,professor=professor)
         if form.is_valid():
-            form.save()
+            capsection=form.save()
+            idYear=capsection.Year.idYear
             messages.success(request, 'Punts per seccions correctament creats.')
-            return redirect('capacityprofessor_show', idProfessor=idProfessor)
+            return redirect(f"{reverse('capacityprofessor_show', kwargs={'idProfessor': idProfessor})}?year={idYear}")
     else:
         form = CapacitySectionForm(professor=professor)
 
@@ -284,13 +294,14 @@ def create_capacity_section(request, idProfessor):
 def edit_capacity_section(request, idCapacitySection):
     capsection = get_object_or_404(CapacitySection, pk=idCapacitySection)
     idProfessor = capsection.Professor.idProfessor  
+    idYear = capsection.Year.idYear
 
     if request.method == 'POST':
         form = CapacitySectionForm(request.POST, instance=capsection,professor=capsection.Professor)
         if form.is_valid():
             form.save()
             messages.success(request, 'Punts per seccions correctament editats.')
-            return redirect('capacityprofessor_show', idProfessor=idProfessor)
+            return redirect(f"{reverse('capacityprofessor_show', kwargs={'idProfessor': idProfessor})}?year={idYear}")
     else:
         form = CapacitySectionForm(instance=capsection,professor=capsection.Professor)
 
@@ -299,13 +310,15 @@ def edit_capacity_section(request, idCapacitySection):
 def delete_capacity_section(request, idCapacitySection):
     capsection = get_object_or_404(CapacitySection, pk=idCapacitySection)
     idProfessor = capsection.Professor.idProfessor  
+    idYear = capsection.Year.idYear
+
     try:
         capsection.delete()
         messages.success(request, 'Punts per seccions correctament eliminat.')
     except Exception as e:
         messages.error(request, f"Error: No s'ha pogut eliminar els punts per seccions ({e}).")
 
-    return redirect('capacityprofessor_show', idProfessor=idProfessor)
+    return redirect(f"{reverse('capacityprofessor_show', kwargs={'idProfessor': idProfessor})}?year={idYear}")
 
 #SECTIONS
 #Get all the capacity for each section for selected year
