@@ -17,11 +17,11 @@ def generate_degree_excel(request):
         sheet.title = "Titulacions"
 
         headers = [
-            ("ID del Grau", 15),
-            ("Nom del Grau", 30),
-            ("Codi del Grau", 15),
+            ("ID de la titulació", 15),
+            ("Titulació", 30),
+            ("Codi", 15),
             ("Escola", 30),
-            ("Està Actiu", 15),
+            ("Està Activa", 15),
         ]
 
         # headers to the first row
@@ -65,7 +65,7 @@ def upload_degree_excel(request):
                 workbook = openpyxl.load_workbook(excel_file)
                 sheet = workbook.active
 
-                expected_columns =["ID del Grau","Nom del Grau","Codi del Grau","Escola","Està Actiu"]
+                expected_columns =["ID de la titulació","Titulació","Codi","Escola","Està Activa"]
                 header_row = [cell.value for cell in sheet[1]]
 
                 # Check columns
@@ -102,13 +102,17 @@ def upload_degree_excel(request):
                         )
                         error_occurred = True
                         continue
+                    
+                    if isinstance(is_active, str):
+                        if is_active == 'Si':
+                            is_active = True
+                        elif is_active == 'No':
+                            is_active = False
+                        else:
+                            messages.warning(request, f"Fila {row_num} no s'ha processat: l'estat d'activitat ha de ser 'Si' o 'No'.")
+                            error_occurred = True
+                            continue
 
-                    if is_active not in ['Si', 'No']:
-                        messages.warning(
-                            request, f"Fila {row_num} no s'ha processat: l'estat d'activitat ha de ser 'Si' o 'No'."
-                        )
-                        error_occurred = True
-                        continue
 
                     try:
                         school = School.objects.get(NameSchool=school_name)
@@ -139,7 +143,7 @@ def upload_degree_excel(request):
                         existing_degree.NameDegree = name_degree
                         existing_degree.CodeDegree = code_degree
                         existing_degree.School = school
-                        existing_degree.isActive = is_active.lower() == "Si" if isinstance(is_active, str) else bool(is_active)
+                        existing_degree.isActive = is_active
                         existing_degree.save()
 
                     #Does not exist - create
@@ -164,11 +168,11 @@ def upload_degree_excel(request):
                             NameDegree=name_degree,
                             CodeDegree=code_degree,
                             School=school,
-                            isActive=is_active.lower() == "Si" if isinstance(is_active, str) else bool(is_active),
+                            isActive=is_active,
                         )
                 
                 if not error_occurred:
-                    messages.success(request, "Els graus s'han actualitzat correctament.")
+                    messages.success(request, "Les titulaciosn s'han actualitzat correctament.")
                     return redirect('degree_list')
 
             except Exception as e:
