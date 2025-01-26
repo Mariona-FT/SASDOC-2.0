@@ -38,7 +38,7 @@ class FieldForm(forms.ModelForm):
 
         help_texts = {
             'Description': 'Opcional.',
-            'isActive': 'Marcar si el camp de coneixament està actiu.',
+            'isActive': 'Marcar si el camp de coneixement està actiu.',
         }
 
 class SectionForm(forms.ModelForm):
@@ -133,7 +133,7 @@ class CourseForm(forms.ModelForm):
             'CodeCourse': 'Codi',
             'ECTS': 'ECTS',
             'Degree': 'Titulació',
-            'Field': 'Camp de coneixament',
+            'Field': 'Camp de coneixement',
             'isActive': 'És actiu?',
         }
         widgets = {

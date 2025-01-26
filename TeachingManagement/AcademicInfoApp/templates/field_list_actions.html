@@ -1,11 +1,11 @@
 {% extends 'base-template/base.html' %}
 
-{% block title %}Camps de coneixament{% endblock %}
+{% block title %}Camps de coneixement{% endblock %}
 
 {% block content %}
 <div class="container-fluid d-flex" style="min-height: 100vh;">
     <div class="col-lg-10 mx-auto">
-        <h2 style="text-align:center">Gestió de camps de coneixament</h2>
+        <h2 style="text-align:center">Gestió de camps de coneixement</h2>
 
         <!-- Display success, warning, or error messages -->
         {% if messages %}
@@ -23,7 +23,7 @@
         <div class="row">
             <div class="col-lg-10">
                 <!-- Filter Fields -->
-                <h3>Filtres pels camps de coneixament</h3>
+                <h3>Filtres pels camps de coneixement</h3>
                 <div class="d-flex justify-content-between row mb-2">
                     <!-- Filters section -->
                     <div class="filters d-flex flex-wrap">
@@ -46,7 +46,7 @@
                 <hr>
 
                 <!-- List of all fields -->
-                <h3>Llistat dels camps de coneixament</h3>
+                <h3>Llistat dels camps de coneixement</h3>
                 <table class="table table-hover" id="fields-table">
                     
                     <thead>
@@ -84,7 +84,7 @@
                             {% endfor %}
                         {% else %}
                             <tr>
-                                <td colspan="4" class="text-center">Cap camp de coneixament entrat.</td>
+                                <td colspan="4" class="text-center">Cap camp de coneixement entrat.</td>
                             </tr>
                         {% endif %}
                     </tbody>
@@ -100,7 +100,7 @@
             <div class="col-lg-2">
                 <div class="sticky-top" style="top: 1rem;">
                     <div class="buttons mb-2 d-flex flex-column align-items-center">
-                        <a href="{% url 'field_create' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Afegir camp de coneixament</a>
+                        <a href="{% url 'field_create' %}" class="button-secondary btn-sm mb-2" style="width: 100%;">Afegir camp de coneixement</a>
                     </div>
                 </div>
             </div>
@@ -112,7 +112,7 @@
 <!-- JavaScript function for confirmation -->
 <script>
     function confirmDelete(fieldName) {
-        return confirm("Estàs segur que vols eliminar aquest camp de coneixament: " + fieldName + " ?");
+        return confirm("Estàs segur que vols eliminar aquest camp de coneixement: " + fieldName + " ?");
     }
 
     //Not using  accents in the filter and in the data

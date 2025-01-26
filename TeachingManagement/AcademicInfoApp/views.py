@@ -28,10 +28,10 @@ def field_list(request):
             field = Field.objects.get(pk=field_id)
             field_name = field.NameField  # Store the name for the message
             field.delete()
-            messages.success(request, f"El camp de coneixament {field_name} s'ha eliminat correctament.")
+            messages.success(request, f"El camp de coneixement {field_name} s'ha eliminat correctament.")
             return redirect('field_list') 
         except Field.DoesNotExist:
-            messages.error(request, "Error: El camp de coneixament no existeix.")
+            messages.error(request, "Error: El camp de coneixement no existeix.")
 
     # ACTION OF INITIAL DELETE
     if 'confirm_delete' in request.GET:
@@ -57,7 +57,7 @@ def field_create_edit(request, idField=None):
             form = FieldForm(request.POST, instance=field)
             if form.is_valid():
                 form.save()
-                messages.success(request, f'El camp de coneixament "{field.NameField}" s\'ha actualitzat correctament.')
+                messages.success(request, f'El camp de coneixement "{field.NameField}" s\'ha actualitzat correctament.')
                 return redirect('field_list')
         else:
             form = FieldForm(instance=field)
@@ -67,7 +67,7 @@ def field_create_edit(request, idField=None):
             form = FieldForm(request.POST)
             if form.is_valid():
                 new_field = form.save()
-                messages.success(request, f'El camp de coneixament "{new_field.NameField}" s\'ha afegit correctament.')
+                messages.success(request, f'El camp de coneixement "{new_field.NameField}" s\'ha afegit correctament.')
                 return redirect('field_list')
         else:
             form = FieldForm()
