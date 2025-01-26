@@ -42,7 +42,7 @@
                             <a class="nav-link" href="{% url 'professorapp:professor_dashboard' %}"> Inici</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'professorapp:info_assignments' %}"> Informe assignació docent</a>
+                            <a class="nav-link" href="{% url 'professorapp:info_assignments' %}"> La meva assignació docent</a>
                         </li>
                     {% endif %}
                 {% endif %}
@@ -83,7 +83,7 @@
 <!-- Subnavbar for SECTIONCHIEF-->
 <div class="container-fluid mt-1">
     {% if user.is_authenticated and user.role == 'section_chief' %}
-        <div class="collapse {% if '/infosection/' in request.path or '/sectionchief/' in request.path   or '/professor/info/' in request.path %}show{% endif %}"  id="sectionchiefNavbar">
+        <div class="collapse {% if '/infosection/' in request.path or '/sectionchief/' in request.path   or '/professor/info/' in request.path or '/professor/details-professor/' in request.path %}show{% endif %}"  id="sectionchiefNavbar">
             {% include 'navbars/navbar-sectionchief-parameters.html' with selected_year=selected_year %}
         </div>
     {% endif %}

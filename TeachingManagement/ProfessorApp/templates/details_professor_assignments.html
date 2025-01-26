@@ -23,7 +23,7 @@
         <hr>
 
         <div class="row">
-            <div class="col-lg-12">
+            <div class="col-lg-11">
               
                 <!-- Filter Fields -->
                 <h3>Filtrar per curs</h3>
@@ -33,10 +33,10 @@
                             <!-- Year Filter Form -->
                             <form method="get" id="year-filter-form">
                                 <label for="year-select">Selecciona un curs acadèmic</label>
-                                <select name="year" id="year-select" class="form-select" onchange="document.getElementById('year-filter-form').submit();">
+                                <select name="year" id="year-select" class="form-select" onchange="document.getElementById('year-filter-form').submit();" disabled>
                                     {% for year in available_years %}
                                         <!-- Use idYear as the value to send the ID, but display Year in the option text -->
-                                        <option value="{{ year.idYear }}" {% if year == selected_year %}selected{% endif %}>
+                                        <option value="{{ year.idYear }}" {% if year == selected_year %}selected{% endif %} >
                                             {{ year.Year }}
                                         </option>
                                     {% endfor %}
@@ -44,8 +44,7 @@
                             </form>
                         </div> 
                         <div class="col-md-2 d-flex flex-column justify-content-end ms-auto">
-                            <form method="get" action="{% url 'professorapp:generate_info_pdf' %}">
-                                <input type="hidden" name="year" value="{{ selected_year.idYear }}">
+                            <form method="get" action="{% url 'professorapp:generate_info_pdf_given_professor' professor.idProfessor selected_year.idYear %}">
                                 <button type="submit" class="button-secondary btn-sm">Descarregar en PDF</button>
                             </form>
                         </div>
@@ -235,6 +234,15 @@
 
             </div>
             
+            <!-- Buttons section fixed on the right -->
+            <div class="col-lg-1">
+                <div class="sticky-top" style="top: 1rem">
+                    <div class="buttons mb-2 d-flex flex-column align-items-center">
+                        <a href="{% url 'section_professors_list' %}" class="button-return mb-2">Tornar al llistat del professorat</a>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>

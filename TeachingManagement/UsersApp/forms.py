@@ -90,7 +90,7 @@ class ProfessorForm(forms.ModelForm):
     possible_fields = forms.ModelMultipleChoiceField(
         queryset=Field.objects.filter(isActive=True),
         required=False,
-        label="Camps de coneixament",
+        label="Camps de coneixement",
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'checkbox-select-multiple'}),
 
     )

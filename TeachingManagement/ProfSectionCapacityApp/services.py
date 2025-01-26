@@ -3,6 +3,7 @@ from openpyxl.styles import Alignment
 from openpyxl.utils import get_column_letter
 from django.http import HttpResponse
 from datetime import datetime
+from django.urls import reverse
 from .models import Capacity,Free,CapacitySection,TypePoints,CourseYear
 from AcademicInfoApp.models import Year,Section,Course,Degree,Language
 from UsersApp.models import Professor
@@ -183,6 +184,7 @@ def generate_courseyear_excel(request,year_id):
         return redirect("courseyear_list")
 
 def upload_courseyear_excel(request):
+    redirect_year = None
     if request.method == "POST":
         form = UploadForm(request.POST, request.FILES)
         if form.is_valid():
@@ -232,6 +234,15 @@ def upload_courseyear_excel(request):
                         )
                         error_occurred = True
                         continue
+
+                    if redirect_year is None and academic_year:
+                        try:
+                            year = Year.objects.get(Year=academic_year)
+                            redirect_year = year.idYear 
+                        except Year.DoesNotExist:
+                            messages.warning(request, f"Fila {row_num} no s'ha processat: curs acadèmic '{academic_year}' no trobat.")
+                            error_occurred = True
+                            continue
 
                     if not isinstance(id_course_year, (int, float)) or not str(id_course_year).isdigit():
                         messages.warning(
@@ -353,7 +364,7 @@ def upload_courseyear_excel(request):
                         if CourseYear.objects.filter(Course=course,Year=year,Semester=semester).exists():
                             messages.warning(
                                 request,
-                                f"Fila {row_num} no s'ha processat: la combinació de l'assignatura, curs acadèmic i semestre ja existeix2."
+                                f"Fila {row_num} no s'ha processat: la combinació de l'assignatura, curs acadèmic i semestre ja existeix."
                             )
                             error_occurred = True
                             continue
@@ -363,22 +374,23 @@ def upload_courseyear_excel(request):
                             Course=course,
                             Year=year,
                             Semester=semester,
-                            defaults={
-                            'PointsA': points_a,
-                            'PointsB': points_b,
-                            'PointsC': points_c,
-                            'PointsD': points_d,
-                            'PointsE': points_e,
-                            'PointsF': points_f,
-                            'Language': language,
-                            'Comment': comment,
-                            }
+                            PointsA=points_a,
+                            PointsB=points_b,
+                            PointsC=points_c,
+                            PointsD=points_d,
+                            PointsE=points_e,
+                            PointsF=points_f,
+                            Language=language,
+                            Comment=comment,
                         )
                     
 
                 if not error_occurred:
                     messages.success(request, "Tots els encàrrecs docents s'han processat correctament.")
-                    return redirect('courseyear_list') 
+                    if redirect_year:
+                            return redirect(f"{reverse('courseyear_list')}?year={redirect_year}")
+                    else:
+                        return redirect("courseyear_list") 
 
             except Exception as e:
                 messages.error(request, f"Error en processar el fitxer: {e}")

@@ -119,13 +119,13 @@
                     {% for professor in professor_data %}
                         {% for capacity in professor.capacities %}
                             <tr>
-                                <td  style="text-align: center;">{{ capacity.Points }}</td>
-                                <td  style="text-align: center;">XX</td>
+                                <td  style="text-align: center;">{{ capacity.object.Points }}</td>
+                                <td  style="text-align: center;">{{ capacity.total_hours|floatformat:2 }}</td>
                                 <td  style="text-align: left;"> 
-                                    {% if not capacity.Comment %}
+                                    {% if not capacity.object.Comment %}
                                         <p></p>
                                     {% else %}
-                                        {{ capacity.Comment }}
+                                        {{ capacity.object.Comment }}
                                     {% endif %}
                                 </td>
                             </tr>
@@ -157,13 +157,13 @@
                     {% for professor in professor_data %}
                         {% for free in professor.frees %}
                             <tr>
-                                <td  style="text-align: center;">{{ free.PointsFree }}</td>
-                                <td  style="text-align: center;">XX</td>
+                                <td  style="text-align: center;">{{ free.object.PointsFree }}</td>
+                                <td  style="text-align: center;">{{ free.total_hours|floatformat:2 }}</td>
                                 <td  style="text-align: left;"> 
-                                    {% if not free.Comment %}
+                                    {% if not free.object.Comment %}
                                         <p></p>
                                     {% else %}
-                                        {{ free.Comment }}
+                                        {{ free.object.Comment }}
                                     {% endif %}
                                 </td>
                             </tr>
@@ -196,14 +196,14 @@
                     {% for professor in professor_data %}
                         {% for capacity_section in professor.capacity_sections %}
                             <tr>
-                                <td style="text-align: center;" >{{ capacity_section.Points }}</td>
-                                <td style="text-align: center;" >XX</td>
-                                <td style="text-align: center;">{{ capacity_section.Section.NameSection }}</td>
+                                <td style="text-align: center;" >{{ capacity_section.object.Points }}</td>
+                                <td style="text-align: center;" >{{ capacity_section.total_hours|floatformat:2 }}</td>
+                                <td style="text-align: center;">{{ capacity_section.object.Section.NameSection }}</td>
                                 <td style="text-align: left;">
-                                {% if not capacity_section.Comment %}
+                                {% if not capacity_section.object.Comment %}
                                     <p></p>
                                 {% else %}
-                                    {{ capacity_section.Comment }}
+                                    {{ capacity_section.object.Comment }}
                                 {% endif %}
                                 </td>
                             </tr>
@@ -234,33 +234,33 @@
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 15%;">Escola</th>
-                        <th style="width: 20%;">Titulació</th>
-                        <th style="width: 18%;">Assignatura</th>
-                        <th style="width: 10%;">Punts totals</th>
-                        <th style="width: 8%;">Hores</th>
-                        <th style="width: 18%;">Coordinador/a</th>
-                        <th style="width: 18%;">Companys</th>
+                        <th style="width: 13%;">Escola</th>
+                        <th style="width: 18%;">Titulació</th>
+                        <th style="width: 15%;">Assignatura</th>
+                        <th style="width: 8%;">Punts totals</th>
+                        <th style="width: 7%;">Hores</th>
+                        <th style="width: 17%;">Coordinador/a</th>
+                        <th style="width: 25%;">Professorat</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for course_info in section_data %}
-                        <tr>
+                        <tr style="padding: 0px;">
                             <td>{{ course_info.school }}</td>
-                            <td>{{ course_info.degree }}</td>
+                            <td  style="font-size: 9px;  white-space: nowrap; padding: 0px; margin: 0px;" >{{ course_info.degree }}</td>
                             <td>{{ course_info.course }} ({{ course_info.semester }})</td>
                             <td>{{ course_info.total_points }}</td>
-                            <td>XX</td>
-                            <td style="font-size: 9px;  white-space: nowrap; padding: 0px" >
+                            <td>{{course_info.total_hours|floatformat:2  }}</td>
+                            <td style="font-size: 9px;  white-space: nowrap; padding: 0px; margin: 0px;" >
                                 {% if not course_info.coordinator %}
                                     <p></p>
                                 {% else %}
                                     {{ course_info.coordinator}}
                                 {% endif %} 
                             </td>
-                            <td style="font-size: 9px; white-space: nowrap;  padding: 0px" >
+                            <td style="font-size: 9px; white-space: nowrap;  padding: 1px" >
                                 {% for coworker in course_info.coworkers %}
-                                    {{ coworker.name }} {{ coworker.family_name }}<br>
+                                    {{ coworker.name }} {{ coworker.family_name }} - {{ coworker.total_hours|floatformat:2}} h<br>
                                 {% empty %}
                                     <p></p>
                                 {% endfor %}

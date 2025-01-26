@@ -8,7 +8,7 @@
         </li>
 
         {% url 'section_professors_list' as section_professors_list_url %}
-        <li class="nav-item me-4 {% if '/section-professors/' in request.path %} active{% endif %}">
+        <li class="nav-item me-4 {% if '/section-professors/' in request.path or '/professor/details-professor/' in request.path %} active{% endif %}">
             <a class="nav-link" href="{{section_professors_list_url}}">Resultat d'assignació del professorat</a>
         </li>
 
@@ -29,7 +29,7 @@
 
         {% url 'professorapp:info_assignments' as info_assignments_url %}
         <li class="nav-item me-4 {% if '/professor/info/' in request.path %} active{% endif %}"  style="margin-left: 2rem;">
-            <a class="nav-link" href="{{info_assignments_url}}">Informe assignació docent personal</a>
+            <a class="nav-link" href="{{info_assignments_url}}">La meva assignació docent</a>
         </li>
 
     </ul>
