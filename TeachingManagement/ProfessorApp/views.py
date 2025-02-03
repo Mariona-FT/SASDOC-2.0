@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required,user_passes_test
 from django.shortcuts import render, redirect,get_object_or_404
 from django.urls import reverse
 from ProfSectionCapacityApp.models import Professor, Capacity, Free, CapacitySection,TypePoints,CourseYear
-from UsersApp.models import Professor
+from UsersApp.models import Professor,ProfessorField,ProfessorLanguage
 from AcademicInfoApp.models import Section,Year
 from AssignmentYearApp.models import Assignment
 from django.contrib import messages
@@ -25,7 +25,23 @@ def is_professor(user):
 @login_required
 @user_passes_test(is_professor)
 def professor_dashboard(request):
-    return render(request, 'professor_dashboard.html')
+    professor = get_object_or_404(Professor, user=request.user)
+
+ # Get professor's languages and fields
+    languages = ProfessorLanguage.objects.filter(Professor=professor)
+    fields = ProfessorField.objects.filter(Professor=professor)
+
+    # If no languages or fields are found, set them to an empty string
+    languages_list = ', '.join([language.Language.Language for language in languages]) if languages else "Encara no assignats."
+    fields_list = ', '.join([field.Field.NameField for field in fields]) if fields else "Encara no assignats."
+
+    context = {
+        'professor': professor,
+        'languages_list': languages_list,
+        'fields_list': fields_list,
+    }
+
+    return render(request, 'professor_dashboard.html',context)
 
 def get_professor_assignments_data(request):
     available_years = Year.objects.all().order_by('-Year').distinct()

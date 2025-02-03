@@ -49,7 +49,7 @@
                             <th style="text-align: left; width:95px;">% Total</th>
                             <th style="text-align: left; width:8%;">Punts Q1</th>
                             <th style="text-align: left; width:8%;">Punts Q2</th>
-                            <th style="text-align: center; width:8%;">Capacitat docent al departament</th>
+                            <th style="text-align: center; width:10%;">Capacitat docent al departament</th>
                             <th style="text-align: center; width:9%;">Capacitat docent a la secció</th>
                             <th style="text-align: left; width: 8%;">Punts no assignats a la secció</th> 
                             {% for schools in schools_section %}
@@ -63,14 +63,18 @@
                             {% for professor in professor_section_data %}
                                 <tr data-name="{{ professor.name }} {{professor.family_name}}"
                                     data-percentatge="{{professor.point_percentage}}"
-                                    {% if professor.point_percentage < 70 %}
+                                    {% if professor.point_percentage < 10 %}
+                                        style="background-color: rgba(95, 95, 107, 0.2);" 
+                                    {% elif professor.point_percentage < 70 %}
                                         style="background-color: rgba(255, 99, 71, 0.2);"
                                     {% elif professor.point_percentage >= 70 and professor.point_percentage < 90 %}
                                         style="background-color: rgba(255, 215, 0, 0.2);"
                                     {% endif %}
                                     >
                                     <td>{{ professor.name }} {{professor.family_name}}</td>
-                                    <td  {% if professor.point_percentage < 70 %}
+                                    <td  {% if professor.point_percentage < 10 %}
+                                            style="color: grey;"
+                                        {% elif professor.point_percentage < 70 %}
                                             style="color:red;"
                                         {% elif professor.point_percentage >= 70 and professor.point_percentage < 90 %}
                                             style="color: #fba92b;"
