@@ -118,12 +118,12 @@ Run the following commands to set up the database and apply migrations:
 ```
 python manage.py makemigrations
 ```
-If doesnt work, try to make migrations for each app with models:
+If doesnt work, try to make migrations for each app with **this order**:
 ```
- python manage.py migrate UsersApp
- python manage.py migrate AcademicInfoApp
- python manage.py migrate ProfSectionCapacityApp
- python manage.py migrate AssignmentYearApp
+ python manage.py makemigrations UsersApp
+ python manage.py makemigrations AcademicInfoApp
+ python manage.py makemigrations ProfSectionCapacityApp
+ python manage.py makemigrations AssignmentYearApp
 ```
 You should see something like this for each migration:
 ```  
