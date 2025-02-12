@@ -67,3 +67,179 @@ It can be confirmed that this project has met its established objectives. The pl
 
 ### Keywords:
 Teaching Assignment, University Department, Faculty, Teaching Management, Teaching Task, Web Development, Online Platform, Django, HTML, Python
+
+## Setup Instructions
+Follow these steps to set up and run the SASDOC 2.0 project locally:
+
+#### 1. Clone the repository:
+```
+git clone https://github.com/Mariona-FT/SASDOC-2.0.git
+cd SASDOC-2.0
+```
+#### 2.  Create a Virtual Environment:
+In the project directory (SASDOC-2.0), create a virtual environment to isolate dependencies:
+
+```
+python -m venv venv
+```
+#### 3. Activate the Virtual Environment:
+Activate the virtual environment using the following command:
+
+- For Windows:
+```
+.\venv\Scripts\activate
+```
+- Linux/Mac:
+```
+source venv/bin/activate
+```
+Your environment structure should look like this:
+
+```
+\SASDOC-2.0
+├── TeachingManagement
+├──  venv
+├── .gitattributes
+├── .gitignore
+├── LICENSE
+└── README.md
+```
+
+#### 4. Install Dependencies:
+Navigate to the `TeachingManagement` directory and install the required dependencies:
+
+```
+cd .\TeachingManagement\
+pip install -r requirements.txt
+```
+#### 5. Apply Migrations:
+Run the following commands to set up the database and apply migrations:
+
+```
+python manage.py makemigrations
+```
+If doesnt work, try to make migrations for each app with models:
+```
+ python manage.py migrate UsersApp
+ python manage.py migrate AcademicInfoApp
+ python manage.py migrate ProfSectionCapacityApp
+ python manage.py migrate AssignmentYearApp
+```
+You should see something like this for each migration:
+```  
+Migrations for 'AcademicInfoApp':
+  AcademicInfoApp\migrations\0001_initial.py
+    + Create model Field
+    + Create model Language
+    + Create model School
+    + Create model Section
+    + Create model TypeProfessor
+    + Create model Year
+    + Create model Degree
+    + Add field Section to school
+    + Create model Course
+Migrations for 'ProfSectionCapacityApp':
+  ProfSectionCapacityApp\migrations\0001_initial.py
+    + Create model Capacity
+    + Create model CapacitySection
+    + Create model CourseYear
+    + Create model Free
+    + Create model TypePoints
+  ProfSectionCapacityApp\migrations\0002_initial.py
+    + Add field Professor to capacity
+    + Add field Year to capacity
+    + Add field Professor to capacitysection
+    + Add field Section to capacitysection
+    + Add field Year to capacitysection
+    + Add field Course to courseyear
+    + Add field Language to courseyear
+    + Add field Year to courseyear
+    + Add field Professor to free
+    + Add field Year to free
+    + Add field Section to typepoints
+    + Add field Year to typepoints
+    ~ Alter unique_together for capacity (1 constraint(s))
+    ~ Alter unique_together for capacitysection (1 constraint(s))
+    ~ Alter unique_together for courseyear (1 constraint(s))
+    ~ Alter unique_together for typepoints (1 constraint(s))
+Migrations for 'UsersApp':
+  UsersApp\migrations\0001_initial.py
+    + Create model Professor
+    + Create model Chief
+    + Create model ProfessorField
+    + Create model ProfessorLanguage
+    + Create model CustomUser
+    + Add field user to professor
+```
+Finally, apply all migrations:
+```
+python manage.py migrate
+```
+You should see confirmation of successful migrations like:
+```
+Operations to perform:
+  Apply all migrations: AcademicInfoApp, ProfSectionCapacityApp, UsersApp, admin, auth, contenttypes, sessions
+Running migrations:
+  Applying AcademicInfoApp.0001_initial... OK
+  Applying contenttypes.0001_initial... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0001_initial... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying UsersApp.0001_initial... OK
+  Applying ProfSectionCapacityApp.0001_initial... OK
+  Applying ProfSectionCapacityApp.0002_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying sessions.0001_initial... OK
+
+```
+#### 6. Create a Superuser:
+Create a superuser to access the Django admin panel:
+
+```
+python manage.py createsuperuser
+```
+
+> Enter the username (e.g., admin).
+
+> Enter the email address (e.g., a@gmail.com).
+
+> Enter the password (make sure it meets the security requirements).
+
+> Note: If the password is too common or short, you can bypass the validation by typing y when prompted.
+
+
+#### 7. Run the Development Server:
+Start the Django development server by running:
+
+```
+python manage.py runserver
+```
+The development server will start at http://127.0.0.1:8000/.
+
+#### 8. Access the Admin Panel:
+To access the Django admin panel, visit: http://127.0.0.1:8000/admin
+
+Login with the superuser credentials you created earlier (admin and the password).
+
+#### 9. Create a Director User:
+Once logged in to the admin panel, create a new user with the role of **director**.
+
+#### 10. Access the Application: 
+After creating the director user, log out of the admin panel, and log in again using the newly created director credentials at: http://127.0.0.1:8000/baseapp/
+
+
+
+
+Now you're ready to use the <ins> **SASDOC 2.0 platform**</ins>! Enjoy exploring the features and testing the system. If you encounter any issues, have suggestions, or need help, feel free to open an issue in the repository. I welcome contributions and feedback!🌟
