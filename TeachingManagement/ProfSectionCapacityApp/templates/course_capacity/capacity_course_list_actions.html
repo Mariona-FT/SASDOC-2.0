@@ -87,7 +87,7 @@
                             data-degree="{{ course_year.DegreeName}}"
                             data-totalpoints="{{ course_year.TotalPoints }}"
                             >
-                            <td>{{ course_year.DegreeName}}</td>
+                            <td>{{ course_year.SchoolName}} - {{ course_year.DegreeName}} </td>
                             <td><strong>{{ course_year.Course.NameCourse }} </strong></td>
                             <td><strong>{{ course_year.Semester }}</stong></td>
                             <td>{{ course_year.PointsA|floatformat:"-2" |default:"-" }}</td>

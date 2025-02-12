@@ -18,7 +18,7 @@ def field_list(request):
     if not request.user.role == 'director':
         return redirect(reverse('access_denied'))
     
-    fields = Field.objects.all()
+    fields = Field.objects.all().order_by('NameField')
     deleting = None
 
     # FINAL DELETE
@@ -145,7 +145,7 @@ def sections_create_edit(request,idSection=None):
 
 ## Schools list to manage - listing and actions of edit, delete and add schools
 def school_list(request):
-    schools = School.objects.all().order_by('CodeSchool')
+    schools = School.objects.all().order_by('Section__NameSection','CodeSchool')
     deleting = None
    
     if request.method == "POST" and 'confirm_delete' in request.POST:       
@@ -199,7 +199,7 @@ def school_create_edit(request,idSchool=None):
 
 ## Degree list to manage - listing and actions of edit, delete and add degree
 def degree_list(request):
-    degrees = Degree.objects.all().order_by('CodeDegree')
+    degrees = Degree.objects.all().order_by('School__NameSchool', 'CodeDegree')
     deleting = None
    
     if request.method == "POST" and 'confirm_delete' in request.POST:
@@ -309,7 +309,7 @@ def course_create_edit(request,idCourse=None):
 
 ## typeprofessor list to manage - listing and actions of edit, delete and add typeprofessor
 def typeprofessor_list(request):
-    typeprofessors = TypeProfessor.objects.all()
+    typeprofessors = TypeProfessor.objects.all().order_by('NameContract')
     deleting = None
    
     if request.method == "POST" and 'confirm_delete' in request.POST:
@@ -364,7 +364,7 @@ def typeprofessor_create_edit(request,idTypeProfessor=None):
 
 ## language list to manage - listing and actions of edit, delete and add language
 def language_list(request):
-    languages = Language.objects.all()
+    languages = Language.objects.all().order_by('Language')
     deleting = None
    
     if request.method == "POST" and 'confirm_delete' in request.POST:

@@ -1,11 +1,23 @@
 {% extends 'base-template/base.html' %}
 
-{% block title %}Test pàgina{% endblock %}
+{% block title %}Dashboard Professors{% endblock %}
 
 {% block content %}
-<div class="dashboard container mt-4">
+<div class="container mt-4">
+    <h1 class="text-center mb-4">Benvingut/da, {{ professor.name }} {{ professor.family_name }}</h1>
 
-    <h1 class="text-center">Test pàgina</h1>
+    <!-- Section: Overview -->
+    <div class="alert alert-info text-center">
+        En aquesta web, podeu consultar la vostra capacitat i assignació docent per tots els cursos acadèmics del sistema.
+    </div>
 
-</div>
+    <!-- Section: Professor Details -->
+    <div class="card shadow-sm p-4 mt-4">
+        <h4 class="mb-3">Informació Personal</h4>
+        <p><strong>Nom:</strong> {{ professor.name }} {{ professor.family_name }}</p>
+        <p><strong>Correu Electrònic:</strong> {{ professor.email }}</p>
+        <p><strong>Camps de coneixament:</strong> {{ languages_list }}</p>
+        <p><strong>Idiomes:</strong> {{ fields_list }}</p>
+
+
 {% endblock %}

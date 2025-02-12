@@ -138,6 +138,8 @@ def section_courses_list(request):
             'points_summary':points_summary,
         })
 
+    course_data = sorted(course_data, key=lambda x: (x['degree'], x['semester'] == "Q2"))
+    
     context = {
         'course_data': course_data, 
         'section': section,
@@ -294,7 +296,7 @@ def courseyear_show(request,idCourseYear=None):
             'fields_list': fields_list,
         })
     
-    professor_data = sorted(professor_data, key=lambda x: x['is_assigned'], reverse=True)
+    professor_data = sorted(professor_data, key=lambda x: (not x['is_assigned'], x['prof_remaining_points']))
 
 
     context = {
@@ -585,6 +587,9 @@ def section_professors_list(request):
 
             'points_for_schools': points_for_schools,
         })
+
+    professor_data.sort(key=lambda x: x['point_percentage'], reverse=True)
+
     
     context = {
         'section':section,

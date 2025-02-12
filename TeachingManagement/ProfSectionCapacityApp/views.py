@@ -362,6 +362,8 @@ def section_typepoints_list(request):
         }
         section_typepoints_info.append(section_info)
 
+    section_typepoints_info = sorted(section_typepoints_info, key=lambda x: x['LetterSection'])
+
     context = {
         'available_years': available_years,
         'selected_year': selected_year,
@@ -511,13 +513,16 @@ def course_year_list(request):
         course = course_year.Course  
         if course:
             course_year.Degree = course.Degree  
-            course_year.DegreeName = course.Degree.NameDegree if course.Degree else "Sense Grau"
+            course_year.DegreeName = course.Degree.NameDegree if course.Degree else "Sense titulació."
+            course_year.SchoolName = course.Degree.School.NameSchool if course.Degree.School else "Sense escola."
    
+    sorted_course_years = sorted(all_courseyears, key=lambda x: (x.SchoolName, x.DegreeName))
+
     context = {
         'available_years': available_years,
         'selected_year': selected_year,
         'is_most_recent_year': is_most_recent_year,
-        'course_years': all_courseyears,
+        'course_years': sorted_course_years,
     }
 
     return render(request, 'course_capacity/capacity_course_list_actions.html', context)
