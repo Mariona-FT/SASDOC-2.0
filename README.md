@@ -77,8 +77,12 @@ git clone https://github.com/Mariona-FT/SASDOC-2.0.git
 cd SASDOC-2.0
 ```
 #### 2.  Create a Virtual Environment:
-In the project directory (SASDOC-2.0), create a virtual environment to isolate dependencies:
-
+In the project directory (SASDOC-2.0), create a virtual environment to isolate dependencies, for that you will need this **version of Python**: 
+```
+ python --version
+    Python 3.12.3
+```
+And download the enviroment :
 ```
 python -m venv venv
 ```
